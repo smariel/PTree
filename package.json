@@ -21,7 +21,7 @@
   },
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/smariel/PTree.git"
+    "url": "https://github.com/smariel/PTree.git"
   },
   "keywords": [
     "electronics",
@@ -29,9 +29,9 @@
     "power consumption"
   ],
   "bugs": {
-    "url": "https://github.com/smariel/PowerTree-Electron/issues"
+    "url": "https://github.com/smariel/PTree/issues"
   },
-  "homepage": "https://github.com/smariel/PowerTree-Electron#readme",
+  "homepage": "https://github.com/smariel/PTree#readme",
   "devDependencies": {
     "chartjs": "^0.3.24",
     "electron": "^1.4.4",
