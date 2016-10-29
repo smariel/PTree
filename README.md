@@ -8,7 +8,8 @@ The third view is a graphical summary of all the consumptions on the design.
 ## Basic commands
 Simple installation using git and npm:
 
-    $ git clone https://github.com/smariel/ptree
+    $ git clone https://github.com/smariel/PTree
+    $ cd PTree
     $ npm install
 
 Run the application:
