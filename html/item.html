@@ -1,0 +1,135 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<meta charset="UTF-8">
+		<title>Item edition</title>
+
+		<!-- CSS -->
+		<link rel="stylesheet" href="../node_modules/materialize-css/bin/materialize.css">
+		<link rel="stylesheet" href="../css/item.css">
+	</head>
+
+	<body class="container-fluid">
+
+		<!--
+			_______________________________________________________________________
+			Source Edition
+			_______________________________________________________________________
+		-->
+
+		<form id="source_control" class="row">
+			<div class="col s4"  id="source_description">
+				<h5>Description</h5>
+				<div class="input-field row">
+					<label for="source_name">Name</label>
+					<input id="source_name" data-itemdata="name" type="text" class="form-control input-xs item-control" placeholder="Name">
+				</div>
+				<div class="input-field row">
+					<label for="source_ref">Ref</label>
+					<input id="source_ref" type="text" data-itemdata="ref" class="form-control input-xs item-control" placeholder="Reference" />
+				</div>
+				<div class="input-field row">
+					<label id="source_color_label" for="source_color" class="active color-label">Color</label>
+					<input id="source_color" type="color" data-itemdata="color" class="color-label form-control input-xs item-control" value="#000000" />
+				</div>
+			</div>
+			<div class="col s4"  id="source_electrical">
+				<h5>Characteristics</h5>
+				<div class="input-field row">
+					<select id="source_regtype" data-itemdata="regtype" class="form-control item-control" data-toggle="tooltip" data-placement="bottom" title="Regulator type">
+						<!--<optgroup label="Fixed output">-->
+							<option value="0">Fixed DC/DC</option>
+							<option value="1">Fixed LDO</option>
+							<option value="2">Fixed Other</option>
+						<!--</optgroup>-->
+						<!--<optgroup label="Adjustable output">-->
+							<option value="3">Adjustable DC/DC</option>
+							<option value="4">Adjustable LDO</option>
+							<option value="5">Adjustable Other</option>
+						<!--</optgroup>-->
+					</select>
+					<label for="source_regtype">Type</label>
+				</div>
+				<div class="input-field row" id="form-group-vout">
+					<label for="input_vout_typ">V<sub>OUT</sub> (V)</label>
+					<input id="input_vout_min" type="text" data-itemdata="vout_min" class="col s4 form-control input-xs input_vout input_num item-control" placeholder="min (V)" data-toggle="tooltip" data-placement="bottom" title="Minimum output voltage (V)" />
+					<input id="input_vout_typ" type="text" data-itemdata="vout_typ" class="col s4 form-control input-xs input_vout input_num item-control" placeholder="typ (V)" data-toggle="tooltip" data-placement="bottom" title="Typical output voltage (V)" />
+					<input id="input_vout_max" type="text" data-itemdata="vout_max" class="col s4 form-control input-xs input_vout input_num item-control" placeholder="max (V)" data-toggle="tooltip" data-placement="bottom" title="Maximum output voltage (V)" />
+				</div>
+				<div class="input-field source_dcdc row">
+					<label for="source_efficiency">Eff. (%)</label>
+					<input id="source_efficiency" type="text" data-itemdata="efficiency"  class="form-control input-xs input_num item-control" placeholder="Efficiency (%)" data-toggle="tooltip" data-placement="bottom" title="Regulator efficiency (%)" />
+				</div>
+				<div class="input-field source_ldo row" id="form-group-iq">
+					<label>I<sub>Q</sub> (A)</label>
+					<input id="input_iq_min" type="text" data-itemdata="iq_min" class="col s4 form-control input-xs input_iq input_num item-control" placeholder="min (V)" data-toggle="tooltip" data-placement="bottom" title="Min. quiescent current (A)" />
+					<input id="input_iq_typ" type="text" data-itemdata="iq_typ" class="col s4 form-control input-xs input_iq input_num item-control" placeholder="typ (V)" data-toggle="tooltip" data-placement="bottom" title="Typical quiescent current (A)" />
+					<input id="input_iq_max" type="text" data-itemdata="iq_max" class="col s4 form-control input-xs input_iq input_num item-control" placeholder="max (V)" data-toggle="tooltip" data-placement="bottom" title="Max. quiescent current (A)" />
+				</div>
+			</div>
+			<div class="col s4" id="source_adjustable">
+				<h5>Feadback</h5>
+				<div class="input-field source_adj_group row">
+					<label for="source_r1">R<sub>1</sub> (Ω)</label>
+					<input id="source_r1" data-itemdata="r1" type="text" class="form-control input-xs input_num input_num source_adj item-control" placeholder="R between Vout and Vref (Ω)" data-toggle="tooltip" data-placement="bottom" title="R between Vout and Vref (Ω)" />
+				</div>
+				<div class="input-field source_adj_group row">
+					<label for="source_r2">R<sub>2</sub> (Ω)</label>
+					<input id="source_r2" data-itemdata="r2" type="text" class="form-control input-xs input_num input_num source_adj item-control" placeholder="R between Vref and GND (Ω)" data-toggle="tooltip" data-placement="bottom" title="R between Vref and GND (Ω)" />
+				</div>
+				<div class="input-field source_adj_group row">
+					<label for="source_rtol">Tol. (%)</label>
+					<input id="source_rtol" data-itemdata="rtol" type="text" class="form-control input-xs input_num source_adj item-control" placeholder="Resistor tolerance (%)" data-toggle="tooltip" data-placement="bottom" title="Resistor tolerance (%)" />
+				</div>
+				<div class="input-field source_adj_group row">
+					<label for="source_vref">V<sub>REF</sub> (V)</label>
+					<input id="source_vref" data-itemdata="vref" type="text" class="form-control input-xs input_num source_adj item-control" placeholder="Regulator Vref (V)" data-toggle="tooltip" data-placement="bottom" title="Regulator Vref (V)" />
+				</div>
+			</div>
+		</form>
+
+
+		<!--
+			_______________________________________________________________________
+			Load Edition
+			_______________________________________________________________________
+		-->
+
+		<form id="load_control" class="row">
+			<div class="col s12">
+				<div class="input-field row">
+					<label for="load_name">Name</label>
+					<input id="load_name" data-itemdata="name" type="text" class="form-control input-xs" placeholder="Name">
+				</div>
+				<div class="input-field row">
+					<label for="load_ityp">I<sub>LOAD</sub> (A)</label>
+					<input id="load_ityp" data-itemdata="ityp" class="col s6 form-control input-xs input_num" type="text" disabled />
+					<input id="load_imax" data-itemdata="imax" class="col s6 form-control input-xs input_num" type="text" disabled />
+				</div>
+				<div class="input-field row">
+					<label id="load_color_label" for="load_color" class="active">Color</label>
+					<input id="load_color" data-itemdata="color" class="form-control input-xs" type="color" value="#000000" />
+				</div>
+			</div>
+		</form>
+
+		<menu>
+			<button class="btn btn-default" id="edit_cancel">Cancel</button>
+			<button class="btn btn-primary" id="edit_ok">Save</button>
+		</menu>
+	</body>
+
+	<!-- JS framworks and libraries -->
+	<script>
+		require('jquery');
+		require('materialize-css');
+	</script>
+
+	<!-- application JS: functions & constructors -->
+	<script src="../js/functions.js"></script>
+
+	<!-- application JS: this window -->
+	<script>
+		require('../js/renderer.item.js');
+	</script>
+</html>

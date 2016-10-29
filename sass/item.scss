@@ -1,0 +1,24 @@
+// $ sass --watch item.scss:item.css
+/*
+html,
+body
+{
+	margin: 0;
+	padding: 10px 0 0 0;
+}
+*/
+menu {
+	position: fixed;
+	right: 0;
+	bottom: 0;
+	margin: 15px;
+	text-align: right;
+}
+
+#source_color_label, #load_color_label {
+	position: static;
+}
+
+body {
+	overflow: hidden;
+}

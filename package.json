@@ -1,0 +1,47 @@
+{
+  "name": "PTree",
+  "version": "1.0.0",
+  "description": "Design power tree and estimate consumptions.",
+  "author": "Sylvain Mariel",
+  "license": "MIT",
+  "main": "main.js",
+  "jshintConfig": {
+    "esversion": 6
+  },
+  "scripts": {
+	 "postinstall" : "cp node_modules/materialize-css/js/date_picker/picker.js node_modules/materialize-css/bin",
+    "start": "electron .",
+    "pack:osx": "electron-packager .  --out=dist --platform=darwin --arch=x64 --overwrite",
+    "pack:mas": "electron-packager .  --out=dist --platform=mas --arch=x64 --overwrite",
+    "pack:win32": "electron-packager .  --out=dist --platform=win32 --arch=ia32 --overwrite",
+    "pack:win64": "electron-packager .  --out=dist --platform=win32 --arch=x64 --overwrite",
+    "pack:lin32": "electron-packager .  --out=dist --platform=linux --arch=ia32 --overwrite",
+    "pack:lin64": "electron-packager .  --out=dist --platform=linux --arch=x64 --overwrite",
+    "pack:all": "electron-packager . --all --out=dist --overwrite"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/smariel/PTree.git"
+  },
+  "keywords": [
+    "electronics",
+    "power supply",
+    "power consumption"
+  ],
+  "bugs": {
+    "url": "https://github.com/smariel/PowerTree-Electron/issues"
+  },
+  "homepage": "https://github.com/smariel/PowerTree-Electron#readme",
+  "devDependencies": {
+    "chartjs": "^0.3.24",
+    "electron": "^1.4.4",
+    "electron-packager": "^8.1.0",
+    "fabric": "^1.6.6",
+    "font-awesome": "^4.7.0",
+    "fs": "0.0.1-security",
+    "jquery": "^3.1.1",
+    "materialize-css": "^0.97.7",
+    "sass": "^0.5.0",
+    "tablesorter": "^2.27.8"
+  }
+}

@@ -1,0 +1,116 @@
+@import "../node_modules/materialize-css/sass/components/_color.scss";
+
+$topmenu_height:	30px;						// >= 20px
+
+
+// -----------------------------------------------------------------------------
+//	Page
+//
+
+body
+{
+	min-width:	100%;
+	min-height:	100%;
+	margin:		$topmenu_height 0 0 0;
+	padding:		0;
+	background:	#FFFFFF;
+}
+
+
+// -----------------------------------------------------------------------------
+//	Item info
+//
+
+$info_background_color: rgba( 34, 34, 34,1);
+$info_text_color:			rgba(255,255,255,1);
+$info_border_color:		rgba(255,255,255,0.2);
+
+.item_info
+{
+	display:			none;
+	position:		absolute;
+	background:		$info_background_color;
+	color:			$info_text_color;
+	font-family:	arial;
+	font-size:		13px;
+	border-radius:	10px;
+	padding:			5px 10px;
+}
+
+.item_info td,
+.item_info th
+{
+	padding:		1px 5px;
+	text-align:	center;
+}
+
+.item_info_data tr:last-child th
+{
+	border-bottom:		1px solid $info_border_color;
+}
+
+.item_info_data th
+{
+	text-transform:	uppercase;
+}
+
+.item_info_data tr				td:nth-child(1),
+.item_info_data tr:last-child	th:nth-child(1)
+{
+	border-right:	1px solid $info_border_color;
+}
+
+@each $pos in 'left' 'right' 'center' {
+	#item_info_#{$pos} .item_info_border {
+		position:	absolute;
+		top: 			0;
+		width:		10px;
+		height:		100%;
+		background:	url('../img/info_border_#{$pos}.png') center no-repeat;
+
+		@if		'left'   == $pos { right: -10px; }
+		@else if	'right'  == $pos { left:  -10px; }
+		@else if	'center' == $pos {
+			top:		-10px;
+			left: 	0;
+			width:	100%;
+			height:	10px;
+		}
+	}
+}
+
+
+// -----------------------------------------------------------------------------
+//	Menu bar
+//
+
+$navbar_padding_lr:	6px;
+$item_alt_color:		rgba(255,255,255,0.05);
+
+#top_menu {
+	@extend .grey, .darken-4;
+	height: $topmenu_height;
+	line-height: $topmenu_height;
+	position: fixed;
+	top: 0;
+	left: 0;
+	right: 0;
+	z-index: 100;
+}
+
+#top_menu li a {
+	padding:		0 $navbar_padding_lr;
+	font-size:	12px;
+}
+
+#item_control {
+	//background-color: $item_alt_color;
+	display: none;
+}
+
+.disabled, .disabled a{
+	color: grey;
+	&:hover {
+		background-color: inherit;
+	}
+}

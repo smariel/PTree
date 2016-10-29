@@ -1,0 +1,152 @@
+<!DOCTYPE html>
+<html>
+
+	<head>
+		<meta charset="UTF-8">
+		<title>PTree</title>
+
+		<!-- CSS -->
+		<link rel="stylesheet" href="../node_modules/materialize-css/bin/materialize.css">
+		<link rel="stylesheet" href="../node_modules/font-awesome/css/font-awesome.min.css">
+		<link rel="stylesheet" href="../css/tree.css">
+	</head>
+
+	<body>
+		<!-- Top Menu -->
+		<nav id="top_menu" class="nav-wrapper">
+			<ul id="canvas_control" class="left">
+				<li id="bt_clear"				><a><span class="fa fa-lg fa-trash-o"			></span> Clear</a></li>
+				<li id="bt_addrootsource"	><a><span class="fa fa-lg fa-plus"				></span> Source</a></li>
+			</ul>
+			<ul id="item_control" class="left">
+				<li id="bt_remove"			><a><span class="fa fa-lg fa-times"				></span> Remove</a></li>
+				<li id="bt_edit"				><a><span class="fa fa-lg fa-pencil"			></span> Edit</a></li>
+				<li id="bt_addsource"		><a><span class="fa fa-lg fa-plus-square"		></span> Source</a></li>
+				<li id="bt_addload"			><a><span class="fa fa-lg fa-plus-circle"		></span> Load</a></li>
+				<li id="bt_up"					><a><span class="fa fa-lg fa-arrow-up"			></span> Up</a></li>
+				<li id="bt_down"				><a><span class="fa fa-lg fa-arrow-down"		></span> Down</a></li>
+			</ul>
+			<ul id="global_control" class="right">
+				<li id="bt_undo"				><a><span class="fa fa-lg fa-undo"				></span> Undo</a></li>
+				<li id="bt_redo"				><a><span class="fa fa-lg fa-repeat"			></span> Redo</a></li>
+				<li id="bt_open"				><a><span class="fa fa-lg fa-folder-open"		></span> Open</a></li>
+				<li id="bt_save"				><a><span class="fa fa-lg fa-floppy-o"			></span> Save</a></li>
+				<li id="bt_saveas"			><a><span class="fa fa-lg fa-files-o"			></span> Save As</a></li>
+				<li id="bt_export_img"		><a><span class="fa fa-lg fa-file-image-o"	></span> JPEG</a></li>
+			</ul>
+		</nav>
+
+
+		<!-- Section1 : Tree -->
+		<section>
+			<canvas id="canvas" class="canvas" width="1000" height="600"></canvas>
+		</section>
+
+		<!-- Div for info around items -->
+		<aside>
+			<div id="item_info_left" class="item_info">
+				<div class="item_info_data">
+					<table>
+						<thead>
+							<tr>
+								<th colspan="3">Input</th>
+							</tr>
+							<tr>
+								<th>typ</th>
+								<th>max</th>
+							</tr>
+						</thead>
+						<tbody>
+							<tr>
+								<td id="vin_typ"></td>
+								<td id="vin_max"></td>
+							</tr>
+							<tr>
+								<td id="iin_typ"></td>
+								<td id="iin_max"></td>
+							</tr>
+							<tr>
+								<td id="pin_typ"></td>
+								<td id="pin_max"></td>
+							</tr>
+						</tbody>
+					</table>
+				</div>
+				<div class="item_info_border"></div>
+			</div>
+			<div id="item_info_right" class="item_info">
+				<div class="item_info_data">
+					<table>
+						<thead>
+							<tr>
+								<th colspan="3">Output</th>
+							</tr>
+							<tr>
+								<th>typ</th>
+								<th>max</th>
+							</tr>
+						</thead>
+						<tbody>
+							<tr>
+								<td id="vout_typ"></td>
+								<td id="vout_max"></td>
+							</tr>
+							<tr>
+								<td id="iout_typ"></td>
+								<td id="iout_max"></td>
+							</tr>
+							<tr>
+								<td id="pout_typ"></td>
+								<td id="pout_max"></td>
+							</tr>
+						</tbody>
+					</table>
+				</div>
+				<div class="item_info_border"></div>
+			</div>
+			<div id="item_info_center" class="item_info">
+				<div class="item_info_data">
+					<table>
+						<thead>
+							<tr>
+								<th colspan="3">Loss</th>
+							</tr>
+							<tr>
+								<th>typ</th>
+								<th>max</th>
+							</tr>
+						</thead>
+						<tbody>
+							<tr>
+								<td id="loss_typ"></td>
+								<td id="loss_max"></td>
+							</tr>
+						</tbody>
+					</table>
+				</div>
+				<div class="item_info_border"></div>
+			</div>
+		</aside>
+	</body>
+
+	<!-- JS framworks and libraries -->
+	<script>
+		require('jquery');
+		require('materialize-css');
+		require('fabric');
+	</script>
+
+
+	<!-- application JS: functions & constructors -->
+	<script src="../js/functions.js"></script>
+	<script src="../js/obj.Item.js"></script>
+	<script src="../js/obj.Tree.js"></script>
+	<script src="../js/obj.Canvas.js"></script>
+	<script src="../js/obj.PTree.js"></script>
+
+
+	<!-- application JS: this window -->
+	<script>
+		require('../js/renderer.tree.js');
+	</script>
+</html>
