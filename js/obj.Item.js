@@ -293,7 +293,7 @@ Item.prototype.getOutputCurrent = function(valType) {
 	if(this.isSource()) {
 		// i_out = sum of children i_in
 		for(let childID of this.childrenID){
-			i_out += this.getInputCurrent(this.tree.getItem(childID), valType);
+			i_out += this.tree.getItem(childID).getOutputCurrent(valType);
 		}
 	}
 
