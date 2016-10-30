@@ -33,6 +33,7 @@
 				<li id="bt_save"				><a><span class="fa fa-lg fa-floppy-o"			></span> Save</a></li>
 				<li id="bt_saveas"			><a><span class="fa fa-lg fa-files-o"			></span> Save As</a></li>
 				<li id="bt_export_img"		><a><span class="fa fa-lg fa-file-image-o"	></span> JPEG</a></li>
+				<li id="bt_config"			><a><span class="fa fa-lg fa-sliders"			></span> Config</a></li>
 			</ul>
 		</nav>
 
@@ -127,12 +128,39 @@
 				<div class="item_info_border"></div>
 			</div>
 		</aside>
+
+		<!-- Configuration menu -->
+		<aside id="bottom_menu">
+			<form id="config_tree">
+				<p class="config">
+					<input id="config_info" data-config="show_info" type="checkbox" class="config_input config_checkbox" />
+					<label for="config_info"> Infos</label>
+				</p>
+				<p class="config">
+					<input id="config_name" data-config="show_name" type="checkbox" class="config_input config_checkbox" />
+					<label for="config_name"> Names</label>
+				</p>
+				<p class="config">
+					<input id="config_ref" data-config="show_ref" type="checkbox" class="config_input config_checkbox" />
+					<label for="config_ref"> References</label>
+				</p>
+				<p class="config">
+					<label for="config_itemwidth">Item width </label>
+					<input id="config_itemwidth" data-config="cell_width" class="config_input config_range" type="range" min="150" max="500" value="300" step="10" />
+				</p>
+				<p class="config">
+					<label for="config_itemheight">Item height </label>
+					<input id="config_itemheight" data-config="cell_height" class="config_input config_range" type="range" min="30" max="200" value="300" step="10" />
+				</p>
+			</form>
+		</aside>
 	</body>
 
 	<!-- JS framworks and libraries -->
+
 	<script>
-		require('jquery');
-		require('materialize-css');
+		window.$ = window.jQuery = require('jquery');
+		//require('materialize-css');
 		require('fabric');
 	</script>
 

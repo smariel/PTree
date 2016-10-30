@@ -1680,4 +1680,19 @@ body {
   .disabled:hover, .disabled a:hover {
     background-color: inherit; }
 
+#bottom_menu {
+  display: none;
+  width: 100%;
+  position: fixed;
+  bottom: 0px;
+  height: 60px; }
+
+#config_tree {
+  display: flex;
+  align-items: center;
+  border-top: 1px solid #DDDDDD; }
+
+.config {
+  margin: 0 20px 0; }
+
 /*# sourceMappingURL=tree.css.map */

@@ -81,7 +81,7 @@ $info_border_color:		rgba(255,255,255,0.2);
 
 
 // -----------------------------------------------------------------------------
-//	Menu bar
+//	Top menu
 //
 
 $navbar_padding_lr:	6px;
@@ -113,4 +113,27 @@ $item_alt_color:		rgba(255,255,255,0.05);
 	&:hover {
 		background-color: inherit;
 	}
+}
+
+
+// -----------------------------------------------------------------------------
+//	Bottom menu (config)
+//
+
+#bottom_menu {
+	display: none;
+	width: 100%;
+	position: fixed;
+	bottom: 0px;
+	height: 60px;
+}
+
+#config_tree {
+	display: flex;
+	align-items: center;
+	border-top: 1px solid #DDDDDD;
+}
+
+.config {
+	margin: 0 20px 0;
 }

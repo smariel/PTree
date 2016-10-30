@@ -342,7 +342,24 @@ PTree.prototype.listenCanvas = function() {
 PTree.prototype.listenDOM = function() {
 	var that = this;
 
+	// refresh the canvas when the window is resized
+	// could be slow, may be recoded
 	$(window).resize(function () {
+		that.canvas.refresh();
+	});
+
+	// refresh the config when inputs changed
+	$('.config_input').change(function() {
+		if("checkbox" == $(this).attr("type")) {
+			that.canvas.config[$(this).data('config')] = $(this).prop("checked");
+		}
+		else if("range" == $(this).attr("type")) {
+			that.canvas.config[$(this).data('config')] = parseInt($(this).val());
+		}
+		else {
+			return;
+		}
+
 		that.canvas.refresh();
 	});
 };
@@ -464,5 +481,19 @@ PTree.prototype.listenTreeMenu = function() {
 	// export the canvas as an Image
 	$('#bt_export_img').click(function(){
 		that.exportImg();
+	});
+
+
+	// toggle the config bar
+	$('#bt_config').click(function(){
+		$('#bottom_menu').slideToggle(500,'swing');
+
+		$('.config_checkbox').each(function(){
+			$(this).prop('checked',that.canvas.config[$(this).data('config')]);
+		});
+
+		$('.config_range').each(function(){
+			$(this).val(that.canvas.config[$(this).data('config')]);
+		});
 	});
 };

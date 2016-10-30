@@ -1,4 +1,5 @@
 
 .DS_Store
-dist
+bin
 node_modules
+sass/.sass-cache
