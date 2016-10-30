@@ -12,82 +12,78 @@
 
  // Default values for canvas
  const app_template = {
- 	'canvas' : {
- 		'margin_top': 30,
- 		'margin_left': 30,
- 		'margin_bottom': 70,
+ 	canvas : {
+ 		margin_top: 30,
+ 		margin_left: 30,
+ 		margin_bottom: 70,
  	},
- 	'cell' : {
- 		'width': 300,
- 		'height': 100
+ 	cell : {
+ 		width: 300,
+ 		height: 100
  	},
- 	'item' : {
- 		'width_coef': 0.45,
- 		'height_coef': 0.75,
+ 	item : {
+ 		width_coef: 0.45,
+ 		height_coef: 0.75,
  	},
- 	'nodeNet' : {
- 		'left_coef' : 0.9
+ 	nodeNet : {
+ 		left_coef : 0.9
  	},
- 	'text' : {
- 		'margin_x': 10,
- 		'margin_y': 4
+ 	text : {
+ 		margin_x: 10,
+ 		margin_y: 4
  	}
  };
 
  // Default values for fabric items
  const fabric_template = {
- 	'canvas' : {
- 		'backgroundColor': '#FFFFFF'
+ 	canvas : {
+ 		backgroundColor: '#FFFFFF'
  	},
- 	'root': {
- 		'width': 0,
- 		'height': 0,
- 		'fill': 'rgba(0,0,0,0)',
- 		'selectable': false
+ 	root: {
+ 		width: 0,
+ 		height: 0,
+ 		fill: 'rgba(0,0,0,0)',
+ 		selectable: false
  	},
- 	'source': {
-		'fill': '#FF1744',
- 		//'fill': '#eb4755',
-		//'fill': 'hsl(350,80,60)',
- 		'width':  app_template.cell.width  * app_template.item.width_coef,
- 		'height': app_template.cell.height * app_template.item.height_coef,
- 		'selectable': false
+ 	source: {
+		fill: '#FF1744',
+ 		width:  app_template.cell.width  * app_template.item.width_coef,
+ 		height: app_template.cell.height * app_template.item.height_coef,
+ 		selectable: false
  	},
- 	'load': {
-		'fill': '#00bfa5',
-		//'fill': '#17cf91',
- 		//'fill': 'hsl(160,80,45)',
- 		'width':  app_template.cell.width  * app_template.item.width_coef,
- 		'height': app_template.cell.height * app_template.item.height_coef,
- 		'rx': 30,
- 		'ry': 30,
- 		'selectable': false
+ 	load: {
+		fill: '#00bfa5',
+ 		width:  app_template.cell.width  * app_template.item.width_coef,
+ 		height: app_template.cell.height * app_template.item.height_coef,
+ 		rx: 30,
+ 		ry: 30,
+ 		selectable: false
  	},
- 	'group': {
- 		'selectable': false
+ 	group: {
+ 		selectable: false
  	},
- 	'net': {
- 		'stroke': '#424242',
- 		'strokeWidth': 2,
- 		'strokeLineCap': 'square',
- 		'selectable': false
+ 	net: {
+ 		stroke: '#424242',
+ 		strokeWidth: 2,
+ 		strokeLineCap: 'square',
+ 		selectable: false
  	},
- 	'text': {
- 		'fontSize': 14,
- 		'fontFamily': 'Arial',
- 		'selectable': false
+ 	text: {
+ 		fontSize: 14,
+ 		fontFamily: 'Arial',
+ 		selectable: false
  	},
- 	'selected': {
- 		'strokeWidth': 5,
- 		'stroke': '#616161'
+ 	selected: {
+ 		strokeWidth: 5,
+ 		stroke: '#616161'
  	},
- 	'deselected': {
- 		'strokeWidth': 0
+ 	deselected: {
+ 		strokeWidth: 0
  	},
- 	'receiver': {
- 		'strokeWidth': 7,
- 		'stroke': 'rgba(100,100,100,1)',
- 		'strokeDashArray': [15, 8]
+ 	receiver: {
+ 		strokeWidth: 7,
+ 		stroke: 'rgba(100,100,100,1)',
+ 		strokeDashArray: [15, 8]
  	}
  };
 
@@ -99,18 +95,18 @@
 
 var Canvas = function(html_id, tree) {
 
-	this.tree = tree; 					// a reference of the tree
-	this.html_id = html_id;				// the html ID of the canvas
-	this.canvas$ = $("#"+html_id);	// reference to the jquery object
-	this.selectedItem = null;			// by default, no selected item
+	this.tree			=	tree; 			// a reference of the tree
+	this.html_id		= html_id;			// the html ID of the canvas
+	this.canvas$		= $('#'+html_id);	// reference to the jquery object
+	this.selectedItem	= null;				// by default, no selected item
 
 	// canvas main characs that will be updated by the user
 	this.config = {
-		'show_info':	true,
-		'show_name':	true,
-		'show_ref':		true,
-		'cell_width':	app_template.cell.width,
-		'cell_height':	app_template.cell.height,
+		show_info:		true,
+		show_name:		true,
+		show_ref:		true,
+		cell_width:		app_template.cell.width,
+		cell_height:	app_template.cell.height,
 	};
 
 	// Create the canvas with Fabric
@@ -121,6 +117,9 @@ var Canvas = function(html_id, tree) {
 
 // add any item to the canvas
 Canvas.prototype.addItem = function(item) {
+	// TODO: find why the following line is needed when exporting as JPEG...
+	this.fabricCanvas.setBackgroundColor('#FFFFFF');
+
 	var parent = item.getParent();
 
 	var item_width 	= app_template.item.width_coef   * this.config.cell_width;
@@ -158,20 +157,20 @@ Canvas.prototype.addItem = function(item) {
 	// and add it to the canvas
 	var itemRect = new fabric.Rect(fabric_template[item.type]);
 	itemRect.set({
-		'left':		(item.col  * this.config.cell_width)  + app_template.canvas.margin_left,
-		'top': 		(item.line * this.config.cell_height) + app_template.canvas.margin_top,
-		'width':		item_width,
-		'height':	item_height,
-		'fill':		item.characs.color
+		left:		(item.col  * this.config.cell_width)  + app_template.canvas.margin_left,
+		top: 		(item.line * this.config.cell_height) + app_template.canvas.margin_top,
+		width:		item_width,
+		height:	item_height,
+		fill:		item.characs.color
 	});
 
 	// Print the name of sources and loads
-	var text = "";
+	var text = '';
 	if(this.config.show_name) {
 		text += item.characs.name;
 	}
-	if("source" == item.type && this.config.show_ref) {
-		if("" !== text) text += "\n";
+	if('source' == item.type && this.config.show_ref) {
+		if('' !== text) text += '\n';
 		text += item.characs.ref;
 	}
 
@@ -289,8 +288,8 @@ Canvas.prototype.addItem = function(item) {
 	var canvas_minwidth  = this.fabricCanvas.col  * this.config.cell_width;
 	var canvas_minheight = this.fabricCanvas.line * this.config.cell_height + app_template.canvas.margin_top;
 	// compute the minimum size of the canvas according to the window
-	var canvas_minwidth2  = $(window).width()  - parseInt($("body").css("margin-left")); // - $("#canvas").offset().left;
-	var canvas_minheight2 = $(window).height() - parseInt($("body").css("margin-top" )); // - $("#canvas").offset().top;
+	var canvas_minwidth2  = $(window).width()  - parseInt($('body').css('margin-left')); // - $('#canvas').offset().left;
+	var canvas_minheight2 = $(window).height() - parseInt($('body').css('margin-top' )); // - $('#canvas').offset().top;
 	// set the canvas size at either the grid or the window size
 	this.fabricCanvas.setDimensions({
 		'width'  : (canvas_minwidth2  < canvas_minwidth)  ? canvas_minwidth  : canvas_minwidth2,
@@ -358,15 +357,15 @@ Canvas.prototype.selectItem = function(item) {
 	// show/hide menus depending of the item type
 	if(item.isSource())
 	{
-		$("#item_control *").show();
+		$('#item_control *').show();
 	}
 	else if(item.isLoad()) {
-		$("#bt_addsource").hide();
-		$("#bt_addload").hide();
+		$('#bt_addsource').hide();
+		$('#bt_addload').hide();
 	}
 
 	// fadeIn the menu
-	$("#item_control").fadeIn(200);
+	$('#item_control').fadeIn(200);
 };
 
 
@@ -379,8 +378,8 @@ Canvas.prototype.unselectItem = function(fade) {
 	this.selectedItem = null;
 
 	if(fade) {
-		$("#item_control").fadeOut(200);
-		$(".item_info").fadeOut(200);
+		$('#item_control').fadeOut(200);
+		$('.item_info').fadeOut(200);
 	}
 };
 
@@ -393,11 +392,11 @@ Canvas.prototype.getSelectedItem = function() {
 
 // Display info under an item
 Canvas.prototype.displayInfo = function(item) {
-	var text = "";
+	var text = '';
 
 	var fabric_obj = this.fabricCanvas.fabric_obj[item.id];
-	$(".item_info").hide();
-	$(".item_info_data td:not(.item_info_name)").empty();
+	$('.item_info').hide();
+	$('.item_info_data td:not(.item_info_name)').empty();
 
 	var left				= 0;
 	var top				= 0;
@@ -411,61 +410,61 @@ Canvas.prototype.displayInfo = function(item) {
 	if(0 !== item.parentID)
 	{
 		// print the values
-		$("#vin_typ").text(item.getVoltage('typ', 'in', 3, true));
-		$("#vin_max").text(item.getVoltage('max', 'in', 3, true));
-		$("#iin_typ").text(item.getCurrent('typ', 'in', 3, true));
-		$("#iin_max").text(item.getCurrent('max', 'in', 3, true));
-		$("#pin_typ").text(item.getPower  ('typ', 'in', 3, true));
-		$("#pin_max").text(item.getPower  ('max', 'in', 3, true));
+		$('#vin_typ').text(item.getVoltage('typ', 'in', 3, true));
+		$('#vin_max').text(item.getVoltage('max', 'in', 3, true));
+		$('#iin_typ').text(item.getCurrent('typ', 'in', 3, true));
+		$('#iin_max').text(item.getCurrent('max', 'in', 3, true));
+		$('#pin_typ').text(item.getPower  ('typ', 'in', 3, true));
+		$('#pin_max').text(item.getPower  ('max', 'in', 3, true));
 
 		// move the info div next to the item
-		left = this.canvas$.offset().left + fabric_obj.get('left') - $("#item_info_left").outerWidth(true) - margin;
-		top  = this.canvas$.offset().top  + fabric_obj.get('top')  + item_height/2 - $("#item_info_left").outerHeight()/2;
-		$("#item_info_left").css({
+		left = this.canvas$.offset().left + fabric_obj.get('left') - $('#item_info_left').outerWidth(true) - margin;
+		top  = this.canvas$.offset().top  + fabric_obj.get('top')  + item_height/2 - $('#item_info_left').outerHeight()/2;
+		$('#item_info_left').css({
 			'left':	left+'px',
 			'top':	top+'px'
 		});
 
 		// show the info div
-		$("#item_info_left").fadeIn(fade);
+		$('#item_info_left').fadeIn(fade);
 	}
 
 	// if the item has an output
-	if("load" != item.type) {
-		$("#vout_typ").text(item.getVoltage('typ', 'out', 3, true));
-		$("#vout_max").text(item.getVoltage('max', 'out', 3, true));
-		$("#iout_typ").text(item.getCurrent('typ', 'out', 3, true));
-		$("#iout_max").text(item.getCurrent('max', 'out', 3, true));
-		$("#pout_typ").text(item.getPower  ('typ', 'out', 3, true));
-		$("#pout_max").text(item.getPower  ('max', 'out', 3, true));
+	if('load' != item.type) {
+		$('#vout_typ').text(item.getVoltage('typ', 'out', 3, true));
+		$('#vout_max').text(item.getVoltage('max', 'out', 3, true));
+		$('#iout_typ').text(item.getCurrent('typ', 'out', 3, true));
+		$('#iout_max').text(item.getCurrent('max', 'out', 3, true));
+		$('#pout_typ').text(item.getPower  ('typ', 'out', 3, true));
+		$('#pout_max').text(item.getPower  ('max', 'out', 3, true));
 
 		// move the info div next to the item
-		left = $("#canvas").offset().left + fabric_obj.get('left') + item_width + margin;
-		top  = $("#canvas").offset().top  + fabric_obj.get('top')  + item_height/2 - $("#item_info_right").outerHeight()/2;
-		$("#item_info_right").css({
+		left = $('#canvas').offset().left + fabric_obj.get('left') + item_width + margin;
+		top  = $('#canvas').offset().top  + fabric_obj.get('top')  + item_height/2 - $('#item_info_right').outerHeight()/2;
+		$('#item_info_right').css({
 			'left':	left+'px',
 			'top':	top+'px'
 		});
 
 		// show the info div
-		$("#item_info_right").fadeIn(fade);
+		$('#item_info_right').fadeIn(fade);
 
 		// if the item has an input AND an output
 		if(0 !== item.parentID) {
 			// print the values
-			$("#loss_typ").text(item.getPower('typ', 'loss', 3, true));
-			$("#loss_max").text(item.getPower('max', 'loss', 3, true));
+			$('#loss_typ').text(item.getPower('typ', 'loss', 3, true));
+			$('#loss_max').text(item.getPower('max', 'loss', 3, true));
 
 			// move the info div next to the item
-			left = $("#canvas").offset().left + fabric_obj.get('left') + item_width/2 - $("#item_info_center").outerWidth(true)/2;
-			top  = $("#canvas").offset().top  + fabric_obj.get('top')  + item_height + margin;
-			$("#item_info_center").css({
+			left = $('#canvas').offset().left + fabric_obj.get('left') + item_width/2 - $('#item_info_center').outerWidth(true)/2;
+			top  = $('#canvas').offset().top  + fabric_obj.get('top')  + item_height + margin;
+			$('#item_info_center').css({
 				'left':	left+'px',
 				'top':	top+'px'
 			});
 
 			// show the info div
-			$("#item_info_center").fadeIn(fade);
+			$('#item_info_center').fadeIn(fade);
 		}
 	}
 };
@@ -486,7 +485,7 @@ Canvas.prototype.editSelected = function() {
 
 	// bind an event on the response from main.js
 	ipcRenderer.once('edit-request', (event, arg) => {
-		console.log(arg); // prints "pong"
+		console.log(arg); // prints 'pong'
 	});
 
 	// ask main.js to edit the item with the given data
@@ -499,11 +498,33 @@ Canvas.prototype.updateUpDownMenu = function() {
 	var item = this.getSelectedItem();
 
 	if(null === item || 0 === item.child_index)
-		$("#bt_up").addClass("disabled");
+		$('#bt_up').addClass('disabled');
 	else
-		$("#bt_up").removeClass("disabled");
+		$('#bt_up').removeClass('disabled');
 	if(null === item || item.getParent().childrenID.length - 1 == item.child_index)
-		$("#bt_down").addClass("disabled");
+		$('#bt_down').addClass('disabled');
 	else
-		$("#bt_down").removeClass("disabled");
+		$('#bt_down').removeClass('disabled');
+};
+
+
+// Export the canvas as a JPEG image within a dataURL object
+Canvas.prototype.toJPEGdataURL = function() {
+	// save the reference of the eventual selected item (may be null)
+	var selected = this.getSelectedItem();
+	this.unselectItem();
+
+	// get the dataURL from the Fabric object (only the usefull part of the canvas)
+	var dataURL = this.fabricCanvas.toDataURL({
+		format:	'jpeg',
+		quality:	1,
+		width:	this.fabricCanvas.col  * this.config.cell_width,
+		height:	this.fabricCanvas.line * this.config.cell_height + app_template.canvas.margin_top
+	});
+
+	// select any previous selected item
+	if(null !== selected) this.selectItem(selected);
+
+	// return the dataURL to be downloaded
+	return dataURL;
 };

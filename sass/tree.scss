@@ -7,15 +7,12 @@ $topmenu_height:	30px;						// >= 20px
 //	Page
 //
 
-body
-{
+body {
 	min-width:	100%;
 	min-height:	100%;
 	margin:		$topmenu_height 0 0 0;
 	padding:		0;
-	background:	#FFFFFF;
 }
-
 
 // -----------------------------------------------------------------------------
 //	Item info

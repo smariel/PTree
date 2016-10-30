@@ -20,27 +20,6 @@ var PTree = function(canvas_selector) {
 };
 
 
-// export the canvas as an image
-PTree.prototype.exportImg = function() {
-	this.canvas.unselectItem();
-
-	// set the canvas size at either the grid or the window size
-	this.canvas.fabricCanvas.setDimensions({
-		'width'  : this.canvas.fabricCanvas.col  * this.canvas.config.cell_width,
-		'height' : this.canvas.fabricCanvas.line * this.canvas.config.cell_height + app_template.canvas.margin_top
-	});
-
-	var dataURL = this.canvas.fabricCanvas.toDataURL({
-		format: 'jpeg',
-		quality: 1
-	});
-
-	downloadDataURL(dataURL,'ptree.jpg');
-
-	this.canvas.refresh();
-};
-
-
 // load the app data from a file
 PTree.prototype.open = function() {
 	var that = this;
@@ -480,7 +459,7 @@ PTree.prototype.listenTreeMenu = function() {
 
 	// export the canvas as an Image
 	$('#bt_export_img').click(function(){
-		that.exportImg();
+		downloadDataURL(that.canvas.toJPEGdataURL(),'ptree.jpg');
 	});
 
 
