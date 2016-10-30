@@ -443,7 +443,9 @@ Item.prototype.isChildOf = function(potentialParent) {
 		// recursively test if THIS is child of potentialParent children
 		for(let childID of potentialParent.childrenID) {
 			var child = this.tree.getItem(childID);
-			return this.isChildOf(child);
+			// if the child of potentialParent is the parent of the item, return true
+			if(this.isChildOf(child)) return true;
+			// else, continue to the next child
 		}
 	}
 
