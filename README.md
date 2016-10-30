@@ -1,9 +1,9 @@
 #PTree
 ## Description
 PTree aims to help building power supplies on electronics design.
-A first view is dedicated to build the tree itself by adding sources and loads.
-The second view list all the component consumptions on each power supplies.
-The third view is a graphical summary of all the consumptions on the design.
+A first window is dedicated to build the tree itself by adding sources and loads.
+The second window lists all components with their consumption on each power supplies.
+The third window is a graphical summary of all consumption on the design.
 ##
 ## Basic commands
 Simple installation using git and npm:
@@ -12,15 +12,24 @@ Simple installation using git and npm:
     $ cd PTree
     $ npm install
 
-Run the application:
+Start coding within Atom:
+
+    $ ./start_dev.sh
+
+Automatically build SASS on each save (in a dedicated shell):
+
+    $ cd sass
+    $ ./watch.sh
+
+Run:
 
     $ npm start
 
-Package the application
+Package and deploy:
 
     $ npm run pack:xxx
 
-where "xxx" must be replaced by:
+Where "xxx" must be replaced by:
 
  - osx (OS X .app)
  - mas (OS X Mac App Store)
