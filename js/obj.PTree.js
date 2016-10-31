@@ -1,6 +1,8 @@
 var PTree = function(canvas_selector) {
 	this.tree		= new Tree();
 	this.canvas		= new Canvas(canvas_selector, this.tree);
+	this.bom			= new BOM();
+
 	this.filePath	= null;
 	this.unsaved	= true;
 	this.history	= {
@@ -347,6 +349,19 @@ PTree.prototype.listenDOM = function() {
 // listen to all events on the top-menu of the Tree view
 PTree.prototype.listenTreeMenu = function() {
 	var that = this;
+
+
+	// open a new window to manipulate the part list
+	$('#bt_partlist').click(function(){
+		
+	});
+
+
+	// open a new window to see stats
+	$('#bt_partlist').click(function(){
+
+	});
+
 
 	// create a new tree within the same project
 	$('#bt_clear').click(function(){
