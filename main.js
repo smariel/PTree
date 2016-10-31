@@ -24,13 +24,166 @@ app.on('ready', () => {
 	// and load the index.html of the app.
 	appWindows.tree.loadURL(`file://${__dirname}/html/tree.html`);
 
-	//appWindows.tree.webContents.openDevTools();
+	appWindows.tree.webContents.openDevTools();
 
 	// Emitted when the window is closed.
 	appWindows.tree.on('closed', function () {
 		// Dereference the window object
 		appWindows.tree = null;
 	});
+
+
+	const {Menu} = require('electron');
+
+	const template = [
+		{
+			label: 'Edit',
+			submenu: [
+				{
+					role: 'undo'
+				},
+				{
+					role: 'redo'
+				}
+			]
+		},
+		{
+			role: 'window',
+			submenu: [
+				{
+					role: 'minimize'
+				},
+				{
+					role: 'close'
+				}
+			]
+		},
+		{
+			role: 'help',
+			submenu: [
+				{
+					label: 'Equation Summary',
+					click () { require('electron').shell.openItem('docs/equations.pdf'); }
+				},
+			]
+		},
+		{
+		label: 'View',
+			submenu: [
+				{
+					label: 'Reload',
+					accelerator: 'CmdOrCtrl+R',
+					click (item, focusedWindow) {
+						if (focusedWindow) focusedWindow.reload();
+					}
+				},
+				{
+					label: 'Toggle Developer Tools',
+					accelerator: process.platform === 'darwin' ? 'Alt+Command+I' : 'Ctrl+Shift+I',
+					click (item, focusedWindow) {
+						if (focusedWindow) focusedWindow.webContents.toggleDevTools();
+					}
+				},
+				{
+					type: 'separator'
+				},
+				{
+					role: 'resetzoom'
+				},
+				{
+					role: 'zoomin'
+				},
+				{
+					role: 'zoomout'
+				},
+				{
+					type: 'separator'
+				},
+				{
+					role: 'togglefullscreen'
+				}
+			]
+		},
+	];
+
+	if (process.platform === 'darwin') {
+		template.unshift({
+			label: app.getName(),
+			submenu: [
+				{
+					role: 'about'
+				},
+				{
+					type: 'separator'
+				},
+				{
+					role: 'services',
+					submenu: []
+				},
+				{
+					type: 'separator'
+				},
+				{
+					role: 'hide'
+				},
+				{
+					role: 'hideothers'
+				},
+				{
+					role: 'unhide'
+				},
+				{
+					type: 'separator'
+				},
+				{
+					role: 'quit'
+				}
+			]
+		});
+		// Edit menu.
+		template[1].submenu.push(
+			{
+				type: 'separator'
+			},
+			{
+				label: 'Speech',
+				submenu: [
+					{
+						role: 'startspeaking'
+					},
+					{
+						role: 'stopspeaking'
+					}
+				]
+			}
+		);
+		// Window menu.
+		template[2].submenu = [
+			{
+				label: 'Close',
+				accelerator: 'CmdOrCtrl+W',
+				role: 'close'
+			},
+			{
+				label: 'Minimize',
+				accelerator: 'CmdOrCtrl+M',
+				role: 'minimize'
+			},
+			{
+				label: 'Zoom',
+				role: 'zoom'
+			},
+			{
+				type: 'separator'
+			},
+			{
+				label: 'Bring All to Front',
+				role: 'front'
+			}
+		];
+	}
+	menu = Menu.buildFromTemplate(template);
+	Menu.setApplicationMenu(menu);
 });
 
 
