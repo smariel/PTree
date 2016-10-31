@@ -40,7 +40,7 @@ var Item = function(id, parent, type, tree) {
 			iq_typ		: '0',
 			iq_min		: '0',
 			iq_max		: '0',
-			color			: fabric_template[type].fill
+			color			: '#FF1744'
 		};
 	}
 	// Load specific datas
@@ -49,7 +49,7 @@ var Item = function(id, parent, type, tree) {
 			name	:	'Load name',
 			ityp	:	0,
 			imax	:	0,
-			color	:	fabric_template[type].fill
+			color	:	'#00bfa5'
 		};
 	}
 	// Root specific datas
