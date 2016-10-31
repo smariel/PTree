@@ -46,13 +46,13 @@
  		selectable: false
  	},
  	source: {
-		fill: '#FF1744',
+		fill: '#FF1744', // materialze red accent-3
  		width:  app_template.cell.width  * app_template.item.width_coef,
  		height: app_template.cell.height * app_template.item.height_coef,
  		selectable: false
  	},
  	load: {
-		fill: '#00bfa5',
+		fill: '#00bfa5', // materializ teal accent-4
  		width:  app_template.cell.width  * app_template.item.width_coef,
  		height: app_template.cell.height * app_template.item.height_coef,
  		rx: 30,
@@ -355,13 +355,13 @@ Canvas.prototype.selectItem = function(item) {
 	this.updateUpDownMenu();
 
 	// show/hide menus depending of the item type
+	$('#item_control').removeClass('item_control_source item_control_load');
 	if(item.isSource())
 	{
-		$('#item_control *').show();
+		$('#item_control').addClass('item_control_source');
 	}
 	else if(item.isLoad()) {
-		$('#bt_addsource').hide();
-		$('#bt_addload').hide();
+		$('#item_control').addClass('item_control_load');
 	}
 
 	// fadeIn the menu

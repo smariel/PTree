@@ -82,7 +82,7 @@ $info_border_color:		rgba(255,255,255,0.2);
 //
 
 $navbar_padding_lr:	6px;
-$item_alt_color:		rgba(255,255,255,0.05);
+$item_alt_color:		rgba(255,255,255,0.1);
 
 #top_menu {
 	@extend .grey, .darken-4;
@@ -93,6 +93,7 @@ $item_alt_color:		rgba(255,255,255,0.05);
 	left: 0;
 	right: 0;
 	z-index: 100;
+	overflow: hidden;
 }
 
 #top_menu li a {
@@ -101,15 +102,29 @@ $item_alt_color:		rgba(255,255,255,0.05);
 }
 
 #item_control {
-	//background-color: $item_alt_color;
+	display: none;
+}
+
+.item_control_source,
+.item_control_load {
+	@extend .grey, .darken-3;
+}
+
+.item_control_load #bt_addsource,
+.item_control_load #bt_addload {
 	display: none;
 }
 
 .disabled, .disabled a{
-	color: grey;
+	color: rgba(255,255,255,0.3);
 	&:hover {
 		background-color: inherit;
 	}
+}
+
+#top_menu .btn {
+	margin-left: 0px;
+	margin-right: 0px;
 }
 
 

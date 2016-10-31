@@ -1,5 +1,5 @@
 // -----------------------------------------------------------------------------
-// Item constructors
+// Item constructor
 // 	An Item object contains the non-graphical data of a source, load or root
 //		and their relations with other items
 //		Its prototype provides methods dedicated to manipulate the item
@@ -28,7 +28,7 @@ var Item = function(id, parent, type, tree) {
 		this.characs = {
 			name			: 'Source name',
 			regtype		: 0,	// [FixDCDC, FixLDO, FixOther, AdjDCDC, AdjLDO, AdjOther]
-			ref			: 'Reference',
+			ref			: 'Part Number',
 			vout_min		: '1.78',
 			vout_typ		: '1.8',
 			vout_max		: '1.82',
