@@ -237,7 +237,7 @@ Item.prototype.getInputVoltage = function(valType){
 	var v_in = 0.0;
 
 	// item v_in = parent v_out
-	if(!this.isChildOfRoot) {
+	if(!this.isChildOfRoot()) {
 		v_in = parseFloat(this.getParent().characs['vout_'+valType]);
 	}
 
