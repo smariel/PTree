@@ -46,14 +46,13 @@
 .materialize-red-text.text-darken-2 {
   color: #b9151b !important; }
 
-.materialize-red.darken-3, .materialize-red.item_control_source,
-.materialize-red.item_control_load {
+.materialize-red.darken-3 {
   background-color: #a21318 !important; }
 
 .materialize-red-text.text-darken-3 {
   color: #a21318 !important; }
 
-.materialize-red.darken-4, .materialize-red.navbar {
+.materialize-red.darken-4 {
   background-color: #8b1014 !important; }
 
 .materialize-red-text.text-darken-4 {
@@ -107,14 +106,13 @@
 .red-text.text-darken-2 {
   color: #D32F2F !important; }
 
-.red.darken-3, .red.item_control_source,
-.red.item_control_load {
+.red.darken-3 {
   background-color: #C62828 !important; }
 
 .red-text.text-darken-3 {
   color: #C62828 !important; }
 
-.red.darken-4, .red.navbar {
+.red.darken-4 {
   background-color: #B71C1C !important; }
 
 .red-text.text-darken-4 {
@@ -192,14 +190,13 @@
 .pink-text.text-darken-2 {
   color: #c2185b !important; }
 
-.pink.darken-3, .pink.item_control_source,
-.pink.item_control_load {
+.pink.darken-3 {
   background-color: #ad1457 !important; }
 
 .pink-text.text-darken-3 {
   color: #ad1457 !important; }
 
-.pink.darken-4, .pink.navbar {
+.pink.darken-4 {
   background-color: #880e4f !important; }
 
 .pink-text.text-darken-4 {
@@ -277,14 +274,13 @@
 .purple-text.text-darken-2 {
   color: #7b1fa2 !important; }
 
-.purple.darken-3, .purple.item_control_source,
-.purple.item_control_load {
+.purple.darken-3 {
   background-color: #6a1b9a !important; }
 
 .purple-text.text-darken-3 {
   color: #6a1b9a !important; }
 
-.purple.darken-4, .purple.navbar {
+.purple.darken-4 {
   background-color: #4a148c !important; }
 
 .purple-text.text-darken-4 {
@@ -362,14 +358,13 @@
 .deep-purple-text.text-darken-2 {
   color: #512da8 !important; }
 
-.deep-purple.darken-3, .deep-purple.item_control_source,
-.deep-purple.item_control_load {
+.deep-purple.darken-3 {
   background-color: #4527a0 !important; }
 
 .deep-purple-text.text-darken-3 {
   color: #4527a0 !important; }
 
-.deep-purple.darken-4, .deep-purple.navbar {
+.deep-purple.darken-4 {
   background-color: #311b92 !important; }
 
 .deep-purple-text.text-darken-4 {
@@ -447,14 +442,13 @@
 .indigo-text.text-darken-2 {
   color: #303f9f !important; }
 
-.indigo.darken-3, .indigo.item_control_source,
-.indigo.item_control_load {
+.indigo.darken-3 {
   background-color: #283593 !important; }
 
 .indigo-text.text-darken-3 {
   color: #283593 !important; }
 
-.indigo.darken-4, .indigo.navbar {
+.indigo.darken-4 {
   background-color: #1a237e !important; }
 
 .indigo-text.text-darken-4 {
@@ -532,14 +526,13 @@
 .blue-text.text-darken-2 {
   color: #1976D2 !important; }
 
-.blue.darken-3, .blue.item_control_source,
-.blue.item_control_load {
+.blue.darken-3 {
   background-color: #1565C0 !important; }
 
 .blue-text.text-darken-3 {
   color: #1565C0 !important; }
 
-.blue.darken-4, .blue.navbar {
+.blue.darken-4 {
   background-color: #0D47A1 !important; }
 
 .blue-text.text-darken-4 {
@@ -617,14 +610,13 @@
 .light-blue-text.text-darken-2 {
   color: #0288d1 !important; }
 
-.light-blue.darken-3, .light-blue.item_control_source,
-.light-blue.item_control_load {
+.light-blue.darken-3 {
   background-color: #0277bd !important; }
 
 .light-blue-text.text-darken-3 {
   color: #0277bd !important; }
 
-.light-blue.darken-4, .light-blue.navbar {
+.light-blue.darken-4 {
   background-color: #01579b !important; }
 
 .light-blue-text.text-darken-4 {
@@ -702,14 +694,13 @@
 .cyan-text.text-darken-2 {
   color: #0097a7 !important; }
 
-.cyan.darken-3, .cyan.item_control_source,
-.cyan.item_control_load {
+.cyan.darken-3 {
   background-color: #00838f !important; }
 
 .cyan-text.text-darken-3 {
   color: #00838f !important; }
 
-.cyan.darken-4, .cyan.navbar {
+.cyan.darken-4 {
   background-color: #006064 !important; }
 
 .cyan-text.text-darken-4 {
@@ -787,14 +778,13 @@
 .teal-text.text-darken-2 {
   color: #00796b !important; }
 
-.teal.darken-3, .teal.item_control_source,
-.teal.item_control_load {
+.teal.darken-3 {
   background-color: #00695c !important; }
 
 .teal-text.text-darken-3 {
   color: #00695c !important; }
 
-.teal.darken-4, .teal.navbar {
+.teal.darken-4 {
   background-color: #004d40 !important; }
 
 .teal-text.text-darken-4 {
@@ -872,14 +862,13 @@
 .green-text.text-darken-2 {
   color: #388E3C !important; }
 
-.green.darken-3, .green.item_control_source,
-.green.item_control_load {
+.green.darken-3 {
   background-color: #2E7D32 !important; }
 
 .green-text.text-darken-3 {
   color: #2E7D32 !important; }
 
-.green.darken-4, .green.navbar {
+.green.darken-4 {
   background-color: #1B5E20 !important; }
 
 .green-text.text-darken-4 {
@@ -957,14 +946,13 @@
 .light-green-text.text-darken-2 {
   color: #689f38 !important; }
 
-.light-green.darken-3, .light-green.item_control_source,
-.light-green.item_control_load {
+.light-green.darken-3 {
   background-color: #558b2f !important; }
 
 .light-green-text.text-darken-3 {
   color: #558b2f !important; }
 
-.light-green.darken-4, .light-green.navbar {
+.light-green.darken-4 {
   background-color: #33691e !important; }
 
 .light-green-text.text-darken-4 {
@@ -1042,14 +1030,13 @@
 .lime-text.text-darken-2 {
   color: #afb42b !important; }
 
-.lime.darken-3, .lime.item_control_source,
-.lime.item_control_load {
+.lime.darken-3 {
   background-color: #9e9d24 !important; }
 
 .lime-text.text-darken-3 {
   color: #9e9d24 !important; }
 
-.lime.darken-4, .lime.navbar {
+.lime.darken-4 {
   background-color: #827717 !important; }
 
 .lime-text.text-darken-4 {
@@ -1127,14 +1114,13 @@
 .yellow-text.text-darken-2 {
   color: #fbc02d !important; }
 
-.yellow.darken-3, .yellow.item_control_source,
-.yellow.item_control_load {
+.yellow.darken-3 {
   background-color: #f9a825 !important; }
 
 .yellow-text.text-darken-3 {
   color: #f9a825 !important; }
 
-.yellow.darken-4, .yellow.navbar {
+.yellow.darken-4 {
   background-color: #f57f17 !important; }
 
 .yellow-text.text-darken-4 {
@@ -1212,14 +1198,13 @@
 .amber-text.text-darken-2 {
   color: #ffa000 !important; }
 
-.amber.darken-3, .amber.item_control_source,
-.amber.item_control_load {
+.amber.darken-3 {
   background-color: #ff8f00 !important; }
 
 .amber-text.text-darken-3 {
   color: #ff8f00 !important; }
 
-.amber.darken-4, .amber.navbar {
+.amber.darken-4 {
   background-color: #ff6f00 !important; }
 
 .amber-text.text-darken-4 {
@@ -1297,14 +1282,13 @@
 .orange-text.text-darken-2 {
   color: #f57c00 !important; }
 
-.orange.darken-3, .orange.item_control_source,
-.orange.item_control_load {
+.orange.darken-3 {
   background-color: #ef6c00 !important; }
 
 .orange-text.text-darken-3 {
   color: #ef6c00 !important; }
 
-.orange.darken-4, .orange.navbar {
+.orange.darken-4 {
   background-color: #e65100 !important; }
 
 .orange-text.text-darken-4 {
@@ -1382,14 +1366,13 @@
 .deep-orange-text.text-darken-2 {
   color: #e64a19 !important; }
 
-.deep-orange.darken-3, .deep-orange.item_control_source,
-.deep-orange.item_control_load {
+.deep-orange.darken-3 {
   background-color: #d84315 !important; }
 
 .deep-orange-text.text-darken-3 {
   color: #d84315 !important; }
 
-.deep-orange.darken-4, .deep-orange.navbar {
+.deep-orange.darken-4 {
   background-color: #bf360c !important; }
 
 .deep-orange-text.text-darken-4 {
@@ -1467,14 +1450,13 @@
 .brown-text.text-darken-2 {
   color: #5d4037 !important; }
 
-.brown.darken-3, .brown.item_control_source,
-.brown.item_control_load {
+.brown.darken-3 {
   background-color: #4e342e !important; }
 
 .brown-text.text-darken-3 {
   color: #4e342e !important; }
 
-.brown.darken-4, .brown.navbar {
+.brown.darken-4 {
   background-color: #3e2723 !important; }
 
 .brown-text.text-darken-4 {
@@ -1528,84 +1510,73 @@
 .blue-grey-text.text-darken-2 {
   color: #455a64 !important; }
 
-.blue-grey.darken-3, .blue-grey.item_control_source,
-.blue-grey.item_control_load {
+.blue-grey.darken-3 {
   background-color: #37474f !important; }
 
 .blue-grey-text.text-darken-3 {
   color: #37474f !important; }
 
-.blue-grey.darken-4, .blue-grey.navbar {
+.blue-grey.darken-4 {
   background-color: #263238 !important; }
 
 .blue-grey-text.text-darken-4 {
   color: #263238 !important; }
 
-.grey, .navbar, .item_control_source,
-.item_control_load {
+.grey {
   background-color: #9e9e9e !important; }
 
 .grey-text {
   color: #9e9e9e !important; }
 
-.grey.lighten-5, .lighten-5.navbar, .lighten-5.item_control_source,
-.lighten-5.item_control_load {
+.grey.lighten-5 {
   background-color: #fafafa !important; }
 
 .grey-text.text-lighten-5 {
   color: #fafafa !important; }
 
-.grey.lighten-4, .lighten-4.navbar, .lighten-4.item_control_source,
-.lighten-4.item_control_load {
+.grey.lighten-4 {
   background-color: #f5f5f5 !important; }
 
 .grey-text.text-lighten-4 {
   color: #f5f5f5 !important; }
 
-.grey.lighten-3, .lighten-3.navbar, .lighten-3.item_control_source,
-.lighten-3.item_control_load {
+.grey.lighten-3 {
   background-color: #eeeeee !important; }
 
 .grey-text.text-lighten-3 {
   color: #eeeeee !important; }
 
-.grey.lighten-2, .lighten-2.navbar, .lighten-2.item_control_source,
-.lighten-2.item_control_load {
+.grey.lighten-2 {
   background-color: #e0e0e0 !important; }
 
 .grey-text.text-lighten-2 {
   color: #e0e0e0 !important; }
 
-.grey.lighten-1, .lighten-1.navbar, .lighten-1.item_control_source,
-.lighten-1.item_control_load {
+.grey.lighten-1 {
   background-color: #bdbdbd !important; }
 
 .grey-text.text-lighten-1 {
   color: #bdbdbd !important; }
 
-.grey.darken-1, .darken-1.navbar, .darken-1.item_control_source,
-.darken-1.item_control_load {
+.grey.darken-1 {
   background-color: #757575 !important; }
 
 .grey-text.text-darken-1 {
   color: #757575 !important; }
 
-.grey.darken-2, .darken-2.navbar, .darken-2.item_control_source,
-.darken-2.item_control_load {
+.grey.darken-2 {
   background-color: #616161 !important; }
 
 .grey-text.text-darken-2 {
   color: #616161 !important; }
 
-.grey.darken-3, .darken-3.navbar, .item_control_source,
-.item_control_load {
+.grey.darken-3 {
   background-color: #424242 !important; }
 
 .grey-text.text-darken-3 {
   color: #424242 !important; }
 
-.grey.darken-4, .navbar, .darken-4.item_control_source,
-.darken-4.item_control_load {
+.grey.darken-4 {
   background-color: #212121 !important; }
 
 .grey-text.text-darken-4 {
@@ -1629,119 +1600,4 @@
 .transparent-text {
   color: transparent !important; }
 
-body {
-  min-width: 100%;
-  min-height: 100%;
-  margin: 30px 0 0 0;
-  padding: 0; }
-
-.item_info {
-  display: none;
-  position: absolute;
-  background: #222222;
-  color: white;
-  font-family: arial;
-  font-size: 13px;
-  border-radius: 10px;
-  padding: 5px 10px; }
-
-.item_info td,
-.item_info th {
-  padding: 1px 5px;
-  text-align: center; }
-
-.item_info_data tr:last-child th {
-  border-bottom: 1px solid rgba(255, 255, 255, 0.2); }
-
-.item_info_data th {
-  text-transform: uppercase; }
-
-.item_info_data tr td:nth-child(1),
-.item_info_data tr:last-child th:nth-child(1) {
-  border-right: 1px solid rgba(255, 255, 255, 0.2); }
-
-#item_info_left .item_info_border {
-  position: absolute;
-  top: 0;
-  width: 10px;
-  height: 100%;
-  background: url("../img/info_border_left.png") center no-repeat;
-  right: -10px; }
-
-#item_info_right .item_info_border {
-  position: absolute;
-  top: 0;
-  width: 10px;
-  height: 100%;
-  background: url("../img/info_border_right.png") center no-repeat;
-  left: -10px; }
-
-#item_info_center .item_info_border {
-  position: absolute;
-  top: 0;
-  width: 10px;
-  height: 100%;
-  background: url("../img/info_border_center.png") center no-repeat;
-  top: -10px;
-  left: 0;
-  width: 100%;
-  height: 10px; }
-
-#item_control {
-  display: none; }
-
-.navbar {
-  border-radius: 0;
-  border: 0;
-  min-height: 30px;
-  height: 30px;
-  position: fixed;
-  top: 0;
-  left: 0;
-  right: 0;
-  z-index: 100;
-  overflow: hidden; }
-
-.nav {
-  margin: 0; }
-
-.nav > li > a {
-  padding: 0 6px;
-  font-size: 12px;
-  line-height: 30px;
-  color: #fafafa;
-  user-select: none; }
-  .nav > li > a:hover {
-    cursor: pointer;
-    background-color: inherit; }
-
-.item_control_load #bt_addsource,
-.item_control_load #bt_addload {
-  display: none; }
-
-.disabled, .disabled a {
-  color: rgba(255, 255, 255, 0.3); }
-
-#bt_partTable a {
-  background-color: #00b8d4; }
-
-#bt_stats a {
-  background-color: #aa00ff; }
-
-#bottom_menu {
-  display: none;
-  width: 100%;
-  position: fixed;
-  bottom: 0px;
-  background: #eceff1; }
-
-#config_tree {
-  display: flex;
-  align-items: center;
-  border-top: 1px solid #DDDDDD; }
-
-.config {
-  margin: 10px 20px;
-  text-align: center; }
-
-/*# sourceMappingURL=tree.css.map */
+/*# sourceMappingURL=material-color.css.map */

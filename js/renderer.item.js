@@ -10,14 +10,14 @@ var updateView = function () {
 	if(regtype <= 2) {
 		// hide the adj inputs and enable the fixed values
 		$("#source_adjustable").hide();
-		$("#source_description").addClass("offset-s2");
+		//$("#source_description").addClass("offset-s2");
 		$(".input_vout").attr("disabled",false);
 	}
 	// if the reg vout is adjustable
 	else if(regtype <= 5) {
 		// disable the fixed value and show the adj inputs
 		$("#source_adjustable").show();
-		$("#source_description").removeClass("offset-s2");
+		//$("#source_description").removeClass("offset-s2");
 		$(".input_vout").attr("disabled",true);
 
 		// update the voltage values
@@ -73,9 +73,6 @@ var fillData = function(item) {
 		$('#'+item.type+'_control .form-control[data-itemdata='+keys[i]+']').val(item.characs[keys[i]]);
 	}
 
-	// enable Materialize one <select> elements
-	$('select').material_select();
-
 	updateView();
 
 	// finaly show the form
@@ -110,13 +107,17 @@ var updateItem = function(item) {
 // request ipcRenderer to communicate with main.js
 const {ipcRenderer} = require('electron');
 
-// request the item data to main.js
-var reqData  = ipcRenderer.sendSync('edit-window-open');
-var itemData = JSON.parse(reqData);
+// global object that contains the data to process
+var itemData = {};
 
-// fill the form
-fillData(itemData);
+// prepare to fill the form when data will be received from the main process
+ipcRenderer.on('edit-window-open-resp', function(event, data){
+	itemData = JSON.parse(data);
+	fillData(itemData);
+});
 
+// request data to the main process
+ipcRenderer.send('edit-window-open-req');
 
 
 // -----------------------------------------------------------------------------
@@ -132,7 +133,7 @@ $('#edit_cancel').click(function(){
 
 // BT OK clicked
 $('#edit_ok').click(function(){
-	// update the item by passing its reference to a dedicated function
+	// update the item object with the form values
 	updateItem(itemData);
 
 	// send the new data and close the window

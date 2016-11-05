@@ -1,4 +1,4 @@
-@import "../node_modules/materialize-css/sass/components/_color.scss";
+@import "material-color.scss";
 
 $topmenu_height:	30px;						// >= 20px
 
@@ -81,28 +81,40 @@ $info_border_color:		rgba(255,255,255,0.2);
 //	Top menu
 //
 
-$navbar_padding_lr:	6px;
-$item_alt_color:		rgba(255,255,255,0.1);
-
-#top_menu {
-	@extend .grey, .darken-4;
-	height: $topmenu_height;
-	line-height: $topmenu_height;
-	position: fixed;
-	top: 0;
-	left: 0;
-	right: 0;
-	z-index: 100;
-	overflow: hidden;
-}
-
-#top_menu li a {
-	padding:		0 $navbar_padding_lr;
-	font-size:	12px;
-}
-
 #item_control {
 	display: none;
+}
+
+.navbar {
+	@extend .grey, .darken-4;
+
+	border-radius:	0;
+	border:			0;
+	min-height:		$topmenu_height;
+	height:			$topmenu_height;
+	position:		fixed;
+	top:				0;
+	left:				0;
+	right:			0;
+	z-index:			100;
+	overflow:		hidden;
+}
+
+.nav {
+	margin: 0;
+}
+
+.nav>li>a {
+	padding:			0 6px;
+	font-size:		12px;
+	line-height:	$topmenu_height;
+	color:			color('grey', 'lighten-5');
+	user-select:	none;
+
+	&:hover {
+		cursor: pointer;
+		background-color: inherit;
+	}
 }
 
 .item_control_source,
@@ -117,15 +129,16 @@ $item_alt_color:		rgba(255,255,255,0.1);
 
 .disabled, .disabled a{
 	color: rgba(255,255,255,0.3);
-	&:hover {
-		background-color: inherit;
-	}
 }
 
-#top_menu .btn {
-	margin-left: 0px;
-	margin-right: 0px;
+#bt_partTable a {
+	background-color: color('cyan', 'accent-4');
 }
+
+#bt_stats a {
+	background-color: color('purple', 'accent-4');
+}
+
 
 
 // -----------------------------------------------------------------------------
@@ -133,19 +146,20 @@ $item_alt_color:		rgba(255,255,255,0.1);
 //
 
 #bottom_menu {
-	display: none;
-	width: 100%;
-	position: fixed;
-	bottom: 0px;
-	height: 60px;
+	display:		none;
+	width:		100%;
+	position:	fixed;
+	bottom:		0px;
+	background: color('blue-grey', 'lighten-5');
 }
 
 #config_tree {
-	display: flex;
-	align-items: center;
-	border-top: 1px solid #DDDDDD;
+	display:			flex;
+	align-items:	center;
+	border-top:		1px solid #DDDDDD;
 }
 
 .config {
-	margin: 0 20px 0;
+	margin: 10px 20px;
+	text-align: center;
 }

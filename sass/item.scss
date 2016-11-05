@@ -1,12 +1,7 @@
-// $ sass --watch item.scss:item.css
-/*
-html,
-body
-{
-	margin: 0;
-	padding: 10px 0 0 0;
+form {
+	display: flex;
 }
-*/
+
 menu {
 	position: fixed;
 	right: 0;
@@ -15,6 +10,21 @@ menu {
 	text-align: right;
 }
 
+
+html,
+body
+{
+	margin: 0;
+	padding: 10px 0 0 0;
+}
+
+h3 {
+	margin-top: 0;
+}
+
+/*
+
+
 #source_color_label, #load_color_label {
 	position: static;
 }
@@ -22,3 +32,9 @@ menu {
 body {
 	overflow: hidden;
 }
+
+form {
+	display: flex;
+	justify-content: center;
+}
+*/

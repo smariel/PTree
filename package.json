@@ -1,50 +1,49 @@
 {
-	"name": "PTree",
-	"version": "1.0.0",
-	"description": "Design power tree and estimate consumptions.",
-	"author": "Sylvain Mariel",
-	"license": "MIT",
-	"main": "main.js",
-	"jshintConfig": {
-		"esversion": 6
-	},
-	"scripts": {
-		"postinstall" : "cp node_modules/materialize-css/js/date_picker/picker.js node_modules/materialize-css/bin",
-		"start": "electron .",
-		"pack:osx":   "electron-packager . --out=bin --platform=darwin --arch=x64  --overwrite",
-		"pack:mas":   "electron-packager . --out=bin --platform=mas    --arch=x64  --overwrite",
-		"pack:win32": "electron-packager . --out=bin --platform=win32  --arch=ia32 --overwrite",
-		"pack:win64": "electron-packager . --out=bin --platform=win32  --arch=x64  --overwrite",
-		"pack:lin32": "electron-packager . --out=bin --platform=linux  --arch=ia32 --overwrite",
-		"pack:lin64": "electron-packager . --out=bin --platform=linux  --arch=x64  --overwrite",
-		"pack:all":   "electron-packager . --out=bin --platform=all    --arch=all  --overwrite"
-	},
-	"repository": {
-		"type": "git",
-		"url": "https://github.com/smariel/PTree.git"
-	},
-	"keywords": [
-		"electronics",
-		"power supply",
-		"power consumption"
-	],
-	"bugs": {
-		"url": "https://github.com/smariel/PTree/issues"
-	},
-	"homepage": "https://github.com/smariel/PTree#readme",
-	"dependencies": {
-		"chartjs": "^0.3.24",
-		"fabric": "^1.6.6",
-		"font-awesome": "^4.7.0",
-		"fs": "0.0.1-security",
-		"jquery": "^3.1.1",
-		"materialize-css": "^0.97.7",
-		"tablesorter": "^2.27.8"
-	},
-	"devDependencies": {
-		"electron": "^1.4.4",
-		"electron-packager": "^8.1.0",
-		"sass": "^0.5.0"
-	}
-
+  "name": "PTree",
+  "version": "1.0.0",
+  "description": "Design power tree and estimate consumptions.",
+  "author": "Sylvain Mariel",
+  "license": "MIT",
+  "main": "main.js",
+  "jshintConfig": {
+    "esversion": 6
+  },
+  "scripts": {
+    "postinstall": "",
+    "start": "electron .",
+    "pack:osx": "electron-packager . --out=bin --platform=darwin --arch=x64  --overwrite",
+    "pack:mas": "electron-packager . --out=bin --platform=mas    --arch=x64  --overwrite",
+    "pack:win32": "electron-packager . --out=bin --platform=win32  --arch=ia32 --overwrite",
+    "pack:win64": "electron-packager . --out=bin --platform=win32  --arch=x64  --overwrite",
+    "pack:lin32": "electron-packager . --out=bin --platform=linux  --arch=ia32 --overwrite",
+    "pack:lin64": "electron-packager . --out=bin --platform=linux  --arch=x64  --overwrite",
+    "pack:all": "electron-packager . --out=bin --platform=all    --arch=all  --overwrite"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/smariel/PTree.git"
+  },
+  "keywords": [
+    "electronics",
+    "power supply",
+    "power consumption"
+  ],
+  "bugs": {
+    "url": "https://github.com/smariel/PTree/issues"
+  },
+  "homepage": "https://github.com/smariel/PTree#readme",
+  "dependencies": {
+    "bootstrap": "^3.3.7",
+    "chartjs": "^0.3.24",
+    "fabric": "^1.6.6",
+    "font-awesome": "^4.7.0",
+    "fs": "0.0.1-security",
+    "jquery": "^3.1.1",
+    "tablesorter": "^2.27.8"
+  },
+  "devDependencies": {
+    "electron": "^1.4.4",
+    "electron-packager": "^8.1.0",
+    "sass": "^0.5.0"
+  }
 }

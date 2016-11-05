@@ -6,38 +6,38 @@
 		<title>PTree</title>
 
 		<!-- CSS -->
-		<link rel="stylesheet" href="../node_modules/materialize-css/bin/materialize.css">
+		<link rel="stylesheet" href="../node_modules/bootstrap/dist/css/bootstrap.min.css">
 		<link rel="stylesheet" href="../node_modules/font-awesome/css/font-awesome.min.css">
 		<link rel="stylesheet" href="../css/tree.css">
 	</head>
 
 	<body>
 		<!-- Top Menu -->
-		<nav id="top_menu">
-			<ul id="windows_control" class="left">
-				<li id="bt_partlist"			><a class="waves-effect waves-light btn cyan accent-4"><span class="fa fa-lg fa-list"				></span> Part list</a></li>
-				<li id="bt_stats"				><a class="waves-effect waves-light btn purple accent-4"><span class="fa fa-lg fa-pie-chart"		></span> Stats</a></li>
+		<nav id="top_menu" class="navbar">
+			<ul id="windows_control" class="nav navbar-nav navbar-left">
+				<li id="bt_partTable"		><a><span class="fa fa-lg fa-list"				></span> Part list</a></li>
+				<li id="bt_stats"				><a><span class="fa fa-lg fa-pie-chart"		></span> Stats</a></li>
 			</ul>
-			<ul id="canvas_control" class="left">
-				<li id="bt_clear"				><a class="waves-effect waves-light"><span class="fa fa-lg fa-trash-o"			></span> Clear</a></li>
-				<li id="bt_addrootsource"	><a class="waves-effect waves-light"><span class="fa fa-lg fa-plus"				></span> Source</a></li>
+			<ul id="canvas_control" class="nav navbar-nav navbar-left">
+				<li id="bt_clear"				><a><span class="fa fa-lg fa-trash-o"			></span> Clear</a></li>
+				<li id="bt_addrootsource"	><a><span class="fa fa-lg fa-plus"				></span> Source</a></li>
 			</ul>
-			<ul id="item_control" class="left">
-				<li id="bt_remove"			><a class="waves-effect waves-light"><span class="fa fa-lg fa-times"				></span> Remove</a></li>
-				<li id="bt_edit"				><a class="waves-effect waves-light"><span class="fa fa-lg fa-pencil"			></span> Edit</a></li>
-				<li id="bt_addsource"		><a class="waves-effect waves-light"><span class="fa fa-lg fa-plus-square"		></span> Source</a></li>
-				<li id="bt_addload"			><a class="waves-effect waves-light"><span class="fa fa-lg fa-plus-circle"		></span> Load</a></li>
-				<li id="bt_up"					><a class="waves-effect waves-light"><span class="fa fa-lg fa-arrow-up"			></span> Up</a></li>
-				<li id="bt_down"				><a class="waves-effect waves-light"><span class="fa fa-lg fa-arrow-down"		></span> Down</a></li>
+			<ul id="item_control" class="nav navbar-nav navbar-left">
+				<li id="bt_remove"			><a><span class="fa fa-lg fa-times"				></span> Remove</a></li>
+				<li id="bt_edit"				><a><span class="fa fa-lg fa-pencil"			></span> Edit</a></li>
+				<li id="bt_addsource"		><a><span class="fa fa-lg fa-plus-square"		></span> Source</a></li>
+				<li id="bt_addload"			><a><span class="fa fa-lg fa-plus-circle"		></span> Load</a></li>
+				<li id="bt_up"					><a><span class="fa fa-lg fa-arrow-up"			></span> Up</a></li>
+				<li id="bt_down"				><a><span class="fa fa-lg fa-arrow-down"		></span> Down</a></li>
 			</ul>
-			<ul id="global_control" class="right">
-				<li id="bt_undo"				><a class="waves-effect waves-light"><span class="fa fa-lg fa-undo"				></span> Undo</a></li>
-				<li id="bt_redo"				><a class="waves-effect waves-light"><span class="fa fa-lg fa-repeat"			></span> Redo</a></li>
-				<li id="bt_open"				><a class="waves-effect waves-light"><span class="fa fa-lg fa-folder-open"		></span> Open</a></li>
-				<li id="bt_save"				><a class="waves-effect waves-light"><span class="fa fa-lg fa-floppy-o"			></span> Save</a></li>
-				<li id="bt_saveas"			><a class="waves-effect waves-light"><span class="fa fa-lg fa-files-o"			></span> Save As</a></li>
-				<li id="bt_export_img"		><a class="waves-effect waves-light"><span class="fa fa-lg fa-file-image-o"	></span> JPEG</a></li>
-				<li id="bt_config"			><a class="waves-effect waves-light"><span class="fa fa-lg fa-sliders"			></span> Config</a></li>
+			<ul id="global_control" class="nav navbar-nav navbar-right">
+				<li id="bt_undo"				><a><span class="fa fa-lg fa-undo"				></span> Undo</a></li>
+				<li id="bt_redo"				><a><span class="fa fa-lg fa-repeat"			></span> Redo</a></li>
+				<li id="bt_open"				><a><span class="fa fa-lg fa-folder-open"		></span> Open</a></li>
+				<li id="bt_save"				><a><span class="fa fa-lg fa-floppy-o"			></span> Save</a></li>
+				<li id="bt_saveas"			><a><span class="fa fa-lg fa-files-o"			></span> Save As</a></li>
+				<li id="bt_export_img"		><a><span class="fa fa-lg fa-file-image-o"	></span> JPEG</a></li>
+				<li id="bt_config"			><a><span class="fa fa-lg fa-sliders"			></span> Config</a></li>
 			</ul>
 		</nav>
 
@@ -137,23 +137,29 @@
 		<aside id="bottom_menu">
 			<form id="config_tree">
 				<p class="config">
-					<input id="config_info" data-config="show_info" type="checkbox" class="config_input config_checkbox" />
-					<label for="config_info"> Value</label>
+					<label for="config_info">
+						<input id="config_info" data-config="show_info" type="checkbox" class="config_input config_checkbox" />
+						Value
+					</label>
 				</p>
 				<p class="config">
-					<input id="config_name" data-config="show_name" type="checkbox" class="config_input config_checkbox" />
-					<label for="config_name"> Name</label>
+					<label for="config_name">
+						<input id="config_name" data-config="show_name" type="checkbox" class="config_input config_checkbox" />
+						Name
+					</label>
 				</p>
 				<p class="config">
-					<input id="config_ref" data-config="show_ref" type="checkbox" class="config_input config_checkbox" />
-					<label for="config_ref"> Part Number</label>
+					<label for="config_ref">
+						<input id="config_ref" data-config="show_ref" type="checkbox" class="config_input config_checkbox" />
+						Part Number
+					</label>
 				</p>
 				<p class="config">
-					<label for="config_itemwidth">Item width </label>
+					<label for="config_itemwidth">Item width </label><br />
 					<input id="config_itemwidth" data-config="cell_width" class="config_input config_range" type="range" min="150" max="500" value="300" step="10" />
 				</p>
 				<p class="config">
-					<label for="config_itemheight">Item height </label>
+					<label for="config_itemheight">Item height </label><br />
 					<input id="config_itemheight" data-config="cell_height" class="config_input config_range" type="range" min="30" max="200" value="300" step="10" />
 				</p>
 			</form>
@@ -164,7 +170,7 @@
 
 	<script>
 		window.$ = window.jQuery = require('jquery');
-		require('materialize-css');
+		require('bootstrap');
 		require('fabric');
 	</script>
 
@@ -175,7 +181,7 @@
 	<script src="../js/obj.Tree.js"></script>
 	<script src="../js/obj.Canvas.js"></script>
 	<script src="../js/obj.Part.js"></script>
-	<script src="../js/obj.BOM.js"></script>
+	<script src="../js/obj.PartList.js"></script>
 	<script src="../js/obj.PTree.js"></script>
 
 
