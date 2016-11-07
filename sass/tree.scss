@@ -1,4 +1,10 @@
-@import "material-color.scss";
+$red			: #ff1744;
+$teal			: #00bfa5;
+$cyan			: #00b8d4;
+$purple		: #aa00ff;
+$dark			: #212121;
+$light		: #fafafa;
+$light-blue	: #eceff1;
 
 $topmenu_height:	30px;						// >= 20px
 
@@ -107,7 +113,7 @@ $info_border_color:		rgba(255,255,255,0.2);
 	padding:			0 6px;
 	font-size:		12px;
 	line-height:	$topmenu_height;
-	color:			color('grey', 'lighten-5');
+	color:			$light;
 	user-select:	none;
 
 	&:hover {
@@ -116,9 +122,12 @@ $info_border_color:		rgba(255,255,255,0.2);
 	}
 }
 
-.item_control_source,
+.item_control_source {
+	box-shadow:inset 0 -3px 0 0 $red;
+}
+
 .item_control_load {
-	box-shadow:inset 0 -3px 0 0 color('grey', 'lighten-2');
+	box-shadow:inset 0 -3px 0 0 $teal;
 }
 
 .item_control_load #bt_addsource,
@@ -132,11 +141,11 @@ $info_border_color:		rgba(255,255,255,0.2);
 }
 
 #bt_partTable a {
-	background-color: color('cyan', 'accent-4');
+	background-color: $cyan;
 }
 
 #bt_stats a {
-	background-color: color('purple', 'accent-4');
+	background-color: $purple;
 }
 
 
@@ -150,7 +159,7 @@ $info_border_color:		rgba(255,255,255,0.2);
 	width:		100%;
 	position:	fixed;
 	bottom:		0px;
-	background: color('blue-grey', 'lighten-5');
+	background: $light-blue;
 }
 
 #config_tree {

@@ -3,3 +3,5 @@
 bin
 node_modules
 **.sass-cache**
+**material-color**
+**.map
