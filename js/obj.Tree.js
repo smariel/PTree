@@ -7,6 +7,8 @@
 
 // Tree object constructor
 var Tree = function() {
+	this.item_list		= [];
+	this.item_index	= 0;
 	this.clear();
 };
 
@@ -73,66 +75,39 @@ Tree.prototype.addLoad = function(parent) {
 };
 
 
-// return an array with all item of the specified type
-Tree.prototype.getItems = function(type, id_only) {
-	if(undefined === id_only) id_only = false;
-
-	var items =  [];
-	for(let i in this.item_list) {
-		var item = this.item_list[i];
-		if(type === item.type) items.push(id_only?item.id:item);
-	}
-	return items;
-};
-
-
-// return an array with all loads
-Tree.prototype.getLoads = function(id_only) {
-	return this.getItems("load",id_only);
-};
-
-
-// return an array with all sources
-Tree.prototype.getSources = function(id_only) {
-	return this.getItems("source",id_only);
-};
-
-
 // refresh the consumptions of each load of the tree view, based on the list view infos
 Tree.prototype.refreshConsumptions = function() {
-	for(let i in this.item_list) {
-		var item = this.item_list[i];
-		if(item.isLoad()) {
-			item.characs.ityp = 0;
-			item.characs.imax = 0;
+	this.forEachLoad(function(item){
+		item.characs.ityp = 0;
+		item.characs.imax = 0;
 
-			/*// TODO
-			powerTree.component.forEach(function(component) {
-				if(null !== component && undefined !== component.characs.consumption[item.id])
-				{
-					item.characs.ityp += component.characs.consumption[item.id].typ;
-					item.characs.imax += component.characs.consumption[item.id].max;
-				}
-			});*/
-		}
-	}
+		/*// TODO
+		powerTree.component.forEach(function(component) {
+			if(null !== component && undefined !== component.characs.consumption[item.id])
+			{
+				item.characs.ityp += component.characs.consumption[item.id].typ;
+				item.characs.imax += component.characs.consumption[item.id].max;
+			}
+		});*/
+	});
 };
 
 
 // Remove the reference to this tree from each item
 // Caution! Call .convertToCircular() before calling any other method
 Tree.prototype.convertToUncircular = function() {
-	for(let i in this.item_list) {
-		this.item_list[i].tree = null;
-	}
+	this.forEachItem(function(item){
+		item.tree = null;
+	});
 };
 
 // Replace the reference to this tree in each item
 // This method is only usefull after .convertToUncircular()
 Tree.prototype.convertToCircular = function() {
-	for(let i in this.item_list) {
-		this.item_list[i].tree = this;
-	}
+	var that = this;
+	this.forEachItem(function(item){
+		item.tree = that;
+	});
 };
 
 
@@ -141,9 +116,10 @@ Tree.prototype.toString = function() {
 	var tree = new Tree();
 	tree.item_index = this.item_index;
 
-	for(let i in this.item_list) {
-		tree.item_list[i] = this.item_list[i].toString();
-	}
+	this.forEachItem(function(item){
+		tree.item_list[item.id] = item.toString();
+	});
+
 	return JSON.stringify(tree);
 };
 
@@ -165,14 +141,42 @@ Tree.prototype.fromString = function(str) {
 		this.item_list[item.id] = new Item(item.id, null, item.type, null);
 
 		// for each property of the item
-		for(let j in this.item_list[item.id]) {
-			if(this.item_list[item.id].hasOwnProperty(j)) {
+		for(let i in this.item_list[item.id]) {
+			if(this.item_list[item.id].hasOwnProperty(i)) {
 				// copy the property
-				this.item_list[item.id][j] = item[j];
+				this.item_list[item.id][i] = item[i];
 			}
 		}
 
 		// copy a reference of this Tree in the item
 		this.item_list[item.id].tree = this;
 	}
+};
+
+
+// loop on each item and process a given function
+Tree.prototype.forEachItem = function(theFunction) {
+	for(let i in this.item_list) {
+		theFunction(this.item_list[i]);
+	}
+};
+
+
+// loop on each source and process a given function
+Tree.prototype.forEachSource = function(theFunction) {
+	this.forEachItem(function(item){
+		if(item.isSource()) {
+			theFunction(item);
+		}
+	});
+};
+
+
+// loop on each load and process a given function
+Tree.prototype.forEachLoad = function(theFunction) {
+	this.forEachItem(function(item){
+		if(item.isLoad()) {
+			theFunction(item);
+		}
+	});
 };
