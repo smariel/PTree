@@ -18,8 +18,8 @@
  		margin_bottom: 70,
  	},
  	cell : {
- 		width: 300,
- 		height: 100
+ 		width: 280,
+ 		height: 90
  	},
  	item : {
  		width_coef: 0.45,
@@ -30,7 +30,7 @@
  	},
  	text : {
  		margin_x: 10,
- 		margin_y: 4
+ 		margin_y: 3
  	}
  };
 
@@ -55,8 +55,8 @@
 		fill: '#00bfa5', // materializ teal accent-4
  		width:  app_template.cell.width  * app_template.item.width_coef,
  		height: app_template.cell.height * app_template.item.height_coef,
- 		rx: 30,
- 		ry: 30,
+ 		rx: 20,
+ 		ry: 20,
  		selectable: false
  	},
  	group: {
@@ -202,10 +202,10 @@ Canvas.prototype.addItem = function(item) {
 			// Print the Vout of sources
 			var itemText_vout = new fabric.Text(vtyp, fabric_template.text);
 			itemText_vout.set({
-				'originX': 'left',
-				'originY': 'bottom',
-				'top': itemGroup.top + itemGroup.height/2,
-				'left': itemGroup.left + itemGroup.width + app_template.text.margin_x,
+				'originX'	: 'left',
+				'originY'	: 'bottom',
+				'top'			: itemGroup.top  + itemGroup.height/2 - app_template.text.margin_y,
+				'left'		: itemGroup.left + itemGroup.width    + app_template.text.margin_x,
 			});
 			this.fabricCanvas.add(itemText_vout);
 
@@ -217,10 +217,10 @@ Canvas.prototype.addItem = function(item) {
 			// Print the current
 			var itemText_ityp = new fabric.Text(ityp+' / '+imax, fabric_template.text);
 			itemText_ityp.set({
-				'originX': 'left',
-				'originY': 'top',
-				'top': itemGroup.top + itemGroup.height/2 + app_template.text.margin_y,
-				'left': itemGroup.left + itemGroup.width + app_template.text.margin_x,
+				'originX'	: 'left',
+				'originY'	: 'top',
+				'top'			: itemGroup.top  + itemGroup.height/2 + app_template.text.margin_y,
+				'left'		: itemGroup.left + itemGroup.width    + app_template.text.margin_x,
 			});
 			this.fabricCanvas.add(itemText_ityp);
 		}
@@ -355,14 +355,10 @@ Canvas.prototype.selectItem = function(item) {
 	this.updateUpDownMenu();
 
 	// show/hide menus depending of the item type
-	$('#item_control').removeClass('item_control_source item_control_load');
-	if(item.isSource())
-	{
-		$('#item_control').addClass('item_control_source');
-	}
-	else if(item.isLoad()) {
-		$('#item_control').addClass('item_control_load');
-	}
+	var ctrl = $('#item_control');
+	ctrl.removeClass('item_control_source item_control_load');
+	ctrl.addClass('item_control_'+item.type);
+	ctrl.css({'box-shadow':'inset 0 -3px 0 0 '+item.characs.color});
 
 	// fadeIn the menu
 	$('#item_control').fadeIn(200);
