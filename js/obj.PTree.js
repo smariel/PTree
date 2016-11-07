@@ -1,7 +1,7 @@
 var PTree = function(canvas_selector) {
 	this.tree		= new Tree();
 	this.canvas		= new Canvas(canvas_selector, this.tree);
-	this.bom			= new BOM();
+	this.partlist	= new PartList();
 
 	this.filePath	= null;
 	this.unsaved	= true;
@@ -352,13 +352,17 @@ PTree.prototype.listenTreeMenu = function() {
 
 
 	// open a new window to manipulate the part list
-	$('#bt_partlist').click(function(){
-		
+	$('#bt_partTable').click(function(){
+		// require ipcRenderer to send/receive message with main.js
+		const {ipcRenderer} = require('electron');
+
+		// ask main.js to edit the item with the given data and wait for a response
+		ipcRenderer.sendSync('partTable-request', that.tree.toString(), that.partlist.toString());
 	});
 
 
 	// open a new window to see stats
-	$('#bt_partlist').click(function(){
+	$('#bt_stats').click(function(){
 
 	});
 

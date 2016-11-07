@@ -1,0 +1,58 @@
+<!DOCTYPE html>
+<html>
+
+	<head>
+		<meta charset="UTF-8">
+		<title>PTree</title>
+
+		<!-- CSS -->
+		<link rel="stylesheet" href="../node_modules/bootstrap/dist/css/bootstrap.min.css">
+		<link rel="stylesheet" href="../node_modules/font-awesome/css/font-awesome.min.css">
+		<link rel="stylesheet" href="../css/partlist.css">
+	</head>
+
+	<body>
+		<table class="partTable">
+			<thead>
+				<tr class="tr_top">
+					<th class="th_charac" colspan="4">Part Description</th>
+					<th class="th_power"  colspan="2">Total Power</th>
+				</tr>
+				<tr class="tr_bottom">
+					<th class="th_charac">#</th>
+					<th class="th_charac">Name</th>
+					<th class="th_charac">Part Number</th>
+					<th class="th_charac">Function</th>
+					<th class="th_power th_typ">P<sub>TYP</sub></th>
+					<th class="th_power th_max">P<sub>MAX</sub></th>
+				</tr>
+			</thead>
+			<tbody>
+
+			</tbody>
+		</table>
+		<div class="addPart myBtn">
+			<button><span class="fa fa-lg fa-plus"></span></button>
+		</div>
+	</body>
+
+	<!-- JS framworks and libraries -->
+	<script>
+		window.$ = window.jQuery = require('jquery');
+		require('bootstrap');
+	</script>
+
+	<!-- application JS: functions & constructors -->
+	<script src="../js/functions.js"></script>
+	<script src="../js/obj.Item.js"></script>
+	<script src="../js/obj.Tree.js"></script>
+	<script src="../js/obj.Part.js"></script>
+	<script src="../js/obj.PartList.js"></script>
+	<script src="../js/obj.PartTable.js"></script>
+
+
+	<!-- application JS: this window -->
+	<script>
+		require('../js/renderer.partTable.js');
+	</script>
+</html>

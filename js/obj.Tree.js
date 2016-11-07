@@ -156,8 +156,11 @@ Tree.prototype.fromString = function(str) {
 
 // loop on each item and process a given function
 Tree.prototype.forEachItem = function(theFunction) {
-	for(let i in this.item_list) {
-		theFunction(this.item_list[i]);
+	// use for..of instead of for..in to respect the array order if needed
+	for(let item of this.item_list) {
+		if(undefined !== item) {
+			theFunction(item);
+		}
 	}
 };
 

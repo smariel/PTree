@@ -92,7 +92,7 @@ $info_border_color:		rgba(255,255,255,0.2);
 }
 
 .navbar {
-	background:		color('grey', 'darken-4');
+	background:		$dark;
 	border-radius:	0;
 	border:			0;
 	min-height:		$topmenu_height;

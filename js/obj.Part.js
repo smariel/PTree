@@ -11,7 +11,7 @@ var Part = function(id, bom) {
 	this.characs = {
 		name				: 'name',
 		ref				: 'part number',
-		consumptions	: [],
+		consumptions	: {},
 		tagsID			: []
 	};
 	this.bom = bom;
