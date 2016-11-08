@@ -202,6 +202,21 @@ PTree.prototype.updateClearButtons = function() {
 };
 
 
+// Show/Hide up & down button depending on the position of the selected item
+PTree.prototype.updateUpDownButtons = function() {
+	var item = this.canvas.getSelectedItem();
+
+	if(null === item || 0 === item.child_index)
+		$('#bt_up').addClass('disabled');
+	else
+		$('#bt_up').removeClass('disabled');
+	if(null === item || item.getParent().childrenID.length - 1 == item.child_index)
+		$('#bt_down').addClass('disabled');
+	else
+		$('#bt_down').removeClass('disabled');
+};
+
+
 // listen to all events on canvas
 PTree.prototype.listenCanvas = function() {
 	// save 'this' to use into event callbacks
@@ -213,6 +228,7 @@ PTree.prototype.listenCanvas = function() {
 		// if the fabric obj is an "item"
 		if(null !== fabric_obj && undefined !== fabric_obj && undefined !== fabric_obj.item) {
 			that.canvas.selectItem(fabric_obj.item);
+			that.updateUpDownButtons();
 			that.canvas.fabricCanvas.dragedItem = fabric_obj.item;
 			that.canvas.fabricCanvas.defaultCursor = "move";
 		}
@@ -425,7 +441,7 @@ PTree.prototype.listenTreeMenu = function() {
 		var item = that.canvas.getSelectedItem();
 		item.moveUp();
 		that.canvas.refresh();
-		that.canvas.updateUpDownMenu();
+		that.updateUpDownButtons();
 		that.saveHistory();
 	});
 
@@ -435,7 +451,7 @@ PTree.prototype.listenTreeMenu = function() {
 		var item = that.canvas.getSelectedItem();
 		item.moveDown();
 		that.canvas.refresh();
-		that.canvas.updateUpDownMenu();
+		that.updateUpDownButtons();
 		that.saveHistory();
 	});
 

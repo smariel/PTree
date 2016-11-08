@@ -351,9 +351,6 @@ Canvas.prototype.selectItem = function(item) {
 	// save a ref to the precedent item
 	this.selectedItem = item;
 
-	// Show/Hide up & down button depending on the item position
-	this.updateUpDownMenu();
-
 	// show/hide menus depending of the item type
 	var ctrl = $('#item_control');
 	ctrl.removeClass('item_control_source item_control_load');
@@ -486,21 +483,6 @@ Canvas.prototype.editSelected = function() {
 
 	// ask main.js to edit the item with the given data
 	ipcRenderer.send('edit-item', JSON.stringify(data));
-};
-
-
-// Show/Hide up & down button depending on the position of the selected item
-Canvas.prototype.updateUpDownMenu = function() {
-	var item = this.getSelectedItem();
-
-	if(null === item || 0 === item.child_index)
-		$('#bt_up').addClass('disabled');
-	else
-		$('#bt_up').removeClass('disabled');
-	if(null === item || item.getParent().childrenID.length - 1 == item.child_index)
-		$('#bt_down').addClass('disabled');
-	else
-		$('#bt_down').removeClass('disabled');
 };
 
 

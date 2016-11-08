@@ -88,6 +88,40 @@ Item.prototype.isChildOfRoot = function() {
 };
 
 
+// Check if the item is a DC/DC
+Item.prototype.isDCDC = function() {
+	return this.isSource() && ('0' == this.characs.regtype || '3' == this.characs.regtype);
+};
+
+
+// Check if the item is a LDO
+Item.prototype.isLDO = function() {
+	return this.isSource() && ('1' == this.characs.regtype || '4' == this.characs.regtype);
+};
+
+
+// recursively test if this item is a child of "potentialParent"
+Item.prototype.isChildOf = function(potentialParent) {
+	// test if this item is a child of potentialParent
+	if(-1 !== potentialParent.childrenID.indexOf(this.id)) {
+		return true;
+	}
+	// if the item is not a child of potentialParent and if potentialParent is a source
+	else if (potentialParent.isSource())
+	{
+		// recursively test if THIS is child of potentialParent children
+		for(let childID of potentialParent.childrenID) {
+			var child = this.tree.getItem(childID);
+			// if the child of potentialParent is the parent of the item, return true
+			if(this.isChildOf(child)) return true;
+			// else, continue to the next child
+		}
+	}
+
+	return false;
+};
+
+
 // return the parent of the item
 Item.prototype.getParent = function() {
 	return (null === this.parentID)? null : this.tree.getItem(this.parentID);
@@ -217,18 +251,6 @@ Item.prototype.moveTo = function(newparent) {
 		// increment the offset of all parents (recursively)
 		newparent.nextOffsetIncrement(this.nextOffset+1);
 	}
-};
-
-
-// Check if the item is a DC/DC
-Item.prototype.isDCDC = function() {
-	return this.isSource() && ('0' == this.characs.regtype || '3' == this.characs.regtype);
-};
-
-
-// Check if the item is a LDO
-Item.prototype.isLDO = function() {
-	return this.isSource() && ('1' == this.characs.regtype || '4' == this.characs.regtype);
 };
 
 
@@ -428,28 +450,6 @@ Item.prototype.edit = function() {
 			this.characs[charac] = resultData.characs[charac];
 		}
 	}
-};
-
-
-// recursively test if this item is a child of "potentialParent"
-Item.prototype.isChildOf = function(potentialParent) {
-	// test if this item is a child of potentialParent
-	if(-1 !== potentialParent.childrenID.indexOf(this.id)) {
-		return true;
-	}
-	// if the item is not a child of potentialParent and if potentialParent is a source
-	else if (potentialParent.isSource())
-	{
-		// recursively test if THIS is child of potentialParent children
-		for(let childID of potentialParent.childrenID) {
-			var child = this.tree.getItem(childID);
-			// if the child of potentialParent is the parent of the item, return true
-			if(this.isChildOf(child)) return true;
-			// else, continue to the next child
-		}
-	}
-
-	return false;
 };
 
 
