@@ -1,7 +1,34 @@
-
-.DS_Store
-bin
-node_modules
+# sass cache and useless files
+#-----------------------------
 **.sass-cache**
 **material-color**
-**.map
+css/colors.css
+
+
+# dependencies
+#--------------
+node_modules
+
+
+# compiled sources & packages
+#----------------------------
+bin
+*.7z
+*.dmg
+*.gz
+*.iso
+*.jar
+*.rar
+*.tar
+*.zip
+
+
+# OS generated files
+#--------------------
+.DS_Store
+.DS_Store?
+._*
+.Spotlight-V100
+.Trashes
+ehthumbs.db
+Thumbs.db
