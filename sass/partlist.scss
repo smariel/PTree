@@ -72,20 +72,14 @@ $thead_colors: (
 // part table body
 // -----------------------------------------------------------------------------
 
-.partTable tr:nth-child(even) {
+.partTable tr.selected {
+	background-color: lighten($cyan, 40);
+}
+
+.partTable tr:nth-child(even):not(.selected) {
 	background-color: rgba(0,0,0,0.05);
 }
 
-.td_typ {
-	border-left: 1px solid rgba(0,0,0,0.2);
-	border-right: 1px solid rgba(0,0,0,0.05);
-}
-
-.partTable tr {
-	&:hover {
-		background-color: rgba(0,0,0,0.12);
-	}
-}
 
 .partTable td {
 	text-align: center;
@@ -96,10 +90,59 @@ $thead_colors: (
 	}
 }
 
+.partTable td.td_typ {
+	border-left: 1px solid rgba(0,0,0,0.2);
+	border-right: 1px solid rgba(0,0,0,0.05);
+}
+
+.partTable td.td_current[data-value='0'],
+.partTable td.td_power[data-value='0'] {
+	color: rgba(0,0,0,0.2);
+}
+
+.partTable td.td_charac > .edition {
+	width: 100px;
+}
+
+.partTable td.td_current > .edition {
+	width: 50px;
+}
+
+.edition {
+	text-align: center;
+	color: black;
+}
+
+
 
 // -----------------------------------------------------------------------------
 // controls
 // -----------------------------------------------------------------------------
+
+@mixin round-button($color: $teal, $size: 50px) {
+	height:			$size;
+	width:			$size;
+	border-radius:	$size/2;
+	display:			block;
+	border:			none;
+	outline:			0;
+	color:			white;
+	background:		$color;
+
+	transition:		300ms ease;
+	box-shadow:		0 2px 7px 1px rgba(0,0,0,0.3);
+
+	&:hover {
+		background: darken($color, 10);
+		transition:	150ms ease;
+	}
+
+	&:active {
+		background: darken($color, 15);
+		transition: 100ms ease;
+	}
+}
+
 
 .addPart {
 	position:	fixed;
@@ -107,7 +150,7 @@ $thead_colors: (
 	left:			10px;
 
 	& > button {
-		background: $teal;
+		@include round-button($teal);
 	}
 }
 
@@ -115,39 +158,9 @@ $thead_colors: (
 	position:	fixed;
 	bottom:		10px;
 	left:			70px;
+	display:		none;
 
 	& > button {
-		background: $red;
-	}
-}
-
-.myBtn > button
-{
-	$btn_size:		50px;
-	display:			block;
-	height:			$btn_size;
-	width:			$btn_size;
-	border-radius:	$btn_size/2;
-	border:			none;
-	outline:			0;
-	color:			white;
-
-	transition:		150ms ease;
-	box-shadow:		0 1px 1px 0 rgba(0,0,0,0.3);
-
-	&:hover {
-		box-shadow:	0 1px 3px 1px rgba(0,0,0,0.3);
-
-		& > .fa {
-			font-size: 1.37em;
-		}
-	}
-
-	&:active {
-		box-shadow:	none;
-
-		& > .fa {
-			font-size: 1.33em;
-		}
+		@include round-button($red);
 	}
 }

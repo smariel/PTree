@@ -315,7 +315,7 @@ Item.prototype.getOutputCurrent = function(valType) {
 	if(this.isSource()) {
 		// i_out = sum of children i_in
 		for(let childID of this.childrenID){
-			i_out += this.tree.getItem(childID).getOutputCurrent(valType);
+			i_out += this.tree.getItem(childID).getInputCurrent(valType);
 		}
 	}
 
@@ -465,4 +465,22 @@ Item.prototype.toString = function() {
 	this.tree = tree;
 	// return the string
 	return str;
+};
+
+
+// Refresh the consumption whith the given partList
+Item.prototype.refreshConsumption = function(partList) {
+	if(this.isLoad()){
+		// reinit each current
+		this.characs.ityp = 0;
+		this.characs.imax = 0;
+
+		var that = this;
+
+		// parcour all part to add all currents
+		partList.forEachPart(function(part){
+			that.characs.ityp += part.getConsumption(that, 'typ');
+			that.characs.imax += part.getConsumption(that, 'max');
+		});
+	}
 };

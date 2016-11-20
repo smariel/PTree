@@ -7,7 +7,13 @@
 var PartList = function() {
 	this.part_list		= [];
 	this.part_index	= 0;
-	this.part_order	= [];
+};
+
+
+// set a part at the given id
+PartList.prototype.setPart = function(id, data) {
+	this.part_list[id] = data;
+	return this.part_list[id];
 };
 
 
@@ -17,12 +23,43 @@ PartList.prototype.getPart = function(id) {
 };
 
 
+// return the next part in the list
+PartList.prototype.getNextPart = function(part) {
+	for(let id = part.id+1; id < this.part_list.length; id++) {
+		let nextPart = this.getPart(id);
+		if(null !== nextPart && undefined !== nextPart) {
+			return nextPart;
+		}
+	}
+
+	return null;
+};
+
+
+// return the previous part in the list
+PartList.prototype.getPreviousPart = function(part) {
+	for(let id = part.id-1; id >= 0; id--) {
+		let previousPart = this.getPart(id);
+		if(null !== nextPart && undefined !== nextPart) {
+			return previousPart;
+		}
+	}
+
+	return null;
+};
+
+
 // add a part to the BOM
 PartList.prototype.addPart = function() {
 	var part = new Part(this.part_index, this);
 	this.part_list[this.part_index++] = part;
-	this.part_order.push(part.id);
 	return part;
+};
+
+
+// remove a part from the BOM
+PartList.prototype.deletePart = function(part) {
+	delete this.part_list[part.id];
 };
 
 
@@ -30,9 +67,6 @@ PartList.prototype.addPart = function() {
 PartList.prototype.toString = function() {
 	var partList = new PartList();
 	partList.part_index	= this.part_index;
-	partList.part_order	= this.part_order;
-	partList.tag_list		= this.tag_list;
-	partList.tag_index	= this.tag_index;
 
 	this.forEachPart(function(part){
 		partList.part_list[part.id] = part.toString();
@@ -45,29 +79,33 @@ PartList.prototype.toString = function() {
 // Import a partlist from a string and reconstruct all references
 PartList.prototype.fromString = function(str) {
 	// get all properties from the stringified object where parts are strings
-	var partList = JSON.parse(str);
-	this.part_index = partList.part_index;
+	var partListProp = JSON.parse(str);
+
+	// reinit the partlist data
+	this.part_index = partListProp.part_index;
+	this.part_list = [];
 
 	// for each part in the list
-	for(var part_str of partList.part_list) {
+	for(var part_str of partListProp.part_list) {
 		if(null === part_str) continue;
 
 		// get the properties of the part
-		var part = JSON.parse(part_str);
+		var partProp = JSON.parse(part_str);
 
 		// create a new empty part (without giving a ref to partList yet)
-		this.part_list[part.id] = new Part(part.id, null);
+		var newPart = new Part(partProp.id, null);
+		this.setPart(partProp.id, newPart);
 
 		// for each property of the part
-		for(let i in this.part_list[part.id]) {
-			if(this.part_list[part.id].hasOwnProperty(i)) {
+		for(let i in newPart) {
+			if(newPart.hasOwnProperty(i)) {
 				// copy the property
-				this.part_list[part.id][i] = part[i];
+				newPart[i] = partProp[i];
 			}
 		}
 
 		// copy a reference of this PartList in the part
-		this.part_list[part.id].partList = this;
+		newPart.partList = this;
 	}
 };
 

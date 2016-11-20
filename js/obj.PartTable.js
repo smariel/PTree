@@ -9,6 +9,7 @@ var PartTable = function() {
 	this.tree			= new Tree();
 	this.editing		= null;
 	this.shiftPressed = false;
+	this.selectedPart = null;
 
 	this.listenEvents();
 };
@@ -22,22 +23,24 @@ PartTable.prototype.refresh = function() {
 	// init TableSorter on the empty table
 	$('.partTable').tablesorter({sortList: [[0,0]]});
 
-	// print the content of the table
-	for(let part of this.partList.part_list) {
+	var that = this;
+	var niceid = 0;
+
+	this.partList.forEachPart(function(part){
 		// Init the total power
 		let ptyp = 0;
 		let pmax = 0;
 
 		// Part characteristics
 		let tr = `<tr data-partid='${part.id}'>
-			<td class='td_charac'>${part.id}</td>
+			<td class='td_charac' data-charac='id' data-value='${part.id}'>${niceid++}</td>
 			<td class='td_charac td_editable' data-charac='name'>${part.characs.name}</td>
 			<td class='td_charac td_editable' data-charac='ref'>${part.characs.ref}</td>
 		`;
 
 		// Part consumptions on each load
 		// Can't use tree.forEachLoad() without creating an anonymous function in this loop
-		for(let item of this.tree.item_list) {
+		for(let item of that.tree.item_list) {
 			if(item !== undefined && item.isLoad()) {
 				// get the consumption on this item
 				let ityp = part.getConsumption(item, 'typ');
@@ -46,17 +49,20 @@ PartTable.prototype.refresh = function() {
 				ptyp += parseFloat(ityp) * item.getInputVoltage('typ');
 				pmax += parseFloat(imax) * item.getInputVoltage('max');
 				// add two table cells to the table line
-				tr += `<td class='td_current td_typ td_editable' data-typmax='typ' data-loadid='${item.id}'>${ityp}</td><td class='td_current td_max td_editable' data-typmax='max' data-loadid='${item.id}'>${imax}</td>`;
+				tr += `<td class='td_current td_typ td_editable' data-typmax='typ' data-loadid='${item.id}' data-value='${ityp}'>${round(ityp,3)}</td><td class='td_current td_max td_editable' data-typmax='max' data-loadid='${item.id}' data-value='${imax}'>${round(imax,3)}</td>`;
 			}
 		}
 
 		// Part total power consumption
-		tr += `<td class='td_power td_typ'>${ptyp}</td><td class='td_power td_max'>${pmax}</td>`;
+		tr += `<td class='td_power td_typ' data-value='${ptyp}'>${round(ptyp,3)}</td><td class='td_power td_max' data-value='${pmax}'>${round(pmax,3)}</td>`;
 
 		// Print the line
 		tr += `</tr>`;
 		$('.partTable tbody').append(tr);
-	}
+	});
+
+
+	if(null !== this.selectedPart) this.selectPart(this.selectedPart);
 
 	// Let TableSorter know that the table has changed
 	$('.partTable').trigger('update');
@@ -83,6 +89,8 @@ PartTable.prototype.editCharac = function(part, charac) {
 			this.validateEdition();
 		}
 	}
+
+	this.selectPart(part);
 
 	// mark as editing
 	this.editing = 'charac';
@@ -119,6 +127,8 @@ PartTable.prototype.editCurrent = function(part, load, typmax) {
 		}
 	}
 
+	this.selectPart(part);
+
 	// mark as editing
 	this.editing = 'current';
 
@@ -133,7 +143,7 @@ PartTable.prototype.editCurrent = function(part, load, typmax) {
 
 
 // rempve the UI from editing by validating (or not) the data
-PartTable.prototype.clearCharac = function (validate){
+PartTable.prototype.clearCharac = function(validate){
 	// get datas from html elements
 	var part		= this.getEditedPart();
 	var charac	= this.getEditedCharac();
@@ -153,7 +163,7 @@ PartTable.prototype.clearCharac = function (validate){
 
 
 // rempve the UI from editing by validating (or not) the data
-PartTable.prototype.clearCurrent = function (validate){
+PartTable.prototype.clearCurrent = function(validate){
 	// get datas from html elements
 	var part		= this.getEditedPart();
 	var load		= this.getEditedLoad();
@@ -166,10 +176,11 @@ PartTable.prototype.clearCurrent = function (validate){
 	part.setConsumption(value, load, typmax);
 
 	// refresh the part table
-	$('.edition').parent().html(value);
+	$('.edition').parent().attr('data-value', value.toString());
+	$('.edition').parent().html(round(value,3));
 	var power = part.getPower(this.tree);
-	$(`tr[data-partid=${part.id}] > td.td_power.td_typ`).html(power.typ);
-	$(`tr[data-partid=${part.id}] > td.td_power.td_max`).html(power.max);
+	$(`tr[data-partid=${part.id}] > td.td_power.td_typ`).html(round(power.typ,3));
+	$(`tr[data-partid=${part.id}] > td.td_power.td_max`).html(round(power.max,3));
 	$('.partTable').trigger('update');
 
 	this.editing = null;
@@ -184,6 +195,7 @@ PartTable.prototype.validateEdition = function() {
 	else if ('current' === this.editing) {
 		this.clearCurrent(true);
 	}
+	this.unselectPart();
 };
 
 
@@ -195,11 +207,12 @@ PartTable.prototype.cancelEdition = function() {
 	else if ('current' === this.editing) {
 		this.clearCurrent(false);
 	}
+	this.unselectPart();
 };
 
 
 // get the edited part
-PartTable.prototype.getEditedPart = function () {
+PartTable.prototype.getEditedPart = function() {
 	var partID = $('.edition').data('partid');
 	var part = this.partList.getPart(partID);
 	return part;
@@ -207,7 +220,7 @@ PartTable.prototype.getEditedPart = function () {
 
 
 // get the edited load
-PartTable.prototype.getEditedLoad = function () {
+PartTable.prototype.getEditedLoad = function() {
 	var loadID = $('.edition').data('loadid');
 	var load = this.tree.getItem(loadID);
 	return load;
@@ -215,13 +228,13 @@ PartTable.prototype.getEditedLoad = function () {
 
 
 // get the edited TypMax
-PartTable.prototype.getEditedTypMax = function () {
+PartTable.prototype.getEditedTypMax = function() {
 	return $('.edition').data('typmax');
 };
 
 
 // get the edited value
-PartTable.prototype.getEditedValue = function () {
+PartTable.prototype.getEditedValue = function() {
 	var value = $('.edition').val();
 
 	if ('current' === this.editing) {
@@ -233,8 +246,36 @@ PartTable.prototype.getEditedValue = function () {
 
 
 // get the edited characteristic
-PartTable.prototype.getEditedCharac = function () {
+PartTable.prototype.getEditedCharac = function() {
 	return $('.edition').parent().data('charac');
+};
+
+
+// select the given part
+PartTable.prototype.selectPart = function(part) {
+	this.validateEdition();
+
+	if(null !== this.selectedPart) {
+		this.unselectPart(false);
+		$('.removePart').show();
+	}
+	else {
+		$('.removePart').fadeIn(150);
+	}
+
+	this.selectedPart = part;
+	$(`tr[data-partid=${part.id}]`).addClass('selected');
+
+};
+
+
+// deselect the actual part
+PartTable.prototype.unselectPart = function(fade) {
+	if(null !== this.selectedPart) {
+		this.selectedPart = null;
+		$('.selected').removeClass('selected');
+		$('.removePart').fadeOut(fade?150:0);
+	}
 };
 
 
@@ -247,13 +288,19 @@ PartTable.prototype.listenEvents = function() {
 		// request ipcRenderer to communicate with main.js
 		const {ipcRenderer} = require('electron');
 		// send data to main.js
+		console.log(that.partList);
 		ipcRenderer.send('partTable-window-close',that.partList.toString());
 	};
-
 
 	// add a new empty part to the PartList
 	$('.addPart').click(function(){
 		that.partList.addPart();
+		that.refresh();
+	});
+
+	// add a new empty part to the PartList
+	$('.removePart').click(function(){
+		that.partList.deletePart(that.selectedPart);
 		that.refresh();
 	});
 
@@ -264,9 +311,13 @@ PartTable.prototype.listenEvents = function() {
 		var partID	= $(this).parent().data('partid');
 		var part		= that.partList.getPart(partID);
 
-		that.editCharac(part, charac);
+		if('id' === charac) {
+			that.selectPart(part);
+		}
+		else {
+			that.editCharac(part, charac);
+		}
 	});
-
 
 	// edit a current
 	$('.partTable').on('click', '.td_current', function() {
@@ -279,6 +330,26 @@ PartTable.prototype.listenEvents = function() {
 		that.editCurrent(part, load, typmax);
 	});
 
+	// Global keydown
+	$(document).keydown(function(e){
+		// SHIFT
+		if (16 === e.keyCode) {
+			that.shiftPressed = true;
+		}
+		// ESCAPE (=> cancel)
+		else if (27 === e.keyCode) {
+			that.cancelEdition();
+			that.unselectPart(true);
+		}
+	});
+
+	// Global keyup
+	$(document).keyup(function(e){
+		// SHIFT
+		if (16 === e.keyCode) {
+			that.shiftPressed = false;
+		}
+	});
 
 	// trig KEYDOWN and KEYUP on the edition of any value in the partTable
 	$('.partTable').on('keydown', '.edition', function(e){
@@ -291,10 +362,6 @@ PartTable.prototype.listenEvents = function() {
 		else if (13 === e.keyCode) {
 			that.validateEdition();
 		}
-		// ESCAPE (=> cancel)
-		else if (27 === e.keyCode) {
-			that.cancelEdition();
-		}
 		// TAB (=> validate and edit next)
 		else if (9 === e.keyCode) {
 			event.preventDefault();
@@ -306,87 +373,60 @@ PartTable.prototype.listenEvents = function() {
 
 			that.validateEdition();
 
-			// shift+tab = previous
+			// SHIFT+TAB = previous
 			if(that.shiftPressed) {
+				// if editing the ref, jump to name
 				if('charac' === editing && 'ref' === charac) {
 					that.editCharac(part, 'name');
 				}
+				// else if editing any cirrent
 				else if ('current' === editing) {
+					// if the current is a max, jump to the typ of the same load
 					if('max' === typmax) {
 						that.editCurrent(part, load, 'typ');
 					}
+					// else, if the current is a typ
 					else {
-						let prevload = null;
-						that.tree.forEachLoad(function(loopload){
-							if(load !== undefined && load.id === loopload.id) {
-								if(null !== prevload) {
-									that.editCurrent(part, prevload, 'max');
-								}
-								else if(null === prevload) {
-									that.editCharac(part, 'ref');
-								}
-
-								return;
-							}
-							prevload = loopload;
-						});
+						let prevload = that.tree.getPreviousLoad(load);
+						// if their is a previous load, jump to its max
+						if(null !== prevload) {
+							that.editCurrent(part, prevload, 'max');
+						}
+						// else, jump to the ref
+						else {
+							that.editCharac(part, 'ref');
+						}
 					}
 				}
-
-
-
 			}
-			// tap = next
+			// TAB = next
 			else {
+				// if editing a charac
 				if('charac' === editing) {
+					// if editing the name, jump to the ref
 					if('name' === charac) {
 						that.editCharac(part, 'ref');
 					}
+					// if editing the ref, jump to the first load (if their is one)
 					else if ('ref' === charac) {
-						let done = false;
-						that.tree.forEachLoad(function(loopload){
-							if(!done) {
-								that.editCurrent(part, loopload, 'typ');
-								done = true;
-							}
-						});
+						let firstLoad = that.tree.getNextLoad(that.tree.getRoot());
+						if(null !== firstLoad) that.editCurrent(part, firstLoad, 'typ');
 					}
 				}
+				// else if editing any current
 				else if ('current' === editing) {
+					// if the current is a typ, jump to the max of the same load
 					if('typ' === typmax) {
 						that.editCurrent(part, load, 'max');
 					}
+					// else if the current is a max
 					else {
-						let prevload = null;
-						that.tree.forEachLoad(function(loopload){
-							if(null !== prevload && load.id === prevload.id) {
-								that.editCurrent(part, loopload, 'typ');
-								return;
-							}
-							prevload = loopload;
-						});
+						// jump to the typ of the next load (if their is one)
+						let nextLoad = that.tree.getNextLoad(load);
+						if(null !== nextLoad) that.editCurrent(part, nextLoad, 'typ');
 					}
 				}
 			}
 		}
 	});
-
-	// Shift is released
-	$(document).keydown(function(e){
-		// SHIFT
-		if (16 === e.keyCode) {
-			that.shiftPressed = true;
-		}
-	});
-
-	// Shift is released
-	$(document).keyup(function(e){
-		// SHIFT
-		if (16 === e.keyCode) {
-			that.shiftPressed = false;
-		}
-	});
-
-
-
 };

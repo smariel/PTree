@@ -323,8 +323,6 @@ Canvas.prototype.refresh = function() {
 	this.fabricCanvas.line=0;
 	this.fabricCanvas.col=0;
 	this.fabricCanvas.fabric_obj=[];
-	// compute all the consumptions
-	this.tree.refreshConsumptions();
 	// reprint the canvas by adding the root and all its children
 	this.addItems(this.tree.getRoot());
 	this.fabricCanvas.renderAll();

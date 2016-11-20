@@ -41,12 +41,14 @@ PTree.prototype.open = function() {
 
 	// read the content of the file
 	const fs = require('fs');
-	fs.readFile(this.filePath, 'utf8', function(err, data){
+	fs.readFile(this.filePath, 'utf8', function(err, datastr){
 		if (null !== err) {
 			alert(err);
 		}
 		else {
-			that.tree.fromString(data);
+			var data = JSON.parse(datastr);
+			that.tree.fromString(data.tree);
+			that.partList.fromString(data.partList);
 			that.clearHistory();
 			that.canvas.refresh();
 			that.setSaved();
@@ -88,8 +90,11 @@ PTree.prototype.save = function(saveas) {
 	fs.open(this.filePath, 'w+', function(err, fd) {
 		if(null === err) {
 			// write the data
-			var data = that.tree.toString();
-			fs.write(fd,data);
+			var data = {
+				tree: that.tree.toString(),
+				partList: that.partList.toString()
+			};
+			fs.write(fd,JSON.stringify(data));
 
 			// mark the workspace as saved
 			that.setSaved();
@@ -378,7 +383,10 @@ PTree.prototype.listenTreeMenu = function() {
 		// update the partList
 		that.partList.fromString(partListString);
 
-		// TODO
+		// update consumptions
+		that.tree.refreshConsumptions(that.partList);
+		that.canvas.refresh();
+		that.setUnsaved();
 	});
 
 

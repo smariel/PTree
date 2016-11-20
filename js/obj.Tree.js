@@ -45,6 +45,32 @@ Tree.prototype.getRoot = function() {
 };
 
 
+// return the next load in the list
+Tree.prototype.getNextLoad = function(load) {
+	for(let id = load.id+1; id < this.item_list.length; id++) {
+		let nextItem = this.getItem(id);
+		if(null !== nextItem && undefined !== nextItem && nextItem.isLoad()) {
+			return nextItem;
+		}
+	}
+
+	return null;
+};
+
+
+// return the previous load in the list
+Tree.prototype.getPreviousLoad = function(load) {
+	for(let id = load.id-1; id >= 0; id--) {
+		let previousItem = this.getItem(id);
+		if(null !== previousItem && undefined !== previousItem && previousItem.isLoad()) {
+			return previousItem;
+		}
+	}
+
+	return null;
+};
+
+
 // Create an item : root, source or load, whithout any connection with the canvas
 Tree.prototype.addItem = function(parent, type) {
 
@@ -88,20 +114,10 @@ Tree.prototype.addLoad = function(parent) {
 };
 
 
-// refresh the consumptions of each load of the tree view, based on the list view infos
-Tree.prototype.refreshConsumptions = function() {
-	this.forEachLoad(function(item){
-		item.characs.ityp = 0;
-		item.characs.imax = 0;
-
-		/*// TODO
-		powerTree.component.forEach(function(component) {
-			if(null !== component && undefined !== component.characs.consumption[item.id])
-			{
-				item.characs.ityp += component.characs.consumption[item.id].typ;
-				item.characs.imax += component.characs.consumption[item.id].max;
-			}
-		});*/
+// refresh the consumptions of each load based on the given partList
+Tree.prototype.refreshConsumptions = function(partList) {
+	this.forEachLoad(function(load){
+		load.refreshConsumption(partList);
 	});
 };
 
@@ -140,11 +156,14 @@ Tree.prototype.toString = function() {
 // Import a tree exported with .toString()
 Tree.prototype.fromString = function(str) {
 	// get all properties from the stringified object with items as strings
-	var tree = JSON.parse(str);
-	this.item_index = tree.item_index;
+	var treeProp = JSON.parse(str);
+
+	// reinit the tree with new values
+	this.item_list = [];
+	this.item_index = treeProp.item_index;
 
 	// for each item in the list
-	for(var item_str of tree.item_list) {
+	for(var item_str of treeProp.item_list) {
 		if(null === item_str) continue;
 
 		// get the properties of the item
