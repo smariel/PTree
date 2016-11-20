@@ -4,7 +4,9 @@ PTree aims to help building power supplies on electronics design.
 A first window is dedicated to build the tree itself by adding sources and loads.
 The second window lists all components with their consumption on each power supplies.
 The third window is a graphical summary of all consumption on the design.
-##
+
+![screenshot](https://raw.githubusercontent.com/smariel/PTree/master/docs/screenshot.png)
+
 ## Basic commands
 Simple installation using git and npm:
 
@@ -37,3 +39,6 @@ Where "xxx" must be replaced by:
  - lin64 (Linux 64 bits)
  - win32 (Windows 32 bits)
  - win64 (Windows 64 bits)
+
+Finally, a complete view of the objects imbrication can be found in /docs/synop.jpg
+![synoptic](https://raw.githubusercontent.com/smariel/PTree/master/docs/synop.jpg)
