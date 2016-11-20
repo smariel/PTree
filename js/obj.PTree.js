@@ -1,7 +1,7 @@
 var PTree = function(canvas_selector) {
 	this.tree		= new Tree();
 	this.canvas		= new Canvas(canvas_selector, this.tree);
-	this.partlist	= new PartList();
+	this.partList	= new PartList();
 
 	this.filePath	= null;
 	this.unsaved	= true;
@@ -373,7 +373,12 @@ PTree.prototype.listenTreeMenu = function() {
 		const {ipcRenderer} = require('electron');
 
 		// ask main.js to edit the item with the given data and wait for a response
-		ipcRenderer.sendSync('partTable-request', that.tree.toString(), that.partlist.toString());
+		var partListString = ipcRenderer.sendSync('partTable-request', that.tree.toString(), that.partList.toString());
+
+		// update the partList
+		that.partList.fromString(partListString);
+
+		// TODO
 	});
 
 

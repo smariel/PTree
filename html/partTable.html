@@ -15,14 +15,13 @@
 		<table class="partTable">
 			<thead>
 				<tr class="tr_top">
-					<th class="th_charac" colspan="4">Part Description</th>
+					<th class="th_charac" colspan="3">Part Description</th>
 					<th class="th_power"  colspan="2">Total Power</th>
 				</tr>
 				<tr class="tr_bottom">
 					<th class="th_charac">#</th>
 					<th class="th_charac">Name</th>
 					<th class="th_charac">Part Number</th>
-					<th class="th_charac">Function</th>
 					<th class="th_power th_typ">P<sub>TYP</sub></th>
 					<th class="th_power th_max">P<sub>MAX</sub></th>
 				</tr>
@@ -34,12 +33,16 @@
 		<div class="addPart myBtn">
 			<button><span class="fa fa-lg fa-plus"></span></button>
 		</div>
+		<div class="removePart myBtn">
+			<button><span class="fa fa-lg fa-trash"></span></button>
+		</div>
 	</body>
 
 	<!-- JS framworks and libraries -->
 	<script>
 		window.$ = window.jQuery = require('jquery');
 		require('bootstrap');
+		require('tablesorter')
 	</script>
 
 	<!-- application JS: functions & constructors -->

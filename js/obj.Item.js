@@ -168,7 +168,7 @@ Item.prototype.removeChildren = function() {
 	var descendants = this.getDescendants();
 
 	for (var i=0; i<descendants.length; ++i) {
-		delete this.tree.item_list[descendants[i]];
+		this.tree.deleteItem(descendants[i]);
 	}
 };
 
@@ -199,7 +199,7 @@ Item.prototype.remove = function() {
 	this.removeChildren();
 	// delete the item from its tree
 	// cannot splice because indexes must not change
-	delete this.tree.item_list[this.id];
+	this.tree.deleteItem(this.id);
 };
 
 

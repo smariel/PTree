@@ -158,12 +158,14 @@ $(".input_num").keypress(function(event) {
 });
 
 
-// Trigger ESCAPE press
+// Trigger key press
 $(document).keydown(function(event){
+	// ESCAPE
 	if(27 == event.which) {
 		// send the old data and close the window
 		close(itemData);
 	}
+	// ENTER
 	else if(13 == event.which) {
 		// update the item by passing its reference to a dedicated function
 		updateItem(itemData);

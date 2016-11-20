@@ -266,7 +266,7 @@ ipcMain.on('partTable-request', function(event, treeData, partlistData) {
 		width:  1024,
 		height: 768,
 		parent: appWindows.tree,
-		//modal:  true,
+		modal:  process.platform !== 'darwin',
 		resizable: true
 	});
 

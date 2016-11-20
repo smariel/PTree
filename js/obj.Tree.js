@@ -20,6 +20,19 @@ Tree.prototype.clear = function() {
 };
 
 
+// delete an item into the array
+Tree.prototype.deleteItem = function(id) {
+	delete this.item_list[id];
+};
+
+
+// set an item at the given id
+Tree.prototype.setItem = function(id, data) {
+	this.item_list[id] = data;
+	return this.item_list[id];
+};
+
+
 // get an item from its ID
 Tree.prototype.getItem = function(item_id) {
 	return this.item_list[item_id];
@@ -36,7 +49,7 @@ Tree.prototype.getRoot = function() {
 Tree.prototype.addItem = function(parent, type) {
 
 	var newItem = new Item(this.item_index, parent, type, this);
-	this.item_list[this.item_index++] = newItem;
+	this.setItem(this.item_index++, newItem);
 
 	// If it as a parent (if it is not the root...)
 	if(null !== parent) {
@@ -117,7 +130,7 @@ Tree.prototype.toString = function() {
 	tree.item_index = this.item_index;
 
 	this.forEachItem(function(item){
-		tree.item_list[item.id] = item.toString();
+		tree.setItem(item.id, item.toString());
 	});
 
 	return JSON.stringify(tree);
@@ -135,21 +148,22 @@ Tree.prototype.fromString = function(str) {
 		if(null === item_str) continue;
 
 		// get the properties of the item
-		var item = JSON.parse(item_str);
+		var itemProp = JSON.parse(item_str);
 
-		// create a new empty item
-		this.item_list[item.id] = new Item(item.id, null, item.type, null);
+		// create a new empty item (without giving a ref to Tree yet)
+		var newItem = new Item(itemProp.id, null, itemProp.type, null);
+		this.setItem(itemProp.id, newItem);
 
 		// for each property of the item
-		for(let i in this.item_list[item.id]) {
-			if(this.item_list[item.id].hasOwnProperty(i)) {
+		for(let i in newItem) {
+			if(newItem.hasOwnProperty(i)) {
 				// copy the property
-				this.item_list[item.id][i] = item[i];
+				newItem[i] = itemProp[i];
 			}
 		}
 
 		// copy a reference of this Tree in the item
-		this.item_list[item.id].tree = this;
+		newItem.tree = this;
 	}
 };
 
