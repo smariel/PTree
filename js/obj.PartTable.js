@@ -168,9 +168,11 @@ PartTable.prototype.clearCurrent = function(validate){
 	var part		= this.getEditedPart();
 	var load		= this.getEditedLoad();
 	var typmax	= this.getEditedTypMax();
+	var newval  = this.getEditedValue();
+	var oldval	= part.getConsumption(load, typmax);
 
 	// validate or not the data
-	var value = validate ? this.getEditedValue() : part.getConsumption(load, typmax);
+	var value = (validate && !isNaN(newval)) ? newval : oldval;
 
 	// update the consumption with the new value
 	part.setConsumption(value, load, typmax);
@@ -253,9 +255,11 @@ PartTable.prototype.getEditedCharac = function() {
 
 // select the given part
 PartTable.prototype.selectPart = function(part) {
+	var selectedPart = this.selectedPart;
+
 	this.validateEdition();
 
-	if(null !== this.selectedPart) {
+	if(null !== selectedPart) {
 		this.unselectPart(false);
 		$('.removePart').show();
 	}
@@ -276,6 +280,39 @@ PartTable.prototype.unselectPart = function(fade) {
 		$('.selected').removeClass('selected');
 		$('.removePart').fadeOut(fade?150:0);
 	}
+};
+
+
+
+// return the table as a CSV string
+PartTable.prototype.toCSV = function() {
+	var CSVstr = '';
+
+	var lineToCSV = function(selector) {
+		let str = '';
+		$(selector).each(function(i, elt){
+			let val = $(elt).text();
+			val = val.replace(/^\s+/, '');
+			val = val.replace(/\s+$/, '');
+			val = val.replace(/\n+/g, ' / ');
+			val = val.replace(/\s+/g, ' ');
+			str += '"' + val + '";';
+
+			let colspan = $(elt).attr('colspan');
+			if(undefined === colspan) colspan = 0;
+
+			for(let i=0; i < colspan; i++) {
+				str += '"";';
+			}
+		});
+		return str + '\n';
+	};
+
+	CSVstr = lineToCSV('.partTable thead .tr_top th');
+
+	return CSVstr;
+
+
 };
 
 
@@ -300,10 +337,20 @@ PartTable.prototype.listenEvents = function() {
 
 	// add a new empty part to the PartList
 	$('.removePart').click(function(){
-		that.partList.deletePart(that.selectedPart);
+		var partToDelete = that.selectedPart;
+		that.unselectPart(true);
+		that.partList.deletePart(partToDelete);
 		that.refresh();
 	});
 
+	// unselect any part when the emptyzone is clicked
+	$('.emptyzone').click(function(){
+		that.validateEdition();
+		that.unselectPart(true);
+
+		// TODO: remove this
+		console.log(that.toCSV());
+	});
 
 	// edit a charac
 	$('.partTable').on('click', '.td_charac', function() {

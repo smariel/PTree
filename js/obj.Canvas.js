@@ -93,9 +93,10 @@
 // Tree canvas object constructor
 // -----------------------------------------------------------------------------
 
-var Canvas = function(html_id, tree) {
+var Canvas = function(html_id, tree, partList) {
 
-	this.tree			=	tree; 			// a reference of the tree
+	this.tree			= tree; 				// a reference to the tree
+	this.partList		= partList;			// a reference to the partlist
 	this.html_id		= html_id;			// the html ID of the canvas
 	this.canvas$		= $('#'+html_id);	// reference to the jquery object
 	this.selectedItem	= null;				// by default, no selected item
@@ -355,6 +356,14 @@ Canvas.prototype.selectItem = function(item) {
 	ctrl.addClass('item_control_'+item.type);
 	ctrl.css({'box-shadow':'inset 0 -3px 0 0 '+item.characs.color});
 
+	// if the item is a load
+	if (item.isLoad()) {
+		this.showParts(item);
+	}
+	else {
+		this.hideParts();
+	}
+
 	// fadeIn the menu
 	$('#item_control').fadeIn(200);
 };
@@ -371,6 +380,7 @@ Canvas.prototype.unselectItem = function(fade) {
 	if(fade) {
 		$('#item_control').fadeOut(200);
 		$('.item_info').fadeOut(200);
+		this.hideParts();
 	}
 };
 
@@ -503,4 +513,38 @@ Canvas.prototype.toJPEGdataURL = function() {
 
 	// return the dataURL to be downloaded
 	return dataURL;
+};
+
+
+// Display a tab containing all the parts consuming on the given load
+Canvas.prototype.showParts = function(load) {
+	$("#part_table tbody").empty();
+
+	var noparts = true;
+	this.partList.forEachPart(function(part){
+		if(part.isConsuming(load)) {
+			noparts = false;
+			$("#part_table tbody").append(
+				`<tr>
+					<td class="part_data part_name">${part.characs.name}</td>
+					<td class="part_data part_ityp part_i">${part.getConsumption(load, 'typ')}</td>
+					<td class="part_data part_imax part_i">${part.getConsumption(load, 'max')}</td>
+				</tr>`);
+		}
+	});
+
+	if(noparts) {
+		$("#part_table tbody").append(
+			`<tr>
+				<td colspan="3" class="part_data part_nopart">No part found</td>
+			</tr>`);
+	}
+
+	$("#part_table").fadeIn(200);
+};
+
+
+// Hide the tab containing the parts
+Canvas.prototype.hideParts = function() {
+	$("#part_table").fadeOut(200);
 };

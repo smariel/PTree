@@ -111,3 +111,10 @@ function downloadDataURL(dataURL, name) {
 	document.body.removeChild(temporaryElement);
 	window.URL.revokeObjectURL(dataURL);
 }
+
+// Download a data in file
+function downloadData(filename, data) {
+	var blob = new Blob([data], {type: "octet/stream"});
+	var dataURL = window.URL.createObjectURL(blob);
+	downloadDataURL(filename, dataURL);
+}

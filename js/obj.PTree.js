@@ -1,7 +1,7 @@
 var PTree = function(canvas_selector) {
 	this.tree		= new Tree();
-	this.canvas		= new Canvas(canvas_selector, this.tree);
 	this.partList	= new PartList();
+	this.canvas		= new Canvas(canvas_selector, this.tree, this.partList);
 
 	this.filePath	= null;
 	this.unsaved	= true;

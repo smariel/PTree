@@ -1,11 +1,27 @@
 @import "colors.scss";
 
-.partTable {
-	min-width: 100%;
+html {
+	height: 100%;
 }
 
+body {
+	height: 100%;
+	display: flex;
+	flex-direction: column;
+}
+
+.partTable {
+	min-width: 100%;
+	flex-grow: 0;
+}
+
+.emptyzone {
+	flex-grow: 1;
+}
+
+
 // -----------------------------------------------------------------------------
-// part table header
+// part table thead
 // -----------------------------------------------------------------------------
 
 th
@@ -69,7 +85,7 @@ $thead_colors: (
 
 
 // -----------------------------------------------------------------------------
-// part table body
+// part table tbody
 // -----------------------------------------------------------------------------
 
 .partTable tr.selected {
@@ -113,10 +129,13 @@ $thead_colors: (
 	color: black;
 }
 
+.partTable td.td_charac:not(:first-child) {
+	text-align: left;
+}
 
 
 // -----------------------------------------------------------------------------
-// controls
+// floating controls
 // -----------------------------------------------------------------------------
 
 @mixin round-button($color: $teal, $size: 50px) {

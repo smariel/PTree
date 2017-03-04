@@ -32,13 +32,7 @@ Part.prototype.setConsumption = function(value, load, typmax) {
 
 // return the current in ampere on the given load
 Part.prototype.getConsumption = function(load, typmax) {
-	var consumption = this.characs.consumptions[load.id];
-	if(null !== consumption && undefined !== consumption) {
-		return consumption[typmax];
-	}
-	else {
-		return 0;
-	}
+	return (this.isConsuming(load)) ? this.characs.consumptions[load.id][typmax] : 0;
 };
 
 
@@ -60,6 +54,13 @@ Part.prototype.getPower = function(tree) {
 	}
 
 	return power;
+};
+
+
+// return true if the current on the given load is not zero
+Part.prototype.isConsuming = function(load) {
+	var consumptions = this.characs.consumptions[load.id];
+	return (null !== consumptions && undefined !== consumptions && (consumptions.typ > 0 || consumptions.max > 0));
 };
 
 

@@ -145,6 +145,46 @@ $info_border_color:		rgba(255,255,255,0.2);
 
 
 // -----------------------------------------------------------------------------
+//	Right section (part list)
+//
+
+#part_table {
+	display:		none;
+	position:	fixed;
+	top:			$topmenu_height;
+	bottom:		0;
+	right:		0;
+	background:	$light-blue;
+}
+
+.part_data,
+.part_title {
+	padding: 0 3px;
+}
+
+.part_i,
+.part_nopart {
+	text-align: center;
+}
+
+.part_title {
+	color:			white;
+	font-weight:	normal;
+	font-size:		12px;
+
+	text-align:		center;
+	border-radius:	0;
+	padding:			4px 12px;
+
+	white-space:	nowrap;
+
+	outline: none;
+
+	background-color: $teal;
+	border-bottom:	4px solid darken($teal, 10);
+}
+
+// -----------------------------------------------------------------------------
 //	Bottom menu (config)
 //
 
