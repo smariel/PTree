@@ -471,29 +471,6 @@ Canvas.prototype.displayInfo = function(item) {
 };
 
 
-// open a new window to edit the selected item
-Canvas.prototype.editSelected = function() {
-	// require ipcRenderer to send/receive message with main.js
-	const {ipcRenderer} = require('electron');
-
-	// prepare datas to be sent to the edit window
-	var item = this.getSelectedItem();
-	var data = {
-		id: item.id,
-		type: item.type,
-		characs: item.characs
-	};
-
-	// bind an event on the response from main.js
-	ipcRenderer.once('edit-request', (event, arg) => {
-		console.log(arg); // prints 'pong'
-	});
-
-	// ask main.js to edit the item with the given data
-	ipcRenderer.send('edit-item', JSON.stringify(data));
-};
-
-
 // Export the canvas as a JPEG image within a dataURL object
 Canvas.prototype.toJPEGdataURL = function() {
 	// save the reference of the eventual selected item (may be null)

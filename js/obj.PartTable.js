@@ -284,8 +284,8 @@ PartTable.prototype.unselectPart = function(fade) {
 
 
 
-// return the table as a CSV string
-PartTable.prototype.toCSV = function() {
+// return the table as a spreadsheet
+PartTable.prototype.toSpreadsheet = function() {
 	var CSVstr = '';
 
 	var lineToCSV = function(selector) {
@@ -325,7 +325,6 @@ PartTable.prototype.listenEvents = function() {
 		// request ipcRenderer to communicate with main.js
 		const {ipcRenderer} = require('electron');
 		// send data to main.js
-		console.log(that.partList);
 		ipcRenderer.send('partTable-window-close',that.partList.toString());
 	};
 
@@ -349,7 +348,7 @@ PartTable.prototype.listenEvents = function() {
 		that.unselectPart(true);
 
 		// TODO: remove this
-		console.log(that.toCSV());
+		console.log(that.toSpreadsheet());
 	});
 
 	// edit a charac
