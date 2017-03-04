@@ -138,7 +138,7 @@ $thead_colors: (
 // floating controls
 // -----------------------------------------------------------------------------
 
-@mixin round-button($color: $teal, $size: 50px) {
+@mixin round-button($color: $teal, $size: 50px, $transistion: 300ms) {
 	height:			$size;
 	width:			$size;
 	border-radius:	$size/2;
@@ -148,7 +148,7 @@ $thead_colors: (
 	color:			white;
 	background:		$color;
 
-	transition:		300ms ease;
+	transition:		all $transistion ease;
 	box-shadow:		0 2px 7px 1px rgba(0,0,0,0.3);
 
 	&:hover {
@@ -181,5 +181,70 @@ $thead_colors: (
 
 	& > button {
 		@include round-button($red);
+	}
+}
+
+.showMore {
+	z-index: 10;
+	& > button {
+		@include round-button($yellow);
+	}
+}
+
+$more_buttons: (
+	0 :	'.importTable',
+	1 :	'.exportTemplate',
+	2 :	'.exportTable'
+);
+
+$more_buttons_color: (
+	0 :	$cyan,
+	1 :	$blue,
+	2 :	$purple
+);
+
+@for $i from 0 through 2 {
+	#{map-get($more_buttons, $i)} {
+		z-index: $i;
+		& > button {
+			@include round-button(map-get($more_buttons_color, $i), 0);
+			transition-delay: #{$i*30}ms;
+		}
+	}
+}
+
+.more .myBtn:not(.showMore) {
+	transition: width 400ms ease;
+	width: 0;
+	& > button {
+		opacity:	0;
+		font-size:	0;
+		box-shadow:	0 2px 5px 0px rgba(0,0,0,0.3);
+	}
+}
+
+.more {
+	position: fixed;
+	bottom: 10px;
+	right: 10px;
+
+	display: flex;
+	align-items: center;
+	justify-content: flex-end;
+
+	&:hover {
+		width: 200px;
+		& .myBtn:not(.showMore) {
+			display: block;
+			width: 50px;
+			& > button {
+				opacity:			1;
+				font-size:		12px;
+				$newsize:		40px;
+				width:			$newsize;
+				height:			$newsize;
+				border-radius:	$newsize/2;
+			}
+		}
 	}
 }
