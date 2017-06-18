@@ -100,21 +100,43 @@ function numberToSi(number,digits) {
 
 
 // Downoad an item passed as a dataURL object
-function downloadDataURL(dataURL, name) {
+function downloadDataURL(dataURL, fileName) {
 	// Create an invisible <a> and force a download on it
 	var temporaryElement = document.createElement('a');
 	temporaryElement.style = "display: none";
 	temporaryElement.href = dataURL;
-	temporaryElement.download = name;
+	temporaryElement.download = fileName;
 	document.body.appendChild(temporaryElement);
 	temporaryElement.click();
 	document.body.removeChild(temporaryElement);
 	window.URL.revokeObjectURL(dataURL);
 }
 
+
 // Download a data in file
-function downloadData(filename, data) {
-	var blob = new Blob([data], {type: "octet/stream"});
-	var dataURL = window.URL.createObjectURL(blob);
-	downloadDataURL(filename, dataURL);
+function downloadData(data, fileName) {
+	var blob = new Blob([data],{type:"application/octet-stream"});
+	var dataURL = URL.createObjectURL(blob);
+	downloadDataURL(dataURL, fileName);
+}
+
+
+// Download a table in a fileName
+// require jQuery and XLSX to be included
+function downloadTable(jQuery_table, fileName) {
+	// Create a workbook from the table passed as a jQuery element
+	// this entire code is from the XLSX documentation...
+	var workbook = XLSX.utils.table_to_book(jQuery_table[0]);
+	var wopts = { bookType:'xlsx', bookSST:false, type:'binary' };
+	var wbout = XLSX.write(workbook,wopts);
+	function s2ab(s) {
+		var buf = new ArrayBuffer(s.length);
+		var view = new Uint8Array(buf);
+		for (var i=0; i!=s.length; ++i) view[i] = s.charCodeAt(i) & 0xFF;
+		return buf;
+	}
+	var data = s2ab(wbout);
+
+	// download the data into a file
+	downloadData(data, fileName);
 }

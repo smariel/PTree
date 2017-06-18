@@ -283,39 +283,6 @@ PartTable.prototype.unselectPart = function(fade) {
 };
 
 
-
-// return the table as a spreadsheet
-PartTable.prototype.toSpreadsheet = function() {
-	var CSVstr = '';
-
-	var lineToCSV = function(selector) {
-		let str = '';
-		$(selector).each(function(i, elt){
-			let val = $(elt).text();
-			val = val.replace(/^\s+/, '');
-			val = val.replace(/\s+$/, '');
-			val = val.replace(/\n+/g, ' / ');
-			val = val.replace(/\s+/g, ' ');
-			str += '"' + val + '";';
-
-			let colspan = $(elt).attr('colspan');
-			if(undefined === colspan) colspan = 0;
-
-			for(let i=0; i < colspan; i++) {
-				str += '"";';
-			}
-		});
-		return str + '\n';
-	};
-
-	CSVstr = lineToCSV('.partTable thead .tr_top th');
-
-	return CSVstr;
-
-
-};
-
-
 // Listen to all event on the page
 PartTable.prototype.listenEvents = function() {
 	var that = this;
@@ -342,13 +309,25 @@ PartTable.prototype.listenEvents = function() {
 		that.refresh();
 	});
 
+	// export the table to excel
+	$('.exportTable').click(function(){
+		downloadTable($('.partTable'), 'ptree.xlsx');
+	});
+
+	// export an empty pre-formated excel
+	$('.exportTemplate').click(function(){
+		downloadTable($('.partTable thead'),'template.xlsx');
+	});
+
+	// import the data from the excel
+	$('.importTable').click(function(){
+		// TODO: code importTable
+	});
+
 	// unselect any part when the emptyzone is clicked
 	$('.emptyzone').click(function(){
 		that.validateEdition();
 		that.unselectPart(true);
-
-		// TODO: remove this
-		console.log(that.toSpreadsheet());
 	});
 
 	// edit a charac

@@ -118,7 +118,7 @@ var Canvas = function(html_id, tree, partList) {
 
 // add any item to the canvas
 Canvas.prototype.addItem = function(item) {
-	// TODO: find why the following line is needed when exporting as JPEG...
+	// FIXME: find why the following line is needed when exporting as JPEG...
 	this.fabricCanvas.setBackgroundColor('#FFFFFF');
 
 	var parent = item.getParent();

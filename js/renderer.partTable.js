@@ -1,6 +1,6 @@
 $(function () {
 	// enable all tooltips
-	$('[data-toggle="tooltip"]').tooltip({delay: { show: 1000, hide: 100 }});
+	$('[data-toggle="tooltip"]').tooltip({delay: { show: 1000, hide: 0 }, trigger: 'hover'});
 
 	// init the two mains object of the partlist
 	var partTable = new PartTable();
