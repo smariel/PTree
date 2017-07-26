@@ -72,10 +72,7 @@ PartTable.prototype.refresh = function() {
 // print a UI to edit a charac
 PartTable.prototype.editCharac = function(part, charac) {
    // if a previous element whas in edition
-   if ('current' === this.editing) {
-      this.validateEdition();
-   }
-   else if ('charac' === this.editing) {
+   if ('charac' === this.editing) {
       // get the previous edited element
       let editedPart    = this.getEditedPart();
       let editedCharac  = this.getEditedCharac();
@@ -84,12 +81,9 @@ PartTable.prototype.editCharac = function(part, charac) {
       if(part.id === editedPart.id && charac === editedCharac) {
          return;
       }
-      // else, validate the edition and continue
-      else {
-         this.validateEdition();
-      }
    }
 
+   // validate the current edition and select the new part
    this.selectPart(part);
 
    // mark as editing
@@ -108,10 +102,7 @@ PartTable.prototype.editCharac = function(part, charac) {
 // print a UI to edit a current
 PartTable.prototype.editCurrent = function(part, load, typmax) {
    // if a previous element whas in edition
-   if ('charac' === this.editing) {
-      this.validateEdition();
-   }
-   else if ('current' === this.editing) {
+   if ('current' === this.editing) {
       // get the previous edited element
       let editedPart   = this.getEditedPart();
       let editedLoad   = this.getEditedLoad();
@@ -120,10 +111,6 @@ PartTable.prototype.editCurrent = function(part, load, typmax) {
       // if the edited element is the same, do nothing
       if(part.id === editedPart.id && load.id === editedLoad.id && typmax === editedTypMax) {
          return;
-      }
-      // else, validate the edition and continue
-      else {
-         this.validateEdition();
       }
    }
 
@@ -480,8 +467,6 @@ PartTable.prototype.listenEvents = function() {
          var typmax  = that.getEditedTypMax();
          var charac  = that.getEditedCharac();
          var editing = that.editing;
-
-         that.validateEdition();
 
          // SHIFT+TAB = previous
          if(that.shiftPressed) {
