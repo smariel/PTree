@@ -289,16 +289,11 @@ Item.prototype.getInputCurrent = function(valType) {
 	if(this.isLDO()) {
 		i_in = this.getOutputCurrent(valType) + parseFloat(this.characs['iq_'+valType]);
 	}
-	// for DC/DC, i_in = p_in / v_in
+	// for DC/DC, i_in = p_in / v_in_typ
 	else if (this.isDCDC()) {
-		if			("min" == valType) i_in = this.getInputPower('min') / this.getInputVoltage('max');
-		else if	("typ" == valType) i_in = this.getInputPower('typ') / this.getInputVoltage('typ');
-		else if	("max" == valType) i_in = this.getInputPower('max') / this.getInputVoltage('min');
-
-		// correct division by 0 (if V=0)
-		if(isNaN(i_in)) i_in = 0.0;
+      i_in = (0 == this.getInputVoltage('typ')) ? 0.0 : this.getInputPower(valType) / this.getInputVoltage('typ');
 	}
-	// for loads, i_in is set by user
+	// for loads, i_in is set by the partList
 	else if (this.isLoad()) {
 		i_in = parseFloat(this.characs['i'+valType]);
 	}
@@ -329,8 +324,8 @@ Item.prototype.getInputPower = function(valType) {
 
 	// if the item is a load or a LDO
 	if(this.isLoad() || this.isLDO())	{
-		// p_in = v_in * i_in
-		p_in = this.getInputVoltage(valType) * this.getInputCurrent(valType);
+		// p_in = v_in_typ * i_in
+		p_in = this.getInputVoltage('typ') * this.getInputCurrent(valType);
 	}
 	// if the item is a DC/DC
 	else if (this.isDCDC()) {
@@ -349,8 +344,8 @@ Item.prototype.getOutputPower = function(valType) {
 
 	// only sources have output
 	if(this.isSource()) {
-		// p_out = v_out * i_out
-		p_out = this.getOutputVoltage(valType) * this.getOutputCurrent(valType);
+		// p_out = v_out_typ * i_out
+		p_out = this.getOutputVoltage('typ') * this.getOutputCurrent(valType);
 	}
 
 	return p_out;
