@@ -24,7 +24,7 @@ bin
 
 
 # OS generated files
-#--------------------
+#-------------------
 .DS_Store
 .DS_Store?
 ._*
@@ -32,3 +32,8 @@ bin
 .Trashes
 ehthumbs.db
 Thumbs.db
+
+
+# Other files
+#------------
+docs/equations.pages
