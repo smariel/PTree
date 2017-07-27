@@ -1,22 +1,22 @@
 @import "colors.scss";
 
 html {
-	height: 100%;
+   height: 100%;
 }
 
 body {
-	height: 100%;
-	display: flex;
-	flex-direction: column;
+   height:         100%;
+   display:        flex;
+   flex-direction: column;
 }
 
 .partTable {
-	min-width: 100%;
-	flex-grow: 0;
+   min-width: 100%;
+   flex-grow: 0;
 }
 
 .emptyzone {
-	flex-grow: 1;
+   flex-grow: 1;
 }
 
 
@@ -24,63 +24,55 @@ body {
 // part table thead
 // -----------------------------------------------------------------------------
 
-th
-{
-	color:			white;
-	font-weight:	normal;
-	font-size:		12px;
-
-	text-align:		center;
-	border-radius:	0;
-	padding:			4px 12px;
-
-	white-space:	nowrap;
-
-	outline: none;
+th {
+   color:         white;
+   font-weight:   normal;
+   font-size:     12px;
+   text-align:    center;
+   border-radius: 0;
+   padding:       4px 12px;
+   white-space:   nowrap;
+   outline:       none;
 }
 
 .tr_bottom th {
-	border-bottom:	4px solid;
+   border-bottom: 4px solid;
 }
-
-$thead_colors: (
-	charac:	$teal,
-	current:	$grey,
-	power:	$red
-);
+$thead_colors: ( charac: $teal, current: $grey, power: $red );
 
 @each $pos in 'charac' 'current' 'power' {
-	$color1: map-get($thead_colors, #{$pos});
-	$color2: darken($color1, 10);
+   $color1: map-get($thead_colors, #{$pos});
+   $color2: darken($color1, 10);
 
-	.th_#{$pos} {
-		background-color: $color1;
-	}
+   .th_#{$pos} {
+      background-color: $color1;
+   }
 
-	.tr_bottom  .th_#{$pos} {
-		border-color: $color2;
-		&:hover {
-			background-color: $color2;
-		}
-	}
+   .tr_bottom .th_#{$pos} {
+      border-color: $color2;
+
+      &:hover {
+         background-color: $color2;
+      }
+   }
 }
 
 .item_charac {
-	display: block;
+   display: block;
 }
 
 @each $dir in 'Asc' 'Desc' {
-	.tablesorter-header#{$dir} {
-		background-image: url('../img/chevron-#{$dir}.png');
-		background-repeat: no-repeat;
-		background-position: center right;
+   .tablesorter-header#{$dir} {
+      background-image:    url('../img/chevron-#{$dir}.png');
+      background-repeat:   no-repeat;
+      background-position: center right;
 
-		@each $pos in 'charac' 'current' 'power' {
-			&.th_#{$pos} {
-				background-color: darken(map-get($thead_colors, #{$pos}), 10);
-			}
-		}
-	}
+      @each $pos in 'charac' 'current' 'power' {
+         &.th_#{$pos} {
+            background-color: darken(map-get($thead_colors, #{$pos}), 10);
+         }
+      }
+   }
 }
 
 
@@ -89,48 +81,47 @@ $thead_colors: (
 // -----------------------------------------------------------------------------
 
 .partTable tr.selected {
-	background-color: lighten($cyan, 40);
+   background-color: lighten($cyan, 40);
 }
 
 .partTable tr:nth-child(even):not(.selected) {
-	background-color: rgba(0,0,0,0.05);
+   background-color: rgba(0,0,0,0.05);
 }
 
-
 .partTable td {
-	text-align: center;
-	padding: 2px;
+   text-align: center;
+   padding:    2px;
 
-	&.td_editable:hover {
-		background-color: rgba(0,0,0,0.15);
-	}
+   &.td_editable:hover {
+      background-color: rgba(0,0,0,0.15);
+   }
 }
 
 .partTable td.td_typ {
-	border-left: 1px solid rgba(0,0,0,0.2);
-	border-right: 1px solid rgba(0,0,0,0.05);
+   border-left:  1px solid rgba(0,0,0,0.2);
+   border-right: 1px solid rgba(0,0,0,0.05);
 }
 
 .partTable td.td_current[data-value='0'],
 .partTable td.td_power[data-value='0'] {
-	color: rgba(0,0,0,0.2);
+   color: rgba(0,0,0,0.2);
 }
 
 .partTable td.td_charac > .edition {
-	width: 100px;
+   width: 100px;
 }
 
 .partTable td.td_current > .edition {
-	width: 50px;
+   width: 50px;
 }
 
 .edition {
-	text-align: center;
-	color: black;
+   text-align: center;
+   color: black;
 }
 
 .partTable td.td_charac:not(:first-child) {
-	text-align: left;
+   text-align: left;
 }
 
 
@@ -139,112 +130,104 @@ $thead_colors: (
 // -----------------------------------------------------------------------------
 
 @mixin round-button($color: $teal, $size: 50px, $transistion: 300ms) {
-	height:			$size;
-	width:			$size;
-	border-radius:	$size/2;
-	display:			block;
-	border:			none;
-	outline:			0;
-	color:			white;
-	background:		$color;
+   height:        $size;
+   width:         $size;
+   border-radius: $size/2;
+   display:       block;
+   border:        none;
+   outline:       0;
+   color:         white;
+   background:    $color;
+   transition:    all $transistion ease;
+   box-shadow:    0 2px 7px 1px rgba(0,0,0,0.3);
 
-	transition:		all $transistion ease;
-	box-shadow:		0 2px 7px 1px rgba(0,0,0,0.3);
+   &:hover {
+      background: darken($color, 10);
+      transition: 150ms ease;
+   }
 
-	&:hover {
-		background: darken($color, 10);
-		transition:	150ms ease;
-	}
-
-	&:active {
-		background: darken($color, 15);
-		transition: 100ms ease;
-	}
+   &:active {
+      background: darken($color, 15);
+      transition: 100ms ease;
+   }
 }
 
-
 .addPart {
-	position:	fixed;
-	bottom:		10px;
-	left:			10px;
+   position: fixed;
+   bottom:   10px;
+   left:     10px;
 
-	& > button {
-		@include round-button($teal);
-	}
+   & > button {
+      @include round-button($teal);
+   }
 }
 
 .removePart {
-	position:	fixed;
-	bottom:		10px;
-	left:			70px;
-	display:		none;
+   position: fixed;
+   bottom:   10px;
+   left:     70px;
+   display:  none;
 
-	& > button {
-		@include round-button($red);
-	}
+   & > button {
+      @include round-button($red);
+   }
 }
 
 .showMore {
-	z-index: 10;
-	& > button {
-		@include round-button($yellow);
-	}
+   z-index: 10;
+
+   & > button {
+      @include round-button($yellow);
+   }
 }
 
-$more_buttons: (
-	0 :	'.importTable',
-	1 :	'.exportTemplate',
-	2 :	'.exportTable'
-);
-
-$more_buttons_color: (
-	0 :	$cyan,
-	1 :	$blue,
-	2 :	$purple
-);
-
+$more_buttons: ( 0 : '.importTable', 1 : '.exportTemplate', 2 : '.exportTable' );
+$more_buttons_color: ( 0 : $cyan, 1 : $blue, 2 : $purple );
 @for $i from 0 through 2 {
-	#{map-get($more_buttons, $i)} {
-		z-index: $i;
-		& > button {
-			@include round-button(map-get($more_buttons_color, $i), 0);
-			transition-delay: #{$i*30}ms;
-		}
-	}
+   #{map-get($more_buttons, $i)} {
+      z-index: $i;
+
+      & > button {
+         @include round-button(map-get($more_buttons_color, $i), 0);
+         transition-delay: #{$i*30}ms;
+      }
+   }
 }
 
 .more .myBtn:not(.showMore) {
-	transition: width 400ms ease;
-	width: 0;
-	& > button {
-		opacity:	0;
-		font-size:	0;
-		box-shadow:	0 2px 5px 0px rgba(0,0,0,0.3);
-	}
+   transition: width 400ms ease;
+   width:      0;
+
+   & > button {
+      opacity:    0;
+      font-size:  0;
+      box-shadow: 0 2px 5px 0 rgba(0,0,0,0.3);
+   }
 }
 
 .more {
-	position: fixed;
-	bottom: 10px;
-	right: 10px;
+   position:        fixed;
+   bottom:          10px;
+   right:           10px;
+   display:         flex;
+   align-items:     center;
+   justify-content: flex-end;
 
-	display: flex;
-	align-items: center;
-	justify-content: flex-end;
+   &:hover {
+      width: 200px;
 
-	&:hover {
-		width: 200px;
-		& .myBtn:not(.showMore) {
-			display: block;
-			width: 50px;
-			& > button {
-				opacity:			1;
-				font-size:		12px;
-				$newsize:		40px;
-				width:			$newsize;
-				height:			$newsize;
-				border-radius:	$newsize/2;
-			}
-		}
-	}
+      & .myBtn:not(.showMore) {
+         display: block;
+         width:   50px;
+
+         & > button {
+            opacity:       1;
+            font-size:     12px;
+            $newsize:      40px;
+            width:         $newsize;
+            height:        $newsize;
+            border-radius: $newsize/2;
+         }
+      }
+   }
 }

@@ -1,100 +1,96 @@
 @import "colors.scss";
 
 form {
-	display: flex;
+   display: flex;
 }
 
 menu {
-	position: fixed;
-	right: 0;
-	bottom: 0;
-	margin: 15px;
-	text-align: right;
+   position: fixed;
+   right: 0;
+   bottom: 0;
+   margin: 15px;
+   text-align: right;
 }
 
-
-html,
-body
-{
-	margin: 0;
-	padding: 10px 0 0 0;
+body,
+html {
+   margin: 0;
+   padding: 10px 0 0;
 }
 
 h3 {
-	margin-top: 0;
+   margin-top: 0;
 }
 
 @mixin mybtn($txt-color, $bg-color) {
-	text-transform: uppercase;
-	background: none;
-	border: none;
-	color: $txt-color;
-	border-radius: 2px;
+   text-transform: uppercase;
+   background:     none;
+   border:         none;
+   color:          $txt-color;
+   border-radius:  2px;
 
-	&:hover {
-		background-color: $bg-color;
-		color: $txt-color;
-	}
+   &:hover {
+      background-color: $bg-color;
+      color:            $txt-color;
+   }
 
-	&:active {
-		background-color: $bg-color;
-	}
+   &:active {
+      background-color: $bg-color;
+   }
 }
 
 .mybtn {
-	text-transform: uppercase;
-	background: none;
-	border: none;
-	border-radius: 2px;
-	padding: 6px 20px;
-	transition: 150ms ease;
-	outline: none;
+   text-transform: uppercase;
+   background:     none;
+   border:         none;
+   border-radius:  2px;
+   padding:        6px 20px;
+   transition:     150ms ease;
+   outline:        none;
 }
 
 .mybtn-save {
-	margin-left: 		5px;
-	background-color: $teal;
-	color: 				white;
+   margin-left:      5px;
+   background-color: $teal;
+   color:            white;
 
-	&:hover {
-		background-color: darken($teal, 5);
-	}
+   &:hover {
+      background-color: darken($teal, 5);
+   }
 
-	&:active,
-	&:focus {
-		background-color: darken($teal, 10);
-	}
+   &:active,
+   &:focus {
+      background-color: darken($teal, 10);
+   }
 }
 
 .mybtn-cancel {
-	background: white;
-	color: $red	;
+   background: white;
+   color:      $red;
 
-	&:hover {
-		background-color: $red;
-		color: white;
-	}
+   &:hover {
+      background-color: $red;
+      color:            white;
+   }
 
-	&:active,
-	&:focus {
-		background-color: darken($red, 15);
-		color: 				white;
-	}
+   &:active,
+   &:focus {
+      background-color: darken($red, 15);
+      color:            white;
+   }
 }
 
 /*
-
-
 #source_color_label, #load_color_label {
-	position: static;
+   position: static;
 }
 
 body {
-	overflow: hidden;
+   overflow: hidden;
 }
 
 form {
-	display: flex;
-	justify-content: center;
+   display: flex;
+   justify-content: center;
 }
 */

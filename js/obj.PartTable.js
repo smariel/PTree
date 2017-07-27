@@ -1,7 +1,7 @@
 // -----------------------------------------------------------------------------
-//    PartTable constructor
+// PartTable constructor
 //    A PartTable contains a partlist associated with a tree
-//      It provides methods to manipulate those parts within a <table> element
+//    It provides methods to manipulate those parts within a <table> element
 // -----------------------------------------------------------------------------
 
 var PartTable = function() {

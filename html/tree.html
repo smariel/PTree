@@ -1,206 +1,207 @@
 <!DOCTYPE html>
 <html>
 
-	<head>
-		<meta charset="UTF-8">
-		<title>PTree</title>
+   <head>
+      <meta charset="UTF-8">
+      <title>PTree</title>
 
-		<!-- CSS -->
-		<link rel="stylesheet" href="../node_modules/bootstrap/dist/css/bootstrap.min.css">
-		<link rel="stylesheet" href="../node_modules/font-awesome/css/font-awesome.min.css">
-		<link rel="stylesheet" href="../css/tree.css">
-	</head>
+      <!-- CSS -->
+      <link rel="stylesheet" href="../node_modules/bootstrap/dist/css/bootstrap.min.css">
+      <link rel="stylesheet" href="../node_modules/font-awesome/css/font-awesome.min.css">
+      <link rel="stylesheet" href="../css/tree.css">
+   </head>
 
-	<body>
-		<!-- Top Menu -->
-		<nav id="top_menu" class="navbar">
-			<ul id="windows_control" class="nav navbar-nav navbar-left">
-				<li id="bt_partTable"		><a																																												><span class="fa fa-lg fa-microchip"		></span> Part list</a></li>
-				<li id="bt_stats"				><a																																												><span class="fa fa-lg fa-pie-chart"		></span> Stats</a></li>
-			</ul>
-			<ul id="canvas_control" class="nav navbar-nav navbar-left">
-				<li id="bt_clear"				><a data-toggle="tooltip" data-placement="bottom" title="Erase everyghing"																					><span class="fa fa-lg fa-trash-o"			></span> Clear</a></li>
-				<li id="bt_addrootsource"	><a data-toggle="tooltip" data-placement="bottom" title="Add&#160a&#160new&#160voltage source&#160or&#160regulator"							><span class="fa fa-lg fa-plus"				></span> Source</a></li>
-			</ul>
-			<ul id="item_control" class="nav navbar-nav navbar-left">
-				<li id="bt_remove"			><a data-toggle="tooltip" data-placement="bottom" title="Delete the selected&#160item"																	><span class="fa fa-lg fa-times"				></span> Remove</a></li>
-				<li id="bt_edit"				><a data-toggle="tooltip" data-placement="bottom" title="Modify the selected&#160item"																	><span class="fa fa-lg fa-pencil"			></span> Edit</a></li>
-				<li id="bt_addsource"		><a data-toggle="tooltip" data-placement="bottom" title="Add&#160a&#160voltage&#160regulator downstream&#160the&#160selected&#160item"	><span class="fa fa-lg fa-plus-square"		></span> Source</a></li>
-				<li id="bt_addload"			><a data-toggle="tooltip" data-placement="bottom" title="Add&#160a&#160new&#160plane downstream&#160the&#160selected&#160item"			><span class="fa fa-lg fa-plus-circle"		></span> Load</a></li>
-				<li id="bt_up"					><a data-toggle="tooltip" data-placement="bottom" title="Move&#160up the&#160selected&#160item"														><span class="fa fa-lg fa-arrow-up"			></span> Up</a></li>
-				<li id="bt_down"				><a data-toggle="tooltip" data-placement="bottom" title="Move&#160down the&#160selected&#160item"													><span class="fa fa-lg fa-arrow-down"		></span> Down</a></li>
-			</ul>
-			<ul id="global_control" class="nav navbar-nav navbar-right">
-				<li id="bt_undo"				><a data-toggle="tooltip" data-placement="bottom" title="Undo"																									><span class="fa fa-lg fa-undo"				></span></a></li>
-				<li id="bt_redo"				><a data-toggle="tooltip" data-placement="bottom" title="Redo"																									><span class="fa fa-lg fa-repeat"			></span></a></li>
-				<li id="bt_open"				><a data-toggle="tooltip" data-placement="bottom" title="Open"																									><span class="fa fa-lg fa-folder-open"		></span></a></li>
-				<li id="bt_save"				><a data-toggle="tooltip" data-placement="bottom" title="Save"																									><span class="fa fa-lg fa-floppy-o"			></span></a></li>
-				<li id="bt_saveas"			><a data-toggle="tooltip" data-placement="bottom" title="Save&#160As..."																					><span class="fa fa-lg fa-files-o"			></span></a></li>
-				<li id="bt_export_img"		><a data-toggle="tooltip" data-placement="bottom" title="Export&#160image"																					><span class="fa fa-lg fa-file-image-o"	></span></a></li>
-				<li id="bt_config"			><a data-toggle="tooltip" data-placement="bottom" title="Options"																								><span class="fa fa-lg fa-sliders"			></span></a></li>
-			</ul>
-		</nav>
-
-
-		<!-- Section1 : Tree -->
-		<section>
-			<canvas id="canvas" class="canvas" width="1000" height="600"></canvas>
-		</section>
-
-		<!-- Div for info around items -->
-		<aside>
-			<div id="item_info_left" class="item_info">
-				<div class="item_info_data">
-					<table>
-						<thead>
-							<tr>
-								<th colspan="3">Input</th>
-							</tr>
-							<tr>
-								<th>typ</th>
-								<th>max</th>
-							</tr>
-						</thead>
-						<tbody>
-							<tr>
-								<td id="vin_typ"></td>
-								<td id="vin_max"></td>
-							</tr>
-							<tr>
-								<td id="iin_typ"></td>
-								<td id="iin_max"></td>
-							</tr>
-							<tr>
-								<td id="pin_typ"></td>
-								<td id="pin_max"></td>
-							</tr>
-						</tbody>
-					</table>
-				</div>
-				<div class="item_info_border"></div>
-			</div>
-			<div id="item_info_right" class="item_info">
-				<div class="item_info_data">
-					<table>
-						<thead>
-							<tr>
-								<th colspan="3">Output</th>
-							</tr>
-							<tr>
-								<th>typ</th>
-								<th>max</th>
-							</tr>
-						</thead>
-						<tbody>
-							<tr>
-								<td id="vout_typ"></td>
-								<td id="vout_max"></td>
-							</tr>
-							<tr>
-								<td id="iout_typ"></td>
-								<td id="iout_max"></td>
-							</tr>
-							<tr>
-								<td id="pout_typ"></td>
-								<td id="pout_max"></td>
-							</tr>
-						</tbody>
-					</table>
-				</div>
-				<div class="item_info_border"></div>
-			</div>
-			<div id="item_info_center" class="item_info">
-				<div class="item_info_data">
-					<table>
-						<thead>
-							<tr>
-								<th colspan="3">Loss</th>
-							</tr>
-							<tr>
-								<th>typ</th>
-								<th>max</th>
-							</tr>
-						</thead>
-						<tbody>
-							<tr>
-								<td id="loss_typ"></td>
-								<td id="loss_max"></td>
-							</tr>
-						</tbody>
-					</table>
-				</div>
-				<div class="item_info_border"></div>
-			</div>
-		</aside>
-
-		<!-- Part table for selected load -->
-		<aside id="part_table">
-			<table>
-				<thead>
-					<tr>
-						<th class="part_title part_name">Part</th>
-						<th class="part_title part_i part_ityp">I<sub>TYP</sub></th>
-						<th class="part_title part_i part_imax">I<sub>MAX</sub></th>
-					</tr>
-				</thead>
-				<tbody></tbody>
-			</table>
-		</aside>
-
-		<!-- Configuration menu -->
-		<aside id="bottom_menu">
-			<form id="config_tree">
-				<p class="config">
-					<label for="config_info">
-						<input id="config_info" data-config="show_info" type="checkbox" class="config_input config_checkbox" />
-						Value
-					</label>
-				</p>
-				<p class="config">
-					<label for="config_name">
-						<input id="config_name" data-config="show_name" type="checkbox" class="config_input config_checkbox" />
-						Name
-					</label>
-				</p>
-				<p class="config">
-					<label for="config_ref">
-						<input id="config_ref" data-config="show_ref" type="checkbox" class="config_input config_checkbox" />
-						Part Number
-					</label>
-				</p>
-				<p class="config">
-					<label for="config_itemwidth">Item width </label><br />
-					<input id="config_itemwidth" data-config="cell_width" class="config_input config_range" type="range" min="150" max="500" value="300" step="10" />
-				</p>
-				<p class="config">
-					<label for="config_itemheight">Item height </label><br />
-					<input id="config_itemheight" data-config="cell_height" class="config_input config_range" type="range" min="30" max="200" value="300" step="10" />
-				</p>
-			</form>
-		</aside>
-	</body>
-
-	<!-- JS framworks and libraries -->
-
-	<script>
-		window.$ = window.jQuery = require('jquery');
-		require('bootstrap');
-		require('fabric');
-	</script>
+   <body>
+      <!-- Top Menu -->
+      <nav id="top_menu" class="navbar">
+         <ul id="windows_control" class="nav navbar-nav navbar-left">
+            <li id="bt_partTable"><a><span class="fa fa-lg fa-microchip"></span> Part list</a></li>
+            <li id="bt_stats"    ><a><span class="fa fa-lg fa-pie-chart"></span> Stats</a></li>
+         </ul>
+         <ul id="canvas_control" class="nav navbar-nav navbar-left">
+            <li id="bt_clear"        ><a data-toggle="tooltip" data-placement="bottom" title="Erase everyghing"                                                            ><span class="fa fa-lg fa-trash-o"     ></span> Clear</a></li>
+            <li id="bt_addrootsource"><a data-toggle="tooltip" data-placement="bottom" title="Add&#160a&#160new&#160voltage source&#160or&#160regulator"                   ><span class="fa fa-lg fa-plus"        ></span> Source</a></li>
+         </ul>
+         <ul id="item_control" class="nav navbar-nav navbar-left">
+            <li id="bt_remove"      ><a data-toggle="tooltip" data-placement="bottom" title="Delete the selected&#160item"                                                 ><span class="fa fa-lg fa-times"       ></span> Remove</a></li>
+            <li id="bt_edit"        ><a data-toggle="tooltip" data-placement="bottom" title="Modify the selected&#160item"                                                 ><span class="fa fa-lg fa-pencil"      ></span> Edit</a></li>
+            <li id="bt_addsource"   ><a data-toggle="tooltip" data-placement="bottom" title="Add&#160a&#160voltage&#160regulator downstream&#160the&#160selected&#160item" ><span class="fa fa-lg fa-plus-square" ></span> Source</a></li>
+            <li id="bt_addload"     ><a data-toggle="tooltip" data-placement="bottom" title="Add&#160a&#160new&#160plane downstream&#160the&#160selected&#160item"         ><span class="fa fa-lg fa-plus-circle" ></span> Load</a></li>
+            <li id="bt_up"          ><a data-toggle="tooltip" data-placement="bottom" title="Move&#160up the&#160selected&#160item"                                        ><span class="fa fa-lg fa-arrow-up"    ></span> Up</a></li>
+            <li id="bt_down"        ><a data-toggle="tooltip" data-placement="bottom" title="Move&#160down the&#160selected&#160item"                                      ><span class="fa fa-lg fa-arrow-down"  ></span> Down</a></li>
+         </ul>
+         <ul id="global_control" class="nav navbar-nav navbar-right">
+            <li id="bt_undo"        ><a data-toggle="tooltip" data-placement="bottom" title="Undo"                                                                         ><span class="fa fa-lg fa-undo"        ></span></a></li>
+            <li id="bt_redo"        ><a data-toggle="tooltip" data-placement="bottom" title="Redo"                                                                         ><span class="fa fa-lg fa-repeat"      ></span></a></li>
+            <li id="bt_open"        ><a data-toggle="tooltip" data-placement="bottom" title="Open"                                                                         ><span class="fa fa-lg fa-folder-open" ></span></a></li>
+            <li id="bt_save"        ><a data-toggle="tooltip" data-placement="bottom" title="Save"                                                                         ><span class="fa fa-lg fa-floppy-o"    ></span></a></li>
+            <li id="bt_saveas"      ><a data-toggle="tooltip" data-placement="bottom" title="Save&#160As..."                                                               ><span class="fa fa-lg fa-files-o"     ></span></a></li>
+            <li id="bt_export_img"  ><a data-toggle="tooltip" data-placement="bottom" title="Export&#160image"                                                             ><span class="fa fa-lg fa-file-image-o"></span></a></li>
+            <li id="bt_config"      ><a data-toggle="tooltip" data-placement="bottom" title="Options"                                                                      ><span class="fa fa-lg fa-sliders"     ></span></a></li>
+         </ul>
+      </nav>
 
 
-	<!-- application JS: functions & constructors -->
-	<script src="../js/functions.js"></script>
-	<script src="../js/obj.Item.js"></script>
-	<script src="../js/obj.Tree.js"></script>
-	<script src="../js/obj.Canvas.js"></script>
-	<script src="../js/obj.Part.js"></script>
-	<script src="../js/obj.PartList.js"></script>
-	<script src="../js/obj.PTree.js"></script>
+      <!-- Section1 : Tree -->
+      <section>
+         <canvas id="canvas" class="canvas" width="1000" height="600"></canvas>
+      </section>
+
+      <!-- Div for info around items -->
+      <aside>
+         <div id="item_info_left" class="item_info">
+            <div class="item_info_data">
+               <table>
+                  <thead>
+                     <tr>
+                        <th colspan="3">Input</th>
+                     </tr>
+                     <tr>
+                        <th>typ</th>
+                        <th>max</th>
+                     </tr>
+                  </thead>
+                  <tbody>
+                     <tr>
+                        <td id="vin_typ"></td>
+                        <td id="vin_max"></td>
+                     </tr>
+                     <tr>
+                        <td id="iin_typ"></td>
+                        <td id="iin_max"></td>
+                     </tr>
+                     <tr>
+                        <td id="pin_typ"></td>
+                        <td id="pin_max"></td>
+                     </tr>
+                  </tbody>
+               </table>
+            </div>
+            <div class="item_info_border"></div>
+         </div>
+         <div id="item_info_right" class="item_info">
+            <div class="item_info_data">
+               <table>
+                  <thead>
+                     <tr>
+                        <th colspan="3">Output</th>
+                     </tr>
+                     <tr>
+                        <th>typ</th>
+                        <th>max</th>
+                     </tr>
+                  </thead>
+                  <tbody>
+                     <tr>
+                        <td id="vout_typ"></td>
+                        <td id="vout_max"></td>
+                     </tr>
+                     <tr>
+                        <td id="iout_typ"></td>
+                        <td id="iout_max"></td>
+                     </tr>
+                     <tr>
+                        <td id="pout_typ"></td>
+                        <td id="pout_max"></td>
+                     </tr>
+                  </tbody>
+               </table>
+            </div>
+            <div class="item_info_border"></div>
+         </div>
+         <div id="item_info_center" class="item_info">
+            <div class="item_info_data">
+               <table>
+                  <thead>
+                     <tr>
+                        <th colspan="3">Loss</th>
+                     </tr>
+                     <tr>
+                        <th>typ</th>
+                        <th>max</th>
+                     </tr>
+                  </thead>
+                  <tbody>
+                     <tr>
+                        <td id="loss_typ"></td>
+                        <td id="loss_max"></td>
+                     </tr>
+                  </tbody>
+               </table>
+            </div>
+            <div class="item_info_border"></div>
+         </div>
+      </aside>
+
+      <!-- Part table for selected load -->
+      <aside id="part_table">
+         <table>
+            <thead>
+               <tr>
+                  <th class="part_title part_name">Part</th>
+                  <th class="part_title part_i part_ityp">I<sub>TYP</sub></th>
+                  <th class="part_title part_i part_imax">I<sub>MAX</sub></th>
+               </tr>
+            </thead>
+            <tbody></tbody>
+         </table>
+      </aside>
+
+      <!-- Configuration menu -->
+      <aside id="bottom_menu">
+         <form id="config_tree">
+            <p class="config">
+               <label for="config_info">
+                     <input id="config_info" data-config="show_info" type="checkbox" class="config_input config_checkbox" />
+                     Value
+                  </label>
+            </p>
+            <p class="config">
+               <label for="config_name">
+                     <input id="config_name" data-config="show_name" type="checkbox" class="config_input config_checkbox" />
+                     Name
+                  </label>
+            </p>
+            <p class="config">
+               <label for="config_ref">
+                     <input id="config_ref" data-config="show_ref" type="checkbox" class="config_input config_checkbox" />
+                     Part Number
+                  </label>
+            </p>
+            <p class="config">
+               <label for="config_itemwidth">Item width </label><br />
+               <input id="config_itemwidth" data-config="cell_width" class="config_input config_range" type="range" min="150" max="500" value="300" step="10" />
+            </p>
+            <p class="config">
+               <label for="config_itemheight">Item height </label><br />
+               <input id="config_itemheight" data-config="cell_height" class="config_input config_range" type="range" min="30" max="200" value="300" step="10" />
+            </p>
+         </form>
+      </aside>
+   </body>
 
 
-	<!-- application JS: this window -->
-	<script>
-		require('../js/renderer.tree.js');
-	</script>
+   <!-- JS framworks and libraries -->
+   <script>
+      window.$ = window.jQuery = require('jquery');
+      require('bootstrap');
+      require('fabric');
+   </script>
+
+
+   <!-- application JS: functions & constructors -->
+   <script src="../js/functions.js"    ></script>
+   <script src="../js/obj.Item.js"     ></script>
+   <script src="../js/obj.Tree.js"     ></script>
+   <script src="../js/obj.Canvas.js"   ></script>
+   <script src="../js/obj.Part.js"     ></script>
+   <script src="../js/obj.PartList.js" ></script>
+   <script src="../js/obj.PTree.js"    ></script>
+
+
+   <!-- application JS: this window -->
+   <script>
+      require('../js/renderer.tree.js');
+   </script>
+
 </html>

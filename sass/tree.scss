@@ -1,208 +1,206 @@
 @import "colors.scss";
 
-$topmenu_height:	30px;						// >= 20px
+$topmenu_height: 30px; // >= 20px
 
 
 // -----------------------------------------------------------------------------
-//	Page
+//   Page
 //
 
 body {
-	min-width:	100%;
-	min-height:	100%;
-	margin:		$topmenu_height 0 0 0;
-	padding:		0;
+   min-width:  100%;
+   min-height: 100%;
+   margin:     $topmenu_height 0 0;
+   padding:    0;
 }
 
+
 // -----------------------------------------------------------------------------
-//	Item info
+//   Item info
 //
 
 $info_background_color: rgba( 34, 34, 34,1);
-$info_text_color:			rgba(255,255,255,1);
-$info_border_color:		rgba(255,255,255,0.2);
+$info_text_color:       rgba(255,255,255,1);
+$info_border_color:     rgba(255,255,255,0.2);
 
-.item_info
-{
-	display:			none;
-	position:		absolute;
-	background:		$info_background_color;
-	color:			$info_text_color;
-	font-family:	arial;
-	font-size:		13px;
-	border-radius:	10px;
-	padding:			5px 10px;
+.item_info {
+   display:       none;
+   position:      absolute;
+   background:    $info_background_color;
+   color:         $info_text_color;
+   font-family:   arial;
+   font-size:     13px;
+   border-radius: 10px;
+   padding:       5px 10px;
 }
 
 .item_info td,
-.item_info th
-{
-	padding:		1px 5px;
-	text-align:	center;
+.item_info th {
+   padding: 1px 5px;
+   text-align: center;
 }
 
-.item_info_data tr:last-child th
-{
-	border-bottom:		1px solid $info_border_color;
+.item_info_data tr:last-child th {
+   border-bottom: 1px solid $info_border_color;
 }
 
-.item_info_data th
-{
-	text-transform:	uppercase;
+.item_info_data th {
+   text-transform: uppercase;
 }
 
-.item_info_data tr				td:nth-child(1),
-.item_info_data tr:last-child	th:nth-child(1)
-{
-	border-right:	1px solid $info_border_color;
+.item_info_data tr td:nth-child(1),
+.item_info_data tr:last-child th:nth-child(1) {
+   border-right: 1px solid $info_border_color;
 }
 
 @each $pos in 'left' 'right' 'center' {
-	#item_info_#{$pos} .item_info_border {
-		position:	absolute;
-		top: 			0;
-		width:		10px;
-		height:		100%;
-		background:	url('../img/info_border_#{$pos}.png') center no-repeat;
+   #item_info_#{$pos} .item_info_border {
+      position:   absolute;
+      top:        0;
+      width:      10px;
+      height:     100%;
+      background: url('../img/info_border_#{$pos}.png') center no-repeat;
 
-		@if		'left'   == $pos { right: -10px; }
-		@else if	'right'  == $pos { left:  -10px; }
-		@else if	'center' == $pos {
-			top:		-10px;
-			left: 	0;
-			width:	100%;
-			height:	10px;
-		}
-	}
+      @if 'left' == $pos {
+         right: -10px;
+      }
+
+      @else if 'right' == $pos {
+         left: -10px;
+      }
+
+      @else if 'center' == $pos {
+         top:    -10px;
+         left:   0;
+         width:  100%;
+         height: 10px;
+      }
+   }
 }
 
 
 // -----------------------------------------------------------------------------
-//	Top menu
+//   Top menu
 //
 
 #item_control {
-	display: none;
+   display: none;
 }
 
 .navbar {
-	background:		$dark;
-	border-radius:	0;
-	border:			0;
-	min-height:		$topmenu_height;
-	height:			$topmenu_height;
-	position:		fixed;
-	top:				0;
-	left:				0;
-	right:			0;
-	z-index:			100;
-	//overflow:		hidden;
+   background:    $dark;
+   border-radius: 0;
+   border:        0;
+   min-height:    $topmenu_height;
+   height:        $topmenu_height;
+   position:      fixed;
+   top:           0;
+   left:          0;
+   right:         0;
+   z-index:       100;
+   //overflow:      hidden;
 }
 
 .nav {
-	margin: 0;
+   margin: 0;
 }
 
-.nav>li>a {
-	padding:			0 6px;
-	font-size:		12px;
-	line-height:	$topmenu_height;
-	color:			$light;
-	user-select:	none;
+.nav > li > a {
+   padding:     0 6px;
+   font-size:   12px;
+   line-height: $topmenu_height;
+   color:       $light;
+   user-select: none;
 
-	&:hover {
-		cursor: pointer;
-		background-color: inherit;
-	}
+   &:hover {
+      cursor: pointer;
+      background-color: inherit;
+   }
 }
 
-.item_control_source {
-	box-shadow:inset 0 -3px 0 0 $red;
+.item_control_source {
+   box-shadow: inset 0 -3px 0 0 $red;
 }
 
 .item_control_load {
-	box-shadow:inset 0 -3px 0 0 $teal;
+   box-shadow: inset 0 -3px 0 0 $teal;
 }
 
-.item_control_load #bt_addsource,
-.item_control_load #bt_addload {
-	display: none;
+.item_control_load #bt_addload,
+.item_control_load #bt_addsource {
+   display: none;
 }
 
-.nav>li.disabled>a,
-.nav>li.disabled:hover>a {
-	color: rgba(255,255,255,0.3);
+.nav > li.disabled > a,
+.nav > li.disabled:hover > a {
+   color: rgba(255,255,255,0.3);
 }
 
 #bt_partTable a {
-	background-color: $cyan;
+   background-color: $cyan;
 }
 
 #bt_stats a {
-	background-color: $purple;
+   background-color: $purple;
 }
 
 
-
 // -----------------------------------------------------------------------------
-//	Right section (part list)
+//   Right section (part list)
 //
 
 #part_table {
-	display:		none;
-	position:	fixed;
-	top:			$topmenu_height;
-	bottom:		0;
-	right:		0;
-	background:	$light-blue;
+   display:    none;
+   position:   fixed;
+   top:        $topmenu_height;
+   bottom:     0;
+   right:      0;
+   background: $light-blue;
 }
 
 .part_data,
 .part_title {
-	padding: 0 3px;
+   padding: 0 3px;
 }
 
 .part_i,
 .part_nopart {
-	text-align: center;
+   text-align: center;
 }
 
 .part_title {
-	color:			white;
-	font-weight:	normal;
-	font-size:		12px;
-
-	text-align:		center;
-	border-radius:	0;
-	padding:			4px 12px;
-
-	white-space:	nowrap;
-
-	outline: none;
-
-	background-color: $teal;
-	border-bottom:	4px solid darken($teal, 10);
+   color:            white;
+   font-weight:      normal;
+   font-size:        12px;
+   text-align:       center;
+   border-radius:    0;
+   padding:          4px 12px;
+   white-space:      nowrap;
+   outline:          none;
+   background-color: $teal;
+   border-bottom:    4px solid darken($teal, 10);
 }
 
+
 // -----------------------------------------------------------------------------
-//	Bottom menu (config)
+//   Bottom menu (config)
 //
 
 #bottom_menu {
-	display:		none;
-	width:		100%;
-	position:	fixed;
-	bottom:		0px;
-	background: $light-blue;
+   display:    none;
+   width:      100%;
+   position:   fixed;
+   bottom:     0;
+   background: $light-blue;
 }
 
 #config_tree {
-	display:			flex;
-	align-items:	center;
-	border-top:		1px solid #DDDDDD;
+   display:     flex;
+   align-items: center;
+   border-top:  1px solid #DDDDDD;
 }
 
 .config {
-	margin: 10px 20px;
-	text-align: center;
+   margin:     10px 20px;
+   text-align: center;
 }
