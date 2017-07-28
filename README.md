@@ -33,12 +33,15 @@ Package and deploy:
 
 Where "xxx" must be replaced by:
 
- - osx (OS X .app)
- - mas (OS X Mac App Store)
- - lin32 (Linux 32 bits)
- - lin64 (Linux 64 bits)
- - win32 (Windows 32 bits)
- - win64 (Windows 64 bits)
+| xxx     | Platform            |
+| ------- | ------------------- |
+| osx     | macOS               |
+| mas     | macOS [Mac App Store](https://electron.atom.io/docs/tutorial/mac-app-store-submission-guide/)  |
+| lin32   | Linux x86 32 bits   |
+| lin64   | Linux x86 64 bits   |
+| linArm7 | Linux ARMv7 32 bits |
+| win32   | Windows 32 bits     |
+| win64   | Windows 64 bits     |
 
 Finally, a complete view of the objects imbrication can be found in /docs/synop.jpg
 ![synoptic](https://raw.githubusercontent.com/smariel/PTree/master/docs/synop.jpg)

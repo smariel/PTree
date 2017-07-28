@@ -17,6 +17,7 @@
     "pack:win64": "electron-packager . --out=bin --platform=win32  --arch=x64  --overwrite",
     "pack:lin32": "electron-packager . --out=bin --platform=linux  --arch=ia32 --overwrite",
     "pack:lin64": "electron-packager . --out=bin --platform=linux  --arch=x64  --overwrite",
+    "pack:linArm7": "electron-packager . --out=bin --platform=linux  --arch=armv7l  --overwrite",
     "pack:all": "electron-packager . --out=bin --platform=all    --arch=all  --overwrite"
   },
   "repository": {
