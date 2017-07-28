@@ -80,7 +80,7 @@ PTree.prototype.open = function() {
 PTree.prototype.save = function(saveas) {
 
    // if the app as no file to work on
-   // or if the app data must be savec as a new file
+   // or if the app data must be save as a new file
    if (saveas || null === this.filePath) {
       // prompt the user
       const {

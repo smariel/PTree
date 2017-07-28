@@ -1,5 +1,6 @@
-const electron = require('electron');
+const debug = true;
 
+const electron = require('electron');
 
 // Module to control application life.
 const app = electron.app;
@@ -11,9 +12,10 @@ const {ipcMain} = require('electron');
 
 // Keep a global reference of the window object to avaoid JS garbage collected to close them automatically
 let appWindows = {
-	tree: null,
-	item: null,
-	partTable: null
+	tree          : null,
+	item          : null,
+	partTable     : null,
+   saveBeforeExit: null
 };
 
 
@@ -25,7 +27,8 @@ app.on('ready', () => {
 	// and load the index.html of the app.
 	appWindows.tree.loadURL(`file://${__dirname}/html/tree.html`);
 
-	appWindows.tree.webContents.openDevTools();
+   // Open the dev tools...
+	if (debug) appWindows.tree.webContents.openDevTools();
 
 	// Emitted when the window is closed.
 	appWindows.tree.on('closed', function () {
@@ -86,7 +89,7 @@ app.on('ready', () => {
 				},
 			]
 		},
-		{
+      (debug) ? {
 		label: 'View',
 			submenu: [
 				{
@@ -102,27 +105,9 @@ app.on('ready', () => {
 					click (item, focusedWindow) {
 						if (focusedWindow) focusedWindow.webContents.toggleDevTools();
 					}
-				},
-				{
-					type: 'separator'
-				},
-				{
-					role: 'resetzoom'
-				},
-				{
-					role: 'zoomin'
-				},
-				{
-					role: 'zoomout'
-				},
-				{
-					type: 'separator'
-				},
-				{
-					role: 'togglefullscreen'
 				}
 			]
-		},
+		} : {},
 	];
 
 	if (process.platform === 'darwin') {
@@ -133,73 +118,13 @@ app.on('ready', () => {
 					role: 'about'
 				},
 				{
-					type: 'separator'
-				},
-				{
-					role: 'services',
-					submenu: []
-				},
-				{
-					type: 'separator'
-				},
-				{
 					role: 'hide'
-				},
-				{
-					role: 'hideothers'
-				},
-				{
-					role: 'unhide'
-				},
-				{
-					type: 'separator'
 				},
 				{
 					role: 'quit'
 				}
 			]
 		});
-		// Edit menu.
-		template[1].submenu.push(
-			{
-				type: 'separator'
-			},
-			{
-				label: 'Speech',
-				submenu: [
-					{
-						role: 'startspeaking'
-					},
-					{
-						role: 'stopspeaking'
-					}
-				]
-			}
-		);
-		// Window menu.
-		template[2].submenu = [
-			{
-				label: 'Close',
-				accelerator: 'CmdOrCtrl+W',
-				role: 'close'
-			},
-			{
-				label: 'Minimize',
-				accelerator: 'CmdOrCtrl+M',
-				role: 'minimize'
-			},
-			{
-				label: 'Zoom',
-				role: 'zoom'
-			},
-			{
-				type: 'separator'
-			},
-			{
-				label: 'Bring All to Front',
-				role: 'front'
-			}
-		];
 	}
 
 	menu = Menu.buildFromTemplate(template);
@@ -213,10 +138,10 @@ app.on('window-all-closed', function () {
 });
 
 
-// bind an event handler on an request to edit an item
+// bind an event handler on a request to edit an item
 // this request is sent synchronusly by an item object on the tree view
 // so the tree view script is blocked untill it received a response
-ipcMain.on('edit-request', function(treeEvent, itemdata) {
+ipcMain.on('edit-request', function (itemEvent, itemdata) {
 	// parse the data to resize the window
 	var item = JSON.parse(itemdata);
 
@@ -230,18 +155,18 @@ ipcMain.on('edit-request', function(treeEvent, itemdata) {
 	});
 
 	// Open the dev tools...
-	//appWindows.item.webContents.openDevTools();
+	if (debug) appWindows.item.webContents.openDevTools();
 
 	// Load the *.html of the window.
 	appWindows.item.loadURL(`file://${__dirname}/html/item.html`);
 
 	// wait for the edit window to request the data, then send them
-	ipcMain.once('edit-window-open-req', function(event, arg){
-		event.sender.send('edit-window-open-resp', itemdata);
+	ipcMain.once('edit-window-open-req', function(event_wopen, arg){
+		event_wopen.sender.send('edit-window-open-resp', itemdata);
 	});
 
 	// wait for the edit window to send data when it closes
-	ipcMain.once('edit-window-close', function(event, newitemdata) {
+	ipcMain.once('edit-window-close', function(event_wclose, newitemdata) {
 		// save those datas before sending them when the close event is trigged
 		itemdata = newitemdata;
 	});
@@ -249,17 +174,17 @@ ipcMain.on('edit-request', function(treeEvent, itemdata) {
 	// Emitted when the window is closed.
 	appWindows.item.on('closed', function () {
 		// sent the (new or old) data to the tree window
-		treeEvent.returnValue = itemdata;
+		itemEvent.returnValue = itemdata;
 		// Dereference the window object
 		appWindows.item = null;
 	});
 });
 
 
-// bind an event handler on an request to open the part list
+// bind an event handler on a request to open the part list
 // this request is sent synchronusly by the tree window
 // so the tree script is blocked untill it received a response
-ipcMain.on('partTable-request', function(event, treeData, partlistData) {
+ipcMain.on('partTable-request', function (partEvent, treeData, partlistData) {
 
 	// Create the partTable window
 	appWindows.partTable = new BrowserWindow({
@@ -271,18 +196,18 @@ ipcMain.on('partTable-request', function(event, treeData, partlistData) {
 	});
 
 	// Open the dev tools...
-	appWindows.partTable.webContents.openDevTools();
+	if (debug) appWindows.partTable.webContents.openDevTools();
 
 	// Load the *.html of the window.
 	appWindows.partTable.loadURL(`file://${__dirname}/html/partTable.html`);
 
 	// wait for the window to request the data then send them
-	ipcMain.once('partTable-window-open-req', function(event, arg){
-		event.sender.send('partTable-window-open-resp', treeData, partlistData);
+	ipcMain.once('partTable-window-open-req', function(event_wopen, arg){
+		event_wopen.sender.send('partTable-window-open-resp', treeData, partlistData);
 	});
 
 	// wait for the edit window to send data when it closes
-	ipcMain.once('partTable-window-close', function(event, newPartlistData) {
+	ipcMain.once('partTable-window-close', function(event_wclose, newPartlistData) {
 		// save the new data before sending them when the close event is trigged
 		partlistData = newPartlistData;
 	});
@@ -290,9 +215,43 @@ ipcMain.on('partTable-request', function(event, treeData, partlistData) {
 	// Emitted when the window is closed.
 	appWindows.partTable.on('closed', function () {
 		// sent the (new or old) data to the tree window
-		event.returnValue = partlistData;
+		partEvent.returnValue = partlistData;
 		// Dereference the window object
 		appWindows.partlistData = null;
 	});
+});
 
+
+
+// bind an event handler on a request to open the "Save Before Exit" window
+// this request is sent synchronusly by the tree window
+// so the tree script is blocked untill it received a response (saving or not)
+ipcMain.on('saveBeforeExit-request', function (saveEvent) {
+   // Create the window
+   appWindows.saveBeforeExit = new BrowserWindow({
+      width:  500,
+      height: 180,
+      parent: appWindows.tree,
+      modal:  true,
+      resizable: false
+   });
+
+   // init a default value to be returned
+   var performSave = false;
+
+	// Load the *.html of the window.
+	appWindows.saveBeforeExit.loadURL(`file://${__dirname}/html/saveBeforeExit.html`);
+
+   // wait for the window to send data when it closes
+	ipcMain.once('saveBeforeExit-close', function(event_wclose, data) {
+      performSave = data;
+	});
+
+   // Emitted when the window is closed.
+	appWindows.saveBeforeExit.on('closed', function () {
+		// send the command to the tree renderer which is waiting to close
+		saveEvent.returnValue = performSave;
+		// Dereference the window object
+      appWindows.saveBeforeExit = null;
+	});
 });
