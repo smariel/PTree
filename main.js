@@ -85,7 +85,9 @@ app.on('ready', () => {
 			submenu: [
 				{
 					label: 'Equation Summary',
-					click () { require('electron').shell.openItem('docs/equations.pdf'); }
+					click () {
+                  require('electron').shell.openItem(`${__dirname}/docs/equations.pdf`);
+               }
 				},
 			]
 		},
