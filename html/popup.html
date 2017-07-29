@@ -3,21 +3,18 @@
 
    <head>
       <meta charset="UTF-8">
-      <title>Item edition</title>
+      <title>Popup</title>
 
       <!-- CSS -->
       <link rel="stylesheet" href="../node_modules/bootstrap/dist/css/bootstrap.min.css">
-      <link rel="stylesheet" href="../css/saveBeforeExit.css">
+      <link rel="stylesheet" href="../css/popup.css">
    </head>
 
    <body class="container-fluid">
-      <p>
-         <em>You have made changes which were not saved.</em><br />
-         Do you want to save before exiting ?
-      </p>
+      <p class="content">Content</p>
       <menu>
-         <button class="mybtn mybtn-cancel">Exit without saving</button>
-         <button class="mybtn mybtn-save">Save and exit</button>
+         <button class="mybtn mybtn-cancel">Cancel</button>
+         <button class="mybtn mybtn-ok">OK</button>
       </menu>
    </body>
 
@@ -30,6 +27,6 @@
 
    <!-- application JS: this window -->
    <script>
-      require('../js/renderer.saveBeforeExit.js');
+      require('../js/renderer.popup.js');
    </script>
 </html>

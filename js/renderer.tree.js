@@ -19,8 +19,18 @@ window.onbeforeunload = function() {
    if (app.unsaved) {
       // request to the main process to open a window asking for saving
       // the request is synchronus to block this renderer untill the response
+      let popupData = {
+         title      : 'Save before exit?',
+         width      : 500,
+         height     : 180,
+         sender     : 'tree',
+         content    : `<strong>You have made changes which were not saved.</strong><br />
+         Do you want to save before exiting ?`,
+         btn_ok     : 'Save and exit',
+         btn_cancel : 'Exit without saving'
+      };
       const {ipcRenderer} = require('electron');
-      let saveBeforeExit = ipcRenderer.sendSync('saveBeforeExit-request', null);
+      let saveBeforeExit = ipcRenderer.sendSync('popup-request', popupData);
 
       // save if asked
       if (saveBeforeExit) {

@@ -1,4 +1,4 @@
-const debug = false;
+const debug = true;
 
 const electron = require('electron');
 
@@ -15,7 +15,7 @@ let appWindows = {
 	tree          : null,
 	item          : null,
 	partTable     : null,
-   saveBeforeExit: null
+   popup         : null
 };
 
 
@@ -224,16 +224,19 @@ ipcMain.on('partTable-request', function (partEvent, treeData, partlistData) {
 });
 
 
-
-// bind an event handler on a request to open the "Save Before Exit" window
-// this request is sent synchronusly by the tree window
-// so the tree script is blocked untill it received a response (saving or not)
-ipcMain.on('saveBeforeExit-request', function (saveEvent) {
+// bind an event handler on a request to open a generic popup with OK/Cancel commands
+// this request is sent synchronusly by any window with a data object describing the popup
+// when the popup opens, it ask main.js for the data
+// when the popup is validates/closed, it send back the value of OK/CANCEL
+// then main.js send back the OK/CANCEL value to the initiatior of the popup
+// popupData has the following properties : title, width, height, sender, content, btn_ok, btn_cancel
+ipcMain.on('popup-request', function (popupEvent, popupData) {
    // Create the window
-   appWindows.saveBeforeExit = new BrowserWindow({
-      width          : 500,
-      height         : 180,
-      parent         : appWindows.tree,
+   appWindows.popup = new BrowserWindow({
+      title          : (undefined === popupData.title ) ? ''   : popupData.title,
+      width          : (undefined === popupData.width ) ? 500  : popupData.width,
+      height         : (undefined === popupData.height) ? 180  : popupData.height,
+      parent         : (undefined === popupData.sender) ? null : appWindows[popupData.sender],
       modal          : true,
       autoHideMenuBar: true,
       resizable      : false,
@@ -242,22 +245,27 @@ ipcMain.on('saveBeforeExit-request', function (saveEvent) {
       alwaysOnTop    : true
    });
 
-   // init a default value to be returned
-   var performSave = false;
+   // set as CANCEL by default
+   var isOK = false;
 
 	// Load the *.html of the window.
-	appWindows.saveBeforeExit.loadURL(`file://${__dirname}/html/saveBeforeExit.html`);
+	appWindows.popup.loadURL(`file://${__dirname}/html/popup.html`);
 
-   // wait for the window to send data when it closes
-	ipcMain.once('saveBeforeExit-close', function(event_wclose, data) {
-      performSave = data;
+   // wait for the popup to request the data then send them
+	ipcMain.once('popup-open', function(event_wopen, response){
+		event_wopen.returnValue = popupData;
+	});
+
+   // wait for the popup to send data when it closes
+	ipcMain.once('popup-close', function(event_wclose, response) {
+      isOK = response;
 	});
 
    // Emitted when the window is closed.
-	appWindows.saveBeforeExit.on('closed', function () {
+	appWindows.popup.on('closed', function () {
 		// send the command to the tree renderer which is waiting to close
-		saveEvent.returnValue = performSave;
+		popupEvent.returnValue = isOK;
 		// Dereference the window object
-      appWindows.saveBeforeExit = null;
+      appWindows.popup = null;
 	});
 });
