@@ -10,7 +10,6 @@ var PTree = function(canvas_selector) {
    this.tree     = new Tree();
    this.partList = new PartList();
    this.canvas   = new Canvas(canvas_selector, this.tree, this.partList);
-
    this.filePath = null;
    this.unsaved  = true;
    this.history  = {
@@ -105,6 +104,7 @@ PTree.prototype.save = function(saveas) {
       else return;
    }
 
+   // save a reference to this PTree object
    var that = this;
 
    // open the file or create it if it does not exist
@@ -113,6 +113,7 @@ PTree.prototype.save = function(saveas) {
       if (null === err) {
          // write the data
          var data = {
+            version  : require('../package.json').version,
             tree     : that.tree.toString(),
             partList : that.partList.toString()
          };
