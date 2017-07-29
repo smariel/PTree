@@ -48,10 +48,12 @@ var Item = function(id, parent, type, tree) {
    // Load specific datas
    else if ('load' === type) {
       this.characs = {
-         name  : 'Load name',
-         ityp  : 0,
-         imax  : 0,
-         color : '#00bfa5'
+         name    : 'Load name',
+         custom1 : '',
+         custom2 : '',
+         ityp    : 0,
+         imax    : 0,
+         color   : '#00bfa5'
       };
    }
    // Root specific datas

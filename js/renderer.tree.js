@@ -22,7 +22,7 @@ window.onbeforeunload = function() {
       let popupData = {
          title      : 'Save before exit?',
          width      : 500,
-         height     : 180,
+         height     : 135,
          sender     : 'tree',
          content    : `<strong>You have made changes which were not saved.</strong><br />
          Do you want to save before exiting ?`,

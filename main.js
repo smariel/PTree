@@ -1,4 +1,4 @@
-const debug = true;
+const debug = false;
 
 const electron = require('electron');
 
@@ -148,11 +148,12 @@ ipcMain.on('edit-request', function (itemEvent, itemdata) {
 	// Create the item window
 	appWindows.item = new BrowserWindow({
 		width           : ('source' == item.type) ? 800 : 400,
-		height          : ('source' == item.type) ? 440 : 330,
+		height          : ('source' == item.type) ? 485 : 445,
 		parent          : appWindows.tree,
 		modal           : true,
 		resizable       : false,
-      autoHideMenuBar : true
+      autoHideMenuBar : true,
+      useContentSize  : true
 	});
 
 	// Open the dev tools...
@@ -194,7 +195,7 @@ ipcMain.on('partTable-request', function (partEvent, treeData, partlistData) {
 		parent          : appWindows.tree,
 		modal           : process.platform !== 'darwin',
 		resizable       : true,
-      autoHideMenuBar : true
+      useContentSize  : true
 	});
 
 	// Open the dev tools...
@@ -233,16 +234,16 @@ ipcMain.on('partTable-request', function (partEvent, treeData, partlistData) {
 ipcMain.on('popup-request', function (popupEvent, popupData) {
    // Create the window
    appWindows.popup = new BrowserWindow({
-      title          : (undefined === popupData.title ) ? ''   : popupData.title,
-      width          : (undefined === popupData.width ) ? 500  : popupData.width,
-      height         : (undefined === popupData.height) ? 180  : popupData.height,
-      parent         : (undefined === popupData.sender) ? null : appWindows[popupData.sender],
-      modal          : true,
-      autoHideMenuBar: true,
-      resizable      : false,
-      minimizable    : false,
-      maximizable    : false,
-      alwaysOnTop    : true
+      title           : (undefined === popupData.title ) ? ''   : popupData.title,
+      width           : (undefined === popupData.width ) ? 500  : popupData.width,
+      height          : (undefined === popupData.height) ? 180  : popupData.height,
+      parent          : (undefined === popupData.sender) ? null : appWindows[popupData.sender],
+      modal           : true,
+      autoHideMenuBar : true,
+      resizable       : false,
+      minimizable     : false,
+      maximizable     : false,
+      useContentSize  : true
    });
 
    // set as CANCEL by default

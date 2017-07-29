@@ -103,11 +103,12 @@ var Canvas = function(html_id, tree, partList) {
 
    // canvas main characs that will be updated by the user
    this.config = {
-      show_info   : true,
-      show_name   : true,
-      show_ref    : true,
-      cell_width  : app_template.cell.width,
-      cell_height : app_template.cell.height,
+      show_info    : true,
+      show_name    : true,
+      show_ref     : true,
+      show_custom1 : true,
+      cell_width   : app_template.cell.width,
+      cell_height  : app_template.cell.height,
    };
 
    // Create the canvas with Fabric
@@ -170,9 +171,13 @@ Canvas.prototype.addItem = function(item) {
    if (this.config.show_name) {
       text += item.characs.name;
    }
-   if ('source' == item.type && this.config.show_ref) {
+   if ('source' == item.type && this.config.show_ref && undefined !== item.characs.ref && '' !== item.characs.ref) {
       if ('' !== text) text += '\n';
       text += item.characs.ref;
+   }
+   if (this.config.show_custom1 && undefined !== item.characs.custom1 && '' !== item.characs.custom1) {
+      if ('' !== text) text += '\n';
+      text += item.characs.custom1;
    }
 
    var itemText = new fabric.Text(text, fabric_template.text);
