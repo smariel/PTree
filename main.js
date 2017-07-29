@@ -1,4 +1,4 @@
-const debug = true;
+const debug = false;
 
 const electron = require('electron');
 
@@ -147,11 +147,12 @@ ipcMain.on('edit-request', function (itemEvent, itemdata) {
 
 	// Create the item window
 	appWindows.item = new BrowserWindow({
-		width:  ('source' == item.type) ? 800 : 400,
-		height: ('source' == item.type) ? 440 : 330,
-		parent: appWindows.tree,
-		modal:  true,
-		resizable: false
+		width           : ('source' == item.type) ? 800 : 400,
+		height          : ('source' == item.type) ? 440 : 330,
+		parent          : appWindows.tree,
+		modal           : true,
+		resizable       : false,
+      autoHideMenuBar : true
 	});
 
 	// Open the dev tools...
@@ -188,11 +189,12 @@ ipcMain.on('partTable-request', function (partEvent, treeData, partlistData) {
 
 	// Create the partTable window
 	appWindows.partTable = new BrowserWindow({
-		width:  1024,
-		height: 768,
-		parent: appWindows.tree,
-		modal:  process.platform !== 'darwin',
-		resizable: true
+		width           : 1024,
+		height          : 768,
+		parent          : appWindows.tree,
+		modal           : process.platform !== 'darwin',
+		resizable       : true,
+      autoHideMenuBar : true
 	});
 
 	// Open the dev tools...
@@ -229,11 +231,15 @@ ipcMain.on('partTable-request', function (partEvent, treeData, partlistData) {
 ipcMain.on('saveBeforeExit-request', function (saveEvent) {
    // Create the window
    appWindows.saveBeforeExit = new BrowserWindow({
-      width:  500,
-      height: 180,
-      parent: appWindows.tree,
-      modal:  true,
-      resizable: false
+      width          : 500,
+      height         : 180,
+      parent         : appWindows.tree,
+      modal          : true,
+      autoHideMenuBar: true,
+      resizable      : false,
+      minimizable    : false,
+      maximizable    : false,
+      alwaysOnTop    : true
    });
 
    // init a default value to be returned
