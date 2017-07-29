@@ -29,6 +29,8 @@ var Item = function(id, parent, type, tree) {
          name        : 'Source name',
          regtype     : 0, // [FixDCDC, FixLDO, FixOther, AdjDCDC, AdjLDO, AdjOther]
          ref         : 'Part Number',
+         custom1     : '',
+         custom2     : '',
          vout_min    : '1.78',
          vout_typ    : '1.8',
          vout_max    : '1.82',
