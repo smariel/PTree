@@ -1,0 +1,10 @@
+@mixin mybtn($bg-color, $txt-color) {
+   text-transform:   uppercase;
+   background:       none;
+   border:           none;
+   border-radius:    2px;
+   padding:          6px 20px;
+   transition:       150ms ease;
+   background-color: $bg-color;
+   color:            $txt-color;
+}
