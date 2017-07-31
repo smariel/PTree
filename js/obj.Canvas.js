@@ -88,13 +88,11 @@ const fabric_template = {
 };
 
 
-
 // -----------------------------------------------------------------------------
 // Tree canvas object constructor
 // -----------------------------------------------------------------------------
 
 var Canvas = function(html_id, tree, partList) {
-
    this.tree         = tree;              // a reference to the tree
    this.partList     = partList;          // a reference to the partlist
    this.html_id      = html_id;           // the html ID of the canvas
@@ -102,6 +100,16 @@ var Canvas = function(html_id, tree, partList) {
    this.selectedItem = null;              // by default, no selected item
 
    // canvas main characs that will be updated by the user
+   this.setDefaultConfig();
+
+   // Create the canvas with Fabric
+   this.fabricCanvas = new fabric.Canvas(this.html_id, fabric_template.canvas);
+   this.fabricCanvas.dragedItem = null;
+};
+
+
+// Set the canvas config to default
+Canvas.prototype.setDefaultConfig = function() {
    this.config = {
       show_info    : true,
       show_name    : true,
@@ -110,10 +118,6 @@ var Canvas = function(html_id, tree, partList) {
       cell_width   : app_template.cell.width,
       cell_height  : app_template.cell.height,
    };
-
-   // Create the canvas with Fabric
-   this.fabricCanvas = new fabric.Canvas(this.html_id, fabric_template.canvas);
-   this.fabricCanvas.dragedItem = null;
 };
 
 
@@ -336,6 +340,21 @@ Canvas.prototype.refresh = function() {
    // set the scroll as saved before canvas modifications
    $(document).scrollTop (scroll_position[0]);
    $(document).scrollLeft(scroll_position[1]);
+   // refresh the config
+   this.refreshConfig();
+};
+
+
+// Refresh the config html inputs
+Canvas.prototype.refreshConfig = function() {
+   var that = this;
+   $('.config_checkbox').each(function() {
+      $(this).prop('checked', that.config[$(this).data('config')]);
+   });
+
+   $('.config_range').each(function() {
+      $(this).val(that.config[$(this).data('config')]);
+   });
 };
 
 

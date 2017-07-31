@@ -63,6 +63,7 @@ PTree.prototype.open = function() {
          var data = JSON.parse(datastr);
          that.tree.fromString(data.tree);
          that.partList.fromString(data.partList);
+         that.canvas.config = data.config;
          that.clearHistory();
          that.canvas.refresh();
          that.setSaved();
@@ -115,7 +116,8 @@ PTree.prototype.save = function(saveas) {
          var data = {
             version  : require('../package.json').version,
             tree     : that.tree.toString(),
-            partList : that.partList.toString()
+            partList : that.partList.toString(),
+            config   : that.canvas.config
          };
          fs.write(fd, JSON.stringify(data));
 
@@ -384,6 +386,14 @@ PTree.prototype.listenDOM = function() {
          return;
       }
 
+      that.setUnsaved();
+      that.canvas.refresh();
+   });
+
+   // set the config to default
+   $('.mybtn-defaultConfig').click(function() {
+      that.canvas.setDefaultConfig();
+      that.setUnsaved();
       that.canvas.refresh();
    });
 };

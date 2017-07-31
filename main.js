@@ -1,4 +1,4 @@
-const debug = false;
+const debug = true;
 
 const electron = require('electron');
 
@@ -36,9 +36,8 @@ app.on('ready', () => {
 		appWindows.tree = null;
 	});
 
-
+   // configuration of the Application menu
 	const {Menu} = require('electron');
-
 	const template = [
 		{
 			label: 'Edit',
@@ -112,6 +111,7 @@ app.on('ready', () => {
 		} : {},
 	];
 
+   // menu add-ons for macOS
 	if (process.platform === 'darwin') {
 		template.unshift({
 			label: app.getName(),
@@ -129,6 +129,7 @@ app.on('ready', () => {
 		});
 	}
 
+   // set the menu
 	menu = Menu.buildFromTemplate(template);
 	Menu.setApplicationMenu(menu);
 });

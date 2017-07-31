@@ -1,4 +1,5 @@
 @import "colors.scss";
+@import "mybtn.scss";
 
 $topmenu_height: 30px; // >= 20px
 
@@ -203,4 +204,18 @@ $info_border_color:     rgba(255,255,255,0.2);
 .config {
    margin:     10px 20px;
    text-align: center;
+}
+
+.mybtn-defaultConfig {
+   @include mybtn($blue, white);
+   margin-left: 5px;
+
+   &:hover {
+      background-color: darken($blue, 5);
+   }
+
+   &:active,
+   &:focus {
+      background-color: darken($blue, 10);
+   }
 }
