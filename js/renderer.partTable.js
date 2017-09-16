@@ -20,6 +20,7 @@ $(function() {
       // reconstruct a Tree and a PartList object
       partTable.tree.fromString(treeData);
       partTable.partList.fromString(partListData);
+      partTable.clearHistory();
 
       // print the header of the table
       partTable.tree.forEachLoad(function(load) {

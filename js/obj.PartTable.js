@@ -9,6 +9,10 @@ var PartTable = function() {
    this.tree          = new Tree();
    this.editType      = null;
    this.selectedParts = [];
+   this.history  = {
+      list: [],
+      index: 0
+   };
 
    this.listenEvents();
 };
@@ -128,20 +132,24 @@ PartTable.prototype.editCurrent = function(part, load, typmax) {
 };
 
 
-// rempve the UI from editing by validating (or not) the data
+// remove the UI from editing by validating (or not) the data
 PartTable.prototype.clearCharac = function(validate){
    // get datas from html elements
    var part    = this.getEditedPart();
    var charac  = this.getEditedCharac();
 
    // validate or not the data
-   var value = validate ? this.getEditedValue() : part.characs[charac];
+   let oldValue = part.characs[charac];
+   let newValue = this.getEditedValue();
 
-   // update the charac with the new value
-   part.characs[charac] = value;
+   if(validate && oldValue != newValue) {
+      // update the charac with the new value
+      part.characs[charac] = newValue;
+      this.saveHistory();
+   }
 
    // refresh the part table
-   $('.edition').parent().html(value);
+   $('.edition').parent().html(part.characs[charac]);
    $('.partTable').trigger('update');
 
    this.editType = null;
@@ -151,22 +159,24 @@ PartTable.prototype.clearCharac = function(validate){
 // rempve the UI from editing by validating (or not) the data
 PartTable.prototype.clearCurrent = function(validate){
    // get datas from html elements
-   var part    = this.getEditedPart();
-   var load    = this.getEditedLoad();
-   var typmax  = this.getEditedTypMax();
-   var newval  = this.getEditedValue();
-   var oldval  = part.getConsumption(load, typmax);
+   let part     = this.getEditedPart();
+   let load     = this.getEditedLoad();
+   let typmax   = this.getEditedTypMax();
+   let newValue = this.getEditedValue();
+   let oldValue = part.getConsumption(load, typmax);
 
    // validate or not the data
-   var value = (validate && !isNaN(newval)) ? newval : oldval;
-
-   // update the consumption with the new value
-   part.setConsumption(value, load, typmax);
+   if(validate && !isNaN(newValue) && oldValue != newValue) {
+      // update the consumption with the new value
+      part.setConsumption(newValue, load, typmax);
+      this.saveHistory();
+   }
 
    // refresh the part table
+   let value = part.getConsumption(load, typmax);
    $('.edition').parent().attr('data-value', value.toString());
    $('.edition').parent().html(round(value,3));
-   var power = part.getPower(this.tree);
+   let power = part.getPower(this.tree);
    $(`tr[data-partid=${part.id}] > td.td_power.td_typ`).html(round(power.typ,3));
    $(`tr[data-partid=${part.id}] > td.td_power.td_max`).html(round(power.max,3));
    $('.partTable').trigger('update');
@@ -345,6 +355,78 @@ PartTable.prototype.unselectPart = function(fade) {
 };
 
 
+// empty the history and add only one data
+PartTable.prototype.clearHistory = function() {
+   // save the actual tree into the history
+   var data = this.partList.toString();
+   this.history.list  = [data];
+   this.history.index = 0;
+   this.updateUndoRedoButtons();
+};
+
+
+// save the app data into the history
+PartTable.prototype.saveHistory = function() {
+   console.log("save history");
+   // save the actual partList into the history
+   var data = this.partList.toString();
+   // if the index is not the last element, remove everything over index
+   this.history.list.splice(this.history.index + 1, this.history.list.length - (this.history.index + 1));
+   // save the element in the history at the last position
+   this.history.list.push(data);
+   // set the new index at the last element
+   this.history.index = this.history.list.length - 1;
+   // update the UI
+   this.updateUndoRedoButtons();
+};
+
+
+// undo an action
+PartTable.prototype.undo = function() {
+   // unselect all part
+   this.unselectPart();
+   // restore the previous tree in the history
+   var readIndex = (0 === this.history.index) ? 0 : --this.history.index;
+   this.partList.fromString(this.history.list[readIndex]);
+   // update the UI
+   this.refresh();
+   this.updateUndoRedoButtons();
+};
+
+
+// redo un action
+PartTable.prototype.redo = function() {
+   // restore the next tree in the history
+   var readIndex = (this.history.index == this.history.list.length - 1) ? this.history.list.length - 1 : ++this.history.index;
+   this.partList.fromString(this.history.list[readIndex]);
+   // update the UI
+   this.refresh();
+   this.updateUndoRedoButtons();
+};
+
+
+// enable or disable the undo/redo buttons
+PartTable.prototype.updateUndoRedoButtons = function() {
+   // if there is no data to undo, hide the undo button
+   if (0 === this.history.index) {
+      $(".undo").fadeOut(200);
+   }
+   // else, show the undo button
+   else {
+      $(".undo").fadeIn(200);
+   }
+
+   // if there is no data to redo, hide the redo button
+   if (this.history.index >= (this.history.list.length - 1)) {
+      $(".redo").fadeOut(200);
+   }
+   // else, show the redo button
+   else {
+      $(".redo").fadeIn(200);
+   }
+};
+
+
 // Listen to all event on the page
 PartTable.prototype.listenEvents = function() {
    var that = this;
@@ -361,6 +443,7 @@ PartTable.prototype.listenEvents = function() {
    $('.addPart').click(function(){
       that.partList.addPart();
       that.refresh();
+      that.saveHistory();
    });
 
    // remove parts from the PartList
@@ -371,6 +454,17 @@ PartTable.prototype.listenEvents = function() {
          that.partList.deletePart(part);
       }
       that.refresh();
+      that.saveHistory();
+   });
+
+   // export the table to excel
+   $('.undo').click(function(){
+      that.undo();
+   });
+
+   // export the table to excel
+   $('.redo').click(function(){
+      that.redo();
    });
 
    // export the table to excel
@@ -490,6 +584,7 @@ PartTable.prototype.listenEvents = function() {
 
       // finally, refresh the table with the new values
       that.refresh();
+      that.saveHistory();
    });
 
    // unselect any part when the emptyzone is clicked
@@ -546,7 +641,7 @@ PartTable.prototype.listenEvents = function() {
 
    // trig KEYDOWN and KEYUP on the edition of any value in the partTable
    $('.partTable').on('keydown', '.edition', function(e){
-      // , (=> .)
+      // , (replace , by .)
       if("188" == event.which || "110" == event.which){
          event.preventDefault();
          $(this).val($(this).val() + '.');
