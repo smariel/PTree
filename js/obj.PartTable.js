@@ -7,7 +7,7 @@
 var PartTable = function() {
    this.partList      = new PartList();
    this.tree          = new Tree();
-   this.editing       = null;
+   this.editType      = null;
    this.selectedParts = [];
 
    this.listenEvents();
@@ -71,7 +71,7 @@ PartTable.prototype.refresh = function() {
 // print a UI to edit a charac
 PartTable.prototype.editCharac = function(part, charac) {
    // if a previous element whas in edition
-   if ('charac' === this.editing) {
+   if ('charac' === this.editType) {
       // get the previous edited element
       let editedPart    = this.getEditedPart();
       let editedCharac  = this.getEditedCharac();
@@ -86,7 +86,7 @@ PartTable.prototype.editCharac = function(part, charac) {
    this.selectPart(part);
 
    // mark as editing
-   this.editing = 'charac';
+   this.editType = 'charac';
 
    // print an input element
    var value      = part.characs[charac];
@@ -101,7 +101,7 @@ PartTable.prototype.editCharac = function(part, charac) {
 // print a UI to edit a current
 PartTable.prototype.editCurrent = function(part, load, typmax) {
    // if a previous element whas in edition
-   if ('current' === this.editing) {
+   if ('current' === this.editType) {
       // get the previous edited element
       let editedPart   = this.getEditedPart();
       let editedLoad   = this.getEditedLoad();
@@ -116,7 +116,7 @@ PartTable.prototype.editCurrent = function(part, load, typmax) {
    this.selectPart(part);
 
    // mark as editing
-   this.editing = 'current';
+   this.editType = 'current';
 
    // print an input element
    var value      = part.getConsumption(load,typmax).toString();
@@ -144,7 +144,7 @@ PartTable.prototype.clearCharac = function(validate){
    $('.edition').parent().html(value);
    $('.partTable').trigger('update');
 
-   this.editing = null;
+   this.editType = null;
 };
 
 
@@ -171,16 +171,16 @@ PartTable.prototype.clearCurrent = function(validate){
    $(`tr[data-partid=${part.id}] > td.td_power.td_max`).html(round(power.max,3));
    $('.partTable').trigger('update');
 
-   this.editing = null;
+   this.editType = null;
 };
 
 
 // validate the occuring edition
 PartTable.prototype.validateEdition = function() {
-   if ('charac' === this.editing) {
+   if ('charac' === this.editType) {
       this.clearCharac(true);
    }
-   else if ('current' === this.editing) {
+   else if ('current' === this.editType) {
       this.clearCurrent(true);
    }
 };
@@ -188,10 +188,10 @@ PartTable.prototype.validateEdition = function() {
 
 // cancel the occuring edition
 PartTable.prototype.cancelEdition = function() {
-   if ('charac' === this.editing) {
+   if ('charac' === this.editType) {
       this.clearCharac(false);
    }
-   else if ('current' === this.editing) {
+   else if ('current' === this.editType) {
       this.clearCurrent(false);
    }
    this.unselectPart();
@@ -224,7 +224,7 @@ PartTable.prototype.getEditedTypMax = function() {
 PartTable.prototype.getEditedValue = function() {
    var value = $('.edition').val();
 
-   if ('current' === this.editing) {
+   if ('current' === this.editType) {
       value = parseFloat(value);
    }
 
@@ -241,6 +241,24 @@ PartTable.prototype.getEditedCharac = function() {
 // Return true if at least one part is selected
 PartTable.prototype.selectionExist = function() {
    return (this.selectedParts.length > 0);
+};
+
+
+// select the given part (add to the selection)
+PartTable.prototype.addToSelection = function(part) {
+   // validate any editon before selection
+   this.validateEdition();
+
+   // show the remove button differently if there was a seletion or not
+   if(this.selectionExist()) {
+      $('.removePart').show();
+   }
+   else {
+      $('.removePart').fadeIn(150);
+   }
+
+   this.selectedParts.push(part);
+   $(`tr[data-partid=${part.id}]`).addClass('selected');
 };
 
 
@@ -264,23 +282,6 @@ PartTable.prototype.selectPart = function(part) {
 
 };
 
-
-// select the given part (add to the selection)
-PartTable.prototype.addToSelection = function(part) {
-   // validate any editon before selection
-   this.validateEdition();
-
-   // show the remove button differently if there was a seletion or not
-   if(this.selectionExist()) {
-      $('.removePart').show();
-   }
-   else {
-      $('.removePart').fadeIn(150);
-   }
-
-   this.selectedParts.push(part);
-   $(`tr[data-partid=${part.id}]`).addClass('selected');
-};
 
 // select all parts between the given and the selected
 PartTable.prototype.selectToPart = function(part) {
@@ -558,20 +559,20 @@ PartTable.prototype.listenEvents = function() {
       // TAB (=> validate and edit next)
       else if (9 === e.keyCode) {
          event.preventDefault();
-         let part    = that.getEditedPart();
-         let load    = that.getEditedLoad();
-         var typmax  = that.getEditedTypMax();
-         var charac  = that.getEditedCharac();
-         var editing = that.editing;
+         let part     = that.getEditedPart();
+         let load     = that.getEditedLoad();
+         var typmax   = that.getEditedTypMax();
+         var charac   = that.getEditedCharac();
+         var editType = that.editType;
 
          // SHIFT+TAB = previous
          if(e.shiftKey) {
             // if editing the ref, jump to name
-            if('charac' === editing && 'ref' === charac) {
+            if('charac' === editType && 'ref' === charac) {
                that.editCharac(part, 'name');
             }
             // else if editing any cirrent
-            else if ('current' === editing) {
+            else if ('current' === editType) {
                // if the current is a max, jump to the typ of the same load
                if('max' === typmax) {
                   that.editCurrent(part, load, 'typ');
@@ -593,7 +594,7 @@ PartTable.prototype.listenEvents = function() {
          // TAB = next
          else {
             // if editing a charac
-            if('charac' === editing) {
+            if('charac' === editType) {
                // if editing the name, jump to the ref
                if('name' === charac) {
                   that.editCharac(part, 'ref');
@@ -605,7 +606,7 @@ PartTable.prototype.listenEvents = function() {
                }
             }
             // else if editing any current
-            else if ('current' === editing) {
+            else if ('current' === editType) {
                // if the current is a typ, jump to the max of the same load
                if('typ' === typmax) {
                   that.editCurrent(part, load, 'max');
