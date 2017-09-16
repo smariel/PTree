@@ -411,7 +411,7 @@ PartTable.prototype.listenEvents = function() {
       // check the 2 first lines only
       for (let i=0; i<2; i++) {
          if(!sheet_json[i].equals(header_json[i])) {
-            console.log(`Error one line ${i}.\nThe format of the file is not correct.\nPlease use the template to ordonate your values.`);
+            alert(`Error on line ${i}.\nThe format of the file is not correct.\nPlease use the template to sort your data.`);
             return;
          }
       }
@@ -440,6 +440,25 @@ PartTable.prototype.listenEvents = function() {
          alert('The file does not contain any value.');
          return;
       }
+
+      // If all checks are OK
+
+      // Ask the user if the file must replace or be added
+      // And delete every part if the table has to be replaced
+      let popupData = {
+         title      : 'Merge or replace ?',
+         width      : 500,
+         height     : 135,
+         sender     : 'partTable',
+         content    : `Do you want to <strong>add</strong> those data to the table or <strong>replace</strong> everything ?`,
+         btn_ok     : 'Add',
+         btn_cancel : 'Replace'
+      };
+      const {ipcRenderer} = require('electron');
+      if(!ipcRenderer.sendSync('popup-request', popupData)) {
+         that.partList.deleteAllParts();
+      }
+
 
       // Add the values to the PartList
       line_id = 0;

@@ -63,6 +63,13 @@ PartList.prototype.deletePart = function(part) {
 };
 
 
+// remove all parts from the BOM
+PartList.prototype.deleteAllParts = function() {
+   this.part_list.length = 0;
+   this.part_index = 0;
+};
+
+
 // Export the partlist content as a string by deletin all reference to itself
 PartList.prototype.toString = function() {
    var partList = new PartList();
