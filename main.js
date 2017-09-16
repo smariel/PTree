@@ -22,13 +22,16 @@ let appWindows = {
 // When Electron has finished initialization
 app.on('ready', () => {
 	// Create the browser window.
-	appWindows.tree = new BrowserWindow({width: 1200, height: 800});
+	appWindows.tree = new BrowserWindow({
+      width:  1200,
+      height: 800,
+   });
 
 	// and load the index.html of the app.
 	appWindows.tree.loadURL(`file://${__dirname}/html/tree.html`);
 
    // Open the dev tools...
-	if (debug) appWindows.tree.webContents.openDevTools();
+	if ((undefined !== debug) && debug) appWindows.tree.webContents.openDevTools();
 
 	// Emitted when the window is closed.
 	appWindows.tree.on('closed', function () {
@@ -90,7 +93,7 @@ app.on('ready', () => {
 				},
 			]
 		},
-      (debug) ? {
+      ((undefined !== debug) && debug) ? {
 		label: 'View',
 			submenu: [
 				{
@@ -160,7 +163,7 @@ ipcMain.on('edit-request', function (itemEvent, itemdata) {
 	});
 
 	// Open the dev tools...
-	if (debug) appWindows.item.webContents.openDevTools();
+	if ((undefined !== debug) && debug) appWindows.item.webContents.openDevTools();
 
 	// Load the *.html of the window.
 	appWindows.item.loadURL(`file://${__dirname}/html/item.html`);
@@ -202,7 +205,7 @@ ipcMain.on('partTable-request', function (partEvent, treeData, partlistData) {
 	});
 
 	// Open the dev tools...
-	if (debug) appWindows.partTable.webContents.openDevTools();
+	if ((undefined !== debug) && debug) appWindows.partTable.webContents.openDevTools();
 
 	// Load the *.html of the window.
 	appWindows.partTable.loadURL(`file://${__dirname}/html/partTable.html`);
