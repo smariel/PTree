@@ -23,8 +23,9 @@ let appWindows = {
 app.on('ready', () => {
 	// Create the browser window.
 	appWindows.tree = new BrowserWindow({
-      width:  1200,
-      height: 800,
+      width    : 1200,
+      height   : 800,
+      minWidth : 800
    });
 
 	// and load the index.html of the app.
