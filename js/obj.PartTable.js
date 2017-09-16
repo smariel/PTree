@@ -5,11 +5,10 @@
 // -----------------------------------------------------------------------------
 
 var PartTable = function() {
-   this.partList     = new PartList();
-   this.tree         = new Tree();
-   this.editing      = null;
-   this.shiftPressed = false;
-   this.selectedPart = null;
+   this.partList      = new PartList();
+   this.tree          = new Tree();
+   this.editing       = null;
+   this.selectedParts = [];
 
    this.listenEvents();
 };
@@ -62,7 +61,7 @@ PartTable.prototype.refresh = function() {
    });
 
 
-   if(null !== this.selectedPart) this.selectPart(this.selectedPart);
+   if(this.selectionExist()) this.selectMultiplePart(this.selectedParts);
 
    // Let TableSorter know that the table has changed
    $('.partTable').trigger('update');
@@ -184,7 +183,6 @@ PartTable.prototype.validateEdition = function() {
    else if ('current' === this.editing) {
       this.clearCurrent(true);
    }
-   this.unselectPart();
 };
 
 
@@ -240,30 +238,106 @@ PartTable.prototype.getEditedCharac = function() {
 };
 
 
-// select the given part
-PartTable.prototype.selectPart = function(part) {
-   var selectedPart = this.selectedPart;
+// Return true if at least one part is selected
+PartTable.prototype.selectionExist = function() {
+   return (this.selectedParts.length > 0);
+};
 
+
+// select the given part (unselect other part)
+PartTable.prototype.selectPart = function(part) {
+   // validate any editon before selection
    this.validateEdition();
 
-   if(null !== selectedPart) {
+   // if there is a selection, unselect and show the remove button
+   if(this.selectionExist()) {
       this.unselectPart(false);
+      $('.removePart').show();
+   }
+   // if there is no selection, just fade the button
+   else {
+      $('.removePart').fadeIn(150);
+   }
+
+   this.selectedParts = [part];
+   $(`tr[data-partid=${part.id}]`).addClass('selected');
+
+};
+
+
+// select the given part (add to the selection)
+PartTable.prototype.addToSelection = function(part) {
+   // validate any editon before selection
+   this.validateEdition();
+
+   // show the remove button differently if there was a seletion or not
+   if(this.selectionExist()) {
       $('.removePart').show();
    }
    else {
       $('.removePart').fadeIn(150);
    }
 
-   this.selectedPart = part;
+   this.selectedParts.push(part);
    $(`tr[data-partid=${part.id}]`).addClass('selected');
-
 };
+
+// select all parts between the given and the selected
+PartTable.prototype.selectToPart = function(part) {
+   // if there is no selection, just select the part
+   if(!this.selectionExist()) {
+      return this.selectPart(part);
+   }
+   // if there are multiple selected parts, just add to the selection
+   else if (this.selectedParts > 1) {
+      return this.addToSelection(part);
+   }
+   // if there is only one part
+   else {
+      // save the context before entering tghe jQuery "each" method
+      var that = this;
+      // loop on the user-ordered partlist
+      let partList = [];
+      var state = 0;
+      $('.partTable tbody tr').each(function(){
+         partId = $(this).data('partid');
+
+         // STATE 0
+         if(0 === state) {
+            // DO NOTHING
+
+            // Go to STATE1 if the partId is one of the two selected (the first)
+            if(partId === part.id || partId === that.selectedParts[0].id) {
+               that.addToSelection(that.partList.getPart(partId));
+               state = 1;
+               return;
+            }
+         }
+         // STATE 1
+         else if (1 === state) {
+            that.addToSelection(that.partList.getPart(partId));
+            // Go to STATE2 if the partId is one of the two selected (the second)
+            if(partId === part.id || partId === that.selectedParts[0].id) {
+               state = 2;
+               return;
+            }
+         }
+         // STATE 2
+         else {
+            // DO NOTHING
+            return;
+         }
+
+      });
+   }
+};
+
 
 
 // deselect the actual part
 PartTable.prototype.unselectPart = function(fade) {
-   if(null !== this.selectedPart) {
-      this.selectedPart = null;
+   if(this.selectionExist()) {
+      this.selectedParts.length = 0;
       $('.selected').removeClass('selected');
       $('.removePart').fadeOut(fade?150:0);
    }
@@ -288,11 +362,13 @@ PartTable.prototype.listenEvents = function() {
       that.refresh();
    });
 
-   // add a new empty part to the PartList
+   // remove parts from the PartList
    $('.removePart').click(function(){
-      var partToDelete = that.selectedPart;
+      var partsToDelete = that.selectedParts.slice();
       that.unselectPart(true);
-      that.partList.deletePart(partToDelete);
+      for(let part of partsToDelete) {
+         that.partList.deletePart(part);
+      }
       that.refresh();
    });
 
@@ -402,14 +478,26 @@ PartTable.prototype.listenEvents = function() {
       that.unselectPart(true);
    });
 
-   // edit a charac
-   $('.partTable').on('click', '.td_charac', function() {
+   // click on a charac
+   $('.partTable').on('click', '.td_charac', function(event) {
       var charac  = $(this).data('charac');
       var partID  = $(this).parent().data('partid');
       var part    = that.partList.getPart(partID);
 
+      // click on the ID
       if('id' === charac) {
-         that.selectPart(part);
+         // If ctrl is pressed : add to selection
+         if(event.ctrlKey || event.metaKey) {
+            that.addToSelection(part);
+         }
+         // if shift is pressed : multiple selection
+         else if(event.shiftKey) {
+            that.selectToPart(part);
+         }
+         // Else, monoselection
+         else {
+            that.selectPart(part);
+         }
       }
       else {
          that.editCharac(part, charac);
@@ -429,22 +517,10 @@ PartTable.prototype.listenEvents = function() {
 
    // Global keydown
    $(document).keydown(function(e){
-      // SHIFT
-      if (16 === e.keyCode) {
-         that.shiftPressed = true;
-      }
       // ESCAPE (=> cancel)
-      else if (27 === e.keyCode) {
+      if (27 === e.keyCode) {
          that.cancelEdition();
          that.unselectPart(true);
-      }
-   });
-
-   // Global keyup
-   $(document).keyup(function(e){
-      // SHIFT
-      if (16 === e.keyCode) {
-         that.shiftPressed = false;
       }
    });
 
@@ -458,6 +534,7 @@ PartTable.prototype.listenEvents = function() {
       // ENTER (=> validate)
       else if (13 === e.keyCode) {
          that.validateEdition();
+         that.unselectPart(true);
       }
       // TAB (=> validate and edit next)
       else if (9 === e.keyCode) {
@@ -469,7 +546,7 @@ PartTable.prototype.listenEvents = function() {
          var editing = that.editing;
 
          // SHIFT+TAB = previous
-         if(that.shiftPressed) {
+         if(e.shiftKey) {
             // if editing the ref, jump to name
             if('charac' === editing && 'ref' === charac) {
                that.editCharac(part, 'name');
