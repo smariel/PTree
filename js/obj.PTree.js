@@ -60,7 +60,55 @@ PTree.prototype.open = function() {
          alert(err);
       }
       else {
-         var data = JSON.parse(datastr);
+         // Try to parse the file
+         var data = {};
+         try {
+            data = JSON.parse(datastr);
+         }
+         catch(parseError) {
+            console.log(parseError);
+            alert ('Impossible to open this file.');
+            return;
+         }
+
+         // if the version number does not exist; prompt the user
+         if(undefined === data.version) {
+            let popupData = {
+               title      : 'Incorrect file',
+               width      : 500,
+               height     : 135,
+               sender     : 'tree',
+               content    : `<strong>This file does not appear to be a valid Power Tree.</strong><br />
+                            This could result in an unexpected behavior. <br />
+                            Do you still want to proceed ? `,
+               btn_ok     : 'Proceed',
+               btn_cancel : 'Cancel'
+            };
+            const {ipcRenderer} = require('electron');
+            let open = ipcRenderer.sendSync('popup-request', popupData);
+            if(!open) return;
+         }
+         // if the version number is different, prompt the user
+         else if(data.version !== require('../package.json').version) {
+            let popupData = {
+               title      : 'Incorrect file',
+               width      : 520,
+               height     : 225,
+               sender     : 'tree',
+               content    : `<strong>This file was made with a different version of the application.</strong><br />
+                            This could result in an unexpected behavior. <br />
+                            Do you still want to proceed ?<br />
+                            <br />
+                            <em>File: ${data.version}<br />
+                            Application: ${require('../package.json').version}</em>`,
+               btn_ok     : 'Proceed',
+               btn_cancel : 'Cancel'
+            };
+            const {ipcRenderer} = require('electron');
+            let open = ipcRenderer.sendSync('popup-request', popupData);
+            if(!open) return;
+         }
+
          that.tree.fromString(data.tree);
          that.partList.fromString(data.partList);
          that.canvas.config = data.config;
