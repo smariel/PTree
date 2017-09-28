@@ -7,15 +7,13 @@
 // -----------------------------------------------------------------------------
 
 var PTree = function(canvas_selector) {
-   this.tree     = new Tree();
-   this.partList = new PartList();
-   this.canvas   = new Canvas(canvas_selector, this.tree, this.partList);
-   this.filePath = null;
-   this.unsaved  = true;
-   this.history  = {
-      list: [],
-      index: 0
-   };
+   this.tree         = new Tree();
+   this.partList     = new PartList();
+   this.canvas       = new Canvas(canvas_selector, this.tree, this.partList);
+   this.statsAreOpen = false;
+   this.filePath     = null;
+   this.unsaved      = true;
+   this.history      = {list: [], index: 0};
 
    this.listenCanvas();
    this.listenTreeMenu();
@@ -303,12 +301,22 @@ PTree.prototype.listenCanvas = function() {
    // click (mouse button pressed) on an object in the canvas
    this.canvas.fabricCanvas.on('mouse:down', function(e) {
       var fabric_obj = e.target;
-      // if the fabric obj is an "item"
+      // if the fabric obj is an "item", select it
       if (null !== fabric_obj && undefined !== fabric_obj && undefined !== fabric_obj.item) {
          that.canvas.selectItem(fabric_obj.item);
          that.updateUpDownButtons();
          that.canvas.fabricCanvas.dragedItem = fabric_obj.item;
          that.canvas.fabricCanvas.defaultCursor = "move";
+
+         if(that.statsAreOpen) {
+            const {ipcRenderer} = require('electron');
+            let data = {
+               itemID:       fabric_obj.item.id,
+               treeData:     that.tree.toString(),
+               partListData: that.partList.toString()
+            };
+            ipcRenderer.send('stats-selectItem', data);
+         }
       }
       else {
          that.canvas.unselectItem(true);
@@ -455,9 +463,7 @@ PTree.prototype.listenTreeMenu = function() {
    // open a new window to manipulate the part list
    $('#bt_partTable').click(function() {
       // require ipcRenderer to send/receive message with main.js
-      const {
-         ipcRenderer
-      } = require('electron');
+      const {ipcRenderer} = require('electron');
 
       // ask main.js to edit the item with the given data and wait for a response
       var partListString = ipcRenderer.sendSync('partTable-request', that.tree.toString(), that.partList.toString());
@@ -474,7 +480,13 @@ PTree.prototype.listenTreeMenu = function() {
 
    // open a new window to see stats
    $('#bt_stats').click(function() {
+      // require ipcRenderer to send/receive message with main.js
+      const {ipcRenderer} = require('electron');
 
+      // ask main.js open the stats window
+      let selectedItemId = (null === that.canvas.getSelectedItem()) ? null : that.canvas.getSelectedItem().id;
+      ipcRenderer.send('stats-request', that.tree.toString(), that.partList.toString(), selectedItemId);
+      that.statsAreOpen = true;
    });
 
 

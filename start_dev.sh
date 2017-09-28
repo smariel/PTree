@@ -35,4 +35,4 @@ atom ./
 #open http://localhost/PowerTree
 
 # Ouverture de l’appli Electron
-npm start
+#npm start

@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+<html>
+   <head>
+      <meta charset="UTF-8">
+      <title>Stats</title>
+
+      <!-- CSS -->
+      <link rel="stylesheet" href="../node_modules/bootstrap/dist/css/bootstrap.min.css">
+      <link rel="stylesheet" href="../css/stats.css">
+   </head>
+
+   <body>
+      <header class="header container">
+         <p class="title"></p>
+      </header>
+      <section class="stats">
+         <section class="canvas_container canvas_cintainer_typ">
+            <canvas class="canvas canvas_typ"></canvas>
+         </section>
+         <section class="canvas_container canvas_cintainer_typ">
+            <canvas class="canvas canvas_max"></canvas>
+         </section>
+      </section>
+   </body>
+
+   <!-- JS framworks and libraries -->
+   <script>
+      window.$ = window.jQuery = require('jquery');
+      require('chart.js');
+   </script>
+
+   <!-- application JS: functions & constructors -->
+   <script src="../js/functions.js"></script>
+   <script src="../js/obj.Item.js"></script>
+   <script src="../js/obj.Tree.js"></script>
+   <script src="../js/obj.Part.js"></script>
+   <script src="../js/obj.PartList.js"></script>
+   <script src="../js/obj.Stats.js"></script>
+
+
+   <!-- application JS: this window -->
+   <script>
+      require('../js/renderer.stats.js');
+   </script>
+</html>

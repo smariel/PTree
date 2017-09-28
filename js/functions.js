@@ -148,6 +148,22 @@ function downloadTable(jQuery_table, fileName) {
 }
 
 
+// create the specified number of HSL colors from main_color
+// main_color must be [H,S,L]
+function getHSLcolorset(main_color, color_number)
+{
+	var colors = [];
+	var space = parseInt(360/color_number);
+
+	for(var i=0; i<color_number; i+=1) {
+		var hue = main_color[0]+(space*i);
+		colors.push('hsl('+hue+', '+main_color[1]+'%, '+main_color[2]+'%)');
+	}
+
+	return colors;
+}
+
+
 // Compare two arrays by adding a new methode Array
 // Warn if overriding existing method
 if (Array.prototype.equals) {

@@ -12,10 +12,11 @@ const {ipcMain} = require('electron');
 
 // Keep a global reference of the window object to avaoid JS garbage collected to close them automatically
 let appWindows = {
-	tree          : null,
-	item          : null,
-	partTable     : null,
-   popup         : null
+	tree      : null,
+	item      : null,
+	partTable : null,
+   stats     : null,
+   popup     : null
 };
 
 
@@ -38,6 +39,8 @@ app.on('ready', () => {
 	appWindows.tree.on('closed', function () {
 		// Dereference the window object
 		appWindows.tree = null;
+      appWindows.stats = null;
+      app.quit();
 	});
 
    // configuration of the Application menu
@@ -227,8 +230,50 @@ ipcMain.on('partTable-request', function (partEvent, treeData, partlistData) {
 		// sent the (new or old) data to the tree window
 		partEvent.returnValue = partlistData;
 		// Dereference the window object
-		appWindows.partlistData = null;
+		appWindows.partTable = null;
 	});
+});
+
+
+// bind an event handler on a request to open the stats window
+// this request is sent asynchronusly by the tree window
+ipcMain.on('stats-request', function (statsEvent, treeData, partlistData, selectedItem) {
+   // if the windows is already open
+   if(appWindows.stats !== null) {
+      appWindows.stats.focus();
+      return;
+   }
+
+	// Create the  window
+	appWindows.stats = new BrowserWindow({
+		width           : 600,
+		height          : 400,
+		resizable       : true,
+      useContentSize  : true
+	});
+
+	// Open the dev tools...
+	if ((undefined !== debug) && debug) appWindows.stats.webContents.openDevTools();
+
+	// Load the *.html of the window.
+	appWindows.stats.loadURL(`file://${__dirname}/html/stats.html`);
+
+	// wait for the window to request the data then send them
+	ipcMain.once('stats-window-open-req', function(event_wopen, arg){
+		event_wopen.sender.send('stats-window-open-resp', treeData, partlistData, selectedItem);
+	});
+
+	// Emitted when the window is closed.
+	appWindows.stats.on('closed', function () {
+		// Dereference the window object
+		appWindows.stats = null;
+	});
+});
+
+// inform the stats window (if open) that an item has been selected on the tree
+ipcMain.on('stats-selectItem', function (event, data) {
+   if(null !== appWindows.stats)
+   appWindows.stats.webContents.send('stats-selectItem',data);
 });
 
 

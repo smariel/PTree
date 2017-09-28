@@ -9,20 +9,20 @@
     "esversion": 6
   },
   "scripts": {
-    "postinstall":   "",
-    "start":         "electron .",
-    "build:mac":     "electron-packager . --out=bin --platform=darwin --arch=x64    --overwrite --icon=icons/mac/icon.icns",
-    "build:mas":     "electron-packager . --out=bin --platform=mas    --arch=x64    --overwrite --icon=icons/mac/icon.icns",
-    "build:win32":   "electron-packager . --out=bin --platform=win32  --arch=ia32   --overwrite --icon=icons/win/icon.ico",
-    "build:win64":   "electron-packager . --out=bin --platform=win32  --arch=x64    --overwrite --icon=icons/win/icon.ico",
-    "build:lin32":   "electron-packager . --out=bin --platform=linux  --arch=ia32   --overwrite --icon=icons/png/1024x1024.png",
-    "build:lin64":   "electron-packager . --out=bin --platform=linux  --arch=x64    --overwrite --icon=icons/png/1024x1024.png",
+    "postinstall": "",
+    "start": "electron .",
+    "build:mac": "electron-packager . --out=bin --platform=darwin --arch=x64    --overwrite --icon=icons/mac/icon.icns",
+    "build:mas": "electron-packager . --out=bin --platform=mas    --arch=x64    --overwrite --icon=icons/mac/icon.icns",
+    "build:win32": "electron-packager . --out=bin --platform=win32  --arch=ia32   --overwrite --icon=icons/win/icon.ico",
+    "build:win64": "electron-packager . --out=bin --platform=win32  --arch=x64    --overwrite --icon=icons/win/icon.ico",
+    "build:lin32": "electron-packager . --out=bin --platform=linux  --arch=ia32   --overwrite --icon=icons/png/1024x1024.png",
+    "build:lin64": "electron-packager . --out=bin --platform=linux  --arch=x64    --overwrite --icon=icons/png/1024x1024.png",
     "build:linArm7": "electron-packager . --out=bin --platform=linux  --arch=armv7l --overwrite --icon=icons/png/1024x1024.png",
-    "build:macos":   "npm run build:mac   && npm run build:mas",
+    "build:macos": "npm run build:mac   && npm run build:mas",
     "build:windows": "npm run build:win32 && npm run build:win64",
-    "build:linux":   "npm run build:lin32 && npm run build:lin64   && npm run build:linArm7",
-    "build:all":     "npm run build:macos && npm run build:windows && npm run build:linux",
-    "build":         "npm run build:all"
+    "build:linux": "npm run build:lin32 && npm run build:lin64   && npm run build:linArm7",
+    "build:all": "npm run build:macos && npm run build:windows && npm run build:linux",
+    "build": "npm run build:all"
   },
   "repository": {
     "type": "git",
@@ -39,7 +39,7 @@
   "homepage": "https://github.com/smariel/PTree#readme",
   "dependencies": {
     "bootstrap": "^3.3.7",
-    "chartjs": "^0.3.24",
+    "chart.js": "^2.7.0",
     "fabric": "~1.6.7",
     "font-awesome": "^4.7.0",
     "fs": "^0.0.1-security",
