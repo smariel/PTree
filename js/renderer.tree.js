@@ -29,11 +29,9 @@ window.onbeforeunload = function() {
          btn_ok     : 'Save and exit',
          btn_cancel : 'Exit without saving'
       };
-      const {ipcRenderer} = require('electron');
-      let saveBeforeExit = ipcRenderer.sendSync('popup-request', popupData);
 
       // save if asked
-      if (saveBeforeExit) {
+      if (popup(popupData)) {
          app.save();
       }
    }

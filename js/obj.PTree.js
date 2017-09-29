@@ -82,9 +82,7 @@ PTree.prototype.open = function() {
                btn_ok     : 'Proceed',
                btn_cancel : 'Cancel'
             };
-            const {ipcRenderer} = require('electron');
-            let open = ipcRenderer.sendSync('popup-request', popupData);
-            if(!open) return;
+            if(!popup(popupData)) return;
          }
          // if the version number is different, prompt the user
          else if(data.version !== require('../package.json').version) {
@@ -102,9 +100,7 @@ PTree.prototype.open = function() {
                btn_ok     : 'Proceed',
                btn_cancel : 'Cancel'
             };
-            const {ipcRenderer} = require('electron');
-            let open = ipcRenderer.sendSync('popup-request', popupData);
-            if(!open) return;
+            if(!popup(popupData)) return;
          }
 
          that.tree.fromString(data.tree);

@@ -11,6 +11,8 @@ var Part = function(id, partlist) {
    this.characs = {
       name         : 'name',
       ref          : 'part number',
+      function     : '',
+      tags         : '',
       consumptions : []
    };
    this.partList = partlist;
@@ -60,6 +62,57 @@ Part.prototype.getPower = function(tree) {
    }
 
    return power;
+};
+
+
+// Return a string of tags
+Part.prototype.getTags_formated = function() {
+   let formatedTags = '';
+   for(let tag of this.characs.tags.split(/[\s]/)) {
+      formatedTags += `<span class="label label-default">${tag}</span> `;
+   }
+   return formatedTags.substr(0,formatedTags.length-1);
+};
+
+
+// Get any charac, eventualy formated
+Part.prototype.getCharac_formated = function(charac_name) {
+   if('tags' === charac_name) {
+      return this.getTags_formated();
+   }
+   else {
+      return this.getCharac_raw(charac_name);
+   }
+};
+
+
+// Get any raw charac
+Part.prototype.getCharac_raw = function(charac_name) {
+   return this.characs[charac_name];
+};
+
+
+// Set the tags from a formated string
+Part.prototype.setTags = function(formatedTags) {
+   this.characs.tags = '';
+   for(let tag of formatedTags.split(/\s*[#\s,;]\s*/)) {
+      console.log(tag);
+      if(0 === tag.length) continue;
+      else if('#' !== tag[0]) tag = '#'+tag;
+      this.characs.tags += tag+' ';
+   }
+   this.characs.tags = this.characs.tags.substr(0,this.characs.tags.length-1);
+};
+
+
+// Set any formated value to the characs
+Part.prototype.setCharac = function(charac_name, charac_value) {
+   if('tags' === charac_name) {
+      this.setTags(charac_value);
+   }
+   else {
+      this.characs[charac_name] = charac_value;
+   }
 };
 
 

@@ -125,6 +125,14 @@ $thead_colors: ( charac: $teal, current: $grey, power: $red );
    text-align: left;
 }
 
+.partTable .label {
+   font-weight: normal;
+}
+
+.partTable .label-default {
+   background-color: darken($teal, 10);;
+}
+
 
 // -----------------------------------------------------------------------------
 // floating controls

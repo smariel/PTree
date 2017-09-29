@@ -164,6 +164,17 @@ function getHSLcolorset(main_color, color_number)
 }
 
 
+// ask main.js to open a popup (OK/CANCEL by default)
+// data = {type (string), title (string), width (int), height (int), sender (string), content (string), btn_ok (string), btn_cancel (string)}
+// where data.type must be :
+//   undefined (optional) => OK/CANCEL                  => return BOOL => no additional data
+//   list                 => list selection + OK/CANCEL => return INT  => additional data.list (array)
+function popup(popupData) {
+   const {ipcRenderer} = require('electron');
+   return ipcRenderer.sendSync('popup-request', popupData);
+}
+
+
 // Compare two arrays by adding a new methode Array
 // Warn if overriding existing method
 if (Array.prototype.equals) {

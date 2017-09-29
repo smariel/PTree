@@ -2,9 +2,20 @@ $(function() {
    // ask main.js for the data to print in the popup
    const {ipcRenderer} = require('electron');
    var popupData = ipcRenderer.sendSync('popup-open', null);
+
+   // display the data
    $('.content').html(popupData.content);
    $('.mybtn-ok').html(popupData.btn_ok);
-   $('.mybtn-cancel').html(popupData.btn_cancel);
+   if(undefined !== popupData.type && 'list' === popupData.type) {
+      $('.mybtn-cancel').remove();
+
+      for(let item of popupData.list) {
+         $('#list').append(`<option>${item}</option>\n`);
+      }
+   }
+   else {
+      $('.mybtn-cancel').html(popupData.btn_cancel);
+   }
 
    // prepare the close function to send back OK or CANCEL to main.js
    var close = function (isOK) {
@@ -15,7 +26,12 @@ $(function() {
 
    // close with OK
    $('.mybtn-ok').click(function () {
-      close (true);
+      if(undefined !== popupData.type && 'list' === popupData.type) {
+         close($('#list option:selected').text());
+      }
+      else {
+         close (true);
+      }
    });
 
    // close with CANCEL

@@ -35,10 +35,12 @@ PartTable.prototype.refresh = function() {
       let pmax = 0;
 
       // Part characteristics
-      let tr = `<tr data-partid='${part.id}'>
-         <td class='td_charac' data-charac='id' data-value='${part.id}'>${niceid++}</td>
-         <td class='td_charac td_editable' data-charac='name'>${part.characs.name}</td>
-         <td class='td_charac td_editable' data-charac='ref'>${part.characs.ref}</td>
+      let tr = `<tr data-partid="${part.id}">
+         <td class="td_charac" data-charac="id" data-value="${part.id}">${niceid++}</td>
+         <td class="td_charac td_editable" data-charac="name">${part.getCharac_formated('name')}</td>
+         <td class="td_charac td_editable" data-charac="ref">${part.getCharac_formated('ref')}</td>
+         <td class="td_charac td_editable" data-charac="function">${part.getCharac_formated('function')}</td>
+         <td class="td_charac td_editable" data-charac="tags">${part.getCharac_formated('tags')}</td>
       `;
 
       // Part consumptions on each load
@@ -93,7 +95,7 @@ PartTable.prototype.editCharac = function(part, charac) {
    this.editType = 'charac';
 
    // print an input element
-   var value      = part.characs[charac];
+   var value      = part.getCharac_raw(charac);
    var html       = `<input class='edition' type='text' value='${value}' data-partid='${part.id}' />`;
    var selector   = `tr[data-partid=${part.id}] > .td_charac[data-charac=${charac}]`;
    $(selector).html(html);
@@ -139,17 +141,17 @@ PartTable.prototype.clearCharac = function(validate){
    var charac  = this.getEditedCharac();
 
    // validate or not the data
-   let oldValue = part.characs[charac];
+   let oldValue = part.getCharac_raw(charac);
    let newValue = this.getEditedValue();
 
    if(validate && oldValue != newValue) {
       // update the charac with the new value
-      part.characs[charac] = newValue;
+      part.setCharac(charac, newValue);
       this.saveHistory();
    }
 
    // refresh the part table
-   $('.edition').parent().html(part.characs[charac]);
+   $('.edition').parent().html(part.getCharac_formated(charac));
    $('.partTable').trigger('update');
 
    this.editType = null;
@@ -367,7 +369,6 @@ PartTable.prototype.clearHistory = function() {
 
 // save the app data into the history
 PartTable.prototype.saveHistory = function() {
-   console.log("save history");
    // save the actual partList into the history
    var data = this.partList.toString();
    // if the index is not the last element, remove everything over index
@@ -426,6 +427,122 @@ PartTable.prototype.updateUndoRedoButtons = function() {
    }
 };
 
+
+// Import a parttable from Excel
+PartTable.prototype.fromSpreadsheet = function(file) {
+   // construct a workbook from the file
+   let workbook   = XLSX.readFile(file);
+
+   // Check 1
+   // If there are multiple tabs in the file, ask the user
+   let sheetName  = '';
+   if(workbook.SheetNames.length > 1) {
+      let popupData = {
+         type       : 'list',
+         title      : 'Choose a sheet',
+         width      : 500,
+         height     : 135,
+         sender     : 'partTable',
+         content    : `Multiple sheets found in this document.<br />Please choose one: <select id="list"></select>`,
+         btn_ok     : 'Choose',
+         list       : workbook.SheetNames
+      };
+      sheetName  = popup(popupData);
+   }
+   else {
+      sheetName  = workbook.SheetNames[0];
+   }
+
+
+   let sheet      = workbook.Sheets[sheetName];
+   let sheet_json = XLSX.utils.sheet_to_json(sheet, {header:1});
+
+   // Check 2
+   // compare the template with the header of the sheet and exit with an alert() if different
+   let header_xlsx = XLSX.utils.table_to_book($('.partTable thead')[0]);
+   let header_json = XLSX.utils.sheet_to_json(header_xlsx.Sheets[header_xlsx.SheetNames[0]], {header:1});
+   // check the 2 first lines only
+   for (let i=0; i<2; i++) {
+      if(!sheet_json[i].equals(header_json[i])) {
+         alert(`Error on line ${i}.\nThe format of the file is not correct.\nPlease use the template to sort your data.`);
+         return false;
+      }
+   }
+
+
+   // Check 3
+   // check if the values of the sheet are numbers
+   let line_id = 0;
+   for(let sheet_line of sheet_json) {
+      let cell_id = 0;
+      for(let sheet_cell of sheet_line) {
+         if (undefined !== sheet_cell) {
+            if(cell_id > 4 && line_id > 1 && !$.isNumeric(sheet_cell)) {
+               alert(`Error on cell ${String.fromCharCode(65+cell_id)}${line_id}.\nA number is excpected but the following value was found :\n${sheet_cell}`);
+               return false;
+            }
+         }
+         cell_id++;
+      }
+      line_id++;
+   }
+
+   // Check 4
+   // check if there is any line other than the header in the sheet
+   if(sheet_json.length < 3) {
+      alert('The file does not contain any value.');
+      return false;
+   }
+
+   // If all checks are OK
+
+   // Ask the user if the file must replace or be added
+   // And delete every part if the table has to be replaced
+   let popupData = {
+      title      : 'Merge or replace ?',
+      width      : 500,
+      height     : 135,
+      sender     : 'partTable',
+      content    : `Do you want to <strong>add</strong> those data to the table or <strong>replace</strong> everything ?`,
+      btn_ok     : 'Add',
+      btn_cancel : 'Replace'
+   };
+   if(!popup(popupData)) {
+      this.partList.deleteAllParts();
+   }
+
+
+   // Add the values to the PartList
+   line_id = 0;
+   for(let sheet_line of sheet_json) {
+      // skip the header (two first lines)
+      if(line_id>1) {
+         // create a part for each line
+         let part = this.partList.addPart();
+
+         // set the Text characs
+         part.setCharac('name',     sheet_line[1]); // cell A
+         part.setCharac('ref',      sheet_line[2]); // cell B
+         part.setCharac('function', sheet_line[3]); // cell C
+         part.setCharac('tags',     sheet_line[4]); // cell D
+
+         // parse each load (same order as the columns) to set the consumptions
+         // the col number can be incremented with each load because each data is correctly ordered
+         let col_id = 5;
+         // can not use that.tree.forEachLoad() because it need an anonymous functions which is not permited in a loop
+         for(let item of this.tree.item_list) {
+            if(item !== undefined && item.isLoad()) {
+               part.setConsumption(sheet_line[col_id],   item, 'typ');
+               part.setConsumption(sheet_line[col_id+1], item, 'max');
+               col_id += 2;
+            }
+         }
+      }
+      line_id++;
+   }
+
+   return true;
+};
 
 // Listen to all event on the page
 PartTable.prototype.listenEvents = function() {
@@ -493,98 +610,14 @@ PartTable.prototype.listenEvents = function() {
       // exit if the path is undefined (canceled)
       if(undefined === paths) return;
 
-      // construct a workbook from the file
-      var workbook   = XLSX.readFile(paths[0]);
-      var sheetName  = workbook.SheetNames[0];
-      var sheet      = workbook.Sheets[sheetName];
-      var sheet_json = XLSX.utils.sheet_to_json(sheet, {header:1});
-
-      // Check 1
-      // compare the template with the header of the sheet and exit with an alert() if different
-      var header_xlsx = XLSX.utils.table_to_book($('.partTable thead')[0]);
-      var header_json = XLSX.utils.sheet_to_json(header_xlsx.Sheets[header_xlsx.SheetNames[0]], {header:1});
-      // check the 2 first lines only
-      for (let i=0; i<2; i++) {
-         if(!sheet_json[i].equals(header_json[i])) {
-            alert(`Error on line ${i}.\nThe format of the file is not correct.\nPlease use the template to sort your data.`);
-            return;
-         }
-      }
-
-
-      // Check 2
-      // check if the values of the sheet are numbers
-      let line_id = 0;
-      for(let sheet_line of sheet_json) {
-         let cell_id = 0;
-         for(let sheet_cell of sheet_line) {
-            if (undefined !== sheet_cell) {
-               if(cell_id > 2 && line_id > 1 && !$.isNumeric(sheet_cell)) {
-                  alert(`Error on cell ${String.fromCharCode(65+cell_id)}${line_id}.\nA number is excpected but the following value was found :\n${sheet_cell}`);
-                  return;
-               }
-            }
-            cell_id++;
-         }
-         line_id++;
-      }
-
-      // Check 3
-      // check if there is any line other than the header in the sheet
-      if(sheet_json.length < 3) {
-         alert('The file does not contain any value.');
-         return;
-      }
-
-      // If all checks are OK
-
-      // Ask the user if the file must replace or be added
-      // And delete every part if the table has to be replaced
-      let popupData = {
-         title      : 'Merge or replace ?',
-         width      : 500,
-         height     : 135,
-         sender     : 'partTable',
-         content    : `Do you want to <strong>add</strong> those data to the table or <strong>replace</strong> everything ?`,
-         btn_ok     : 'Add',
-         btn_cancel : 'Replace'
-      };
-      const {ipcRenderer} = require('electron');
-      if(!ipcRenderer.sendSync('popup-request', popupData)) {
-         that.partList.deleteAllParts();
-      }
-
-
-      // Add the values to the PartList
-      line_id = 0;
-      for(let sheet_line of sheet_json) {
-         // skip the header (two first lines)
-         if(line_id>1) {
-            // create a part for each line
-            let part = that.partList.addPart();
-
-            // set the Text characs
-            part.characs.name = sheet_line[1]; // cell B
-            part.characs.ref  = sheet_line[2]; // cell C
-
-            // parse each load (same order as the columns) to set the consumptions
-            // the col number can be incremented with each load because each data is correctly ordered
-            let col_id = 3;
-            // can not use that.tree.forEachLoad() because it need an anonymous functions which is not permited in a loop
-            for(let item of that.tree.item_list) {
-               if(item !== undefined && item.isLoad()) {
-                  part.setConsumption(sheet_line[col_id],   item, 'typ');
-                  part.setConsumption(sheet_line[col_id+1], item, 'max');
-                  col_id += 2;
-               }
-            }
-         }
-         line_id++;
-      }
+      // Import the file into the partlist
+      let noerror = that.fromSpreadsheet(paths[0]);
 
       // finally, refresh the table with the new values
-      that.refresh();
-      that.saveHistory();
+      if(noerror) {
+         that.refresh();
+         that.saveHistory();
+      }
    });
 
    // unselect any part when the emptyzone is clicked
@@ -641,10 +674,12 @@ PartTable.prototype.listenEvents = function() {
 
    // trig KEYDOWN and KEYUP on the edition of any value in the partTable
    $('.partTable').on('keydown', '.edition', function(e){
-      // , (replace , by .)
+      // , (replace , by .) if a number is edited
       if("188" == event.which || "110" == event.which){
-         event.preventDefault();
-         $(this).val($(this).val() + '.');
+         if(undefined !== that.getEditedLoad()) {
+            event.preventDefault();
+            $(this).val($(this).val() + '.');
+         }
       }
       // ENTER (=> validate)
       else if (13 === e.keyCode) {
