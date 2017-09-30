@@ -1,27 +1,34 @@
 @import "colors.scss";
+@import "mybtn.scss";
 
 html, body {
    width:  100%;
    height: 100%;
    margin:    0;
    padding:   0;
-
-
 }
 
+$title_height:   30px;
+$title_margin: 10px;
+$header_height:  $title_height + $title_margin*2;;
+
+
 .header {
-   height: 40px;
+   height:  $header_height;
 }
 
 .title {
-   font-size: 28px;
-   text-align: center;
-   overflow: hidden;
+   height:      $title_height;
+   font-size:   $title_height;
+   line-height: $title_height;
+   margin:      $title_margin;
+   text-align:  center;
+   overflow:    hidden;
 }
 
 .stats {
    position: fixed;
-   top:      40px;
+   top:      $header_height;
    bottom:   0;
    width:    100%;
    display:  flex;
@@ -29,4 +36,25 @@ html, body {
 
 .canvas_container {
    width: 50%;
+}
+
+.goToParent {
+   display:  none;
+   position: fixed;
+   top:      $title_margin;
+   left:     10px;
+
+   & > button {
+      @include round-btn($grey, $title_height);
+   }
+}
+
+.chartType {
+   position: fixed;
+   top:      $title_margin;
+   right:    10px;
+
+   & > button {
+      @include round-btn($grey, $title_height);
+   }
 }

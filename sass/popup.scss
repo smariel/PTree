@@ -19,7 +19,7 @@ menu {
 }
 
 .mybtn-ok {
-   @include mybtn($teal, white);
+   @include square-btn($teal, white);
    margin-left: 5px;
 
    &:hover {
@@ -33,7 +33,7 @@ menu {
 }
 
 .mybtn-cancel {
-   @include mybtn(white, $red);
+   @include square-btn(white, $red);
 
    &:hover {
       background-color: $red;

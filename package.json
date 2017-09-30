@@ -1,6 +1,6 @@
 {
   "name": "PTree",
-  "version": "1.0.2",
+  "version": "1.0.3",
   "description": "Design power tree and estimate consumptions",
   "author": "Sylvain Mariel",
   "license": "MIT",
@@ -11,18 +11,18 @@
   "scripts": {
     "postinstall": "",
     "start": "electron .",
-    "build:mac": "electron-packager . --out=bin --platform=darwin --arch=x64    --overwrite --icon=icons/mac/icon.icns",
-    "build:mas": "electron-packager . --out=bin --platform=mas    --arch=x64    --overwrite --icon=icons/mac/icon.icns",
-    "build:win32": "electron-packager . --out=bin --platform=win32  --arch=ia32   --overwrite --icon=icons/win/icon.ico",
-    "build:win64": "electron-packager . --out=bin --platform=win32  --arch=x64    --overwrite --icon=icons/win/icon.ico",
-    "build:lin32": "electron-packager . --out=bin --platform=linux  --arch=ia32   --overwrite --icon=icons/png/1024x1024.png",
-    "build:lin64": "electron-packager . --out=bin --platform=linux  --arch=x64    --overwrite --icon=icons/png/1024x1024.png",
-    "build:linArm7": "electron-packager . --out=bin --platform=linux  --arch=armv7l --overwrite --icon=icons/png/1024x1024.png",
-    "build:macos": "npm run build:mac   && npm run build:mas",
+    "build:mac": "    electron-packager . --out=bin --platform=darwin --arch=x64    --overwrite --icon=icons/mac/icon.icns     ; cp LICENSE.md bin/PTree-darwin-x64/LICENSE   ; cp docs/equations.pdf bin/PTree-darwin-x64/equations.pdf   ; cp docs/equations.pdf bin/PTree-darwin-x64/example.json",
+    "build:mas": "    electron-packager . --out=bin --platform=mas    --arch=x64    --overwrite --icon=icons/mac/icon.icns     ; cp LICENSE.md bin/PTree-mas-x64/LICENSE      ; cp docs/equations.pdf bin/PTree-mas-x64/equations.pdf      ; cp docs/equations.pdf bin/PTree-mas-x64/example.json",
+    "build:win32": "  electron-packager . --out=bin --platform=win32  --arch=ia32   --overwrite --icon=icons/win/icon.ico      ; cp LICENSE.md bin/PTree-win32-ia32/LICENSE   ; cp docs/equations.pdf bin/PTree-win32-ia32/equations.pdf   ; cp docs/equations.pdf bin/PTree-win32-ia32/example.json",
+    "build:win64": "  electron-packager . --out=bin --platform=win32  --arch=x64    --overwrite --icon=icons/win/icon.ico      ; cp LICENSE.md bin/PTree-win32-x64/LICENSE    ; cp docs/equations.pdf bin/PTree-win32-x64/equations.pdf    ; cp docs/equations.pdf bin/PTree-win32-x64/example.json",
+    "build:lin32": "  electron-packager . --out=bin --platform=linux  --arch=ia32   --overwrite --icon=icons/png/1024x1024.png ; cp LICENSE.md bin/PTree-linux-ia32/LICENSE   ; cp docs/equations.pdf bin/PTree-linux-ia32/equations.pdf   ; cp docs/equations.pdf bin/PTree-linux-ia32/example.json",
+    "build:lin64":  " electron-packager . --out=bin --platform=linux  --arch=x64    --overwrite --icon=icons/png/1024x1024.png ; cp LICENSE.md bin/PTree-linux-x64/LICENSE    ; cp docs/equations.pdf bin/PTree-linux-x64/equations.pdf    ; cp docs/equations.pdf bin/PTree-linux-x64/example.json",
+    "build:linArm7": "electron-packager . --out=bin --platform=linux  --arch=armv7l --overwrite --icon=icons/png/1024x1024.png ; cp LICENSE.md bin/PTree-linux-armv7l/LICENSE ; cp docs/equations.pdf bin/PTree-linux-armv7l/equations.pdf ; cp docs/equations.pdf bin/PTree-linux-armv7l/example.json",
+    "build:macos": "  npm run build:mac   && npm run build:mas",
     "build:windows": "npm run build:win32 && npm run build:win64",
-    "build:linux": "npm run build:lin32 && npm run build:lin64   && npm run build:linArm7",
-    "build:all": "npm run build:macos && npm run build:windows && npm run build:linux",
-    "build": "npm run build:all"
+    "build:linux": "  npm run build:lin32 && npm run build:lin64   && npm run build:linArm7",
+    "build:all": "    npm run build:macos && npm run build:windows && npm run build:linux",
+    "build": "        npm run build:all"
   },
   "repository": {
     "type": "git",

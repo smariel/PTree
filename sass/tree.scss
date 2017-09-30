@@ -207,7 +207,7 @@ $info_border_color:     rgba(255,255,255,0.2);
 }
 
 .mybtn-defaultConfig {
-   @include mybtn($blue, white);
+   @include square-btn($blue, white);
    margin-left: 5px;
 
    &:hover {

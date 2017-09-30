@@ -18,6 +18,7 @@ var PTree = function(canvas_selector) {
    this.listenCanvas();
    this.listenTreeMenu();
    this.listenDOM();
+   this.listenMessages();
    this.clearHistory();
    this.canvas.refresh();
    this.setUnsaved();
@@ -229,6 +230,8 @@ PTree.prototype.undo = function() {
    this.setUnsaved();
    // update the UI
    this.updateUndoRedoButtons();
+   // if stats are open, unselect the item
+   this.updateStats(null);
 };
 
 
@@ -289,6 +292,19 @@ PTree.prototype.updateUpDownButtons = function() {
 };
 
 
+// Show stats in the stat window (if it is open) for the given itemID
+PTree.prototype.updateStats = function(itemID) {
+   if(this.statsAreOpen) {
+      const {ipcRenderer} = require('electron');
+      ipcRenderer.send('stats-selectItem', {
+         itemID:       itemID,
+         treeData:     this.tree.toString(),
+         partListData: this.partList.toString()
+      });
+   }
+};
+
+
 // listen to all events on canvas
 PTree.prototype.listenCanvas = function() {
    // save 'this' to use into event callbacks
@@ -299,23 +315,17 @@ PTree.prototype.listenCanvas = function() {
       var fabric_obj = e.target;
       // if the fabric obj is an "item", select it
       if (null !== fabric_obj && undefined !== fabric_obj && undefined !== fabric_obj.item) {
+         // select the item
          that.canvas.selectItem(fabric_obj.item);
          that.updateUpDownButtons();
          that.canvas.fabricCanvas.dragedItem = fabric_obj.item;
          that.canvas.fabricCanvas.defaultCursor = "move";
-
-         if(that.statsAreOpen) {
-            const {ipcRenderer} = require('electron');
-            let data = {
-               itemID:       fabric_obj.item.id,
-               treeData:     that.tree.toString(),
-               partListData: that.partList.toString()
-            };
-            ipcRenderer.send('stats-selectItem', data);
-         }
+         // show stats if they are already open
+         that.updateStats(fabric_obj.item.id);
       }
       else {
          that.canvas.unselectItem(true);
+         that.updateStats(null);
       }
    });
 
@@ -480,8 +490,11 @@ PTree.prototype.listenTreeMenu = function() {
       const {ipcRenderer} = require('electron');
 
       // ask main.js open the stats window
-      let selectedItemId = (null === that.canvas.getSelectedItem()) ? null : that.canvas.getSelectedItem().id;
-      ipcRenderer.send('stats-request', that.tree.toString(), that.partList.toString(), selectedItemId);
+      ipcRenderer.send('stats-request', {
+         itemID:       (null === that.canvas.getSelectedItem()) ? null : that.canvas.getSelectedItem().id,
+         treeData:     that.tree.toString(),
+         partListData: that.partList.toString()
+      });
       that.statsAreOpen = true;
    });
 
@@ -494,6 +507,7 @@ PTree.prototype.listenTreeMenu = function() {
          that.canvas.refresh();
          that.updateClearButtons();
          that.saveHistory();
+         that.updateStats(null);
       }
    });
 
@@ -514,6 +528,7 @@ PTree.prototype.listenTreeMenu = function() {
       that.canvas.refresh();
       that.updateClearButtons();
       that.saveHistory();
+      that.updateStats(null);
    });
 
 
@@ -612,5 +627,19 @@ PTree.prototype.listenTreeMenu = function() {
       $('.config_range').each(function() {
          $(this).val(that.canvas.config[$(this).data('config')]);
       });
+   });
+};
+
+
+// listen to all events (messages) from main.js
+PTree.prototype.listenMessages = function() {
+   let that = this;
+   // use ipcRender to communicate with main main process
+   const {ipcRenderer} = require('electron');
+
+   // update the chart every time a message is received from main.js
+   ipcRenderer.on('tree-selectItem', function(event, itemID){
+      that.canvas.selectItem(that.tree.getItem(itemID));
+      that.updateUpDownButtons();
    });
 };

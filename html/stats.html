@@ -6,12 +6,19 @@
 
       <!-- CSS -->
       <link rel="stylesheet" href="../node_modules/bootstrap/dist/css/bootstrap.min.css">
+      <link rel="stylesheet" href="../node_modules/font-awesome/css/font-awesome.min.css">
       <link rel="stylesheet" href="../css/stats.css">
    </head>
 
    <body>
       <header class="header container">
          <p class="title"></p>
+         <div class="goToParent">
+            <button data-toggle="tooltip" data-placement="bottom" title="parent"><span class="fa fa-arrow-left"></span></button>
+         </div>
+         <div class="chartType">
+            <button data-toggle="tooltip" data-placement="bottom" title="bar"><span class="fa fa-bar-chart"></span></button>
+         </div>
       </header>
       <section class="stats">
          <section class="canvas_container canvas_cintainer_typ">
@@ -27,6 +34,7 @@
    <script>
       window.$ = window.jQuery = require('jquery');
       require('chart.js');
+      require('bootstrap');
    </script>
 
    <!-- application JS: functions & constructors -->

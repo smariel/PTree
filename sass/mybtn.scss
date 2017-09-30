@@ -1,4 +1,4 @@
-@mixin mybtn($bg-color, $txt-color) {
+@mixin square-btn($bg-color, $txt-color) {
    text-transform:   uppercase;
    background:       none;
    border:           none;
@@ -7,4 +7,27 @@
    transition:       150ms ease;
    background-color: $bg-color;
    color:            $txt-color;
+}
+
+@mixin round-btn($color: $teal, $size: 50px, $transistion: 300ms) {
+   height:        $size;
+   width:         $size;
+   border-radius: $size/2;
+   display:       block;
+   border:        none;
+   outline:       0;
+   color:         white;
+   background:    $color;
+   transition:    all $transistion ease;
+   box-shadow:    0 2px 7px 1px rgba(0,0,0,0.3);
+
+   &:hover {
+      background: darken($color, 10);
+      transition: 150ms ease;
+   }
+
+   &:active {
+      background: darken($color, 15);
+      transition: 100ms ease;
+   }
 }

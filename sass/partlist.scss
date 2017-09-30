@@ -1,4 +1,5 @@
 @import "colors.scss";
+@import "mybtn.scss";
 
 html {
    height: 100%;
@@ -138,36 +139,13 @@ $thead_colors: ( charac: $teal, current: $grey, power: $red );
 // floating controls
 // -----------------------------------------------------------------------------
 
-@mixin round-button($color: $teal, $size: 50px, $transistion: 300ms) {
-   height:        $size;
-   width:         $size;
-   border-radius: $size/2;
-   display:       block;
-   border:        none;
-   outline:       0;
-   color:         white;
-   background:    $color;
-   transition:    all $transistion ease;
-   box-shadow:    0 2px 7px 1px rgba(0,0,0,0.3);
-
-   &:hover {
-      background: darken($color, 10);
-      transition: 150ms ease;
-   }
-
-   &:active {
-      background: darken($color, 15);
-      transition: 100ms ease;
-   }
-}
-
 .addPart {
    position: fixed;
    bottom:   10px;
    left:     10px;
 
    & > button {
-      @include round-button($teal);
+      @include round-btn($teal);
    }
 }
 
@@ -178,7 +156,7 @@ $thead_colors: ( charac: $teal, current: $grey, power: $red );
    display:  none;
 
    & > button {
-      @include round-button($red);
+      @include round-btn($red);
    }
 }
 
@@ -206,7 +184,7 @@ $undoredo_marginLR: 3px;
    display: none;
 
    & > button {
-      @include round-button($grey, $undoredo_size);
+      @include round-btn($grey, $undoredo_size);
    }
 }
 
@@ -214,7 +192,7 @@ $undoredo_marginLR: 3px;
    z-index: 10;
 
    & > button {
-      @include round-button($yellow);
+      @include round-btn($yellow);
    }
 }
 
@@ -225,7 +203,7 @@ $more_buttons_color: ( 0 : $cyan, 1 : $blue, 2 : $purple );
       z-index: $i;
 
       & > button {
-         @include round-button(map-get($more_buttons_color, $i), 0);
+         @include round-btn(map-get($more_buttons_color, $i), 0);
          transition-delay: #{$i*30}ms;
       }
    }

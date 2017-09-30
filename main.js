@@ -1,4 +1,4 @@
-const debug = true;
+const debug = false;
 
 const electron = require('electron');
 
@@ -237,7 +237,7 @@ ipcMain.on('partTable-request', function (partEvent, treeData, partlistData) {
 
 // bind an event handler on a request to open the stats window
 // this request is sent asynchronusly by the tree window
-ipcMain.on('stats-request', function (statsEvent, treeData, partlistData, selectedItem) {
+ipcMain.on('stats-request', function (statsEvent, data) {
    // if the windows is already open
    if(appWindows.stats !== null) {
       appWindows.stats.focus();
@@ -246,10 +246,11 @@ ipcMain.on('stats-request', function (statsEvent, treeData, partlistData, select
 
 	// Create the  window
 	appWindows.stats = new BrowserWindow({
-		width           : 600,
+		width           : 800,
 		height          : 400,
 		resizable       : true,
-      useContentSize  : true
+      useContentSize  : true,
+      alwaysOnTop     : true
 	});
 
 	// Open the dev tools...
@@ -260,7 +261,7 @@ ipcMain.on('stats-request', function (statsEvent, treeData, partlistData, select
 
 	// wait for the window to request the data then send them
 	ipcMain.once('stats-window-open-req', function(event_wopen, arg){
-		event_wopen.sender.send('stats-window-open-resp', treeData, partlistData, selectedItem);
+		event_wopen.sender.send('stats-window-open-resp', data);
 	});
 
 	// Emitted when the window is closed.
@@ -272,8 +273,14 @@ ipcMain.on('stats-request', function (statsEvent, treeData, partlistData, select
 
 // inform the stats window (if open) that an item has been selected on the tree
 ipcMain.on('stats-selectItem', function (event, data) {
-   if(null !== appWindows.stats)
-   appWindows.stats.webContents.send('stats-selectItem',data);
+   if(null !== appWindows.stats) {
+      appWindows.stats.webContents.send('stats-selectItem',data);
+   }
+});
+
+// inform the PTree window that an item has been selected on the stats
+ipcMain.on('tree-selectItem', function (event, data) {
+   appWindows.tree.webContents.send('tree-selectItem',data);
 });
 
 

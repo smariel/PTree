@@ -24,7 +24,7 @@ h3 {
 }
 
 .mybtn-save {
-   @include mybtn($teal, white);
+   @include square-btn($teal, white);
    margin-left: 5px;
 
    &:hover {
@@ -38,7 +38,7 @@ h3 {
 }
 
 .mybtn-cancel {
-   @include mybtn(white, $red);
+   @include square-btn(white, $red);
 
    &:hover {
       background-color: $red;
