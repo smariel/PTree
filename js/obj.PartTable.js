@@ -453,22 +453,24 @@ PartTable.prototype.fromSpreadsheet = function(file) {
       sheetName  = workbook.SheetNames[0];
    }
 
-
+   // translate the sheet to JSON
    let sheet      = workbook.Sheets[sheetName];
    let sheet_json = XLSX.utils.sheet_to_json(sheet, {header:1});
 
+   /* TODO: find a better check. Maybe just the column number
    // Check 2
    // compare the template with the header of the sheet and exit with an alert() if different
    let header_xlsx = XLSX.utils.table_to_book($('.partTable thead')[0]);
    let header_json = XLSX.utils.sheet_to_json(header_xlsx.Sheets[header_xlsx.SheetNames[0]], {header:1});
    // check the 2 first lines only
-   for (let i=0; i<2; i++) {
-      if(!sheet_json[i].equals(header_json[i])) {
-         alert(`Error on line ${i}.\nThe format of the file is not correct.\nPlease use the template to sort your data.`);
-         return false;
+   for (let line_id=0; line_id<2; line_id++) {
+      for(let cell_id in header_json) {
+         if(header_json[line_id][cell_id] != sheet_json[line_id][cell_id]) {
+            alert(`Error in line ${line_id}.\nexpected: ${header_json[line_id][cell_id]}\nFound: ${sheet_json[line_id][cell_id]}\nPlease use the template to sort your data.`);
+            return false;
+         }
       }
-   }
-
+   }*/
 
    // Check 3
    // check if the values of the sheet are numbers
@@ -478,7 +480,7 @@ PartTable.prototype.fromSpreadsheet = function(file) {
       for(let sheet_cell of sheet_line) {
          if (undefined !== sheet_cell) {
             if(cell_id > 4 && line_id > 1 && !$.isNumeric(sheet_cell)) {
-               alert(`Error on cell ${String.fromCharCode(65+cell_id)}${line_id}.\nA number is excpected but the following value was found :\n${sheet_cell}`);
+               alert(`Error on cell ${String.fromCharCode(65+cell_id)}${line_id}.\nA number is expected but the following value was found :\n${sheet_cell}`);
                return false;
             }
          }

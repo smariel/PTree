@@ -25,7 +25,7 @@ window.onbeforeunload = function() {
          height     : 135,
          sender     : 'tree',
          content    : `<strong>You have made changes which were not saved.</strong><br />
-         Do you want to save before exiting ?`,
+         Do you want to save them before exit?`,
          btn_ok     : 'Save and exit',
          btn_cancel : 'Exit without saving'
       };

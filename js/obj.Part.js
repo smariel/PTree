@@ -96,7 +96,6 @@ Part.prototype.getCharac_raw = function(charac_name) {
 Part.prototype.setTags = function(formatedTags) {
    this.characs.tags = '';
    for(let tag of formatedTags.split(/\s*[#\s,;]\s*/)) {
-      console.log(tag);
       if(0 === tag.length) continue;
       else if('#' !== tag[0]) tag = '#'+tag;
       this.characs.tags += tag+' ';
