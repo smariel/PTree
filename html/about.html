@@ -1,0 +1,36 @@
+<!DOCTYPE html>
+<html>
+
+   <head>
+      <meta charset="UTF-8">
+      <title>About</title>
+
+      <!-- CSS -->
+      <link rel="stylesheet" href="../node_modules/bootstrap/dist/css/bootstrap.min.css">
+      <link rel="stylesheet" href="../css/about.css">
+   </head>
+
+   <body class="container-fluid">
+      <header class="title">
+         <img src="../icons/png/128x128.png" />
+         <h1 class="pkg_data" data-pkg="name"></h1>
+         <p class="pkg_data" data-pkg="description"></p>
+      </header>
+      <p class="content">
+         By <a class="url author pkg_data" data-pkg="author"></a><br />
+         Version <span class="pkg_data" data-pkg="version"></span><br />
+         License <span class="pkg_data" data-pkg="license"></span><br />
+         <a class="url homepage">See on GitHub</a><br />
+      </p>
+
+      <!-- JS framworks and libraries -->
+      <script>
+         window.$ = window.jQuery = require('jquery');
+      </script>
+
+      <!-- application JS: this window -->
+      <script>
+         require('../js/renderer.about.js');
+      </script>
+   </body>
+</html>

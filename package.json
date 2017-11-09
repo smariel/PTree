@@ -1,7 +1,7 @@
 {
   "name": "PTree",
-  "version": "1.0.3",
-  "description": "Design power tree and estimate consumptions",
+  "version": "0.4.0",
+  "description": "Design power trees and estimate consumptions",
   "author": "Sylvain Mariel",
   "license": "MIT",
   "main": "main.js",

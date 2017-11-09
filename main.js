@@ -1,6 +1,8 @@
 const debug = true;
 
 const electron = require('electron');
+const packagejson = require('./package.json');
+
 
 // Module to control application life.
 const app = electron.app;
@@ -16,7 +18,8 @@ let appWindows = {
 	item      : null,
 	partTable : null,
    stats     : null,
-   popup     : null
+   popup     : null,
+   about     : null,
 };
 
 
@@ -90,6 +93,32 @@ app.on('ready', () => {
 			role: 'help',
 			submenu: [
 				{
+					label: `About ${packagejson.name}`,
+					click () {
+                  // Create the item window
+               	appWindows.about = new BrowserWindow({
+               		width           : 450,
+               		height          : 350,
+                     alwaysOnTop     : true,
+               		resizable       : false,
+                     autoHideMenuBar : true,
+                     useContentSize  : true
+               	});
+
+               	// Open the dev tools...
+               	if ((undefined !== debug) && debug) appWindows.about.webContents.openDevTools();
+
+               	// Load the *.html of the window.
+               	appWindows.about.loadURL(`file://${__dirname}/html/about.html`);
+
+               	// Emitted when the window is closed.
+               	appWindows.about.on('closed', function () {
+               		// Dereference the window object
+               		appWindows.about = null;
+               	});
+               }
+				},
+            {
 					label: 'Equation Summary',
 					click () {
                   require('electron').shell.openItem(`${__dirname}/docs/equations.pdf`);
@@ -98,7 +127,7 @@ app.on('ready', () => {
 			]
 		},
       ((undefined !== debug) && debug) ? {
-		label: 'View',
+		label: 'Debug',
 			submenu: [
 				{
 					label: 'Reload',
@@ -123,9 +152,6 @@ app.on('ready', () => {
 		template.unshift({
 			label: app.getName(),
 			submenu: [
-				{
-					role: 'about'
-				},
 				{
 					role: 'hide'
 				},
