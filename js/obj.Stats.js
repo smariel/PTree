@@ -21,15 +21,16 @@ var Stats = function(item, tree, partList) {
 
 // update the Canvas by displaying the stats of the saved item
 Stats.prototype.update = function() {
-   // if there are no item, display a message
+   // if there is no item, display a message
    if(null === this.item || undefined === this.item) {
       this.empty();
    }
+   // if there is an item, display two charts
    else {
       // display the title
       $('.title').html(`${this.item.characs.name}`);
 
-      //
+      // display a "go to parent" button if needed
       let parent = this.item.getParent();
       if(null !== parent && !parent.isRoot()) {
          $('.goToParent > button').attr('title', parent.characs.name).tooltip('fixTitle');
@@ -87,8 +88,8 @@ Stats.prototype.update = function() {
 // remove both canvas and print a default text
 Stats.prototype.empty = function() {
    if(null !== this.charts.typ) this.charts.typ.destroy();
-   if(null !== this.charts.typ) this.charts.max.destroy();
-   this.selected = null;
+   if(null !== this.charts.max) this.charts.max.destroy();
+   this.item = null;
    $('.title').text('No selection');
 };
 

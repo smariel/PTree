@@ -1,4 +1,4 @@
-const debug = false;
+const debug = true;
 
 const electron = require('electron');
 
@@ -274,6 +274,13 @@ ipcMain.on('stats-request', function (statsEvent, data) {
 // inform the stats window (if open) that an item has been selected on the tree
 ipcMain.on('stats-selectItem', function (event, data) {
    if(null !== appWindows.stats) {
+      /*// wait for the window to request the data then send them
+   	ipcMain.once('stats-window-open-req', function(event_wopen, arg){
+   		event_wopen.sender.send('stats-window-open-resp', data);
+   	});
+      // reload the stats window
+      appWindows.stats.webContents.reload();*/
+
       appWindows.stats.webContents.send('stats-selectItem',data);
    }
 });
