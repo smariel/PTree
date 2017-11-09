@@ -75,9 +75,9 @@
             </div>
             <div class="form-group row" id="form-group-vout">
                <div class="col-xs-12"><label for="input_vout_typ">V<sub>OUT</sub> (V)</label></div>
-               <div class="col-xs-4"><input id="input_vout_min" type="text" data-itemdata="vout_min" class="form-control input_vout input_num item-control" placeholder="min (V)" data-toggle="tooltip" data-placement="bottom" title="Minimum output voltage (V)" /></div>
-               <div class="col-xs-4"><input id="input_vout_typ" type="text" data-itemdata="vout_typ" class="form-control input_vout input_num item-control" placeholder="typ (V)" data-toggle="tooltip" data-placement="bottom" title="Typical output voltage (V)" /></div>
-               <div class="col-xs-4"><input id="input_vout_max" type="text" data-itemdata="vout_max" class="form-control input_vout input_num item-control" placeholder="max (V)" data-toggle="tooltip" data-placement="bottom" title="Maximum output voltage (V)" /></div>
+               <div class="col-xs-4 mintypmax"><input id="input_vout_min" type="text" data-itemdata="vout_min" class="form-control input_vout input_num item-control" placeholder="min (V)" data-toggle="tooltip" data-placement="bottom" title="Minimum output voltage (V)" /></div>
+               <div class="col-xs-4 mintypmax"><input id="input_vout_typ" type="text" data-itemdata="vout_typ" class="form-control input_vout input_num item-control" placeholder="typ (V)" data-toggle="tooltip" data-placement="bottom" title="Typical output voltage (V)" /></div>
+               <div class="col-xs-4 mintypmax"><input id="input_vout_max" type="text" data-itemdata="vout_max" class="form-control input_vout input_num item-control" placeholder="max (V)" data-toggle="tooltip" data-placement="bottom" title="Maximum output voltage (V)" /></div>
             </div>
             <div class="form-group row source_dcdc">
                <div class="col-xs-12">
@@ -87,9 +87,9 @@
             </div>
             <div class="form-group row source_ldo" id="form-group-iq">
                <div class="col-xs-12"><label>I<sub>Q</sub> (A)</label></div>
-               <div class="col-xs-4"><input id="input_iq_min" type="text" data-itemdata="iq_min" class="col-xs-4 form-control input_iq input_num item-control" placeholder="min (V)" data-toggle="tooltip" data-placement="bottom" title="Min. quiescent current (A)" /></div>
-               <div class="col-xs-4"><input id="input_iq_typ" type="text" data-itemdata="iq_typ" class="col-xs-4 form-control input_iq input_num item-control" placeholder="typ (V)" data-toggle="tooltip" data-placement="bottom" title="Typical quiescent current (A)" /></div>
-               <div class="col-xs-4"><input id="input_iq_max" type="text" data-itemdata="iq_max" class="col-xs-4 form-control input_iq input_num item-control" placeholder="max (V)" data-toggle="tooltip" data-placement="bottom" title="Max. quiescent current (A)" /></div>
+               <div class="col-xs-4 mintypmax"><input id="input_iq_min" type="text" data-itemdata="iq_min" class="form-control input_iq input_num item-control" placeholder="min (V)" data-toggle="tooltip" data-placement="bottom" title="Min. quiescent current (A)" /></div>
+               <div class="col-xs-4 mintypmax"><input id="input_iq_typ" type="text" data-itemdata="iq_typ" class="form-control input_iq input_num item-control" placeholder="typ (V)" data-toggle="tooltip" data-placement="bottom" title="Typical quiescent current (A)" /></div>
+               <div class="col-xs-4 mintypmax"><input id="input_iq_max" type="text" data-itemdata="iq_max" class="form-control input_iq input_num item-control" placeholder="max (V)" data-toggle="tooltip" data-placement="bottom" title="Max. quiescent current (A)" /></div>
             </div>
          </div>
          <div id="source_adjustable" class="container">
@@ -113,10 +113,10 @@
                </div>
             </div>
             <div class="form-group row source_adj_group">
-               <div class="col-xs-12">
-                  <label for="source_vref">V<sub>REF</sub> (V)</label>
-                  <input id="source_vref" data-itemdata="vref" type="text" class="form-control input_num source_adj item-control" placeholder="Regulator Vref (V)" data-toggle="tooltip" data-placement="bottom" title="Regulator Vref (V)" />
-               </div>
+               <div class="col-xs-12"><label>V<sub>REF</sub> (V)</label></div>
+               <div class="col-xs-4 mintypmax"><input id="source_vref_min" type="text" data-itemdata="vref_min" class="form-control input_num source_adj item-control" placeholder="typ (V)" data-toggle="tooltip" data-placement="bottom" title="Minium regulator Vref (V)" /></div>
+               <div class="col-xs-4 mintypmax"><input id="source_vref_typ" type="text" data-itemdata="vref_typ" class="form-control input_num source_adj item-control" placeholder="typ (V)" data-toggle="tooltip" data-placement="bottom" title="Typical regulator Vref (V)" /></div>
+               <div class="col-xs-4 mintypmax"><input id="source_vref_max" type="text" data-itemdata="vref_max" class="form-control input_num source_adj item-control" placeholder="typ (V)" data-toggle="tooltip" data-placement="bottom" title="Maximul regulator Vref (V)" /></div>
             </div>
          </div>
       </form>

@@ -51,3 +51,18 @@ h3 {
       color:            white;
    }
 }
+
+.mintypmax {
+   &:nth-child(2) {
+      padding-left:  15px;
+      padding-right: 1px;
+   }
+   &:nth-child(3) {
+      padding-left:  8px;
+      padding-right: 8px;
+   }
+   &:nth-child(4) {
+      padding-left:  1px;
+      padding-right: 15px;
+   }
+}

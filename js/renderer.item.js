@@ -41,17 +41,20 @@ var updateView = function() {
 
 // update the voltage values
 var updateVoltage = function() {
-   var r1   = $("#source_r1").val();
-   var r2   = $("#source_r2").val();
-   var rtol = $("#source_rtol").val();
-   var vref = $("#source_vref").val();
+   var r1       = $("#source_r1").val();
+   var r2       = $("#source_r2").val();
+   var rtol     = $("#source_rtol").val();
+   var vref_min = $("#source_vref_min").val();
+   var vref_typ = $("#source_vref_typ").val();
+   var vref_max = $("#source_vref_max").val();
+
 
    var rtolmax = 1 + rtol / 100;
    var rtolmin = 1 - rtol / 100;
 
-   var vmin = vref * ((r1 * rtolmin) / (r2 * rtolmax) + 1);
-   var vtyp = vref * (r1 / r2 + 1);
-   var vmax = vref * ((r1 * rtolmax) / (r2 * rtolmin) + 1);
+   var vmin = vref_min * ((r1 * rtolmin) / (r2 * rtolmax) + 1);
+   var vtyp = vref_typ * (r1 / r2 + 1);
+   var vmax = vref_max * ((r1 * rtolmax) / (r2 * rtolmin) + 1);
 
    $("#input_vout_min").val(round(vmin, 3));
    $("#input_vout_typ").val(round(vtyp, 3));
