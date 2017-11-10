@@ -1,11 +1,27 @@
+@import "colors.scss";
+
+html, body {
+   height: 100%;
+}
+
 body {
-   margin-top : 20px;
+   padding-top: 30px ;
+   background: linear-gradient(to bottom, lighten($teal,50) 0%,lighten($teal,30) 100%);
 }
 
-.title, .content {
+.title, p, h1 {
    text-align: center;
+   margin: 5px 0;
 }
 
-.url:hover {
-   cursor: pointer;
+.content, .licensep {
+   margin: 15px 20px;
+}
+
+
+a {
+   color: darken($teal,10);
+   &:hover {
+      color: darken($teal,30);
+   }
 }

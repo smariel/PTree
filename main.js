@@ -1,4 +1,4 @@
-const debug = true;
+const debug = false;
 
 const electron = require('electron');
 const packagejson = require('./package.json');
@@ -95,27 +95,31 @@ app.on('ready', () => {
 				{
 					label: `About ${packagejson.name}`,
 					click () {
-                  // Create the item window
-               	appWindows.about = new BrowserWindow({
-               		width           : 450,
-               		height          : 350,
-                     alwaysOnTop     : true,
-               		resizable       : false,
-                     autoHideMenuBar : true,
-                     useContentSize  : true
-               	});
+                  // Create the item window if it doesn't exist
+                  if(null === appWindows.about) {
+                  	appWindows.about = new BrowserWindow({
+                  		width           : 450,
+                  		height          : 420,
+                        alwaysOnTop     : true,
+                  		resizable       : false,
+                        autoHideMenuBar : true,
+                        useContentSize  : true,
+                        thickFrame      : true,
+                        titleBarStyle   : 'hiddenInset'
+                     });
 
-               	// Open the dev tools...
-               	if ((undefined !== debug) && debug) appWindows.about.webContents.openDevTools();
+                  	// Open the dev tools...
+                  	if ((undefined !== debug) && debug) appWindows.about.webContents.openDevTools();
 
-               	// Load the *.html of the window.
-               	appWindows.about.loadURL(`file://${__dirname}/html/about.html`);
+                  	// Load the *.html of the window.
+                  	appWindows.about.loadURL(`file://${__dirname}/html/about.html`);
 
-               	// Emitted when the window is closed.
-               	appWindows.about.on('closed', function () {
-               		// Dereference the window object
-               		appWindows.about = null;
-               	});
+                  	// Emitted when the window is closed.
+                  	appWindows.about.on('closed', function () {
+                  		// Dereference the window object
+                  		appWindows.about = null;
+                  	});
+                  }
                }
 				},
             {

@@ -4,8 +4,8 @@ $(function() {
 
 
    $('.pkg_data').each(function(){
-      let pkgdata = $(this).data('pkg');
-      $(this).html(packagejson[pkgdata]);
+      let pkgdata = packagejson[$(this).data('pkg')];
+      $(this).html(pkgdata);
    });
 
    $('.homepage').click(function(){
@@ -15,4 +15,11 @@ $(function() {
    $('.author').click(function(){
       shell.openExternal('https://github.com/smariel/');
    });
+
+   $('.license').click(function(){
+      let license = packagejson[$(this).data('pkg')];
+      shell.openExternal(`https://spdx.org/licenses/${license}.html`);
+   });
+
+
 });

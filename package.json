@@ -3,7 +3,7 @@
   "version": "0.4.0",
   "description": "Design power trees and estimate consumptions",
   "author": "Sylvain Mariel",
-  "license": "MIT",
+  "license": "GPL-3.0",
   "main": "main.js",
   "jshintConfig": {
     "esversion": 6
@@ -36,7 +36,7 @@
   "bugs": {
     "url": "https://github.com/smariel/PTree/issues"
   },
-  "homepage": "https://github.com/smariel/PTree#readme",
+  "homepage": "https://github.com/smariel/PTree",
   "dependencies": {
     "bootstrap": "^3.3.7",
     "chart.js": "^2.7.1",
