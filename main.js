@@ -123,6 +123,12 @@ app.on('ready', () => {
                }
 				},
             {
+               label: 'Bug report and enhancement request',
+               click () {
+                  require('electron').shell.openExternal('https://github.com/smariel/PTree/issues');
+               }
+            },
+            {
 					label: 'Equation Summary',
 					click () {
                   require('electron').shell.openItem(`${__dirname}/docs/equations.pdf`);
