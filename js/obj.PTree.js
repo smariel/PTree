@@ -337,7 +337,7 @@ PTree.prototype.toggleOptions = function() {
 
 // Export the canvas as a JPEG Image
 PTree.prototype.export = function() {
-   downloadDataURL(that.canvas.toJPEGdataURL(), 'ptree.jpg');
+   downloadDataURL(this.canvas.toJPEGdataURL(), 'ptree.jpg');
 };
 
 
