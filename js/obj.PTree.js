@@ -18,6 +18,7 @@ var PTree = function(canvas_selector) {
    this.listenCanvas();
    this.listenTreeMenu();
    this.listenDOM();
+   this.listenKeyboard();
    this.listenMessages();
    this.clearHistory();
    this.canvas.refresh();
@@ -120,7 +121,11 @@ PTree.prototype.open = function() {
 
 
 // save the app data into a file
-PTree.prototype.save = function(saveas) {
+PTree.prototype.save = function(saveas = false) {
+   // do not try a simple save if it's not needed
+   if(!saveas && !this.unsaved) {
+      return;
+   }
 
    // if the app as no file to work on
    // or if the app data must be save as a new file
@@ -218,33 +223,42 @@ PTree.prototype.saveHistory = function() {
 };
 
 
-// undo an action
-PTree.prototype.undo = function() {
+// load data from the history at the given index (to undo/redo)
+PTree.prototype.loadHistory = function(index) {
    // unselect any item in the canvas
    this.canvas.unselectItem();
-   // restore the previous tree in the history
-   var readIndex = (0 === this.history.index) ? 0 : --this.history.index;
-   this.tree.fromString(this.history.list[readIndex]);
+   // if stats are open, unselect the item
+   this.updateStats(null);
+   // restore the tree
+   this.tree.fromString(this.history.list[index]);
    this.canvas.refresh();
    // mark the workspace as unsaved
    this.setUnsaved();
    // update the UI
    this.updateUndoRedoButtons();
-   // if stats are open, unselect the item
-   this.updateStats(null);
+   this.updateClearButtons();
+};
+
+
+// undo an action
+PTree.prototype.undo = function() {
+   // is there a previous tree ?
+   if (this.history.index > 0) {
+      // load the previous tree in the history
+      --this.history.index;
+      this.loadHistory(this.history.index);
+   }
 };
 
 
 // redo un action
 PTree.prototype.redo = function() {
-   // restore the next tree in the history
-   var readIndex = (this.history.index == this.history.list.length - 1) ? this.history.list.length - 1 : ++this.history.index;
-   this.tree.fromString(this.history.list[readIndex]);
-   this.canvas.refresh();
-   // mark the workspace as unsaved
-   this.setUnsaved();
-   // update the UI
-   this.updateUndoRedoButtons();
+   // is there a next tree ?
+   if(this.history.index < this.history.list.length - 1) {
+      // load the next tree in the history
+      ++this.history.index;
+      this.loadHistory(this.history.index);
+   }
 };
 
 
@@ -302,6 +316,28 @@ PTree.prototype.updateStats = function(itemID) {
          partListData: this.partList.toString()
       });
    }
+};
+
+
+// Toggle the option panel
+PTree.prototype.toggleOptions = function() {
+   let that = this;
+
+   $('#bottom_menu').slideToggle(500, 'swing');
+
+   $('.config_checkbox').each(function() {
+      $(this).prop('checked', that.canvas.config[$(this).data('config')]);
+   });
+
+   $('.config_range').each(function() {
+      $(this).val(that.canvas.config[$(this).data('config')]);
+   });
+};
+
+
+// Export the canvas as a JPEG Image
+PTree.prototype.export = function() {
+   downloadDataURL(that.canvas.toJPEGdataURL(), 'ptree.jpg');
 };
 
 
@@ -576,19 +612,13 @@ PTree.prototype.listenTreeMenu = function() {
 
    // undo action
    $('#bt_undo').click(function() {
-      if (!$(this).hasClass('disabled')) {
-         that.undo();
-         that.updateClearButtons();
-      }
+      that.undo();
    });
 
 
    // redo action
    $('#bt_redo').click(function() {
-      if (!$(this).hasClass('disabled')) {
-         that.redo();
-         that.updateClearButtons();
-      }
+      that.redo();
    });
 
 
@@ -612,21 +642,63 @@ PTree.prototype.listenTreeMenu = function() {
 
    // export the canvas as an Image
    $('#bt_export_img').click(function() {
-      downloadDataURL(that.canvas.toJPEGdataURL(), 'ptree.jpg');
+      that.export();
    });
 
 
    // toggle the config bar
    $('#bt_config').click(function() {
-      $('#bottom_menu').slideToggle(500, 'swing');
+      that.toggleOptions();
+   });
+};
 
-      $('.config_checkbox').each(function() {
-         $(this).prop('checked', that.canvas.config[$(this).data('config')]);
-      });
 
-      $('.config_range').each(function() {
-         $(this).val(that.canvas.config[$(this).data('config')]);
-      });
+// listen to all keyboard shortcuts
+PTree.prototype.listenKeyboard = function() {
+   let that = this;
+   // Mousetrap: return false to prevent default browser behavior and stop event from bubbling
+
+   // Undo
+   Mousetrap.bind(['command+z', 'ctrl+z'], function() {
+      that.undo();
+      return false;
+   });
+
+   // Redo
+   Mousetrap.bind(['command+y', 'ctrl+y', 'command+shift+z', 'ctrl+shift+z'], function() {
+      that.redo();
+      return false;
+   });
+
+   // Open
+   Mousetrap.bind(['command+o', 'ctrl+o'], function() {
+      that.open();
+      return false;
+   });
+
+   // Save
+   Mousetrap.bind(['command+s', 'ctrl+s'], function() {
+      that.save(false);
+      return false;
+   });
+
+   // Save as
+   Mousetrap.bind(['command+shift+s', 'ctrl+shift+s'], function() {
+      that.save(true);
+      return false;
+   });
+
+
+   // Export
+   Mousetrap.bind(['command+e', 'ctrl+e'], function() {
+      that.export();
+      return false;
+   });
+
+   // Options
+   Mousetrap.bind(['command+,', 'ctrl+,'], function() {
+      that.toggleOptions();
+      return false;
    });
 };
 

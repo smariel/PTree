@@ -382,27 +382,37 @@ PartTable.prototype.saveHistory = function() {
 };
 
 
-// undo an action
-PartTable.prototype.undo = function() {
+// load data from the history at the given index (to undo/redo)
+PartTable.prototype.loadHistory = function(index) {
    // unselect all part
    this.unselectPart();
-   // restore the previous tree in the history
-   var readIndex = (0 === this.history.index) ? 0 : --this.history.index;
-   this.partList.fromString(this.history.list[readIndex]);
+   // restore the the part list from the history
+   this.partList.fromString(this.history.list[index]);
    // update the UI
    this.refresh();
    this.updateUndoRedoButtons();
 };
 
 
+// undo an action
+PartTable.prototype.undo = function() {
+   // is there a previous part list ?
+   if (this.history.index > 0) {
+      // load the previous tree in the history
+      --this.history.index;
+      this.loadHistory(this.history.index);
+   }
+};
+
+
 // redo un action
 PartTable.prototype.redo = function() {
-   // restore the next tree in the history
-   var readIndex = (this.history.index == this.history.list.length - 1) ? this.history.list.length - 1 : ++this.history.index;
-   this.partList.fromString(this.history.list[readIndex]);
-   // update the UI
-   this.refresh();
-   this.updateUndoRedoButtons();
+   // is there a next tree ?
+   if(this.history.index < this.history.list.length - 1) {
+      // load the next tree in the history
+      ++this.history.index;
+      this.loadHistory(this.history.index);
+   }
 };
 
 
@@ -663,6 +673,26 @@ PartTable.prototype.listenEvents = function() {
       var load    = that.tree.getItem(loadID);
 
       that.editCurrent(part, load, typmax);
+   });
+
+   // Undo
+   Mousetrap.bind(['command+z', 'ctrl+z'], function() {
+      that.undo();
+      return false;
+   });
+
+   // Redo
+   Mousetrap.bind(['command+y', 'ctrl+y', 'command+shift+z', 'ctrl+shift+z'], function() {
+      that.redo();
+      return false;
+   });
+
+   // Select all
+   Mousetrap.bind(['command+a', 'ctrl+a'], function() {
+      that.partList.forEachPart(function(part){
+         that.addToSelection(part);
+      });
+      return false;
    });
 
    // Global keydown
