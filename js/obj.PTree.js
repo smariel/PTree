@@ -335,7 +335,7 @@ PTree.prototype.listenCanvas = function() {
       var dragedItem = that.canvas.fabricCanvas.dragedItem;
 
       // if the event occured on a fabric obj (on an "item")
-      if (null !== fabric_obj && undefined !== fabric_obj && undefined !== fabric_obj.item) {
+      if (null !== fabric_obj && undefined !== fabric_obj && undefined !== fabric_obj.item && null !== dragedItem) {
          var receiverItem = fabric_obj.item;
          // if the receiver item is different than the dragged item
          if (receiverItem.id !== dragedItem.id) {
