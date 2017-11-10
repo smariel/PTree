@@ -76,6 +76,11 @@ Stats.prototype.update = function() {
                labels.push(part.characs.name);
             }
          });
+
+         if(!this.item.characs.inpartlist || 0 === labels.length) {
+            this.empty('No part');
+            return;
+         }
       }
 
       // create two charts and fill them
@@ -86,11 +91,11 @@ Stats.prototype.update = function() {
 
 
 // remove both canvas and print a default text
-Stats.prototype.empty = function() {
+Stats.prototype.empty = function(title = 'No selection') {
    if(null !== this.charts.typ) this.charts.typ.destroy();
    if(null !== this.charts.max) this.charts.max.destroy();
    this.item = null;
-   $('.title').text('No selection');
+   $('.title').text(title);
 };
 
 

@@ -1,4 +1,4 @@
-const debug = true;
+const debug = false;
 
 const electron = require('electron');
 const packagejson = require('./package.json');
