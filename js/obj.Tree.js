@@ -71,6 +71,28 @@ Tree.prototype.getPreviousLoad = function(load) {
 };
 
 
+// return the previous or next load allowed in the part list (recursve search)
+Tree.prototype.getLoadInPartList = function(load, direction) {
+   let method = {next: 'getNextLoad', prev: 'getPreviousLoad'};
+   let newload = this[method[direction]](load);
+
+   // if there is no load, return null
+   if(null === newload) {
+      return null;
+   }
+   else {
+      // if the load is allowed in the partlist, return it
+      if(newload.characs.inpartlist) {
+         return newload;
+      }
+      // if the  load is not allowed, got an other one... recursively
+      else {
+         return this[method[direction]](newload);
+      }
+   }
+};
+
+
 // Create an item : root, source or load, whithout any connection with the canvas
 Tree.prototype.addItem = function(parent, type) {
 

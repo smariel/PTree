@@ -3,50 +3,50 @@
 // -----------------------------------------------------------------------------
 
 // update the form
-var updateView = function() {
+var updateRegType = function() {
    var regtype = $('#source_regtype').val();
 
    // If the reg vout is fixed
    if (regtype <= 2) {
       // hide the adj inputs and enable the fixed values
-      $("#source_adjustable").hide();
-      //$("#source_description").addClass("offset-s2");
-      $(".input_vout").attr("disabled", false);
+      $('#source_adjustable').hide();
+      //$('#source_description').addClass('offset-s2');
+      $('.input_vout').attr('disabled', false);
    }
    // if the reg vout is adjustable
    else if (regtype <= 5) {
       // disable the fixed value and show the adj inputs
-      $("#source_adjustable").show();
-      //$("#source_description").removeClass("offset-s2");
-      $(".input_vout").attr("disabled", true);
+      $('#source_adjustable').show();
+      //$('#source_description').removeClass('offset-s2');
+      $('.input_vout').attr('disabled', true);
 
       // update the voltage values
       updateVoltage();
    }
 
    // hide DC/DC and LDO inputs
-   $(".source_dcdc").hide();
-   $(".source_ldo").hide();
+   $('.source_dcdc').hide();
+   $('.source_ldo').hide();
 
    // Show corresponding inputs if the reg is a DC/DC
    if ('0' == regtype || '3' == regtype) {
-      $(".source_dcdc").show();
+      $('.source_dcdc').show();
    }
    // Show corresponding inputs if the reg is a LDO
    else if ('1' == regtype || '4' == regtype) {
-      $(".source_ldo").show();
+      $('.source_ldo').show();
    }
 };
 
 
 // update the voltage values
 var updateVoltage = function() {
-   var r1       = $("#source_r1").val();
-   var r2       = $("#source_r2").val();
-   var rtol     = $("#source_rtol").val();
-   var vref_min = $("#source_vref_min").val();
-   var vref_typ = $("#source_vref_typ").val();
-   var vref_max = $("#source_vref_max").val();
+   var r1       = $('#source_r1').val();
+   var r2       = $('#source_r2').val();
+   var rtol     = $('#source_rtol').val();
+   var vref_min = $('#source_vref_min').val();
+   var vref_typ = $('#source_vref_typ').val();
+   var vref_max = $('#source_vref_max').val();
 
 
    var rtolmax = 1 + rtol / 100;
@@ -56,27 +56,39 @@ var updateVoltage = function() {
    var vtyp = vref_typ * (r1 / r2 + 1);
    var vmax = vref_max * ((r1 * rtolmax) / (r2 * rtolmin) + 1);
 
-   $("#input_vout_min").val(round(vmin, 3));
-   $("#input_vout_typ").val(round(vtyp, 3));
-   $("#input_vout_max").val(round(vmax, 3));
+   $('#input_vout_min').val(round(vmin, 3));
+   $('#input_vout_typ').val(round(vtyp, 3));
+   $('#input_vout_max').val(round(vmax, 3));
 };
 
 
 // fill the form inputs with the item data by passing its reference to a dedicated function
 var fillData = function(item) {
-   // get an array of keys for each characs
-   var keys = Object.keys(item.characs);
-
-
    // hide both load and the source form
    $('form').hide();
 
-   // fill the values of each input
-   for (var i = 0; i < keys.length; ++i) {
-      $('#' + item.type + '_control .form-control[data-itemdata=' + keys[i] + ']').val(item.characs[keys[i]]);
+   // get the values of each input
+   for (let charac in item.characs) {
+      if (item.characs.hasOwnProperty(charac)) {
+         let input = $('#' + item.type + '_control *[data-itemdata=' + charac + ']');
+         if('checkbox' === input.attr('type') && item.characs[charac]) {
+            input.prop('checked','checked');
+            input.data('original',item.characs[charac]);
+         }
+         else {
+            input.val(item.characs[charac]);
+            input.data('original',item.characs[charac]);
+         }
+      }
    }
 
-   updateView();
+   // Update the html
+   if('source' === item.type) {
+      updateRegType();
+   }
+   else if ('load' === item.type) {
+      updateLoadInPartlist();
+   }
 
    // finaly show the form
    $('#' + item.type + '_control').show();
@@ -93,15 +105,41 @@ var close = function(data) {
 
 // update the item with the new data
 var updateItem = function(item) {
-   // get an array of keys for each characs
-   var keys = Object.keys(item.characs);
-
    // get the values of each input
-   for (var i = 0; i < keys.length; ++i) {
-      item.characs[keys[i]] = $('#' + item.type + '_control .form-control[data-itemdata=' + keys[i] + ']').val();
+   for (let charac in item.characs) {
+      if (item.characs.hasOwnProperty(charac)) {
+         let input = $('#' + item.type + '_control *[data-itemdata=' + charac + ']');
+         if(('ityp' === charac || 'imax' === charac) && input.prop('disabled')) {
+            continue;
+         }
+         else if('checkbox' === input.attr('type')) {
+            item.characs[charac] = input.prop('checked');
+         }
+         else {
+            item.characs[charac] = input.val();
+         }
+      }
    }
 };
 
+
+// Update the load view if it is in part list or not
+var updateLoadInPartlist = function() {
+   if($('#load_inpartlist').prop('checked')) {
+      $('.inpartlist').show();
+      $('.notinpartlist').hide();
+      $('#load_ityp').prop('disabled', true);
+      $('#load_imax').prop('disabled', true);
+      $('#load_ityp').val($('#load_ityp').data('original'));
+      $('#load_imax').val($('#load_imax').data('original'));
+   }
+   else {
+      $('.inpartlist').hide();
+      $('.notinpartlist').show();
+      $('#load_ityp').attr('disabled', false);
+      $('#load_imax').attr('disabled', false);
+   }
+};
 
 // -----------------------------------------------------------------------------
 // Execution
@@ -145,16 +183,20 @@ $('#edit_ok').click(function() {
 
 
 // Modify the available inputs when the user change the regtype
-$('#source_regtype').change(updateView);
+$('#source_regtype').change(updateRegType);
+
+
+// Permit current edition if the checkbox is unchecked
+$('#load_inpartlist').change(updateLoadInPartlist);
 
 
 // update vmin/vtyp/vmax on the go
-$(".source_adj").keyup(updateVoltage);
+$('.source_adj').keyup(updateVoltage);
 
 
-// Replace "," by "." on numeric inputs
-$(".input_num").keypress(function(event) {
-   if ("44" == event.which) {
+// Replace ',' by '.' on numeric inputs
+$('.input_num').keypress(function(event) {
+   if ('44' == event.which) {
       event.preventDefault();
       $(this).val($(this).val() + '.');
    }

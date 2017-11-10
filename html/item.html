@@ -74,22 +74,20 @@
                </div>
             </div>
             <div class="form-group row" id="form-group-vout">
-               <div class="col-xs-12"><label for="input_vout_typ">V<sub>OUT</sub> (V)</label></div>
-               <div class="col-xs-4 mintypmax"><input id="input_vout_min" type="text" data-itemdata="vout_min" class="form-control input_vout input_num item-control" placeholder="min (V)" data-toggle="tooltip" data-placement="bottom" title="Minimum output voltage (V)" /></div>
-               <div class="col-xs-4 mintypmax"><input id="input_vout_typ" type="text" data-itemdata="vout_typ" class="form-control input_vout input_num item-control" placeholder="typ (V)" data-toggle="tooltip" data-placement="bottom" title="Typical output voltage (V)" /></div>
-               <div class="col-xs-4 mintypmax"><input id="input_vout_max" type="text" data-itemdata="vout_max" class="form-control input_vout input_num item-control" placeholder="max (V)" data-toggle="tooltip" data-placement="bottom" title="Maximum output voltage (V)" /></div>
+               <div class="col-xs-4 mintypmax"><label for="input_vout_min">V<sub>OUT MIN</sub></label><input id="input_vout_min" type="text" data-itemdata="vout_min" class="form-control input_vout input_num item-control" placeholder="min (V)" data-toggle="tooltip" data-placement="bottom" title="Minimum output voltage (V)" /></div>
+               <div class="col-xs-4 mintypmax"><label for="input_vout_typ">V<sub>OUT TYP</sub></label><input id="input_vout_typ" type="text" data-itemdata="vout_typ" class="form-control input_vout input_num item-control" placeholder="typ (V)" data-toggle="tooltip" data-placement="bottom" title="Typical output voltage (V)" /></div>
+               <div class="col-xs-4 mintypmax"><label for="input_vout_max">V<sub>OUT MAX</sub></label><input id="input_vout_max" type="text" data-itemdata="vout_max" class="form-control input_vout input_num item-control" placeholder="max (V)" data-toggle="tooltip" data-placement="bottom" title="Maximum output voltage (V)" /></div>
             </div>
             <div class="form-group row source_dcdc">
                <div class="col-xs-12">
-                  <label for="source_efficiency">Eff. (%)</label>
+                  <label for="source_efficiency">Efficiency (%)</label>
                   <input id="source_efficiency" type="text" data-itemdata="efficiency" class="form-control input_num item-control" placeholder="Efficiency (%)" data-toggle="tooltip" data-placement="bottom" title="Regulator efficiency (%)" />
                </div>
             </div>
             <div class="form-group row source_ldo" id="form-group-iq">
-               <div class="col-xs-12"><label>I<sub>Q</sub> (A)</label></div>
-               <div class="col-xs-4 mintypmax"><input id="input_iq_min" type="text" data-itemdata="iq_min" class="form-control input_iq input_num item-control" placeholder="min (V)" data-toggle="tooltip" data-placement="bottom" title="Min. quiescent current (A)" /></div>
-               <div class="col-xs-4 mintypmax"><input id="input_iq_typ" type="text" data-itemdata="iq_typ" class="form-control input_iq input_num item-control" placeholder="typ (V)" data-toggle="tooltip" data-placement="bottom" title="Typical quiescent current (A)" /></div>
-               <div class="col-xs-4 mintypmax"><input id="input_iq_max" type="text" data-itemdata="iq_max" class="form-control input_iq input_num item-control" placeholder="max (V)" data-toggle="tooltip" data-placement="bottom" title="Max. quiescent current (A)" /></div>
+               <div class="col-xs-4 mintypmax"><label>I<sub>Q MIN</sub></label><input id="input_iq_min" type="text" data-itemdata="iq_min" class="form-control input_iq input_num item-control" placeholder="min (V)" data-toggle="tooltip" data-placement="bottom" title="Min. quiescent current (A)" /></div>
+               <div class="col-xs-4 mintypmax"><label>I<sub>Q TYP</sub></label><input id="input_iq_typ" type="text" data-itemdata="iq_typ" class="form-control input_iq input_num item-control" placeholder="typ (V)" data-toggle="tooltip" data-placement="bottom" title="Typical quiescent current (A)" /></div>
+               <div class="col-xs-4 mintypmax"><label>I<sub>Q MAX</sub></label><input id="input_iq_max" type="text" data-itemdata="iq_max" class="form-control input_iq input_num item-control" placeholder="max (V)" data-toggle="tooltip" data-placement="bottom" title="Max. quiescent current (A)" /></div>
             </div>
          </div>
          <div id="source_adjustable" class="container">
@@ -108,15 +106,14 @@
             </div>
             <div class="form-group row source_adj_group">
                <div class="col-xs-12">
-                  <label for="source_rtol">Tol. (%)</label>
+                  <label for="source_rtol">R tolerance (%)</label>
                   <input id="source_rtol" data-itemdata="rtol" type="text" class="form-control input_num source_adj item-control" placeholder="Resistor tolerance (%)" data-toggle="tooltip" data-placement="bottom" title="Resistor tolerance (%)" />
                </div>
             </div>
             <div class="form-group row source_adj_group">
-               <div class="col-xs-12"><label>V<sub>REF</sub> (V)</label></div>
-               <div class="col-xs-4 mintypmax"><input id="source_vref_min" type="text" data-itemdata="vref_min" class="form-control input_num source_adj item-control" placeholder="typ (V)" data-toggle="tooltip" data-placement="bottom" title="Minium regulator Vref (V)" /></div>
-               <div class="col-xs-4 mintypmax"><input id="source_vref_typ" type="text" data-itemdata="vref_typ" class="form-control input_num source_adj item-control" placeholder="typ (V)" data-toggle="tooltip" data-placement="bottom" title="Typical regulator Vref (V)" /></div>
-               <div class="col-xs-4 mintypmax"><input id="source_vref_max" type="text" data-itemdata="vref_max" class="form-control input_num source_adj item-control" placeholder="typ (V)" data-toggle="tooltip" data-placement="bottom" title="Maximul regulator Vref (V)" /></div>
+               <div class="col-xs-4 mintypmax"><label>V<sub>REF MIN</sub></label><input id="source_vref_min" type="text" data-itemdata="vref_min" class="form-control input_num source_adj item-control" placeholder="typ (V)" data-toggle="tooltip" data-placement="bottom" title="Minium regulator Vref (V)" /></div>
+               <div class="col-xs-4 mintypmax"><label>V<sub>REF TYP</sub></label><input id="source_vref_typ" type="text" data-itemdata="vref_typ" class="form-control input_num source_adj item-control" placeholder="typ (V)" data-toggle="tooltip" data-placement="bottom" title="Typical regulator Vref (V)" /></div>
+               <div class="col-xs-4 mintypmax"><label>V<sub>REF MAX</sub></label><input id="source_vref_max" type="text" data-itemdata="vref_max" class="form-control input_num source_adj item-control" placeholder="typ (V)" data-toggle="tooltip" data-placement="bottom" title="Maximul regulator Vref (V)" /></div>
             </div>
          </div>
       </form>
@@ -129,17 +126,13 @@
       -->
 
       <form id="load_control">
-         <div class="container">
+         <div id="load_description" class="container">
+            <h3>Description</h3>
             <div class="form-group row">
                <div class="col-xs-12">
                   <label for="load_name">Name</label>
                   <input id="load_name" type="text" data-itemdata="name"  class="form-control input-xs" placeholder="Name">
                </div>
-            </div>
-            <div class="form-group row">
-               <div class="col-xs-12"><label for="load_ityp">I<sub>LOAD</sub> (A)</label></div>
-               <div class="col-xs-6"><input id="load_ityp" data-itemdata="ityp" class="col-xs-6 form-control input_num" type="text" disabled /></div>
-               <div class="col-xs-6"><input id="load_imax" data-itemdata="imax" class="col-xs-6 form-control input_num" type="text" disabled /></div>
             </div>
             <div class="form-group row">
                <div class="col-xs-12">
@@ -158,6 +151,23 @@
                   <label for="load_custom2">Free field 2 (hidden)</label>
                   <input id="load_custom2" type="text" data-itemdata="custom2" class="form-control input-xs" placeholder="..." />
                </div>
+            </div>
+         </div>
+         <div id="load_elecrical" class="container">
+            <h3>Characteristics</h3>
+            <div class="form-group row">
+               <div class="col-xs-12">
+                  <label for="load_inpartlist">
+                     In part list
+                     <input id="load_inpartlist" type="checkbox" data-itemdata="inpartlist" class="checkbox-control" />
+                  </label>
+                  <p class="help inpartlist">The Load is in the part list; the currents are determined by the component consuming on it.</p>
+                  <p class="help notinpartlist">The Load does not appear in the part list; the consumption is defined below by the designer.</p>
+               </div>
+            </div>
+            <div class="form-group row">
+               <div class="col-xs-6"><label for="load_ityp">I<sub>TYP</sub> (A)</label><br /><input id="load_ityp" data-itemdata="ityp" class="col-xs-6 form-control input_num" type="text" disabled /></div>
+               <div class="col-xs-6"><label for="load_imax">I<sub>MAX</sub> (A)</label><br /><input id="load_imax" data-itemdata="imax" class="col-xs-6 form-control input_num" type="text" disabled /></div>
             </div>
          </div>
       </form>

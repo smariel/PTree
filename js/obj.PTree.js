@@ -418,7 +418,7 @@ PTree.prototype.listenCanvas = function() {
    // Edit item on double click
    $(that.canvas.canvas$).parent().dblclick(function() {
       if (null !== that.canvas.getSelectedItem()) {
-         that.canvas.getSelectedItem().edit();
+         that.canvas.getSelectedItem().edit(that.partList);
          that.canvas.refresh();
          that.saveHistory();
       }
@@ -534,7 +534,7 @@ PTree.prototype.listenTreeMenu = function() {
 
    // show the correct modal for edition
    $('#bt_edit').click(function() {
-      that.canvas.getSelectedItem().edit();
+      that.canvas.getSelectedItem().edit(that.partlist);
    });
 
 

@@ -46,7 +46,7 @@ PartTable.prototype.refresh = function() {
       // Part consumptions on each load
       // Can't use tree.forEachLoad() without creating an anonymous function in this loop
       for(let item of that.tree.item_list) {
-         if(item !== undefined && item.isLoad()) {
+         if(item !== undefined && item.isLoad() && item.characs.inpartlist) {
             // get the consumption on this item
             let ityp = part.getConsumption(item, 'typ');
             let imax = part.getConsumption(item, 'max');
@@ -533,7 +533,7 @@ PartTable.prototype.fromSpreadsheet = function(file) {
          let col_id = 5;
          // can not use that.tree.forEachLoad() because it need an anonymous functions which is not permited in a loop
          for(let item of this.tree.item_list) {
-            if(item !== undefined && item.isLoad()) {
+            if(item !== undefined && item.isLoad() && item.characs.inpartlist) {
                part.setConsumption(sheet_line[col_id],   item, 'typ');
                part.setConsumption(sheet_line[col_id+1], item, 'max');
                col_id += 2;
@@ -703,7 +703,7 @@ PartTable.prototype.listenEvents = function() {
             if('charac' === editType && 'ref' === charac) {
                that.editCharac(part, 'name');
             }
-            // else if editing any cirrent
+            // else if editing any current, find what is the previous cell
             else if ('current' === editType) {
                // if the current is a max, jump to the typ of the same load
                if('max' === typmax) {
@@ -711,8 +711,9 @@ PartTable.prototype.listenEvents = function() {
                }
                // else, if the current is a typ
                else {
-                  let prevload = that.tree.getPreviousLoad(load);
-                  // if their is a previous load, jump to its max
+                  let prevload = that.tree.getLoadInPartList(load, 'prev');
+
+                  // if there is a previous load, jump to its max
                   if(null !== prevload) {
                      that.editCurrent(part, prevload, 'max');
                   }
@@ -733,7 +734,7 @@ PartTable.prototype.listenEvents = function() {
                }
                // if editing the ref, jump to the first load (if their is one)
                else if ('ref' === charac) {
-                  let firstLoad = that.tree.getNextLoad(that.tree.getRoot());
+                  let firstLoad = that.tree.getLoadInPartList(that.tree.getRoot(), 'next');
                   if(null !== firstLoad) that.editCurrent(part, firstLoad, 'typ');
                }
             }
@@ -746,7 +747,7 @@ PartTable.prototype.listenEvents = function() {
                // else if the current is a max
                else {
                   // jump to the typ of the next load (if their is one)
-                  let nextLoad = that.tree.getNextLoad(load);
+                  let nextLoad = that.tree.getLoadInPartList(load, 'next');
                   if(null !== nextLoad) that.editCurrent(part, nextLoad, 'typ');
                }
             }

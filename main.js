@@ -1,4 +1,4 @@
-const debug = false;
+const debug = true;
 
 const electron = require('electron');
 const packagejson = require('./package.json');
@@ -187,8 +187,8 @@ ipcMain.on('edit-request', function (itemEvent, itemdata) {
 
 	// Create the item window
 	appWindows.item = new BrowserWindow({
-		width           : ('source' == item.type) ? 800 : 400,
-		height          : ('source' == item.type) ? 485 : 445,
+		width           : ('source' == item.type) ? 800 : 600,
+		height          : ('source' == item.type) ? 485 : 485,
 		parent          : appWindows.tree,
 		modal           : true,
 		resizable       : false,

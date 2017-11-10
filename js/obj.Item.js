@@ -50,12 +50,13 @@ var Item = function(id, parent, type, tree) {
    // Load specific datas
    else if ('load' === type) {
       this.characs = {
-         name    : 'Load name',
-         custom1 : '',
-         custom2 : '',
-         ityp    : 0,
-         imax    : 0,
-         color   : '#00bfa5'
+         name       : 'Load name',
+         custom1    : '',
+         custom2    : '',
+         ityp       : 0,
+         imax       : 0,
+         inpartlist : true,
+         color      : '#00bfa5'
       };
    }
    // Root specific datas
@@ -425,12 +426,12 @@ Item.prototype.getPowerLoss = function(valType) {
 };
 
 
-// Open a new window to edit the item, wait for the modifications, then edit the item values
-Item.prototype.edit = function() {
+// Open a new window to edit the item
+// wait for the modifications then edit the item values
+// Need a partlist to update the consumptions in some cases
+Item.prototype.edit = function(partList) {
    // require ipcRenderer to send/receive message with main.js
-   const {
-      ipcRenderer
-   } = require('electron');
+   const { ipcRenderer } = require('electron');
 
    // prepare datas to be sent to the edit window
    var requestData = {
@@ -449,6 +450,22 @@ Item.prototype.edit = function() {
          this.characs[charac] = resultData.characs[charac];
       }
    }
+
+   // if the load is not in the part list
+   // remove all consumptions on the parts
+   if(!this.characs.inpartlist) {
+      let that = this;
+      partList.forEachPart(function(part){
+         if(part.isConsuming(that)) {
+            part.setConsumption(0, that, 'typ');
+            part.setConsumption(0, that, 'max');
+         }
+      });
+   }
+
+   // refresh the consumption
+   // for example when "inpartlist" changes from false to true
+   this.refreshConsumption(partList);
 };
 
 
@@ -468,7 +485,7 @@ Item.prototype.toString = function() {
 
 // Refresh the consumption whith the given partList
 Item.prototype.refreshConsumption = function(partList) {
-   if (this.isLoad()) {
+   if (this.isLoad() && this.characs.inpartlist) {
       // reinit each current
       this.characs.ityp = 0;
       this.characs.imax = 0;
@@ -477,8 +494,8 @@ Item.prototype.refreshConsumption = function(partList) {
 
       // parcour all part to add all currents
       partList.forEachPart(function(part) {
-         that.characs.ityp += part.getConsumption(that, 'typ');
-         that.characs.imax += part.getConsumption(that, 'max');
+         that.characs.ityp += parseFloat(part.getConsumption(that, 'typ'));
+         that.characs.imax += parseFloat(part.getConsumption(that, 'max'));
       });
    }
 };
