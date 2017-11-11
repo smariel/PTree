@@ -15,8 +15,8 @@
 ###### More screenshots:
 * [Source edition](https://raw.githubusercontent.com/smariel/PTree/master/docs/screenshots/source.png)
 * [Part list](https://raw.githubusercontent.com/smariel/PTree/master/docs/screenshots/partlist.png)
-* [Stats - Doughnut](https://raw.githubusercontent.com/smariel/PTree/master/docs/screenshots/tree.png)
-* [Stats - Bar graph](https://raw.githubusercontent.com/smariel/PTree/master/docs/screenshots/tree.png)
+* [Stats - Doughnut](https://raw.githubusercontent.com/smariel/PTree/master/docs/screenshots/statsbar.png)
+* [Stats - Bar graph](https://raw.githubusercontent.com/smariel/PTree/master/docs/screenshots/statsdoughnut.png)
 
 -----------------
 ## For developers
