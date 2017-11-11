@@ -1,16 +1,25 @@
-![icon](https://raw.githubusercontent.com/smariel/PTree/master/icons/png/128x128.png)
+<p align="center">
+   <img src="https://raw.githubusercontent.com/smariel/PTree/master/icons/png/128x128.png" />
+</p>
 
-PTree aims to help building power supplies on electronics design.
-A first window is dedicated to build the tree itself by adding sources and loads.
-The second window lists all components with their consumption on each power supplies.
-The third window is a graphical summary of all consumption on the design.
+<p align="justify">
+   <strong>PTree</strong> aims to help building power supplies on electronics design. A first window is dedicated to build the tree itself by connecting sources and loads. The second window lists all components with their consumption on each power supplies. The third window is a graphical summary of all consumption on the design.
+</p>
 
-[Download PTree](https://github.com/smariel/PTree/releases)
+<p align="center">
+   <a href="https://github.com/smariel/PTree/releases/latest">Download PTree</a> for Windows, macOS and Linux
+</p>
 
-![screenshot](https://raw.githubusercontent.com/smariel/PTree/master/docs/screenshot.png)
-![screenshot2](https://raw.githubusercontent.com/smariel/PTree/master/docs/screenshot2.png)
+![Tree builder](https://raw.githubusercontent.com/smariel/PTree/master/docs/screenshots/tree.png)
 
-## Basic commands
+###### More screenshots:
+* [Source edition](https://raw.githubusercontent.com/smariel/PTree/master/docs/screenshots/source.png)
+* [Part list](https://raw.githubusercontent.com/smariel/PTree/master/docs/screenshots/partlist.png)
+* [Stats - Doughnut](https://raw.githubusercontent.com/smariel/PTree/master/docs/screenshots/tree.png)
+* [Stats - Bar graph](https://raw.githubusercontent.com/smariel/PTree/master/docs/screenshots/tree.png)
+
+-----------------
+## For developers
 Simple installation using git and npm:
 
     $ git clone https://github.com/smariel/PTree
@@ -19,8 +28,7 @@ Simple installation using git and npm:
 
 Automatically build SASS on each save (in a dedicated shell):
 
-    $ cd sass
-    $ ./watch.sh
+    $ ./sass/watch.sh
 
 Run:
 
