@@ -1,5 +1,5 @@
 <p align="center">
-   <img src="https://raw.githubusercontent.com/smariel/PTree/master/icons/png/128x128.png" />
+   <img src="https://raw.githubusercontent.com/smariel/PTree/master/icons/png/128x128.png" alt="logo" />
 </p>
 
 <p align="justify">
@@ -10,7 +10,7 @@
    <a href="https://github.com/smariel/PTree/releases/latest">Download PTree</a> for Windows, macOS and Linux
 </p>
 
-![Tree builder](https://raw.githubusercontent.com/smariel/PTree/master/docs/screenshots/tree.png)
+![Screenshot](https://raw.githubusercontent.com/smariel/PTree/master/docs/screenshots/tree.png)
 
 ###### More screenshots:
 * [Source edition](https://raw.githubusercontent.com/smariel/PTree/master/docs/screenshots/source.png)
