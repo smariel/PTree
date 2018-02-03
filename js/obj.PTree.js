@@ -86,23 +86,27 @@ PTree.prototype.open = function() {
             };
             if(!popup(popupData)) return;
          }
-         // if the version number is different, prompt the user
+         // if the version number is different, prompt the user (except for minor versions)
          else if(data.version !== require('../package.json').version) {
-            let popupData = {
-               title      : 'Incorrect file',
-               width      : 520,
-               height     : 225,
-               sender     : 'tree',
-               content    : `<strong>This file was made with a different version of the application.</strong><br />
-                            This could result in an unexpected behavior. <br />
-                            Do you still want to proceed ?<br />
-                            <br />
-                            <em>File: ${data.version}<br />
-                            Application: ${require('../package.json').version}</em>`,
-               btn_ok     : 'Proceed',
-               btn_cancel : 'Cancel'
-            };
-            if(!popup(popupData)) return;
+            let fileVer = data.version.split('.');
+            let thisVer = require('../package.json').version.split('.');
+            if(fileVer[0] !== thisVer[0] || fileVer[1] !== thisVer[1]) {
+               let popupData = {
+                  title      : 'Incorrect file',
+                  width      : 520,
+                  height     : 225,
+                  sender     : 'tree',
+                  content    : `<strong>This file was made with a different version of the application.</strong><br />
+                               This could result in an unexpected behavior. <br />
+                               Do you still want to proceed ?<br />
+                               <br />
+                               <em>File: ${data.version}<br />
+                               Application: ${require('../package.json').version}</em>`,
+                  btn_ok     : 'Proceed',
+                  btn_cancel : 'Cancel'
+               };
+               if(!popup(popupData)) return;
+            }
          }
 
          that.tree.fromString(data.tree);
