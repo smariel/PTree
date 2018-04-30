@@ -105,6 +105,7 @@ var Canvas = function(html_id, tree, partList) {
    // Create the canvas with Fabric
    this.fabricCanvas = new fabric.Canvas(this.html_id, fabric_template.canvas);
    this.fabricCanvas.dragedItem = null;
+   this.fabricCanvas.selection = false;
 };
 
 
