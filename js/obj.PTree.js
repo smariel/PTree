@@ -717,6 +717,43 @@ PTree.prototype.listenKeyboard = function() {
          that.saveHistory();
          that.updateStats(null);
       }
+      return false;
+   });
+
+   // Copy
+   Mousetrap.bind(['command+c', 'ctrl+c'], function() {
+      if(null !== that.canvas.getSelectedItem()) {
+         that.canvas.copiedItem = that.canvas.getSelectedItem();
+      }
+      return false;
+   });
+
+   // Paste
+   Mousetrap.bind(['command+v', 'ctrl+v'], function() {
+      let selectedItem = that.canvas.getSelectedItem();
+      let copiedItem = that.canvas.getCopiedItem();
+
+      // if there is something to copy
+      if(null !== copiedItem) {
+         // if copy of any item into a source
+         if(null !== selectedItem && selectedItem.isSource()) {
+            that.tree.copyItem(selectedItem, copiedItem);
+         }
+         // else if copy of a source in the root
+         else if(null === selectedItem && copiedItem.isSource()) {
+            that.tree.copyItem(that.tree.getRoot(), copiedItem);
+         }
+         else {
+            return false;
+         }
+      }
+
+      that.canvas.refresh();
+      that.updateClearButtons();
+      that.saveHistory();
+      that.updateStats(null);
+
+      return false;
    });
 };
 

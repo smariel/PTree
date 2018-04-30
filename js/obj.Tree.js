@@ -136,6 +136,18 @@ Tree.prototype.addLoad = function(parent) {
 };
 
 
+// Create a copy of the given item
+Tree.prototype.copyItem = function(parent, itemToCopy) {
+   // create a new empty item of the same type, with the given parent
+   let newItem = this.addItem(parent, itemToCopy.type);
+
+   // clone the characs
+   newItem.characs = Object.assign({},itemToCopy.characs);
+
+   return newItem;
+};
+
+
 // refresh the consumptions of each load based on the given partList
 Tree.prototype.refreshConsumptions = function(partList) {
    this.forEachLoad(function(load) {

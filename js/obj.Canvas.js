@@ -98,6 +98,7 @@ var Canvas = function(html_id, tree, partList) {
    this.html_id      = html_id;           // the html ID of the canvas
    this.canvas$      = $('#' + html_id);  // reference to the jquery object
    this.selectedItem = null;              // by default, no selected item
+   this.copiedItem   = null;              // by default, no copied item
 
    // canvas main characs that will be updated by the user
    this.setDefaultConfig();
@@ -414,6 +415,12 @@ Canvas.prototype.unselectItem = function(fade) {
 // return the selected item
 Canvas.prototype.getSelectedItem = function() {
    return this.selectedItem;
+};
+
+
+// return the copied item
+Canvas.prototype.getCopiedItem = function() {
+   return this.copiedItem;
 };
 
 
