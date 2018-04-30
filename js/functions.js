@@ -21,6 +21,17 @@ function round(number, decimal) {
 }
 
 
+// Round a number with the specified number of decimal if > 1 or digits if < 1
+//    round(12.4824, 2) = 12.48
+//    round(0.00124, 2) = 0.0012
+function smartRound(number, precision) {
+   if(number > 1) return round(number,precision);
+   else if (number == 0) return 0;
+   let nb0 = -Math.floor(Math.log10(Math.abs(number)));
+   return round(number,nb0+precision);
+}
+
+
 // Round a number with a SI prefix
 // return the specified number of digits except useless 0
 //    numberToSi(12345.6789, 3) = 12.3k

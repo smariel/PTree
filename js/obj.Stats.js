@@ -9,6 +9,7 @@ var Stats = function(item, tree, partList) {
    this.tree      = new Tree();
    this.partList  = new PartList();
    this.chartType = 'doughnut';
+   this.normalize = false;
    this.charts    = {
       typ: null,
       max: null
@@ -45,15 +46,20 @@ Stats.prototype.update = function() {
       let labels = [];
       let clickCallback = null;
       var that = this;
+      let max = 0;
 
       // plot the charts
       if(this.item.isSource()) {
          // prepare data for the chart
          for (let childID of this.item.childrenID) {
             let child = this.tree.getItem(childID);
-            datasets.typ.push(round(child.getInputPower('typ'), 2));
-            datasets.max.push(round(child.getInputPower('max'), 2));
+            let valtyp = smartRound(child.getInputCurrent('typ'), 2);
+            let valmax = smartRound(child.getInputCurrent('max'), 2);
+            datasets.typ.push(valtyp);
+            datasets.max.push(valmax);
             labels.push(child.characs.name);
+            if(valmax > max) max = valmax;
+            if(valtyp > max) max = valtyp;
          }
 
          // prepare the callback for the "click" event
@@ -71,9 +77,13 @@ Stats.prototype.update = function() {
          this.partList.forEachPart(function(part){
             // if the part is consuming on this load, add it to the canvas
             if(part.isConsuming(that.item)) {
-               datasets.typ.push(part.getConsumption(that.item, 'typ'));
-               datasets.max.push(part.getConsumption(that.item, 'max'));
+               let valtyp = smartRound(part.getConsumption(that.item, 'typ'),2);
+               let valmax = smartRound(part.getConsumption(that.item, 'max'),2);
+               datasets.typ.push(valtyp);
+               datasets.max.push(valmax);
                labels.push(part.characs.name);
+               if(valmax > max) max = valmax;
+               if(valtyp > max) max = valtyp;
             }
          });
 
@@ -84,8 +94,8 @@ Stats.prototype.update = function() {
       }
 
       // create two charts and fill them
-      this.plotChart('typ', datasets.typ, labels, clickCallback);
-      this.plotChart('max', datasets.max, labels, clickCallback);
+      this.plotChart('typ', datasets.typ, labels, max, clickCallback);
+      this.plotChart('max', datasets.max, labels, max, clickCallback);
    }
 };
 
@@ -100,7 +110,7 @@ Stats.prototype.empty = function(title = 'No selection') {
 
 
 // Fill a canvas with a chart and the given data
-Stats.prototype.plotChart = function(typmax, dataset, labels, clickCallback) {
+Stats.prototype.plotChart = function(typmax, dataset, labels, max, clickCallback) {
    // destroy any previous chart
    if(null !== this.charts[typmax]) {
       this.charts[typmax].destroy();
@@ -140,6 +150,10 @@ Stats.prototype.plotChart = function(typmax, dataset, labels, clickCallback) {
             },
          }]
       };
+
+      if(this.normalize && undefined !== max && 0 !== max) {
+         chartConfig.options.scales.yAxes[0].ticks.suggestedMax = max;
+      }
    }
 
    // create an empty chart
@@ -203,11 +217,28 @@ Stats.prototype.listenEvents = function() {
          that.chartType = "bar";
          $('.chartType .fa').removeClass('fa-bar-chart').addClass('fa-pie-chart');
          $('.chartType > button').attr('title', 'pie').tooltip('fixTitle').tooltip('show');
+         $('.normalize').fadeIn(200);
       }
       else if('bar' === that.chartType) {
          that.chartType = "doughnut";
          $('.chartType .fa').removeClass('fa-pie-chart').addClass('fa-bar-chart');
          $('.chartType > button').attr('title', 'bar').tooltip('fixTitle').tooltip('show');
+         $('.normalize').fadeOut(200);
+      }
+      that.update();
+   });
+
+   // click on the "normalize" button
+   $('.normalize').click(function(){
+      if(that.normalize) {
+         that.normalize = false;
+         $('.normalize .fa').removeClass('fa-compress').addClass('fa-expand');
+         $('.normalize > button').attr('title', 'normalize').tooltip('fixTitle').tooltip('show');
+      }
+      else {
+         that.normalize = true;
+         $('.normalize .fa').removeClass('fa-expand').addClass('fa-compress');
+         $('.normalize > button').attr('title', 'adjust').tooltip('fixTitle').tooltip('show');
       }
       that.update();
    });

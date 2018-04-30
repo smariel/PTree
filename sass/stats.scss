@@ -9,7 +9,7 @@ html, body {
 }
 
 $title_height:   30px;
-$title_margin: 10px;
+$title_margin:   10px;
 $header_height:  $title_height + $title_margin*2;;
 
 
@@ -53,6 +53,17 @@ $header_height:  $title_height + $title_margin*2;;
    position: fixed;
    top:      $title_margin;
    right:    10px;
+
+   & > button {
+      @include round-btn($grey, $title_height);
+   }
+}
+
+.normalize {
+   display:  none;
+   position: fixed;
+   top:      $title_margin;
+   right:    50px;
 
    & > button {
       @include round-btn($grey, $title_height);
