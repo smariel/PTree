@@ -706,6 +706,18 @@ PTree.prototype.listenKeyboard = function() {
       that.toggleOptions();
       return false;
    });
+
+   // Cut / Delete
+   Mousetrap.bind(['command+x', 'ctrl+x', 'backspace'], function() {
+      if(null !== that.canvas.getSelectedItem()) {
+         that.canvas.getSelectedItem().remove();
+         that.canvas.unselectItem(true);
+         that.canvas.refresh();
+         that.updateClearButtons();
+         that.saveHistory();
+         that.updateStats(null);
+      }
+   });
 };
 
 
