@@ -574,7 +574,9 @@ PTree.prototype.listenTreeMenu = function() {
 
    // show the correct modal for edition
    $('#bt_edit').click(function() {
-      that.canvas.getSelectedItem().edit(that.partlist);
+      that.canvas.getSelectedItem().edit(that.partList);
+      that.canvas.refresh();
+      that.saveHistory();
    });
 
 
