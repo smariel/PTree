@@ -3,6 +3,8 @@
 **.sass-cache**
 **material-color**
 css/colors.css
+css/material-color.css
+sass/.sass-cache
 
 
 # dependencies
