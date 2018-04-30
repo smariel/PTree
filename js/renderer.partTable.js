@@ -25,11 +25,7 @@ $(function() {
       // complete the header of the table withe the list of loads
       partTable.tree.forEachLoad(function(load) {
          if(load.characs.inpartlist) {
-            let th1 =  `<th colspan="2" class="th_current">
-                           <span class="item_charac item_name">${load.characs.name}</span>
-                           <span class="item_charac item_ref">${load.getParent().characs.name}</span>
-                           <span class="item_charac item_vout">${numberToSi(load.getInputVoltage('typ'),3)}V</span>
-                        </th>`;
+            let th1 =  `<th colspan="2" class="th_current">${load.characs.name}</th>`;
             $('.tr_top > .th_power:last-child').before(th1);
 
             let th2 = '<th class="th_current th_typ">I<sub>TYP</sub></th>';
