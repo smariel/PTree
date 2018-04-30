@@ -1,4 +1,5 @@
-const debug = false;
+var args = require('minimist')(process.argv);
+const debug = args.debug;
 
 const electron = require('electron');
 const packagejson = require('./package.json');
