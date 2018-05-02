@@ -24,6 +24,10 @@ let appWindows = {
 };
 
 
+// -----------------------------------------------------------------------------
+// TREE
+// -----------------------------------------------------------------------------
+
 // When Electron has finished initialization
 app.on('ready', () => {
 	// Create the browser window.
@@ -185,6 +189,11 @@ app.on('window-all-closed', function () {
 });
 
 
+
+// -----------------------------------------------------------------------------
+// ITEM EDITION
+// -----------------------------------------------------------------------------
+
 // bind an event handler on a request to edit an item
 // this request is sent synchronusly by an item object on the tree view
 // so the tree view script is blocked untill it received a response
@@ -194,7 +203,7 @@ ipcMain.on('edit-request', function (itemEvent, itemdata) {
 
 	// Create the item window
 	appWindows.item = new BrowserWindow({
-		width           : ('source' == item.type) ? 800 : 600,
+		width           : ('source' == item.type) ? 840 : 600,
 		height          : ('source' == item.type) ? 485 : 485,
 		parent          : appWindows.tree,
 		modal           : true,
@@ -229,6 +238,11 @@ ipcMain.on('edit-request', function (itemEvent, itemdata) {
 	});
 });
 
+
+
+// -----------------------------------------------------------------------------
+// PART TABLE
+// -----------------------------------------------------------------------------
 
 // bind an event handler on a request to open the part list
 // this request is sent synchronusly by the tree window
@@ -271,6 +285,11 @@ ipcMain.on('partTable-request', function (partEvent, treeData, partlistData) {
 	});
 });
 
+
+
+// -----------------------------------------------------------------------------
+// STATS
+// -----------------------------------------------------------------------------
 
 // bind an event handler on a request to open the stats window
 // this request is sent asynchronusly by the tree window
@@ -327,6 +346,11 @@ ipcMain.on('tree-selectItem', function (event, data) {
    appWindows.tree.webContents.send('tree-selectItem',data);
 });
 
+
+
+// -----------------------------------------------------------------------------
+// POPUP
+// -----------------------------------------------------------------------------
 
 // bind an event handler on a request to open a generic popup with OK/Cancel commands
 // this request is sent synchronusly by any window with a data object describing the popup

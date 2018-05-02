@@ -7,6 +7,7 @@
 
       <!-- CSS -->
       <link rel="stylesheet" href="../node_modules/bootstrap/dist/css/bootstrap.min.css">
+      <link rel="stylesheet" href="../node_modules/font-awesome/css/font-awesome.min.css">
       <link rel="stylesheet" href="../css/item.css">
    </head>
 
@@ -78,12 +79,17 @@
                <div class="col-xs-4 mintypmax"><label for="input_vout_typ">V<sub>OUT TYP</sub></label><input id="input_vout_typ" type="text" data-itemdata="vout_typ" class="form-control input_vout input_num item-control" placeholder="typ (V)" data-toggle="tooltip" data-placement="bottom" title="Typical output voltage (V)" /></div>
                <div class="col-xs-4 mintypmax"><label for="input_vout_max">V<sub>OUT MAX</sub></label><input id="input_vout_max" type="text" data-itemdata="vout_max" class="form-control input_vout input_num item-control" placeholder="max (V)" data-toggle="tooltip" data-placement="bottom" title="Maximum output voltage (V)" /></div>
             </div>
-            <div class="form-group row source_dcdc">
-               <div class="col-xs-12">
-                  <label for="source_efficiency">Efficiency (%)</label>
-                  <input id="source_efficiency" type="text" data-itemdata="efficiency" class="form-control input_num item-control" placeholder="Efficiency (%)" data-toggle="tooltip" data-placement="bottom" title="Regulator efficiency (%)" />
+
+            <div class="form-group source_dcdc">
+               <label>Efficiency</label>
+               <div class="row">
+                  <div class="col-xs-5 efficiency"><input id="input_eff"   type="text" class="form-control input_num " placeholder="xx %" data-toggle="tooltip" data-placement="bottom" title="Efficiency (%)" /></div>
+                  <div class="col-xs-5 efficiency"><input id="input_eff_i" type="text" class="form-control input_num " placeholder="xx A" data-toggle="tooltip" data-placement="bottom" title="Current (A)" /></div>
+                  <div class="col-xs-2 efficiency"><a id="add_eff" class="btn btn-default"><span class="fa fa-plus"></span></a></div>
                </div>
+               <canvas id="effChart" width="200" height="80" data-itemdata="efficiency"></canvas>
             </div>
+
             <div class="form-group row source_ldo" id="form-group-iq">
                <div class="col-xs-4 mintypmax"><label>I<sub>Q MIN</sub></label><input id="input_iq_min" type="text" data-itemdata="iq_min" class="form-control input_iq input_num item-control" placeholder="min (V)" data-toggle="tooltip" data-placement="bottom" title="Min. quiescent current (A)" /></div>
                <div class="col-xs-4 mintypmax"><label>I<sub>Q TYP</sub></label><input id="input_iq_typ" type="text" data-itemdata="iq_typ" class="form-control input_iq input_num item-control" placeholder="typ (V)" data-toggle="tooltip" data-placement="bottom" title="Typical quiescent current (A)" /></div>
@@ -182,6 +188,7 @@
    <script>
       window.$ = window.jQuery = require('jquery');
       require('bootstrap');
+      require('chart.js');
    </script>
 
    <!-- application JS: functions & constructors -->

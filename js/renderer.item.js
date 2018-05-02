@@ -36,6 +36,8 @@ var updateRegType = function() {
    else if ('1' == regtype || '4' == regtype) {
       $('.source_ldo').show();
    }
+
+   updateEfficiency();
 };
 
 
@@ -47,7 +49,6 @@ var updateVoltage = function() {
    var vref_min = $('#source_vref_min').val();
    var vref_typ = $('#source_vref_typ').val();
    var vref_max = $('#source_vref_max').val();
-
 
    var rtolmax = 1 + rtol / 100;
    var rtolmin = 1 - rtol / 100;
@@ -62,6 +63,111 @@ var updateVoltage = function() {
 };
 
 
+// fill the efficiency chart
+var updateEfficiency = function() {
+   // create a chart dataset from the item datas
+   var datas = $('#effChart').data('efficiency');
+   let dataset = [];
+   for(let data of datas) {
+      dataset.push({x:data.i, y:data.eff});
+   }
+
+   // prepare the configuration of the chart
+   let chartConfig = {
+      type: 'scatter',
+      data: {
+         datasets: [{
+            data: dataset,
+            showLine : true,
+            tension : 0,
+            pointStyle: 'circle',
+            radius: 4
+         }]
+      },
+      options: {
+         legend: {
+            display: false
+         },
+         // Client event
+         onClick: function(event, elements){
+            // if click on a point, delete it and redraw the chart
+            if(elements.length > 0) {
+               $('#effChart').data('efficiency').splice(elements[0]._index,1);
+               updateEfficiency();
+            }
+         }
+      },
+   };
+
+   // erase the old chart
+   if(null !== effChart) {
+      effChart.destroy();
+      effChart = {};
+   }
+
+   // create a new Chart.js
+   effChart =  new Chart($('#effChart'), chartConfig);
+};
+
+
+// Add a new efficiency on the chart
+var addEfficiency = function() {
+   // get the new data from the form
+   let new_data = {
+      eff: parseFloat($("#input_eff").val()),
+      i: parseFloat($("#input_eff_i").val())
+   };
+
+   // get the old data
+   let eff_datas = $('#effChart').data('efficiency');
+
+   // if the new datas are numbers
+   if(!isNaN(new_data.eff) && !isNaN(new_data.i)) {
+      // add the data to the array, keeping ordered by ascending currend
+      let new_index = null;
+      if(eff_datas.length === 0)
+      {
+         // no efficiency, first point in the empty chart
+         new_index = 0;
+         eff_datas.push(new_data);
+      }
+      else if(new_data.i <= eff_datas[0].i) {
+         // lowest Amp, first point in the chart
+         new_index = 0;
+         eff_datas.splice(new_index,0,new_data);
+      }
+      else if (new_data.i >= eff_datas[eff_datas.length-1].i) {
+         // Highest Amp, last point in the chart
+         new_index = eff_datas.length - 1;
+         eff_datas.push(new_data);
+      }
+      else {
+         // Somwhere in the midle of the chart
+         for(let n=1; n<eff_datas.length; n++) {
+            if(new_data.i >= eff_datas[n-1].i && new_data.i < eff_datas[n].i) {
+               new_index = n;
+               eff_datas.splice(new_index,0,new_data);
+               break;
+            }
+         }
+      }
+
+      // convert datas to string
+      if(null !== new_index) {
+         eff_datas[new_index].i   = eff_datas[new_index].i.toString();
+         eff_datas[new_index].eff = eff_datas[new_index].eff.toString();
+      }
+
+      // update the chart
+      updateEfficiency();
+
+      // remove the data from the format
+      $("#input_eff").val("");
+      $("#input_eff_i").val("");
+   }
+};
+
+
 // fill the form inputs with the item data by passing its reference to a dedicated function
 var fillData = function(item) {
    // hide both load and the source form
@@ -70,15 +176,29 @@ var fillData = function(item) {
    // get the values of each input
    for (let charac in item.characs) {
       if (item.characs.hasOwnProperty(charac)) {
+         // get the jquery element identified by its data
          let input = $('#' + item.type + '_control *[data-itemdata=' + charac + ']');
+         // if the element is a checkbox
          if('checkbox' === input.attr('type') && item.characs[charac]) {
             input.prop('checked','checked');
-            input.data('original',item.characs[charac]);
          }
+         // if the element is the efficiency canvas
+         else if ('effChart' === input.attr('id')) {
+            // if the efficiency is an array (>= v1.1.0)
+            if(typeof item.characs.efficiency === 'object') {
+               input.data('efficiency', item.characs.efficiency.slice(0));
+            }
+            // if the efficiency is a single number (< v1.1.0)
+            else {
+               input.data('efficiency', [{i:1, eff:item.characs.efficiency}]);
+            }
+         }
+         // if the element is a normal input
          else {
             input.val(item.characs[charac]);
-            input.data('original',item.characs[charac]);
          }
+
+         input.data('original',item.characs[charac]);
       }
    }
 
@@ -92,7 +212,6 @@ var fillData = function(item) {
 
    // finaly show the form
    $('#' + item.type + '_control').show();
-
 };
 
 
@@ -114,6 +233,9 @@ var updateItem = function(item) {
          }
          else if('checkbox' === input.attr('type')) {
             item.characs[charac] = input.prop('checked');
+         }
+         else if ('effChart' === input.attr('id')) {
+            item.characs[charac] = input.data('efficiency').slice(0);
          }
          else {
             item.characs[charac] = input.val();
@@ -151,6 +273,9 @@ const {ipcRenderer} = require('electron');
 // global object that contains the data to process
 var itemData = {};
 
+// global object that contains the Chart.js context
+var effChart = null;
+
 // prepare to fill the form when data will be received from the main process
 ipcRenderer.on('edit-window-open-resp', function(event, data) {
    itemData = JSON.parse(data);
@@ -182,6 +307,10 @@ $('#edit_ok').click(function() {
 });
 
 
+// BT + (efficiency) clicked
+$('#add_eff').click(addEfficiency);
+
+
 // Modify the available inputs when the user change the regtype
 $('#source_regtype').change(updateRegType);
 
@@ -204,7 +333,7 @@ $('.input_num').keypress(function(event) {
 
 
 // Trigger key press
-$(document).keydown(function(event) {
+$(document).keydown(function(event,a) {
    // ESCAPE
    if (27 == event.which) {
       // send the old data and close the window
@@ -212,9 +341,16 @@ $(document).keydown(function(event) {
    }
    // ENTER
    else if (13 == event.which) {
-      // update the item by passing its reference to a dedicated function
-      updateItem(itemData);
-      // send the old data and close the window
-      close(itemData);
+      // editing efficiency, add it
+      if(event.target.id === "input_eff" || event.target.id === "input_eff_i") {
+         addEfficiency();
+      }
+      // else, validate the editon
+      else {
+         // update the item by passing its reference to a dedicated function
+         updateItem(itemData);
+         // send the old data and close the window
+         close(itemData);
+      }
    }
 });
