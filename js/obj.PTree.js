@@ -445,11 +445,11 @@ PTree.prototype.listenCanvas = function() {
             }
             // if the draged item IS the exited one, fadeOut the item infos
             else {
-               $(".item_info").fadeOut(200);
+               $(".item_info").fadeOut(0);
             }
          }
          else {
-            $(".item_info").fadeOut(100);
+            $(".item_info").fadeOut(0);
          }
       }
    });
