@@ -47,11 +47,10 @@
     "minimist": "^1.2.0",
     "mousetrap": "^1.6.1",
     "tablesorter": "<2.29.0",
-    "xlsx": "^0.12.11"
+    "xlsx": "^0.12.12"
   },
   "devDependencies": {
     "electron": "^1.8.6",
-    "electron-packager": "<12.0.0",
-    "sass": "~1.3.0"
+    "electron-packager": "<12.0.0"
   }
 }
