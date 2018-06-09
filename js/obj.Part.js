@@ -37,7 +37,17 @@ Part.prototype.setConsumption = function(value, load, typmax) {
 
 // return the current in ampere on the given load
 Part.prototype.getConsumption = function(load, typmax) {
-   return (this.isConsuming(load)) ? this.characs.consumptions[load.id][typmax] : 0;
+   let consumption = 0;
+   // if the part is consuming on the given load
+   if(this.isConsuming(load)) {
+      // get the consumption
+      consumption = this.characs.consumptions[load.id][typmax];
+      // if max is wanted but = 0, return the typ
+      if('max' === typmax && 0 === consumption) {
+         consumption = this.characs.consumptions[load.id].typ;
+      }
+   }
+   return consumption;
 };
 
 

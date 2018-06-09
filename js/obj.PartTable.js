@@ -157,7 +157,7 @@ PartTable.prototype.clearCharac = function(validate){
 };
 
 
-// rempve the UI from editing by validating (or not) the data
+// remove the UI from editing by validating (or not) the data
 PartTable.prototype.clearCurrent = function(validate){
    // get datas from html elements
    let part     = this.getEditedPart();
@@ -175,8 +175,14 @@ PartTable.prototype.clearCurrent = function(validate){
 
    // refresh the part table
    let value = part.getConsumption(load, typmax);
-   $('.edition').parent().attr('data-value', value.toString());
-   $('.edition').parent().html(round(value,3));
+   let part$ = $('.edition').parent();
+   part$.attr('data-value', value.toString());
+   part$.html(round(value,3));
+   if('typ' === typmax) {
+      let maxvalue = part.getConsumption(load, 'max');
+      part$.next().attr('data-value', maxvalue.toString());
+      part$.next().html(round(maxvalue,3));
+   }
    let power = part.getPower(this.tree);
    $(`tr[data-partid=${part.id}] > td.td_power.td_typ`).html(round(power.typ,3));
    $(`tr[data-partid=${part.id}] > td.td_power.td_max`).html(round(power.max,3));
@@ -351,7 +357,7 @@ PartTable.prototype.unselectPart = function(fade) {
    if(null !== this.editType) {
       this.cancelEdition();
    }
-   
+
    if(this.selectionExist()) {
       this.selectedParts.length = 0;
       $('.selected').removeClass('selected');
