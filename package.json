@@ -41,16 +41,14 @@
     "bootstrap": "<4.0.0",
     "chart.js": "^2.7.2",
     "fabric": "<2.0.0",
-    "font-awesome": "^4.7.0",
-    "fs": "^0.0.1-security",
+    "font-awesome": "<5.0.0",
     "jquery": "^3.3.1",
-    "minimist": "^1.2.0",
-    "mousetrap": "^1.6.1",
-    "tablesorter": "<2.29.0",
-    "xlsx": "^0.12.12"
+    "mousetrap": "^1.6.2",
+    "tablesorter": "^2.30.5",
+    "xlsx": "^0.13.0"
   },
   "devDependencies": {
-    "electron": "^1.8.6",
-    "electron-packager": "<12.0.0"
+    "electron": "^2.0.2",
+    "electron-packager": "^12.1.0"
   }
 }

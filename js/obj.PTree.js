@@ -75,7 +75,7 @@ PTree.prototype.open = function() {
    if (undefined !== paths) this.filePath = paths[0];
    else return;
 
-   // read the content of the file
+   // read the content of the file using node.js fs module
    const fs = require('fs');
    fs.readFile(this.filePath, 'utf8', function(err, datastr) {
       if (null !== err) {
@@ -185,7 +185,7 @@ PTree.prototype.save = function(saveas = false) {
    // save a reference to this PTree object
    var that = this;
 
-   // open the file or create it if it does not exist
+   // open the file or create it if it does not exist using node.js fs module
    const fs = require('fs');
    fs.open(this.filePath, 'w+', function(err, fd) {
       if (null === err) {

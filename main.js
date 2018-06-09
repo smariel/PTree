@@ -1,6 +1,3 @@
-var args = require('minimist')(process.argv);
-const debug = args.debug;
-
 const electron = require('electron');
 const packagejson = require('./package.json');
 
@@ -11,6 +8,16 @@ const app = electron.app;
 const BrowserWindow = electron.BrowserWindow;
 // Module to send/receive message with all renderers
 const {ipcMain} = require('electron');
+
+
+// parsing arguments using node.js process
+var debug = false;
+for (let arg of process.argv) {
+   if("--debug" == arg) {
+      debug = true;
+      break;
+   }
+}
 
 
 // Keep a global reference of the window object to avaoid JS garbage collected to close them automatically
