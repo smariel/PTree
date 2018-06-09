@@ -29,6 +29,28 @@ var PTree = function(canvas_selector) {
 };
 
 
+// Reset the PTree object
+PTree.prototype.reset = function() {
+   // create new data
+   this.tree.fromString(new Tree().toString());
+   this.partList.fromString(new PartList().toString());
+   this.canvas.setDefaultConfig();
+   this.statsAreOpen = false;
+   this.filePath     = null;
+   this.unsaved      = true;
+   this.history      = {list: [], index: 0};
+
+   // update the app environement
+   this.clearHistory();
+   this.canvas.refresh();
+   this.setUnsaved();
+   this.updateClearButtons();
+
+   // update the window title
+   window.document.title = "Untitled";
+};
+
+
 // load the app data from a file
 PTree.prototype.open = function() {
    var that = this;
@@ -544,6 +566,29 @@ PTree.prototype.listenTreeMenu = function() {
          partListData: that.partList.toString()
       });
       that.statsAreOpen = true;
+   });
+
+
+   // create a new project
+   $('#bt_new').click(function() {
+      // if current project is unsaved, popup
+      if(that.unsaved) {
+         let popupData = {
+            title      : 'Save before continue?',
+            width      : 500,
+            height     : 135,
+            sender     : 'tree',
+            content    : `<strong>You have made changes which were not saved.</strong><br />
+            Are you sure you want to continue?`,
+            btn_ok     : 'Cancel',
+            btn_cancel : 'Continue without saving'
+         };
+
+         // Cancel was clicked
+         if(popup(popupData)) return;
+      }
+
+      that.reset();
    });
 
 
