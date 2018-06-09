@@ -23,6 +23,8 @@ PartTable.prototype.refresh = function() {
    // empty the table content
    $('.partTable tbody').empty();
 
+   this.unselectPart();
+
    // init TableSorter on the empty table
    $('.partTable').tablesorter({sortList: [[0,0]]});
 
@@ -65,9 +67,6 @@ PartTable.prototype.refresh = function() {
       tr += `</tr>`;
       $('.partTable tbody').append(tr);
    });
-
-
-   if(this.selectionExist()) this.selectMultiplePart(this.selectedParts);
 
    // Let TableSorter know that the table has changed
    $('.partTable').trigger('update');
