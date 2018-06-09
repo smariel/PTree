@@ -115,10 +115,12 @@ var Canvas = function(html_id, tree, partList) {
 // update v1.2.0: add show_V, I & P
 Canvas.prototype.setDefaultConfig = function() {
    this.config = {
-      show_info    : true,
-      show_V       : true,
-      show_I       : true,
-      show_P       : true,
+      show_vtyp    : true,
+      show_ityp    : true,
+      show_ptyp    : true,
+      show_vmax    : true,
+      show_imax    : true,
+      show_pmax    : true,
       show_name    : true,
       show_ref     : true,
       show_custom1 : true,
@@ -230,10 +232,13 @@ Canvas.prototype.addItem = function(item) {
 
    // Process text around sources
       if ('source' == item.type) {
-      if(this.config.show_V) {
+      if(this.config.show_vtyp || this.config.show_vmax) {
          // Print the Vout of sources
-         var vtyp = item.getVoltage('typ', 'out', 3, true);
-         var itemText_vout = new fabric.Text(vtyp, fabric_template.text);
+         var vtext = '';
+         if(this.config.show_vtyp)                          vtext += item.getVoltage('typ', 'out', 3, true);
+         if(this.config.show_vtyp && this.config.show_vmax) vtext += ' / ';
+         if(this.config.show_vmax)                          vtext += item.getVoltage('max', 'out', 3, true);
+         var itemText_vout = new fabric.Text(vtext, fabric_template.text);
          itemText_vout.set({
             'originX': 'left',
             'originY': 'bottom',
@@ -245,20 +250,23 @@ Canvas.prototype.addItem = function(item) {
       }
 
       // Print the Iout and/or Pout of sources
-      if(this.config.show_I || this.config.show_P) {
+      if(this.config.show_ityp || this.config.show_imax || this.config.show_ptyp || this.config.show_pmax) {
 
          // Prepare the text for Iout and/or Pout
-         var itemString_ipout = "";
-         if(this.config.show_I) {
-            itemString_ipout += item.getCurrent('typ', 'out', 3, true) + ' / ' + item.getCurrent('max', 'out', 3, true);
-            if(this.config.show_P) itemString_ipout += '\n';
-         }
-         if(this.config.show_P) {
-            itemString_ipout += item.getPower('typ', 'out', 3, true) + ' / ' + item.getPower('max', 'out', 3, true);
-         }
+         var iptext = "";
+         if(this.config.show_ityp)                          iptext += item.getCurrent('typ', 'out', 3, true);
+         if(this.config.show_ityp && this.config.show_imax) iptext += ' / ';
+         if(this.config.show_imax)                          iptext += item.getCurrent('max', 'out', 3, true);
+
+         if((this.config.show_ityp || this.config.show_imax) && (this.config.show_ptyp || this.config.show_pmax))
+                                                            iptext += '\n';
+
+         if(this.config.show_ptyp)                          iptext += item.getPower('typ', 'out', 3, true);
+         if(this.config.show_ptyp && this.config.show_pmax) iptext += ' / ';
+         if(this.config.show_pmax)                          iptext += item.getPower('max', 'out', 3, true);
 
          // Print the prepared text
-         var itemText_ipout = new fabric.Text(itemString_ipout, fabric_template.text);
+         var itemText_ipout = new fabric.Text(iptext, fabric_template.text);
          itemText_ipout.set({
             'originX': 'left',
             'originY': 'top',
