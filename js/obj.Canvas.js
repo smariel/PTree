@@ -99,6 +99,7 @@ var Canvas = function(html_id, tree, partList) {
    this.canvas$      = $('#' + html_id);  // reference to the jquery object
    this.selectedItem = null;              // by default, no selected item
    this.copiedItem   = null;              // by default, no copied item
+   this.config       = {};                // config will be set below
 
    // canvas main characs that will be updated by the user
    this.setDefaultConfig();
@@ -111,15 +112,35 @@ var Canvas = function(html_id, tree, partList) {
 
 
 // Set the canvas config to default
+// update v1.2.0: add show_V, I & P
 Canvas.prototype.setDefaultConfig = function() {
    this.config = {
       show_info    : true,
+      show_V       : true,
+      show_I       : true,
+      show_P       : true,
       show_name    : true,
       show_ref     : true,
       show_custom1 : true,
       cell_width   : app_template.cell.width,
       cell_height  : app_template.cell.height,
    };
+};
+
+
+// Import external config, prevent abandonned config in older versions
+// new in v1.2.0
+Canvas.prototype.getConfig = function(new_config) {
+   // get all existing configs
+   for(let config_prop in this.config) {
+      if (this.config.hasOwnProperty(config_prop)) {
+         // if there is an corresponding config in the import
+         if(undefined !== new_config[config_prop]) {
+            // copy the config
+            this.config[config_prop] = new_config[config_prop];
+         }
+      }
+   }
 };
 
 
@@ -208,10 +229,10 @@ Canvas.prototype.addItem = function(item) {
    // Add some text around the item
 
    // Process text around sources
-   if (this.config.show_info) {
       if ('source' == item.type) {
-         var vtyp = numberToSi(item.characs.vout_typ, 3) + 'V';
+      if(this.config.show_V) {
          // Print the Vout of sources
+         var vtyp = item.getVoltage('typ', 'out', 3, true);
          var itemText_vout = new fabric.Text(vtyp, fabric_template.text);
          itemText_vout.set({
             'originX': 'left',
@@ -221,22 +242,33 @@ Canvas.prototype.addItem = function(item) {
          });
          this.fabricCanvas.add(itemText_vout);
 
+      }
 
-         // Get the output current values
-         var ityp = item.getCurrent('typ', 'out', 3, true);
-         var imax = item.getCurrent('max', 'out', 3, true);
+      // Print the Iout and/or Pout of sources
+      if(this.config.show_I || this.config.show_P) {
 
-         // Print the current
-         var itemText_ityp = new fabric.Text(ityp + ' / ' + imax, fabric_template.text);
-         itemText_ityp.set({
+         // Prepare the text for Iout and/or Pout
+         var itemString_ipout = "";
+         if(this.config.show_I) {
+            itemString_ipout += item.getCurrent('typ', 'out', 3, true) + ' / ' + item.getCurrent('max', 'out', 3, true);
+            if(this.config.show_P) itemString_ipout += '\n';
+         }
+         if(this.config.show_P) {
+            itemString_ipout += item.getPower('typ', 'out', 3, true) + ' / ' + item.getPower('max', 'out', 3, true);
+         }
+
+         // Print the prepared text
+         var itemText_ipout = new fabric.Text(itemString_ipout, fabric_template.text);
+         itemText_ipout.set({
             'originX': 'left',
             'originY': 'top',
             'top'    : itemGroup.top  + itemGroup.height / 2 + app_template.text.margin_y,
             'left'   : itemGroup.left + itemGroup.width      + app_template.text.margin_x,
          });
-         this.fabricCanvas.add(itemText_ityp);
+         this.fabricCanvas.add(itemText_ipout);
       }
    }
+
 
 
 

@@ -149,38 +149,51 @@
 
       <!-- Configuration menu -->
       <aside id="bottom_menu">
+         <button id="bottom_close" type="button" class="close" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+         <h4 id="bottom_title">Display options</h4>
          <form id="config_tree">
-            <p class="config">
-               <label for="config_info">
-                  <input id="config_info" data-config="show_info" type="checkbox" class="config_input config_checkbox" />
-                  Value
+            <div class="config">
+               <label for="config_infoV">
+                  <input id="config_infoV" data-config="show_V" type="checkbox" class="config_input config_checkbox" />
+                  Voltage
                </label>
-            </p>
+               <br />
+               <label for="config_infoI">
+                  <input id="config_infoI" data-config="show_I" type="checkbox" class="config_input config_checkbox" />
+                  Current
+               </label>
+               <br />
+               <label for="config_infoP">
+                  <input id="config_infoP" data-config="show_P" type="checkbox" class="config_input config_checkbox" />
+                  Power
+               </label>
+            </div>
             <p class="config">
                <label for="config_name">
                   <input id="config_name" data-config="show_name" type="checkbox" class="config_input config_checkbox" />
                   Name
                </label>
-            </p>
-            <p class="config">
+               <br />
                <label for="config_ref">
                   <input id="config_ref" data-config="show_ref" type="checkbox" class="config_input config_checkbox" />
                   Part Number
                </label>
-            </p>
-            <p class="config">
+               <br />
                <label for="config_custom1">
                   <input id="config_custom1" data-config="show_custom1" type="checkbox" class="config_input config_checkbox" />
                   Custom Field
                </label>
             </p>
             <p class="config">
-               <label for="config_itemwidth">Item width </label><br />
-               <input id="config_itemwidth" data-config="cell_width" class="config_input config_range" type="range" min="150" max="500" value="300" step="10" />
-            </p>
-            <p class="config">
-               <label for="config_itemheight">Item height </label><br />
-               <input id="config_itemheight" data-config="cell_height" class="config_input config_range" type="range" min="30" max="200" value="300" step="10" />
+               <label for="config_itemwidth">
+                  Item width
+                  <input id="config_itemwidth" data-config="cell_width" class="config_input config_range" type="range" min="150" max="500" value="300" step="10" />
+               </label>
+               <br />
+               <label for="config_itemheight">
+                  Item height
+                  <input id="config_itemheight" data-config="cell_height" class="config_input config_range" type="range" min="30" max="200" value="300" step="10" />
+               </label>
             </p>
             <p class="config">
                <input type="button" class="mybtn-defaultConfig" value="Set to default" />

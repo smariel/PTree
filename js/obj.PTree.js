@@ -109,9 +109,12 @@ PTree.prototype.open = function() {
             }
          }
 
+         // copy the new data in this (=that) tree
          that.tree.fromString(data.tree);
          that.partList.fromString(data.partList);
-         that.canvas.config = data.config;
+         that.canvas.getConfig(data.config);
+
+         // update the app environement
          that.clearHistory();
          that.canvas.refresh();
          that.setSaved();
@@ -327,7 +330,7 @@ PTree.prototype.updateStats = function(itemID) {
 PTree.prototype.toggleOptions = function() {
    let that = this;
 
-   $('#bottom_menu').slideToggle(500, 'swing');
+   $('#bottom_menu').slideToggle(300, 'swing');
 
    $('.config_checkbox').each(function() {
       $(this).prop('checked', that.canvas.config[$(this).data('config')]);
@@ -497,6 +500,11 @@ PTree.prototype.listenDOM = function() {
       that.canvas.setDefaultConfig();
       that.setUnsaved();
       that.canvas.refresh();
+   });
+
+   // close the config menu when click on the cross
+   $('#bottom_close').click(function(){
+      that.toggleOptions();
    });
 };
 
