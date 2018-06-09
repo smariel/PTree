@@ -107,9 +107,11 @@ Part.prototype.setTags = function(formatedTags) {
 // Set any formated value to the characs
 Part.prototype.setCharac = function(charac_name, charac_value) {
    if('tags' === charac_name) {
+      if('string' === typeof charac_value)
       this.setTags(charac_value);
    }
    else {
+      if('string' !== typeof charac_value) charac_value = '';
       this.characs[charac_name] = charac_value;
    }
 };
