@@ -348,6 +348,10 @@ PartTable.prototype.selectToPart = function(part) {
 
 // deselect the actual part
 PartTable.prototype.unselectPart = function(fade) {
+   if(null !== this.editType) {
+      this.cancelEdition();
+   }
+   
    if(this.selectionExist()) {
       this.selectedParts.length = 0;
       $('.selected').removeClass('selected');
