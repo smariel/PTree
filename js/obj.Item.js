@@ -27,7 +27,7 @@ var Item = function(id, parent, type, tree) {
    if ('source' === type) {
       this.characs = {
          name        : 'Source name',
-         regtype     : 0, // [FixDCDC, FixLDO, FixOther, AdjDCDC, AdjLDO, AdjOther]
+         regtype     : 0, // [FixDCDC, FixLDO, FixOther, AdjDCDC, AdjLDO, AdjOther, Dummy, Perfect]
          ref         : 'Part Number',
          custom1     : '',
          custom2     : '',
@@ -102,6 +102,18 @@ Item.prototype.isDCDC = function() {
 // Check if the item is a LDO
 Item.prototype.isLDO = function() {
    return this.isSource() && ('1' == this.characs.regtype || '4' == this.characs.regtype);
+};
+
+
+// Check if the item is a LDO
+Item.prototype.isDummy = function() {
+   return this.isSource() && ('6' == this.characs.regtype);
+};
+
+
+// Check if the item is a LDO
+Item.prototype.isPerfect = function() {
+   return this.isSource() && ('7' == this.characs.regtype);
 };
 
 
@@ -276,8 +288,14 @@ Item.prototype.getOutputVoltage = function(valType) {
 
    // only sources have output
    if (this.isSource()) {
-      // v_out is set by user
-      v_out = parseFloat(this.characs['vout_' + valType]);
+      // Dummy : v_out = v_in
+      if(this.isDummy()) {
+         v_out = this.getInputVoltage(valType);
+      }
+      // DC/DC and LDOs : v_out is set by user
+      else {
+         v_out = parseFloat(this.characs['vout_' + valType]);
+      }
    }
 
    return v_out;
@@ -288,17 +306,21 @@ Item.prototype.getOutputVoltage = function(valType) {
 Item.prototype.getInputCurrent = function(valType) {
    var i_in = 0.0;
 
-   // for LDO, i_in = i_out + i_q
+   // LDO: i_in = i_out + i_q
    if (this.isLDO()) {
       i_in = this.getOutputCurrent(valType) + parseFloat(this.characs['iq_' + valType]);
    }
-   // for DC/DC, i_in = p_in / v_in_typ
-   else if (this.isDCDC()) {
+   // DC/DC and perfect: i_in = p_in / v_in_typ
+   else if (this.isDCDC() || this.isPerfect()) {
       i_in = (0 == this.getInputVoltage('typ')) ? 0.0 : this.getInputPower(valType) / this.getInputVoltage('typ');
    }
-   // for loads, i_in is set by the partList
+   // Loads: i_in is set by the partList
    else if (this.isLoad()) {
       i_in = parseFloat(this.characs['i' + valType]);
+   }
+   // Dummy: i_in = i_out
+   else if (this.isDummy()) {
+      i_in = this.getOutputCurrent(valType);
    }
 
    return i_in;
@@ -325,10 +347,15 @@ Item.prototype.getOutputCurrent = function(valType) {
 Item.prototype.getInputPower = function(valType) {
    var p_in = 0.0;
 
-   // if the item is a load or a LDO
-   if (this.isLoad() || this.isLDO()) {
+   // if the item is a load or a LDO or a dummy item
+   if (this.isLoad() || this.isLDO() || this.isDummy()) {
       // p_in = v_in_typ * i_in
       p_in = this.getInputVoltage('typ') * this.getInputCurrent(valType);
+   }
+   // if the item is perfect
+   else if (this.isPerfect()) {
+      // p_in = p_out
+      p_in = this.getOutputPower(valType);
    }
    // if the item is a DC/DC
    else if (this.isDCDC()) {

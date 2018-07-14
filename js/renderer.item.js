@@ -6,10 +6,12 @@
 var updateRegType = function() {
    var regtype = $('#source_regtype').val();
 
+   // default display
+   $('#source_adjustable').hide();
+   $('#form-group-vout').show();
+
    // If the reg vout is fixed
    if (regtype <= 2) {
-      // hide the adj inputs and enable the fixed values
-      $('#source_adjustable').hide();
       //$('#source_description').addClass('offset-s2');
       $('.input_vout').attr('disabled', false);
    }
@@ -22,6 +24,14 @@ var updateRegType = function() {
 
       // update the voltage values
       updateVoltage();
+   }
+   // if the reg is dummy
+   else if (regtype == 6) {
+      $('#form-group-vout').hide();
+   }
+   // if the reg is perfect
+   else if (regtype == 7) {
+      $('.input_vout').attr('disabled', false);
    }
 
    // hide DC/DC and LDO inputs
