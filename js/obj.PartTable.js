@@ -242,7 +242,7 @@ PartTable.prototype.getEditedValue = function() {
    var value = $('.edition').val();
 
    if ('current' === this.editType) {
-      value = parseFloat(value);
+      value = ('' === value) ? 0 : parseFloat(value);
    }
 
    return value;
