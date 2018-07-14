@@ -184,8 +184,10 @@ PartTable.prototype.clearCurrent = function(validate){
       part$.next().html(round(maxvalue,3));
    }
    let power = part.getPower(this.tree);
-   $(`tr[data-partid=${part.id}] > td.td_power.td_typ`).html(round(power.typ,3));
-   $(`tr[data-partid=${part.id}] > td.td_power.td_max`).html(round(power.max,3));
+   let ptyp = round(power.typ,3);
+   let pmax = round(power.max,3);
+   $(`tr[data-partid=${part.id}] > td.td_power.td_typ`).html(ptyp).attr('data-value', ptyp.toString());
+   $(`tr[data-partid=${part.id}] > td.td_power.td_max`).html(pmax).attr('data-value', pmax.toString());
    $('.partTable').trigger('update');
 
    this.editType = null;
