@@ -130,7 +130,7 @@ Part.prototype.setCharac = function(charac_name, charac_value) {
 // return true if the current on the given load is not zero
 Part.prototype.isConsuming = function(load) {
    var consumptions = this.characs.consumptions[load.id];
-   return (null !== consumptions && undefined !== consumptions && (consumptions.typ > 0 || consumptions.max > 0));
+   return (null !== consumptions && undefined !== consumptions && (consumptions.typ != 0 || consumptions.max != 0));
 };
 
 
