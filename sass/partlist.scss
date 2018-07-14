@@ -82,13 +82,20 @@ $thead_colors: ( charac: $teal, current: $grey, power: $red );
 // part table tbody
 // -----------------------------------------------------------------------------
 
-.partTable tr.selected {
-   background-color: lighten($cyan, 40);
+.partTable tr {
+   &:nth-child(even):not(.selected):not(:hover) {
+      background-color: rgba(0,0,0,0.05);
+   }
+
+   &:hover {
+      background-color: rgba(0,0,0,0.1);
+   }
+
+   &.selected {
+      background-color: lighten($cyan, 40);
+   }
 }
 
-.partTable tr:nth-child(even):not(.selected) {
-   background-color: rgba(0,0,0,0.05);
-}
 
 .partTable td {
    text-align: center;
