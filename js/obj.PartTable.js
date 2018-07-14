@@ -581,6 +581,7 @@ PartTable.prototype.listenEvents = function() {
 
    // add a new empty part to the PartList
    $('.addPart').click(function(){
+      that.unselectPart();
       that.partList.addPart();
       that.refresh();
       that.saveHistory();
