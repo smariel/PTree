@@ -761,7 +761,7 @@ PTree.prototype.listenKeyboard = function() {
    });
 
    // Cut / Delete
-   Mousetrap.bind(['command+x', 'ctrl+x', 'backspace'], function() {
+   Mousetrap.bind(['command+x', 'ctrl+x', 'backspace', 'del'], function() {
       if(null !== that.canvas.getSelectedItem()) {
          that.canvas.getSelectedItem().remove();
          that.canvas.unselectItem(true);
