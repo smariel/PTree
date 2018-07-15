@@ -408,10 +408,11 @@ PTree.prototype.listenCanvas = function() {
             if (receiverItem.isSource()) {
                // if the receiver item is not a child of the dragged items
                if (!receiverItem.isChildOf(dragedItem)) {
-                  // mobe the item into the receiver
+                  // move the item into the receiver and refresh the Tree
                   dragedItem.moveTo(receiverItem);
                   that.canvas.refresh();
                   that.saveHistory();
+                  that.updateUpDownButtons();
                }
             }
          }
