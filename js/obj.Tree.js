@@ -198,25 +198,15 @@ Tree.prototype.fromString = function(str) {
 
    // for each item in the list
    for (var item_str of treeProp.item_list) {
+      // if there is no data, continue to the next item
       if (null === item_str) continue;
 
-      // get the properties of the item
-      var itemProp = JSON.parse(item_str);
+      // create a new item and import the data from the string
+      let newItem = new Item(0,null,null,this);
+      newItem.fromString(item_str);
 
-      // create a new empty item (without giving a ref to Tree yet)
-      var newItem = new Item(itemProp.id, null, itemProp.type, null);
-      this.setItem(itemProp.id, newItem);
-
-      // for each property of the item
-      for (let i in newItem) {
-         if (newItem.hasOwnProperty(i)) {
-            // copy the property
-            newItem[i] = itemProp[i];
-         }
-      }
-
-      // copy a reference of this Tree in the item
-      newItem.tree = this;
+      // insert the new item in the tree
+      this.setItem(newItem.id, newItem);
    }
 };
 

@@ -27,7 +27,17 @@ var Item = function(id, parent, type, tree) {
    if ('source' === type) {
       this.characs = {
          name        : 'Source name',
-         regtype     : 0, // [FixDCDC, FixLDO, FixOther, AdjDCDC, AdjLDO, AdjOther, Dummy, Perfect]
+         regtype     : 0,
+         /* regtypes :
+            0: FixDCDC
+            1: FixLDO
+            2: FixOther (< v1.3.0),
+            3: AdjDCDC
+            4: AdjLDO
+            5: AdjOther (< v1.3.0),
+            6: Dummy    (>= 1.3.0)
+            7: Perfect  (>= 1.3;0)
+         */
          ref         : 'Part Number',
          custom1     : '',
          custom2     : '',
@@ -63,8 +73,9 @@ var Item = function(id, parent, type, tree) {
    else if ('root' === type) {
       this.characs = {}; // nothing yet
    }
+   // Default
    else {
-      this.characs = {}; // other datas specific of the item type
+      this.characs = {};
    }
 };
 
@@ -561,6 +572,28 @@ Item.prototype.toString = function() {
    this.tree = tree;
    // return the string
    return str;
+};
+
+
+// Import an item previously exported with .toString()
+Item.prototype.fromString = function(str) {
+   // extract the data from the string
+   let properties = JSON.parse(str);
+
+   // for each property in this item, copy from the string
+   for (let i in this) {
+      // if the string and this item has the hasOwnProperty
+      // and do not replace the tree
+      if (this.hasOwnProperty(i) && properties.hasOwnProperty(i) && i !== 'tree') {
+         this[i] = properties[i];
+      }
+   }
+
+   // compatibility with < v1.3.0
+   // conversions of old reg types to Perfect Source
+   if(this.isSource() && (2 == this.characs.regtype || 5 == this.characs.regtype)) {
+      this.characs.regtype = 7;
+   }
 };
 
 
