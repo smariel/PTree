@@ -272,11 +272,11 @@ Item.prototype.moveTo = function(newparent) {
    this.parentID    = newparent.id;
    this.child_index = newparent.childrenID.length;
    newparent.childrenID.push(this.id);
-   // if the item is not the first child of its newparent
-   if (newparent.childrenID.length > 1) {
-      // increment the offset of all parents (recursively)
-      newparent.nextOffsetIncrement(this.nextOffset + 1);
-   }
+
+   // increment the offset of all parents (recursively)
+   let increment = this.nextOffset;
+   if (newparent.childrenID.length > 1) increment += 1;
+   newparent.nextOffsetIncrement(increment);
 };
 
 
