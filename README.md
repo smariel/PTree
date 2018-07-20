@@ -52,6 +52,7 @@ Where "xxx" must be replaced by:
 | macos   | = mac + mas               |
 | windows | = win32 + win64           |
 | linux   | = lin32 + lin64 + linArm7 |
+| 64      | = mac + win64 + lin64     |
 | all     | = macos + windows + linux |
 
 Finally, a complete view of the objects imbrication can be found in /docs/synop.jpg
