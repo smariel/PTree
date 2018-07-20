@@ -134,7 +134,7 @@ Canvas.prototype.setDefaultConfig = function() {
 
 // Import external config, prevent abandonned config in older versions
 // new in v1.2.0
-Canvas.prototype.getConfig = function(new_config) {
+Canvas.prototype.setConfig = function(new_config) {
    // get all existing configs
    for(let config_prop in this.config) {
       if (this.config.hasOwnProperty(config_prop)) {

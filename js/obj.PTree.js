@@ -134,7 +134,7 @@ PTree.prototype.open = function() {
          // copy the new data in this (=that) tree
          that.tree.fromString(data.tree);
          that.partList.fromString(data.partList);
-         that.canvas.getConfig(data.config);
+         that.canvas.setConfig(data.config);
 
          // update the app environement
          that.clearHistory();
