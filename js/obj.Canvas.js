@@ -30,7 +30,8 @@ const app_template = {
    },
    text: {
       margin_x : 10,
-      margin_y : 3
+      margin_y : 3,
+      size     : 14
    }
 };
 
@@ -69,7 +70,7 @@ const fabric_template = {
       selectable    : false
    },
    text: {
-      fontSize   : 14,
+      fontSize   : app_template.text.size,
       fontFamily : 'Arial',
       selectable : false
    },
@@ -126,6 +127,7 @@ Canvas.prototype.setDefaultConfig = function() {
       show_custom1 : true,
       cell_width   : app_template.cell.width,
       cell_height  : app_template.cell.height,
+      text_size    : app_template.text.size
    };
 };
 
@@ -148,7 +150,7 @@ Canvas.prototype.getConfig = function(new_config) {
 
 // add any item to the canvas
 Canvas.prototype.addItem = function(item) {
-   // FIXME: find why the following line is needed when exporting as JPEG...
+   // Needed when exporting to jpeg (no alpha)
    this.fabricCanvas.setBackgroundColor('#FFFFFF');
 
    var parent        = item.getParent();
@@ -216,7 +218,8 @@ Canvas.prototype.addItem = function(item) {
       'textAlign' : 'center',
       'top'       : itemRect.top  + itemRect.height / 2,
       'left'      : itemRect.left + itemRect.width  / 2,
-      'fill'      : getOpositeBorW(item.characs.color)
+      'fill'      : getOpositeBorW(item.characs.color),
+      'fontSize'  : this.config.text_size
    });
 
    // group the rect and the name and add it to canvas
@@ -244,6 +247,7 @@ Canvas.prototype.addItem = function(item) {
             'originY': 'bottom',
             'top'    : itemGroup.top  + itemGroup.height / 2 - app_template.text.margin_y,
             'left'   : itemGroup.left + itemGroup.width      + app_template.text.margin_x,
+            'fontSize'  : this.config.text_size
          });
          this.fabricCanvas.add(itemText_vout);
 
@@ -268,10 +272,11 @@ Canvas.prototype.addItem = function(item) {
          // Print the prepared text
          var itemText_ipout = new fabric.Text(iptext, fabric_template.text);
          itemText_ipout.set({
-            'originX': 'left',
-            'originY': 'top',
-            'top'    : itemGroup.top  + itemGroup.height / 2 + app_template.text.margin_y,
-            'left'   : itemGroup.left + itemGroup.width      + app_template.text.margin_x,
+            'originX' : 'left',
+            'originY' : 'top',
+            'top'     : itemGroup.top  + itemGroup.height / 2 + app_template.text.margin_y,
+            'left'    : itemGroup.left + itemGroup.width      + app_template.text.margin_x,
+            'fontSize': this.config.text_size
          });
          this.fabricCanvas.add(itemText_ipout);
       }
