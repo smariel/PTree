@@ -337,7 +337,7 @@ Canvas.prototype.addItem = function(item) {
    if (item.line >= this.fabricCanvas.line) this.fabricCanvas.line = item.line + 1;
    // compute the minimum size of the canvas according to the lines/cols
    var canvas_minwidth  = this.fabricCanvas.col  * this.config.cell_width;
-   var canvas_minheight = this.fabricCanvas.line * this.config.cell_height + app_template.canvas.margin_top;
+   var canvas_minheight = this.fabricCanvas.line * this.config.cell_height + app_template.canvas.margin_top + app_template.canvas.margin_bottom;
    // compute the minimum size of the canvas according to the window
    var canvas_minwidth2  = $(window).width()  - parseInt($('body').css('margin-left')); // - $('#canvas').offset().left;
    var canvas_minheight2 = $(window).height() - parseInt($('body').css('margin-top' )); // - $('#canvas').offset().top;
