@@ -1,0 +1,160 @@
+@import "colors.scss";
+@import "fonts.scss";
+
+
+
+
+.mybody {
+   text-align:  center;
+   font-family: opensans-light;
+   // TODO: remplacer le bg transparent par du JPEG dark
+   background: url('../img/bg.png') fixed, $dark;
+}
+
+
+
+
+
+.navbar {
+   background-color: $dark;
+   border-bottom:    1px solid rgba(0,0,0,0.5);
+}
+
+
+
+
+
+
+.section-top {
+
+   color:         $teal;
+   margin-top:    55px;
+   padding:       100px 0;
+
+   & *.link {
+      color: $teal;
+      text-decoration: none;
+
+      &:hover {
+         color: lighten($teal, 20);
+         text-decoration: underline;
+      }
+   }
+}
+
+.header {
+   display:          flex;
+   flex-direction:   row;
+   justify-content:  center;
+   align-items:      center;
+   margin-bottom:    20px;
+
+   & > * {
+      margin: 0 15px;
+   }
+}
+
+.logo img {
+   $size:  140px;
+   height: $size;
+   width:  $size;
+}
+
+.title {
+   color: white;
+   font-size: 140px;
+   line-height: 0;
+}
+
+.subtitle {
+   text-align: center;
+   font-size: 24px;
+}
+
+.download-button {
+   margin: 70px 0 20px 0;
+   text-align: center;
+   font-size: 24px;
+
+   & > a {
+      padding:          6px 20px;
+
+      background:       none;
+      background-color: rgba($teal, 0.05);
+
+      border:           none;
+      border-radius:    5px;
+      border:           1px solid darken($teal, 20);
+
+      color:            $teal;
+      text-decoration:  none;
+      text-transform:   uppercase;
+
+      transition:       150ms ease;
+
+      &:hover {
+         background-color: rgba($teal, 0.1);
+         border:           1px solid darken($teal, 10);
+         color:            lighten($teal, 20);
+         text-decoration:  none;
+         box-shadow: 0 0 10px rgba($teal, 0.2);
+      }
+   }
+}
+
+.download-info {
+   display:          flex;
+   flex-direction:   row;
+   justify-content:  center;
+   align-items:      center;
+}
+
+.download-info > * {
+   margin: 0 20px;
+   white-space: nowrap;
+
+   &:nth-child(1) {
+      text-align: right;
+      flex-basis: 50%;
+   }
+   &:nth-child(2) {
+      text-align: center;
+   }
+   &:nth-child(3) {
+      text-align: left;
+      flex-basis: 50%;
+   }
+}
+
+
+
+
+
+
+.section-features {
+   background-color: white;
+   color: $dark;
+}
+
+
+
+
+.section-sources {
+   background-color: $teal;
+   color: white;
+}
+
+
+
+.section-about {
+   background-color: none;
+   color: white;
+}
+
+
+
+.footer {
+   background-color: $dark;
+   padding: 30px;
+   color: white;
+}
