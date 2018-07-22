@@ -3,17 +3,31 @@
 
 
 
+/* -----------------------------------------------------------------------------
+   GLOBAL
+   -------------------------------------------------------------------------- */
 
 .mybody {
    text-align:  center;
-   font-family: opensans-light;
-   // TODO: remplacer le bg transparent par du JPEG dark
-   background: url('../img/bg.png') fixed, $dark;
+   font-family: opensans-regular;
+   background: url('../img/bg.png') fixed;
+}
+
+.link {
+   color: $teal;
+   text-decoration: none;
+
+   &:hover {
+      color: lighten($teal, 20);
+      text-decoration: underline;
+   }
 }
 
 
 
-
+/* -----------------------------------------------------------------------------
+   NAVBAR
+   -------------------------------------------------------------------------- */
 
 .navbar {
    background-color: $dark;
@@ -22,24 +36,16 @@
 
 
 
+/* -----------------------------------------------------------------------------
+   DOWNLOAD
+   -------------------------------------------------------------------------- */
 
-
-
-.section-top {
-
-   color:         $teal;
+#download {
    margin-top:    55px;
    padding:       100px 0;
 
-   & *.link {
-      color: $teal;
-      text-decoration: none;
-
-      &:hover {
-         color: lighten($teal, 20);
-         text-decoration: underline;
-      }
-   }
+   font-family:   opensans-light;
+   color:         $teal;
 }
 
 .header {
@@ -128,33 +134,98 @@
 
 
 
+/* -----------------------------------------------------------------------------
+   FEATURES
+   -------------------------------------------------------------------------- */
 
-
-
-.section-features {
+#features {
+   padding: 100px;
    background-color: white;
    color: $dark;
+
+   display:          flex;
+   flex-direction:   column;
+   justify-content:  center;
+   align-items:      center;
+}
+
+.feature-text {
+   margin: 0 0 40px 0;
+   text-align: center;
+   font-size: 24px;
+}
+
+.feature-img-container {
+   margin: 0 0 130px 0;
+}
+
+.feature-img {
+   margin: 5px;
+   max-width: 100%;
+   box-shadow: 0 0 20px rgba($dark, 0.2);
 }
 
 
 
+/* -----------------------------------------------------------------------------
+   ABOUT
+   -------------------------------------------------------------------------- */
 
-.section-sources {
-   background-color: $teal;
-   color: white;
-}
+#about {
+   padding: 20px 0 100px;
 
-
-
-.section-about {
    background-color: none;
+
    color: white;
+   font-family: opensans-regular;
+   text-align: left;
 }
 
 
+#about > div {
+   margin-top: 30px;
 
-.footer {
-   background-color: $dark;
+   display:          flex;
+   flex-direction:   row-reverse;
+   justify-content:  flex-end;
+   align-items:      center;
+}
+
+
+#about img {
+   margin-right: 40px;
+   width: 100px;
+}
+
+.about-title {
+   margin: 80px 0 20px 0;
+}
+
+.about-text {
+
+}
+
+.about-quote {
+   font-style: italic;
+   padding: 0 50px;
+}
+
+
+/* -----------------------------------------------------------------------------
+   FOOTER
+   -------------------------------------------------------------------------- */
+
+#footer {
+   background-color: $teal;
    padding: 30px;
    color: white;
+}
+
+#footer > .email {
+   color: white;
+   text-decoration: none;
+
+   &:hover {
+      text-decoration: underline;
+   }
 }

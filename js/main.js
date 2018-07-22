@@ -2,6 +2,8 @@ var version      = '';
 var download_url = '';
 var platform     = 'win';
 var platform_req = 'Windows 7';
+var mail_name    = 'sylvain.mariel';
+var mail_domain  = 'otmax.fr';
 
 // get the user platform and the minimum system requirement
 if(navigator.platform.match(/win/i) !== null) {
@@ -25,7 +27,7 @@ $.get('https://api.github.com/repos/smariel/ptree/releases/latest', function(git
 
    // get download url accoring to the user platform
    for(var i=0; i<github_data.assets.length; i++) {
-      if(new RegExp(platform,"i").test(github_data.assets[i].name)){
+      if(new RegExp(platform,'i').test(github_data.assets[i].name)){
          download_url = github_data.assets[i].browser_download_url;
          break;
       }
@@ -33,6 +35,12 @@ $.get('https://api.github.com/repos/smariel/ptree/releases/latest', function(git
 
    // if DOM is ready, print the data
    $(function(){
+      // Email Anti Spam
+      $('.email').prop('href','mailto:'+mail_name+'@'+mail_domain+'?subject=Contact PTree');
+
+      // Lazy Load the images
+      lazyload();
+
       // print the version
       $('.dl-version a').append(version);
 

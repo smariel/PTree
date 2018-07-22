@@ -3,6 +3,7 @@
    <head>
       <meta charset="UTF-8">
       <title>PTree</title>
+      <link rel="shortcut icon" href="img/favicon.ico">
 
       <link rel="stylesheet" href="css/main.css">
       <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.1.0/css/bootstrap.min.css" integrity="sha384-9gVQ4dYFwwWSjIDZnLEWnxCjeSWFphJiwGPXr1jddIhOegiu1FwO5qRGvFXOdJZ4" crossorigin="anonymous">
@@ -17,11 +18,14 @@
          integrity="sha384-uefMccjFJAIv6A+rW+L4AHf99KvxDjWSu1z9VI8SKNVmz4sk7buKt/6v9KI65qnm"
          crossorigin="anonymous">
       </script>
+      <script
+         src="https://cdn.jsdelivr.net/npm/lazyload@2.0.0-beta.2/lazyload.min.js">
+      </script>
       <script src="js/main.js"></script>
    </head>
    <body class="mybody" data-spy="scroll" data-target="#navbar" data-offset="55">
 
-      <!--<nav id="navbar" class="navbar fixed-top navbar-expand-lg navbar-dark">
+      <nav id="navbar" class="navbar fixed-top navbar-expand-lg navbar-dark">
          <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
             <span class="navbar-toggler-icon"></span>
          </button>
@@ -34,18 +38,15 @@
                   <a class="nav-link" href="#features">Features</a>
                </li>
                <li class="nav-item">
-                  <a class="nav-link" href="#sources">Sources</a>
-               </li>
-               <li class="nav-item">
                   <a class="nav-link" href="#about">About</a>
                </li>
             </ul>
          </div>
-      </nav>-->
+      </nav>
 
-      <section id="download" class="section-top">
+      <section id="download">
          <div class="header">
-            <p class="logo"><img src="img/256x256.png" /></p>
+            <p class="logo"><img src="img/icon_256x256.png" /></p>
             <h1 class="title">PTree</h1>
          </div>
          <p class="subtitle">Design power trees and estimate consumptions</p>
@@ -57,21 +58,83 @@
             <p class="dl-other"><a class="link" href="https://github.com/smariel/PTree/releases/latest">Other platforms</a></p>
          </div>
       </section>
-      <!--
-      <section id="features" class="section-features">
-         Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.
+
+      <section id="features">
+         <p class="feature-text">Draw the power supply architecture of an electronic board</p>
+         <p class="feature-img-container"><img class="feature-img lazyload" data-src="img/screenshot_tree.png" alt="Power Tree Screenshot"></p>
+
+         <p class="feature-text">Configure multiple types of regulators</p>
+         <p class="feature-img-container"><img class="feature-img lazyload" data-src="img/screenshot_reg.png" alt="Regulator Configuration" /></p>
+
+         <p class="feature-text">Define the part list with all consumptions. Export from and import to spreadshits</p>
+         <p class="feature-img-container"><img class="feature-img lazyload" data-src="img/screenshot_parts.png" alt="Part Table" /></p>
+
+         <p class="feature-text">View project statistics</p>
+         <p class="feature-img-container"><img class="feature-img lazyload" data-src="img/screenshot_stats1.png" alt="Pie Chart" /></p>
       </section>
 
-      <section id="sources" class="section-sources">
-         Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum."
+
+
+      <section id="about" class="container">
+         <h3 class="about-title">About PTree</h3>
+         <div>
+            <div>
+               <p class="about-text">
+                  PTree is a <strong>free</strong> and <strong>open source</strong> project. This mean I earn no money with it.
+               </p>
+               <p class="about-text">
+                  You are welcome to redistribute it under the conditions of the <span class="license">GPL-3.0</span> license.
+               </p>
+               <p class="about-text">
+                  All sources and instructions are available on the <a class="link" href="https://github.com/smariel/PTree">GitHub repository</a>.
+               </p>
+            </div>
+            <div>
+               <img src="img/logo_gnu.png" />
+            </div>
+         </div>
+
+         <h3 class="about-title">Found a bug ? Have an idea ?</h3>
+         <div>
+            <div>
+               <p class="about-text">
+                  Please let me know if you found a bug.
+                  I will try to correct it as fast as possible.
+               </p>
+               <p class="about-text">
+                  You may also have an idea to improve PTree.
+                  I can not promise it will be developped but I would be glad to hear about it.
+               </p>
+               <p class="about-text">
+                  In both case, you can submit a new issue <a class="link" href="https://github.com/smariel/PTree/issues/new/choose">on GitHub</a>.
+                  Or you can send me <a class="link email">an email</a>.
+               </p>
+            </div>
+            <div>
+               <img src="img/logo_github2.png" />
+            </div>
+         </div>
+
+         <h3 class="about-title">Technical details</h3>
+         <div>
+            <div>
+               <p class="about-text">
+                  PTree is a packaged web application for desktop only. It is based on <a class="link" href="https://electronjs.org/">Electron</a>:
+               </p>
+               <blockquote cite="https://electronjs.org/docs/tutorial/about">
+                  <p class="about-quote">Electron is an open source library developed by GitHub for building cross-platform desktop applications with HTML, CSS, and JavaScript. Electron accomplishes this by combining Chromium and Node.js into a single runtime and apps can be packaged for Mac, Windows, and Linux.</p>
+               </blockquote>
+               <p class="about-text">The stylesheets are compiled with <a class="link" href="https://sass-lang.com/">Sass</a> and the application itself is packaged with <a class="link" href="https://www.npmjs.com/package/electron-packager">electron-packager</a>. Mutiple dependancies are used and can be found at the end of <a class="link" href="https://github.com/smariel/PTree/blob/master/package.json">package.json</a>.</p>
+               <p class="about-text">If you want to compile it yourself or modify it, you will find instructions directly on <a class="link" href="https://github.com/smariel/PTree">GitHub</a>.</p>
+            </div>
+            <div>
+               <img src="img/logo_electron.png" />
+            </div>
+         </div>
       </section>
 
-      <section id="about" class="section-about">
-         Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum."
-      </section>
-
-      <footer class="footer">
-         Lorem ipsum
-      </footer>-->
+      <footer id="footer">
+         <a class="email">Sylvain Mariel</a> © 2018
+      </footer>
    </body>
 </html>
