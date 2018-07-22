@@ -1,40 +1,49 @@
-<p align="center">
-   <img src="https://raw.githubusercontent.com/smariel/PTree/master/icons/png/128x128.png" alt="logo" />
-</p>
+**PTree** aims to help building power supplies on electronics design. A first window is dedicated to build the tree itself by connecting sources and loads. The second window lists all components with their consumption on each power supplies. The third window is a graphical summary of all consumption on the design.
 
-<p align="justify">
-   <strong>PTree</strong> aims to help building power supplies on electronics design. A first window is dedicated to build the tree itself by connecting sources and loads. The second window lists all components with their consumption on each power supplies. The third window is a graphical summary of all consumption on the design.
-</p>
 
-<p align="center">
-   <a href="https://github.com/smariel/PTree/releases/latest">Download PTree</a> for Windows, macOS and Linux
-</p>
+You can download PTree for Windows, Linux, macOS and find more informations on [smariel.github.io/PTree](https://smariel.github.io/PTree)
 
-![Screenshot](https://raw.githubusercontent.com/smariel/PTree/master/docs/screenshots/tree.png)
-
-###### More screenshots:
-* [Source edition](https://raw.githubusercontent.com/smariel/PTree/master/docs/screenshots/source.png)
-* [Part list](https://raw.githubusercontent.com/smariel/PTree/master/docs/screenshots/partlist.png)
-* [Stats - Doughnut](https://raw.githubusercontent.com/smariel/PTree/master/docs/screenshots/statsbar.png)
-* [Stats - Bar graph](https://raw.githubusercontent.com/smariel/PTree/master/docs/screenshots/statsdoughnut.png)
 
 -----------------
-## For developers
-Simple installation using git and npm:
+# Install
+
+PTree is based on [Electron](https://electronjs.org/). It is a web app packaged with Chromium and Node.js.
+
+You will first need to install [nodejs](https://nodejs.org/), which includes npm.
+
+Test the installation:
+
+    $ npm --version
+    $ 6.2.0
+
+Then, using git and npm, install the PTree project and all its dependencies *locally*:
 
     $ git clone https://github.com/smariel/PTree
     $ cd PTree
     $ npm install
 
-Automatically build SASS on each save (in a dedicated shell):
-
-    $ ./sass/watch.sh
-
-Run:
+The project is ready. Launch PTree:
 
     $ npm start
 
-Build and deploy using electron-packager:
+# Compile CSS
+The stylesheets are not directly wrotten in CSS but compiled with [Sass](http://sass-lang.com/). You can install it *globally* with npm.
+
+    $ npm install -g npm-sass
+
+You will find a script in the Sass folder to automatically compile sheets each time you save them.
+
+Open a dedicated terminal and let the following command running while you are developping:
+
+    $ ./sass/watch.sh
+
+# Build and deploy
+
+electron-packager is used to create binaries for all platforms. Install it *globally*:
+
+    $ npm install -g electron-packager
+
+package.json contains multiple scripts to easily build PTree. Just run:
 
     $ npm run build:xxx
 
@@ -55,5 +64,53 @@ Where "xxx" must be replaced by:
 | 64      | = mac + win64 + lin64     |
 | all     | = macos + windows + linux |
 
+What the script do:
+ - Package the app for the specifed platform into a folder
+ - Set the icon to the binary
+ - Copy the license, equations.pdf and a project example to the folder
+ - Zip the folder
+
+# Verifications
+You can verify multiple items before deploying.
+
+1.
+Maintain the dependencies up to date. ncu will check package.json:
+
+    $ npm install -g ncu
+    $ ncu
+    $   bootstrap  <4.0.0  →  ^4.1.2
+    $   fabric     <2.0.0  →  ^2.3.3
+
+Bootstrap and fabric are deliberately keeped bellow a certain version.
+
+To update a package:
+
+    $ npm update <package name>@<version>
+
+2.
+Maintain other programs, not listed in package.json, up to date :
+ - node.js
+ - npm
+ - sass
+ - electron-packager
+ - ...
+
+To update a global package:
+
+     $ npm update -g <package name>@<version>
+
+You could also install sass and electron-packager locally to use ncu.
+
+3.
+Use npm to search for security problems in all dependencies:
+
+    $ npm audit
+
+4.
+Have a look to the Chromium console. Chromium and Electron may give good advices there.
+
+
+# PTree diagram
+
 Finally, a complete view of the objects imbrication can be found in /docs/synop.jpg
-![synoptic](https://raw.githubusercontent.com/smariel/PTree/master/docs/synop.jpg)
+![synoptic](https://raw.githubusercontent.com/smariel/PTree/master/docs/synop.png)
