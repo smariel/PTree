@@ -41,6 +41,7 @@ PTree.prototype.reset = function() {
    this.history      = {list: [], index: 0};
 
    // update the app environement
+   this.canvas.unselectItem(true);
    this.clearHistory();
    this.canvas.refresh();
    this.setUnsaved();
@@ -598,7 +599,7 @@ PTree.prototype.listenTreeMenu = function() {
    // create a new tree within the same project
    $('#bt_clear').click(function() {
       if (!$(this).hasClass('disabled')) {
-         that.canvas.unselectItem();
+         that.canvas.unselectItem(true);
          that.tree.clear();
          that.canvas.refresh();
          that.updateClearButtons();
