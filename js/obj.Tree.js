@@ -6,10 +6,11 @@
 
 
 // Tree object constructor
-var Tree = function() {
+var Tree = function(init=true) {
    this.item_list  = [];
    this.item_index = 0;
-   this.clear();
+
+   if(init) this.clear();
 };
 
 
@@ -176,7 +177,7 @@ Tree.prototype.convertToCircular = function() {
 
 // Convert this tree to a string
 Tree.prototype.toString = function() {
-   var tree = new Tree();
+   var tree = new Tree(false);
    tree.item_index = this.item_index;
 
    this.forEachItem(function(item) {
