@@ -41,14 +41,14 @@
   "dependencies": {
     "bootstrap": "<4.0.0",
     "chart.js": "^2.7.2",
-    "fabric": "<2.0.0",
+    "fabric": "^2.3.3",
     "font-awesome": "<5.0.0",
     "jquery": "^3.3.1",
     "mousetrap": "^1.6.2",
     "tablesorter": "^2.30.7",
-    "xlsx": "^0.13.2"
+    "xlsx": "^0.13.3"
   },
   "devDependencies": {
-    "electron": "^2.0.5"
+    "electron": "^2.0.6"
   }
 }
