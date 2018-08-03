@@ -11,17 +11,18 @@
 // Item object constructor
 var Item = function(id, parent, type, tree) {
    // Construction datas
-   this.id       = id;
-   this.type     = type;
-   this.parentID = (null !== parent) ? parent.id : null;
-   this.tree     = tree;
+   this.id           = id;    // item unique ID in the tree
+   this.type         = type;  // item type (source or load)
+   this.tree         = tree;  // reference to the tree (circular object, by the way)
+   this.nextOffset   = 0;     // offset for the next adjacent element, init 0
+   this.childrenID   = [];    // list of references of children, init empty
 
-   // Default inits
-   this.nextOffset   = 0;  // the offset for the next adjacent element, init 0
-   this.childrenID   = []; // list of references of children, init empty
-   this.child_index  = 0;  // represent the nth children of its parents
-   this.col          = 0;  // the col in the canvas saw as a grid
-   this.line         = 1;  // the line in the canvas saw as a grid
+
+   // parent unique ID in the tree
+   this.parentID     = (null !== parent) ? parent.id : null;
+   // represent the nth children of its parents
+   this.child_index  = (null !== parent) ? parent.childrenID.length : 0;
+
 
    // Source specific datas
    if ('source' === type) {

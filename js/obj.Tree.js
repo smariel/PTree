@@ -102,9 +102,6 @@ Tree.prototype.addItem = function(parent, type) {
 
    // If it as a parent (if it is not the root...)
    if (null !== parent) {
-      // set the child index
-      newItem.child_index = parent.childrenID.length;
-
       // add a reference to its parent
       parent.childrenID.push(newItem.id);
 
