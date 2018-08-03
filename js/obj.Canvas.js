@@ -100,6 +100,7 @@ var Canvas = function(html_id, tree, partList) {
    this.canvas$      = $('#' + html_id);  // reference to the jquery object
    this.selectedItem = null;              // by default, no selected item
    this.copiedItem   = null;              // by default, no copied item
+   this.size         = {line:0,col:0};    // grid size, default is empty: 0,0
    this.config       = {};                // config will be set below
 
    // canvas main characs that will be updated by the user
@@ -125,6 +126,7 @@ Canvas.prototype.setDefaultConfig = function() {
       show_name    : true,
       show_ref     : true,
       show_custom1 : true,
+      align_load   : false,
       cell_width   : app_template.cell.width,
       cell_height  : app_template.cell.height,
       text_size    : app_template.text.size
@@ -160,37 +162,12 @@ Canvas.prototype.addItem = function(item) {
    var nodeNet_left  = app_template.nodeNet.left_coef * this.config.cell_width;
 
 
-   // --------------------------------------------------------------------------
-   // First, process the item itself
-
-   // init col & line as pure integer or coefficient (not pixels)
-   item.col  = 0;
-   item.line = 0;
-
-   // set the item coords if it has parent
-   if (null !== parent && undefined !== parent) {
-      item.col = parent.col + 1;
-
-      // if the item is the first child, its line is the same as its parent
-      if (0 === item.child_index) {
-         item.line = parent.line;
-      }
-      // else if it is not the first, its line is set according to the precedentChild
-      else {
-         var precedentChild = this.tree.getItem(parent.childrenID[item.child_index - 1]);
-         item.line = precedentChild.line + 1 + precedentChild.nextOffset;
-      }
-   }
-   else {
-      item.col = -1;
-   }
-
-
    // create a rectangle with the correct template
    // and add it to the canvas
    var itemRect = new fabric.Rect(fabric_template[item.type]);
+   let item_col = (this.config.align_load && item.isLoad()) ? this.size.col : item.col;
    itemRect.set({
-      left  : (item.col  * this.config.cell_width ) + app_template.canvas.margin_left,
+      left  : (item_col  * this.config.cell_width ) + app_template.canvas.margin_left,
       top   : (item.line * this.config.cell_height) + app_template.canvas.margin_top ,
       width : item_width,
       height: item_height,
@@ -283,8 +260,6 @@ Canvas.prototype.addItem = function(item) {
    }
 
 
-
-
    // --------------------------------------------------------------------------
    // Process the nets around the source
 
@@ -293,7 +268,7 @@ Canvas.prototype.addItem = function(item) {
    var height_error = (itemRect.get('height') - itemGroup.get('height') + 1) / 2;
 
    // if the item is a source and has children, process the child nets
-   if ('source' == item.type && item.childrenID.length > 0) {
+   if (item.isSource() && item.childrenID.length > 0) {
 
       // set the childNet to canvas at the correct coords
       var childNet = new fabric.Line([
@@ -307,12 +282,14 @@ Canvas.prototype.addItem = function(item) {
    }
 
    // set the parent net to canvas at the correct coords if it exist
-   if (null !== parent && 'root' != parent.type) {
+   if (!item.isRoot() && !item.isChildOfRoot()) {
+      let offset = (this.config.align_load && item.isLoad()) ? (this.size.col - parent.col -1) * this.config.cell_width : 0;
+
       // set the fabric item
       var parentNet = new fabric.Line([
          Math.round(itemGroup.get('left') - fabric_template.net.strokeWidth - width_error),
          Math.round(itemGroup.get('top' ) + item_height / 2 - fabric_template.net.strokeWidth / 2 - height_error),
-         Math.round(itemGroup.get('left') - (this.config.cell_width - nodeNet_left) - width_error),
+         Math.round(itemGroup.get('left') - (this.config.cell_width - nodeNet_left) - width_error - offset),
          Math.round(itemGroup.get('top' ) + item_height / 2 - fabric_template.net.strokeWidth / 2 - height_error),
       ], fabric_template.net);
       this.fabricCanvas.add(parentNet);
@@ -332,25 +309,6 @@ Canvas.prototype.addItem = function(item) {
          parentNode_net.sendToBack();
       }
    }
-
-
-   // --------------------------------------------------------------------------
-   // Resize the canvas : it mus be the same size as the window to trig unselections
-
-   // check if the item is outside the actual grid, and enlarge the grid if needed
-   if (item.col  >= this.fabricCanvas.col ) this.fabricCanvas.col  = item.col  + 1;
-   if (item.line >= this.fabricCanvas.line) this.fabricCanvas.line = item.line + 1;
-   // compute the minimum size of the canvas according to the lines/cols
-   var canvas_minwidth  = this.fabricCanvas.col  * this.config.cell_width;
-   var canvas_minheight = this.fabricCanvas.line * this.config.cell_height + app_template.canvas.margin_top + app_template.canvas.margin_bottom;
-   // compute the minimum size of the canvas according to the window
-   var canvas_minwidth2  = $(window).width()  - parseInt($('body').css('margin-left')); // - $('#canvas').offset().left;
-   var canvas_minheight2 = $(window).height() - parseInt($('body').css('margin-top' )); // - $('#canvas').offset().top;
-   // set the canvas size at either the grid or the window size
-   this.fabricCanvas.setDimensions({
-      'width' : (canvas_minwidth2  < canvas_minwidth ) ? canvas_minwidth  : canvas_minwidth2,
-      'height': (canvas_minheight2 < canvas_minheight) ? canvas_minheight : canvas_minheight2
-   });
 };
 
 
@@ -368,6 +326,50 @@ Canvas.prototype.addItems = function(item) {
    }
 };
 
+
+// compute the coordinate (line,col) of all items on the grid
+// also keep the max line and col as the canva size
+// this function is recursive, starting from the Root and continue with all items
+Canvas.prototype.setItemsCoord = function(item) {
+   // if item is not given, start with the root and reinit the size
+   if (undefined === item || item.isRoot()) {
+      this.size = {line:0,col:0};
+      item = this.tree.getRoot();
+      item.line = 0;
+      item.col  = -1;
+   }
+   // else, if it is any item
+   else {
+      let parent = item.getParent();
+
+      // the col of an item must be the parent col+1
+      item.col = parent.col + 1;
+
+      // if the item is the first child, its line is the same as its parent
+      if (0 === item.child_index) {
+         item.line = parent.line;
+      }
+      // else if it is not the first, its line is set according to the precedentChild
+      else {
+         let precedentChild = this.tree.getItem(parent.childrenID[item.child_index - 1]);
+         item.line = precedentChild.line + 1 + precedentChild.nextOffset;
+      }
+
+      // remind if this line is the max of the canvas
+      if(item.line > this.size.line) this.size.line = item.line;
+      // remind if this col is the max of the canvas
+      // also, if the max col is a source and the load must be aligned, add +1 to keep extra space for the cols
+      if(item.col  > this.size.col ) this.size.col  = (this.config.align_load && item.isSource()) ? item.col + 1 : item.col ;
+   }
+
+   // continue, recursively, with all the item children
+   for (let childID of item.childrenID) {
+      var child = item.tree.getItem(childID);
+      this.setItemsCoord(child);
+   }
+};
+
+
 // clean the canvas and reprint everything
 Canvas.prototype.refresh = function() {
    // save the scroll position
@@ -379,9 +381,29 @@ Canvas.prototype.refresh = function() {
    this.fabricCanvas.line = 0;
    this.fabricCanvas.col  = 0;
    this.fabricCanvas.fabric_obj = [];
+
+   // compute the coords of all items
+   this.setItemsCoord();
+
    // reprint the canvas by adding the root and all its children
    this.addItems(this.tree.getRoot());
+
+   // compute the minimum size of the canvas according to the lines/cols
+   var canvas_minwidth  = (this.size.col+1)  * this.config.cell_width;
+   var canvas_minheight = (this.size.line+1) * this.config.cell_height + app_template.canvas.margin_top + app_template.canvas.margin_bottom;
+   // compute the minimum size of the canvas according to the window
+   var canvas_minwidth2  = $(window).width()  - parseInt($('body').css('margin-left')); // - $('#canvas').offset().left;
+   var canvas_minheight2 = $(window).height() - parseInt($('body').css('margin-top' )); // - $('#canvas').offset().top;
+   // set the canvas size at either the grid or the window size
+   this.fabricCanvas.setDimensions({
+      'width' : (canvas_minwidth2  < canvas_minwidth ) ? canvas_minwidth  : canvas_minwidth2,
+      'height': (canvas_minheight2 < canvas_minheight) ? canvas_minheight : canvas_minheight2
+   });
+
+
+   // render the Fabric item
    this.fabricCanvas.renderAll();
+
    // reselect the item if it has been deselected
    if (null !== selected_item) this.selectItem(selected_item);
    // set the scroll as saved before canvas modifications
