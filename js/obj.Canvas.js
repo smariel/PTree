@@ -127,6 +127,7 @@ Canvas.prototype.setDefaultConfig = function() {
       show_ref     : true,
       show_custom1 : true,
       align_load   : false,
+      //zoom         : 100,
       cell_width   : app_template.cell.width,
       cell_height  : app_template.cell.height,
       text_size    : app_template.text.size
@@ -400,6 +401,8 @@ Canvas.prototype.refresh = function() {
       'height': (canvas_minheight2 < canvas_minheight) ? canvas_minheight : canvas_minheight2
    });
 
+   // set the canvas zoom
+   //this.fabricCanvas.setZoom(this.config.zoom/100);
 
    // render the Fabric item
    this.fabricCanvas.renderAll();
