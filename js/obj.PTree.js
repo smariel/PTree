@@ -392,6 +392,8 @@ PTree.prototype.listenCanvas = function() {
          that.canvas.unselectItem(true);
          that.updateStats(null);
       }
+
+      $('#bottom_menu').slideUp(300, 'swing');
    });
 
    // mouse button released (click or drop) on an object in the canvas
