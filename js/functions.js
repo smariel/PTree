@@ -220,3 +220,52 @@ Array.prototype.equals = function(array) {
 Object.defineProperty(Array.prototype, "equals", {
    enumerable: false
 });
+
+
+// get a sheet as JSON object from a file
+// popup the user if multiple tabs found
+function getSpreadsheet() {
+   // open a dialog
+   const {dialog} = require('electron').remote;
+   var paths = dialog.showOpenDialog({
+      title: 'Select a spreadsheet',
+      filters: [
+         {name: 'Spreadsheet', extensions: ['xls','xlsx','csv']},
+         {name: 'All Files',   extensions: ['*']}
+      ],
+      properties: ['openFile']
+   });
+
+   // exit if the path is undefined (canceled)
+   if(undefined === paths) return null;
+
+   // construct a workbook from the file
+   const XLSX = require('xlsx');
+   let workbook = XLSX.readFile(paths[0]);
+
+   // If there are multiple tabs in the file, ask the user
+   let sheetName  = '';
+   if(workbook.SheetNames.length > 1) {
+      let popupData = {
+         type       : 'list',
+         title      : 'Choose a sheet',
+         width      : 500,
+         height     : 135,
+         sender     : 'tree',
+         content    : `Multiple sheets found in this document.<br />Please choose one: <select id="list"></select>`,
+         btn_ok     : 'Choose',
+         list       : workbook.SheetNames
+      };
+      sheetName  = popup(popupData);
+   }
+   else {
+      sheetName  = workbook.SheetNames[0];
+   }
+
+   // translate the sheet to JSON
+   let sheet      = workbook.Sheets[sheetName];
+   let sheet_json = XLSX.utils.sheet_to_json(sheet, {header:1});
+
+   // return
+   return sheet_json;
+}

@@ -449,51 +449,8 @@ PartTable.prototype.updateUndoRedoButtons = function() {
 };
 
 
-// Import a parttable from Excel
-PartTable.prototype.fromSpreadsheet = function(file) {
-   // construct a workbook from the file
-   let workbook   = XLSX.readFile(file);
-
-   // Check 1
-   // If there are multiple tabs in the file, ask the user
-   let sheetName  = '';
-   if(workbook.SheetNames.length > 1) {
-      let popupData = {
-         type       : 'list',
-         title      : 'Choose a sheet',
-         width      : 500,
-         height     : 135,
-         sender     : 'partTable',
-         content    : `Multiple sheets found in this document.<br />Please choose one: <select id="list"></select>`,
-         btn_ok     : 'Choose',
-         list       : workbook.SheetNames
-      };
-      sheetName  = popup(popupData);
-   }
-   else {
-      sheetName  = workbook.SheetNames[0];
-   }
-
-   // translate the sheet to JSON
-   let sheet      = workbook.Sheets[sheetName];
-   let sheet_json = XLSX.utils.sheet_to_json(sheet, {header:1});
-
-   /* TODO: find a better check. Maybe just the column number
-   // Check 2
-   // compare the template with the header of the sheet and exit with an alert() if different
-   let header_xlsx = XLSX.utils.table_to_book($('.partTable thead')[0]);
-   let header_json = XLSX.utils.sheet_to_json(header_xlsx.Sheets[header_xlsx.SheetNames[0]], {header:1});
-   // check the 2 first lines only
-   for (let line_id=0; line_id<2; line_id++) {
-      for(let cell_id in header_json) {
-         if(header_json[line_id][cell_id] != sheet_json[line_id][cell_id]) {
-            alert(`Error in line ${line_id}.\nexpected: ${header_json[line_id][cell_id]}\nFound: ${sheet_json[line_id][cell_id]}\nPlease use the template to sort your data.`);
-            return false;
-         }
-      }
-   }*/
-
-   // Check 3
+// Import a parttable from an XLSX sheet passed as JSON
+PartTable.prototype.fromSpreadsheet = function(sheet_json) {
    // check if the values of the sheet are numbers
    let line_id = 0;
    for(let sheet_line of sheet_json) {
@@ -510,14 +467,13 @@ PartTable.prototype.fromSpreadsheet = function(file) {
       line_id++;
    }
 
-   // Check 4
+
    // check if there is any line other than the header in the sheet
    if(sheet_json.length < 3) {
       alert('The file does not contain any value.');
       return false;
    }
 
-   // If all checks are OK
 
    // Ask the user if the file must replace or be added
    // And delete every part if the table has to be replaced
@@ -620,22 +576,12 @@ PartTable.prototype.listenEvents = function() {
 
    // import the data from the excel
    $('.importTable').click(function(){
-      // open dialog
-      const {dialog} = require('electron').remote;
-      var paths = dialog.showOpenDialog({
-         title: 'Open...',
-         filters: [
-            {name: 'Spreadsheet',   extensions: ['xls','xlsx','csv']},
-            {name: 'All Files',     extensions: ['*']}
-         ],
-         properties: ['openFile']
-      });
-
-      // exit if the path is undefined (canceled)
-      if(undefined === paths) return;
+      // ask the user for a sheet
+      let json_sheet = getSpreadsheet();
+      if (null === json_sheet) return;
 
       // Import the file into the partlist
-      let noerror = that.fromSpreadsheet(paths[0]);
+      let noerror = that.fromSpreadsheet(json_sheet);
 
       // finally, refresh the table with the new values
       if(noerror) {
