@@ -138,6 +138,7 @@ function downloadData(data, fileName) {
 function downloadTable(jQuery_table, fileName) {
    // Create a workbook from the table passed as a jQuery element
    // this entire code is from the XLSX documentation...
+   const XLSX = require('xlsx');
    var workbook = XLSX.utils.table_to_book(jQuery_table[0]);
    var wopts = {
       bookType: 'xlsx',
@@ -224,24 +225,28 @@ Object.defineProperty(Array.prototype, "equals", {
 
 // get a sheet as JSON object from a file
 // popup the user if multiple tabs found
-function getSpreadsheet() {
-   // open a dialog
-   const {dialog} = require('electron').remote;
-   var paths = dialog.showOpenDialog({
-      title: 'Select a spreadsheet',
-      filters: [
-         {name: 'Spreadsheet', extensions: ['xls','xlsx','csv']},
-         {name: 'All Files',   extensions: ['*']}
-      ],
-      properties: ['openFile']
-   });
+function getSpreadsheet(path=null, return_path=false) {
+   // of no path given, ask the user
+   if (null === path) {
+      // open a dialog
+      const {dialog} = require('electron').remote;
+      var paths = dialog.showOpenDialog({
+         title: 'Select a spreadsheet',
+         filters: [
+            {name: 'Spreadsheet', extensions: ['xls','xlsx','csv']},
+            {name: 'All Files',   extensions: ['*']}
+         ],
+         properties: ['openFile']
+      });
 
-   // exit if the path is undefined (canceled)
-   if(undefined === paths) return null;
+      // exit if the path is undefined (canceled)
+      if(undefined === paths) return null;
+      path = paths[0];
+   }
 
    // construct a workbook from the file
    const XLSX = require('xlsx');
-   let workbook = XLSX.readFile(paths[0]);
+   let workbook = XLSX.readFile(path);
 
    // If there are multiple tabs in the file, ask the user
    let sheetName  = '';
@@ -267,6 +272,7 @@ function getSpreadsheet() {
    let sheet_json = XLSX.utils.sheet_to_json(sheet, {header:1});
 
    // return
+   if(return_path) return {sheet:sheet_json, path:path};
    return sheet_json;
 }
 
