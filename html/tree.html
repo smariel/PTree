@@ -151,9 +151,10 @@
       <!-- Configuration menu -->
       <aside id="bottom_menu">
          <button id="bottom_close" type="button" class="close" aria-label="Close"><span aria-hidden="true">&times;</span></button>
-         <h4 id="bottom_title">Display options</h4>
-         <form id="config_tree">
-            <div class="config">
+         <h4 id="bottom_title">Project options</h4>
+         <h5 class="bottom_subtitle">Display</h5>
+         <form id="config_tree" class="option_section">
+            <p class="config">
                <label for="config_infoVtyp">
                   <input id="config_infoVtyp" data-config="show_vtyp" type="checkbox" class="config_input config_checkbox" />
                   V<sub>TYP</sub>
@@ -168,8 +169,8 @@
                   <input id="config_infoPtyp" data-config="show_ptyp" type="checkbox" class="config_input config_checkbox" />
                   P<sub>TYP</sub>
                </label>
-            </div>
-            <div class="config">
+            </p>
+            <p class="config">
                <label for="config_infoVmax">
                   <input id="config_infoVmax" data-config="show_vmax" type="checkbox" class="config_input config_checkbox" />
                   V<sub>MAX</sub>
@@ -184,7 +185,7 @@
                   <input id="config_infoPmax" data-config="show_pmax" type="checkbox" class="config_input config_checkbox" />
                   P<sub>MAX</sub>
                </label>
-            </div>
+            </p>
             <p class="config">
                <label for="config_name">
                   <input id="config_name" data-config="show_name" type="checkbox" class="config_input config_checkbox" />
@@ -201,17 +202,6 @@
                   Custom Field
                </label>
             </p>
-            <div class="config">
-               <label for="config_alignload">
-                  <input id="config_alignload" data-config="align_load" type="checkbox" class="config_input config_checkbox" />
-                  Vertical align loads
-               </label>
-               <!--<br />
-               <label for="config_zoom">
-                  Zoom
-                  <input id="config_zoom" data-config="zoom" class="config_input config_range" type="range" min="30" max="300" value="100" step="10" />
-               </label>-->
-            </div>
             <p class="config">
                <label for="config_itemwidth">
                   Item width
@@ -229,7 +219,28 @@
                </label>
             </p>
             <p class="config">
-               <input type="button" class="mybtn-defaultConfig" value="Set to default" />
+               <label for="config_alignload">
+                  <input id="config_alignload" data-config="align_load" type="checkbox" class="config_input config_checkbox" />
+                  Vertical align loads
+               </label>
+               <!--<br />
+               <label for="config_zoom">
+                  Zoom
+                  <input id="config_zoom" data-config="zoom" class="config_input config_range" type="range" min="30" max="300" value="100" step="10" />
+               </label>-->
+               <br />
+               <a type="button" class="mybtn-defaultConfig" value="Reset"><span class="fa fa-retweet"></span> Reset</a>
+
+            </p>
+         </form>
+
+         <h5 class="bottom_subtitle">Synchronization</h5>
+         <form class="option_section">
+            <p id="sheet_selection">
+               <span id="sheetpath">No spreadsheet</span><br />
+               <a id="bt_refresh_sheet" class="bt_sheet"><span class="fa fa-refresh"></span> Refresh</a>
+               <a id="bt_select_sheet" class="bt_sheet"><span class="fa fa-file-excel-o"></span> Select</a>
+               <a id="bt_remove_sheet" class="bt_sheet"><span class="fa fa-remove"></span> Remove</a>
             </p>
          </form>
       </aside>

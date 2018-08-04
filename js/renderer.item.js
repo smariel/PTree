@@ -217,7 +217,7 @@ var fillData = function(item) {
       updateRegType();
    }
    else if ('load' === item.type) {
-      updateLoadInPartlist();
+      updateLoadCurrent();
    }
 
    // finaly show the form
@@ -255,23 +255,14 @@ var updateItem = function(item) {
 };
 
 
-// Update the load view if it is in part list or not
-var updateLoadInPartlist = function() {
-   if($('#load_inpartlist').prop('checked')) {
-      $('.inpartlist').show();
-      $('.notinpartlist').hide();
-      $('#load_ityp').prop('disabled', true);
-      $('#load_imax').prop('disabled', true);
-      $('#load_ityp').val($('#load_ityp').data('original'));
-      $('#load_imax').val($('#load_imax').data('original'));
-   }
-   else {
-      $('.inpartlist').hide();
-      $('.notinpartlist').show();
-      $('#load_ityp').attr('disabled', false);
-      $('#load_imax').attr('disabled', false);
-   }
+// Upadte the load current helper
+var updateLoadCurrent = function() {
+   $('.valtype').hide();
+
+   valtype = $('#load_valtype').val();
+   $(`.valtype${valtype}`).show();
 };
+
 
 // -----------------------------------------------------------------------------
 // Execution
@@ -326,7 +317,7 @@ $('#source_regtype').change(updateRegType);
 
 
 // Permit current edition if the checkbox is unchecked
-$('#load_inpartlist').change(updateLoadInPartlist);
+$('#load_valtype').change(updateLoadCurrent);
 
 
 // update vmin/vtyp/vmax on the go

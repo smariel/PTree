@@ -15,6 +15,7 @@ var PTree = function(canvas_selector) {
    this.unsaved      = true;
    this.history      = {list: [], index: 0};
 
+   this.setSheet(null);
    this.listenCanvas();
    this.listenTreeMenu();
    this.listenDOM();
@@ -57,9 +58,7 @@ PTree.prototype.reset = function() {
 // load the app data from a file
 PTree.prototype.open = function() {
    var that = this;
-   const {
-      dialog
-   } = require('electron').remote;
+   const {dialog} = require('electron').remote;
    var paths = dialog.showOpenDialog({
       title: 'Open...',
       filters: [{
@@ -85,83 +84,8 @@ PTree.prototype.open = function() {
          alert(err);
       }
       else {
-         // Try to parse the file
-         var data = {};
-         try {
-            data = JSON.parse(datastr);
-         }
-         catch(parseError) {
-            console.log(parseError);
-            alert ('Impossible to open this file.');
-            return;
-         }
-
-         // if the version number does not exist; prompt the user
-         if(undefined === data.version) {
-            let popupData = {
-               title      : 'Incorrect file',
-               width      : 500,
-               height     : 135,
-               sender     : 'tree',
-               content    : `<strong>This file does not appear to be a valid Power Tree.</strong><br />
-                            This could result in an unexpected behavior. <br />
-                            Do you still want to proceed ? `,
-               btn_ok     : 'Proceed',
-               btn_cancel : 'Cancel'
-            };
-            if(!popup(popupData)) return;
-         }
-
-         // comapare the version of PTree with the version of the file
-         let comp = compareVersions(packagejson.version, data.version);
-
-         // The file was made with an older PTree
-         if(comp === 1) {
-            let popupData = {
-               title      : 'Incorrect file',
-               width      : 520,
-               height     : 225,
-               sender     : 'tree',
-               content    : `<strong>This file was made with an older version of PTree.</strong><br />
-                            This could result in an unexpected behavior. <br />
-                            Do you still want to proceed ?<br />
-                            <br />
-                            <em>File: ${data.version}<br />
-                            PTree: ${packagejson.version}</em>`,
-               btn_ok     : 'Proceed',
-               btn_cancel : 'Cancel'
-            };
-            if(!popup(popupData)) return;
-         }
-         // The file was made with a newer PTree
-         else if(comp === -1) {
-            let popupData = {
-               title      : 'Incorrect file',
-               width      : 520,
-               height     : 245,
-               sender     : 'tree',
-               content    : `<strong>This file was made with a newer version of PTree.</strong><br />
-                            This could result in an unexpected behavior. <br />
-                            Do you still want to proceed ?<br />
-                            You could also download the new version of PTree.<br />
-                            <br />
-                            <em>File: ${data.version}<br />
-                            PTree: ${packagejson.version}</em>`,
-               btn_ok     : 'Proceed',
-               btn_cancel : 'Cancel'
-            };
-
-            if(!popup(popupData)) return;
-         }
-         // sould not occur
-         else if(null === comp) {
-            alert('Unexpected error');
-         }
-
-         // copy the new data in this (=that) tree
-         that.tree.fromString(data.tree);
-         that.partList.fromString(data.partList);
-         that.canvas.setConfig(data.config);
+         // reconstruct the tree from the data
+         that.fromString(datastr);
 
          // update the app environement
          that.clearHistory();
@@ -187,9 +111,7 @@ PTree.prototype.save = function(saveas = false) {
    // or if the app data must be save as a new file
    if (saveas || null === this.filePath) {
       // prompt the user
-      const {
-         dialog
-      } = require('electron').remote;
+      const {dialog} = require('electron').remote;
       var path = dialog.showSaveDialog({
          title: 'Save as...',
          defaultPath: 'tree.json',
@@ -217,13 +139,9 @@ PTree.prototype.save = function(saveas = false) {
    fs.open(this.filePath, 'w+', function(err, fd) {
       if (null === err) {
          // write the data
-         var data = {
-            version  : require('../package.json').version,
-            tree     : that.tree.toString(),
-            partList : that.partList.toString(),
-            config   : that.canvas.config
-         };
-         fs.write(fd, JSON.stringify(data));
+         let extradata = {version: require('../package.json').version};
+         let data = that.toString(extradata);
+         fs.write(fd, data);
 
          // mark the workspace as saved
          that.setSaved();
@@ -318,6 +236,175 @@ PTree.prototype.redo = function() {
 };
 
 
+// Set the spreadsheet to sync with
+PTree.prototype.setSheet = function(usersheet) {
+   // default value
+   if(undefined === usersheet || null === usersheet) {
+      usersheet = {sheet:null, path:null};
+   }
+   // set the usersheet given as {path, json_sheet}
+   this.usersheet = usersheet;
+   // update the bottom menu
+   if(usersheet.path !== null) {
+      $('#sheetpath').text(usersheet.path);
+      $('#bt_refresh_sheet').show();
+      $('#bt_remove_sheet').show();
+   }
+   else {
+      $('#sheetpath').text('No spreadsheet selected:');
+      $('#bt_refresh_sheet').hide();
+      $('#bt_remove_sheet').hide();
+   }
+};
+
+
+// reload data from the spreadsheet
+PTree.prototype.reloadSheet = function() {
+   // if the file exist
+   const fs = require('fs');
+   if(fs.existsSync(this.usersheet.path)) {
+      // reload the Spreadsheet from the file
+      this.usersheet.sheet = getSpreadsheet(this.usersheet.path);
+   }
+};
+
+
+// Return the PTree as a string
+// add extra properties to the string if needed
+PTree.prototype.toString = function(extra={}) {
+   var data = {
+      tree     : this.tree.toString(),
+      partList : this.partList.toString(),
+      usersheet: this.usersheet,
+      config   : this.canvas.config
+   };
+
+   Object.assign(data, extra);
+
+   return JSON.stringify(data);
+};
+
+
+PTree.prototype.fromString = function(datastr) {
+   // Try to parse the string
+   var data = {};
+   try {
+      data = JSON.parse(datastr);
+   }
+   catch(parseError) {
+      console.log(parseError);
+      alert ('Impossible to open this file.');
+      return false;
+   }
+
+   // if the version number does not exist; prompt the user
+   if(undefined === data.version) {
+      let popupData = {
+         title      : 'Incorrect file',
+         width      : 500,
+         height     : 135,
+         sender     : 'tree',
+         content    : `<strong>This file does not appear to be a valid Power Tree.</strong><br />
+                      This could result in an unexpected behavior. <br />
+                      Do you still want to proceed ? `,
+         btn_ok     : 'Proceed',
+         btn_cancel : 'Cancel'
+      };
+      if(!popup(popupData)) return false;
+   }
+
+   // comapare the version of PTree with the version of the file
+   let packagejson = require('../package.json');
+   let comp = compareVersions(packagejson.version, data.version);
+
+   // The file was made with an older PTree
+   if(comp === 1) {
+      let popupData = {
+         title      : 'Incorrect file',
+         width      : 520,
+         height     : 225,
+         sender     : 'tree',
+         content    : `<strong>This file was made with an older version of PTree.</strong><br />
+                      This could result in an unexpected behavior. <br />
+                      Do you still want to proceed ?<br />
+                      <br />
+                      <em>File: ${data.version}<br />
+                      PTree: ${packagejson.version}</em>`,
+         btn_ok     : 'Proceed',
+         btn_cancel : 'Cancel'
+      };
+      if(!popup(popupData)) return false;
+   }
+   // The file was made with a newer PTree
+   else if(comp === -1) {
+      let popupData = {
+         title      : 'Incorrect file',
+         width      : 520,
+         height     : 245,
+         sender     : 'tree',
+         content    : `<strong>This file was made with a newer version of PTree.</strong><br />
+                      This could result in an unexpected behavior. <br />
+                      Do you still want to proceed ?<br />
+                      You could also download the new version of PTree.<br />
+                      <br />
+                      <em>File: ${data.version}<br />
+                      PTree: ${packagejson.version}</em>`,
+         btn_ok     : 'Proceed',
+         btn_cancel : 'Cancel'
+      };
+
+      if(!popup(popupData)) return false;
+   }
+   // sould not occur
+   else if(null === comp) {
+      alert('Unexpected error');
+      return false;
+   }
+
+   // copy the new data in this tree
+   this.tree.fromString(data.tree);
+   this.partList.fromString(data.partList);
+   this.setSheet(data.usersheet);
+   this.canvas.setConfig(data.config);
+};
+
+
+// Check GitHub for update
+PTree.prototype.checkUpdate = function() {
+   // get informations about the latest release using GitHub API
+   $.get('https://api.github.com/repos/smariel/ptree/releases/latest', function(github_data){
+      // get the version of the latest release
+      let latest_version = github_data.tag_name.substr(1);
+
+      // get the current version
+      const packagejson = require('../package.json');
+      let this_version = packagejson.version;
+
+      // if this version is not equal to the latest on github
+      if(this_version != latest_version) {
+         // open a popup and propose the user to download
+         let popupData = {
+            title      : 'New version available',
+            width      : 350,
+            height     : 160,
+            sender     : 'tree',
+            content    : `<strong>A new version of PTree is available !</strong><br />
+                          You are using PTree v${this_version}. <br />
+                          Would you like to download v${latest_version}?`,
+            btn_ok     : 'Yes',
+            btn_cancel : 'Not now'
+         };
+         // if the user clicked on "download"
+         if(popup(popupData)) {
+            // open the PTree home page in an external browser
+            const {shell} = require('electron');
+            shell.openExternal(packagejson.homepage);
+         }
+      }
+   });
+};
+
+
 // enable or disable the undo/redo buttons
 PTree.prototype.updateUndoRedoButtons = function() {
    if (0 === this.history.index) {
@@ -391,8 +478,8 @@ PTree.prototype.toggleOptions = function() {
 };
 
 
-// Export the canvas as a JPEG Image
-PTree.prototype.export = function() {
+// export the canvas as a JPEG Image
+PTree.prototype.exportImg = function() {
    downloadDataURL(this.canvas.toJPEGdataURL(), 'ptree.jpg');
 };
 
@@ -513,49 +600,11 @@ PTree.prototype.listenCanvas = function() {
    // Edit item on double click
    $(that.canvas.canvas$).parent().dblclick(function() {
       if (null !== that.canvas.getSelectedItem()) {
-         that.canvas.getSelectedItem().edit(that.partList);
+         that.canvas.getSelectedItem().edit(that.partList, that.usersheet.sheet);
          that.canvas.refresh();
          that.saveHistory();
       }
    });
-};
-
-
-// Check GitHub for update
-PTree.prototype.checkUpdate = function() {
-   // get informations about the latest release using GitHub API
-   $.get('https://api.github.com/repos/smariel/ptree/releases/latest', function(github_data){
-      // get the version of the latest release
-      let latest_version = github_data.tag_name.substr(1);
-
-      // get the current version
-      const packagejson = require('../package.json');
-      let this_version = packagejson.version;
-
-      // if this version is not equal to the latest on github
-      if(this_version != latest_version) {
-         // open a popup and propose the user to download
-         let popupData = {
-            title      : 'New version available',
-            width      : 350,
-            height     : 160,
-            sender     : 'tree',
-            content    : `<strong>A new version of PTree is available !</strong><br />
-                          You are using PTree v${this_version}. <br />
-                          Would you like to download v${latest_version}?`,
-            btn_ok     : 'Yes',
-            btn_cancel : 'Not now'
-         };
-         // if the user clicked on "download"
-         if(popup(popupData)) {
-            // open the PTree home page in an external browser
-            const {shell} = require('electron');
-            shell.openExternal(packagejson.homepage);
-         }
-      }
-   });
-
-
 };
 
 
@@ -581,15 +630,41 @@ PTree.prototype.listenDOM = function() {
          return;
       }
 
-      that.setUnsaved();
       that.canvas.refresh();
    });
 
    // set the config to default
    $('.mybtn-defaultConfig').click(function() {
       that.canvas.setDefaultConfig();
-      that.setUnsaved();
       that.canvas.refresh();
+   });
+
+   // select a sheet to sync with
+   $('#bt_select_sheet').click(function() {
+      // ask the user for a sheet
+      let usersheet = getSpreadsheet(null, true);
+      if (null === usersheet.sheet) return;
+      // save the sheet and refresh Consumptions
+      that.setSheet(usersheet);
+      that.tree.refreshConsumptions(null, that.usersheet.sheet);
+      that.canvas.refresh();
+      that.setUnsaved();
+   });
+
+   // refresh the sheet to sync with
+   $('#bt_refresh_sheet').click(function() {
+      that.reloadSheet();
+      that.tree.refreshConsumptions(null, that.usersheet.sheet);
+      that.canvas.refresh();
+      that.setUnsaved();
+   });
+
+   // refresh the sheet to sync with
+   $('#bt_remove_sheet').click(function() {
+      that.setSheet(null);
+      that.tree.refreshConsumptions(null, that.usersheet.sheet);
+      that.canvas.refresh();
+      that.setUnsaved();
    });
 
    // close the config menu when click on the cross
@@ -616,7 +691,7 @@ PTree.prototype.listenTreeMenu = function() {
       that.partList.fromString(partListString);
 
       // update consumptions
-      that.tree.refreshConsumptions(that.partList);
+      that.tree.refreshConsumptions(that.partList, that.usersheet.sheet);
       that.canvas.refresh();
       that.setUnsaved();
    });
@@ -695,7 +770,7 @@ PTree.prototype.listenTreeMenu = function() {
 
    // show the correct modal for edition
    $('#bt_edit').click(function() {
-      that.canvas.getSelectedItem().edit(that.partList);
+      that.canvas.getSelectedItem().edit(that.partList, that.usersheet.sheet);
       that.canvas.refresh();
       that.saveHistory();
    });
@@ -767,9 +842,9 @@ PTree.prototype.listenTreeMenu = function() {
    });
 
 
-   // export the canvas as an Image
-   $('#bt_export_img').click(function() {
-      that.export();
+   // exportImg the canvas as an Image
+   $('#bt_exportImg_img').click(function() {
+      that.exportImg();
    });
 
 
@@ -816,9 +891,9 @@ PTree.prototype.listenKeyboard = function() {
    });
 
 
-   // Export
+   // exportImg
    Mousetrap.bind(['command+e', 'ctrl+e'], function() {
-      that.export();
+      that.exportImg();
       return false;
    });
 

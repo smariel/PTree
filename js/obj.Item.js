@@ -17,13 +17,16 @@ var Item = function(id, parent, type, tree) {
    this.nextOffset   = 0;     // offset for the next adjacent element, init 0
    this.childrenID   = [];    // list of references of children, init empty
 
-
+   // set characs according to the type
+   this.setCharacs(type);
    // parent unique ID in the tree
    this.parentID     = (null !== parent) ? parent.id : null;
    // represent the nth children of its parents
    this.child_index  = (null !== parent) ? parent.childrenID.length : 0;
+};
 
 
+Item.prototype.setCharacs = function(type) {
    // Source specific datas
    if ('source' === type) {
       this.characs = {
@@ -66,8 +69,16 @@ var Item = function(id, parent, type, tree) {
          custom2    : '',
          ityp       : 0,
          imax       : 0,
-         inpartlist : true,
-         color      : '#00bfa5'
+         inpartlist : true, // useless, kept for compatibility with < 1.4.0
+         color      : '#00bfa5',
+         valtype    : 0,
+         /* value types (v1.4.0) :
+            0: partlist
+            1: raw
+            2: sync (associated with celltyp and cellmax)
+         */
+         celltyp    : 'A1',
+         cellmax    : 'B1'
       };
    }
    // Root specific datas
@@ -522,7 +533,8 @@ Item.prototype.getPowerLoss = function(valType) {
 // Open a new window to edit the item
 // wait for the modifications then edit the item values
 // Need a partlist to update the consumptions in some cases
-Item.prototype.edit = function(partList) {
+// Need the sync sheet to update other consumptions
+Item.prototype.edit = function(partList, sheet) {
    // require ipcRenderer to send/receive message with main.js
    const { ipcRenderer } = require('electron');
 
@@ -557,8 +569,7 @@ Item.prototype.edit = function(partList) {
    }
 
    // refresh the consumption
-   // for example when "inpartlist" changes from false to true
-   this.refreshConsumption(partList);
+   this.refreshConsumption(partList, sheet);
 };
 
 
@@ -581,12 +592,28 @@ Item.prototype.fromString = function(str) {
    // extract the data from the string
    let properties = JSON.parse(str);
 
+   // init the characs
+   this.setCharacs(properties.type);
+
    // for each property in this item, copy from the string
    for (let i in this) {
       // if the string and this item has the hasOwnProperty
       // and do not replace the tree
       if (this.hasOwnProperty(i) && properties.hasOwnProperty(i) && i !== 'tree') {
-         this[i] = properties[i];
+         // if the property is the characs, replace one by one
+         if(i === 'characs') {
+            // for each characs in this item, copy from the string
+            for (let j in this.characs) {
+               // if the charac exist in this item and in the string
+               if (this.characs.hasOwnProperty(j) && properties.characs.hasOwnProperty(j)) {
+                  this.characs[j] = properties.characs[j];
+               }
+            }
+         }
+         // replace all the other properties
+         else {
+            this[i] = properties[i];
+         }
       }
    }
 
@@ -595,22 +622,69 @@ Item.prototype.fromString = function(str) {
    if(this.isSource() && (2 == this.characs.regtype || 5 == this.characs.regtype)) {
       this.characs.regtype = 7;
    }
+
+   // compatibility with < v1.4.0
+   // concersions of old characs.isinpartlist to new characs.valtyp
+   if(this.isLoad()) {
+      this.characs.valtype = (this.characs.inpartlist) ? 0 : 1;
+   }
 };
 
 
 // Refresh the consumption whith the given partList
-Item.prototype.refreshConsumption = function(partList) {
-   if (this.isLoad() && this.characs.inpartlist) {
-      // reinit each current
-      this.characs.ityp = 0;
-      this.characs.imax = 0;
+Item.prototype.refreshConsumption = function(partList, sheet) {
+   if (this.isLoad()) {
+      // if the cunsumptions of this loads are in the partlist
+      // v < 1.4.0 compatibility: if the location do not exist, assume partlist
+      if(undefined === this.characs.valtype || 0 == this.characs.valtype) {
+         // skip if the partlist was not given
+         if(undefined !== partList && null !== partList) {
+            // reinit each current
+            this.characs.ityp = 0;
+            this.characs.imax = 0;
 
-      var that = this;
+            var that = this;
 
-      // parcour all part to add all currents
-      partList.forEachPart(function(part) {
-         that.characs.ityp += parseFloat(part.getConsumption(that, 'typ'));
-         that.characs.imax += parseFloat(part.getConsumption(that, 'max'));
-      });
+            // parcour all part to add all currents
+            partList.forEachPart(function(part) {
+               that.characs.ityp += parseFloat(part.getConsumption(that, 'typ'));
+               that.characs.imax += parseFloat(part.getConsumption(that, 'max'));
+            });
+         }
+      }
+      // if the consumptions are raw
+      else if(1 == this.characs.valtype) {
+         // do nothing
+      }
+      // if the consumptions are in the spreadsheet
+      else if(2 == this.characs.valtype) {
+         // if there is no sheet
+         if(undefined === sheet || null === sheet) {
+            // reinit values
+            this.characs.ityp = 0;
+            this.characs.imax = 0;
+         }
+         // if there is a sheet
+         else {
+            const XLSX = require('xlsx');
+            for(let typmax of ['typ','max']) {
+               // init current
+               let i=0;
+               // convert the cell adress to indexes, B8 -> {c:1,r:7}
+               let cell_index = XLSX.utils.decode_cell(this.characs['cell'+typmax]);
+               // if the cell exists
+               if(undefined !== sheet[cell_index.r] && undefined !== sheet[cell_index.r][cell_index.c]) {
+                  // get the value from the sheet
+                  i = parseFloat(sheet[cell_index.r][cell_index.c]);
+               }
+               // check if the value is a number
+               if(isNaN(i)) i = 0;
+               // save the values
+               this.characs['i'+typmax] = i;
+
+            }
+         }
+      }
    }
+
 };

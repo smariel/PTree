@@ -197,10 +197,6 @@ $info_border_color:     rgba(255,255,255,0.2);
 //   Bottom menu (config)
 //
 
-#bottom_title {
-   text-align: center;
-}
-
 #bottom_menu {
    display:    none;
    width:      100%;
@@ -209,32 +205,78 @@ $info_border_color:     rgba(255,255,255,0.2);
    background: $light-blue;
 }
 
-#config_tree {
-   display:     flex;
-   align-items: center;
+#bottom_title {
+   text-align: center;
+   background: rgba(0,0,0,0.05);
+   margin: 0;
+   padding: 10px 0;
+}
+
+#bottom_close {
+   position:    absolute;
+   top:         10px;
+   right:       10px;
+   font-size:   30px;
+   line-height: 0.5;
+}
+
+.bottom_subtitle {
+   margin:      0;
+   padding-top: 10px;
+   border-top:  1px solid rgba(0,0,0,0.2);
+   text-align:  center;
+   font-size:   16px;
+}
+
+.option_section {
+   display:         flex;
+   align-items:     center;
    justify-content: center;
-   border-top:  1px solid #DDDDDD;
+   line-height:     1;
+
+   & label {
+      font-weight:     normal;
+   }
 }
 
 .config {
    margin:     10px 15px;
    text-align: left;
-
    &:last-child {
-   //   align-self: flex-end;
+      line-height: 2;
+      text-align:  center;
    }
 }
 
 .mybtn-defaultConfig {
+   @include square-btn($red, white);
+   margin-top: 10px;
+}
+
+#sheet_selection {
+   margin:      10px 0;
+   text-align:  center;
+   line-height: 1.5;
+}
+
+#sheetpath {
+   display: inline;
+}
+
+.bt_sheet {
+   display: inline-block;
+   margin:  10px;
+   width:   130px;
+}
+
+#bt_select_sheet {
+   @include square-btn($teal, white);
+}
+
+#bt_refresh_sheet {
    @include square-btn($blue, white);
-   margin-left: 5px;
+}
 
-   &:hover {
-      background-color: darken($blue, 5);
-   }
-
-   &:active,
-   &:focus {
-      background-color: darken($blue, 10);
-   }
+#bt_remove_sheet {
+   @include square-btn($red, white);
 }

@@ -146,10 +146,10 @@ Tree.prototype.copyItem = function(parent, itemToCopy) {
 };
 
 
-// refresh the consumptions of each load based on the given partList
-Tree.prototype.refreshConsumptions = function(partList) {
+// refresh the consumptions of each load based on the given partList and sheet
+Tree.prototype.refreshConsumptions = function(partList, sheet) {
    this.forEachLoad(function(load) {
-      load.refreshConsumption(partList);
+      load.refreshConsumption(partList, sheet);
    });
 };
 
