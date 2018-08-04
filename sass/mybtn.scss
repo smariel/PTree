@@ -7,6 +7,20 @@
    transition:       150ms ease;
    background-color: $bg-color;
    color:            $txt-color;
+
+   &:hover {
+      background-color: darken($bg-color, 5);
+      color:            $txt-color;
+      cursor:           pointer;
+      text-decoration:  none;
+   }
+
+   &:active,
+   &:focus {
+      outline:          none;
+      color:            $txt-color;
+      background-color: darken($bg-color, 10);
+   }
 }
 
 @mixin round-btn($color: $teal, $size: 50px, $transistion: 300ms) {
