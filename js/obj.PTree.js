@@ -111,27 +111,51 @@ PTree.prototype.open = function() {
             };
             if(!popup(popupData)) return;
          }
-         // if the version number is different, prompt the user (except for minor versions)
-         else if(data.version !== require('../package.json').version) {
-            let fileVer = data.version.split('.');
-            let thisVer = require('../package.json').version.split('.');
-            if(fileVer[0] !== thisVer[0] || fileVer[1] !== thisVer[1]) {
-               let popupData = {
-                  title      : 'Incorrect file',
-                  width      : 520,
-                  height     : 225,
-                  sender     : 'tree',
-                  content    : `<strong>This file was made with a different version of the application.</strong><br />
-                               This could result in an unexpected behavior. <br />
-                               Do you still want to proceed ?<br />
-                               <br />
-                               <em>File: ${data.version}<br />
-                               Application: ${require('../package.json').version}</em>`,
-                  btn_ok     : 'Proceed',
-                  btn_cancel : 'Cancel'
-               };
-               if(!popup(popupData)) return;
-            }
+
+         // comapare the version of PTree with the version of the file
+         let comp = compareVersions(packagejson.version, data.version);
+
+         // The file was made with an older PTree
+         if(comp === 1) {
+            let popupData = {
+               title      : 'Incorrect file',
+               width      : 520,
+               height     : 225,
+               sender     : 'tree',
+               content    : `<strong>This file was made with an older version of PTree.</strong><br />
+                            This could result in an unexpected behavior. <br />
+                            Do you still want to proceed ?<br />
+                            <br />
+                            <em>File: ${data.version}<br />
+                            PTree: ${packagejson.version}</em>`,
+               btn_ok     : 'Proceed',
+               btn_cancel : 'Cancel'
+            };
+            if(!popup(popupData)) return;
+         }
+         // The file was made with a newer PTree
+         else if(comp === -1) {
+            let popupData = {
+               title      : 'Incorrect file',
+               width      : 520,
+               height     : 245,
+               sender     : 'tree',
+               content    : `<strong>This file was made with a newer version of PTree.</strong><br />
+                            This could result in an unexpected behavior. <br />
+                            Do you still want to proceed ?<br />
+                            You could also download the new version of PTree.<br />
+                            <br />
+                            <em>File: ${data.version}<br />
+                            PTree: ${packagejson.version}</em>`,
+               btn_ok     : 'Proceed',
+               btn_cancel : 'Cancel'
+            };
+
+            if(!popup(popupData)) return;
+         }
+         // sould not occur
+         else if(null === comp) {
+            alert('Unexpected error');
          }
 
          // copy the new data in this (=that) tree
