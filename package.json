@@ -37,7 +37,7 @@
   "bugs": {
     "url": "https://github.com/smariel/PTree/issues"
   },
-  "homepage": "https://github.com/smariel/PTree",
+  "homepage": "https://smariel.github.io/PTree",
   "dependencies": {
     "bootstrap": "<4.0.0",
     "chart.js": "^2.7.2",

@@ -26,6 +26,8 @@ var PTree = function(canvas_selector) {
    this.updateClearButtons();
 
    window.document.title = "Untitled";
+
+   this.checkUpdate();
 };
 
 
@@ -492,6 +494,44 @@ PTree.prototype.listenCanvas = function() {
          that.saveHistory();
       }
    });
+};
+
+
+// Check GitHub for update
+PTree.prototype.checkUpdate = function() {
+   // get informations about the latest release using GitHub API
+   $.get('https://api.github.com/repos/smariel/ptree/releases/latest', function(github_data){
+      // get the version of the latest release
+      let latest_version = github_data.tag_name.substr(1);
+
+      // get the current version
+      const packagejson = require('../package.json');
+      let this_version = packagejson.version;
+
+      // if this version is not equal to the latest on github
+      if(this_version != latest_version) {
+         // open a popup and propose the user to download
+         let popupData = {
+            title      : 'New version available',
+            width      : 350,
+            height     : 160,
+            sender     : 'tree',
+            content    : `<strong>A new version of PTree is available !</strong><br />
+                          You are using PTree v${this_version}. <br />
+                          Would you like to download v${latest_version}?`,
+            btn_ok     : 'Yes',
+            btn_cancel : 'Not now'
+         };
+         // if the user clicked on "download"
+         if(popup(popupData)) {
+            // open the PTree home page in an external browser
+            const {shell} = require('electron');
+            shell.openExternal(packagejson.homepage);
+         }
+      }
+   });
+
+
 };
 
 
