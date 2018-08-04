@@ -5,16 +5,23 @@ $(function() {
 
    // display the data
    $('.content').html(popupData.content);
-   $('.mybtn-ok').html(popupData.btn_ok);
+
+   // popup type = list
    if(undefined !== popupData.type && 'list' === popupData.type) {
       $('.mybtn-cancel').remove();
+      $('.mybtn-ok').html(popupData.btn_ok);
 
       for(let item of popupData.list) {
          $('#list').append(`<option>${item}</option>\n`);
       }
    }
+   // popup type = OK/Cancel
    else {
-      $('.mybtn-cancel').html(popupData.btn_cancel);
+      if(null === popupData.btn_ok)     $('.mybtn-ok').remove();
+      else                              $('.mybtn-ok').html(popupData.btn_ok);
+
+      if(null === popupData.btn_cancel) $('.mybtn-cancel').remove();
+      else                              $('.mybtn-cancel').html(popupData.btn_cancel);
    }
 
    // prepare the close function to send back OK or CANCEL to main.js
