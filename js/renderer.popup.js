@@ -54,7 +54,12 @@ $(function() {
       }
       // ENTER
       else if (13 == event.which) {
-         close(true);
+         if(undefined !== popupData.type && 'list' === popupData.type) {
+            close($('#list option:selected').text());
+         }
+         else {
+            close (true);
+         }
       }
    });
 
