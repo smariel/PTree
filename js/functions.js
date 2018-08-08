@@ -267,9 +267,9 @@ function getSpreadsheet(path=null, return_path=false) {
       sheetName  = workbook.SheetNames[0];
    }
 
-   // translate the sheet to JSON
+   // translate the sheet to JSON, convert empty values to 0, starting by A1 even if empty
    let sheet      = workbook.Sheets[sheetName];
-   let sheet_json = XLSX.utils.sheet_to_json(sheet, {header:1});
+   let sheet_json = XLSX.utils.sheet_to_json(sheet, {header:1, defval:0, range:'A1:'+sheet['!ref'].split(':')[1]});
 
    // return
    if(return_path) return {sheet:sheet_json, path:path};
