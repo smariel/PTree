@@ -1,6 +1,6 @@
 {
   "name": "PTree",
-  "version": "1.4.0",
+  "version": "1.4.1",
   "description": "Design power trees and estimate consumptions",
   "author": "Sylvain Mariel",
   "license": "GPL-3.0",
@@ -41,7 +41,7 @@
   "dependencies": {
     "bootstrap": "<4.0.0",
     "chart.js": "^2.7.2",
-    "fabric": "^2.3.3",
+    "fabric": "^2.3.4",
     "font-awesome": "<5.0.0",
     "jquery": "^3.3.1",
     "mousetrap": "^1.6.2",
