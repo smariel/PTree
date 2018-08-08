@@ -257,10 +257,10 @@ var updateItem = function(item) {
 
 // Upadte the load current helper
 var updateLoadCurrent = function() {
-   $('.valtype').hide();
+   $('.loadtype').hide();
 
-   valtype = $('#load_valtype').val();
-   $(`.valtype${valtype}`).show();
+   loadtype = $('#load_type').val();
+   $(`.loadtype${loadtype}`).show();
 };
 
 
@@ -317,7 +317,7 @@ $('#source_regtype').change(updateRegType);
 
 
 // Permit current edition if the checkbox is unchecked
-$('#load_valtype').change(updateLoadCurrent);
+$('#load_type').change(updateLoadCurrent);
 
 
 // update vmin/vtyp/vmax on the go

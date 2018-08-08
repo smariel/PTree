@@ -69,10 +69,9 @@ Item.prototype.setCharacs = function(type) {
          custom2    : '',
          ityp       : 0,
          imax       : 0,
-         inpartlist : true, // useless, kept for compatibility with < 1.4.0
          color      : '#00bfa5',
-         valtype    : 0,
-         /* value types (v1.4.0) :
+         loadtype   : 0,
+         /* load types (v1.4.0) :
             0: partlist
             1: raw
             2: sync (associated with celltyp and cellmax)
@@ -625,8 +624,8 @@ Item.prototype.fromString = function(str) {
 
    // compatibility with < v1.4.0
    // concersions of old characs.isinpartlist to new characs.valtyp
-   if(this.isLoad()) {
-      this.characs.valtype = (this.characs.inpartlist) ? 0 : 1;
+   if(this.isLoad() && undefined !== this.characs.inpartlist) {
+      this.characs.loadtype = (this.characs.inpartlist) ? 0 : 1;
    }
 };
 
@@ -636,7 +635,7 @@ Item.prototype.refreshConsumption = function(partList, sheet) {
    if (this.isLoad()) {
       // if the cunsumptions of this loads are in the partlist
       // v < 1.4.0 compatibility: if the location do not exist, assume partlist
-      if(undefined === this.characs.valtype || 0 == this.characs.valtype) {
+      if(undefined === this.characs.loadtype || 0 == this.characs.loadtype) {
          // skip if the partlist was not given
          if(undefined !== partList && null !== partList) {
             // reinit each current
@@ -653,11 +652,11 @@ Item.prototype.refreshConsumption = function(partList, sheet) {
          }
       }
       // if the consumptions are raw
-      else if(1 == this.characs.valtype) {
+      else if(1 == this.characs.loadtype) {
          // do nothing
       }
       // if the consumptions are in the spreadsheet
-      else if(2 == this.characs.valtype) {
+      else if(2 == this.characs.loadtype) {
          // if there is no sheet
          if(undefined === sheet || null === sheet) {
             // reinit values
