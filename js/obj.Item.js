@@ -623,9 +623,9 @@ Item.prototype.fromString = function(str) {
    }
 
    // compatibility with < v1.4.0
-   // concersions of old characs.isinpartlist to new characs.valtyp
-   if(this.isLoad() && undefined !== this.characs.inpartlist) {
-      this.characs.loadtype = (this.characs.inpartlist) ? 0 : 1;
+   // conversions of old characs.isinpartlist to new characs.valtyp
+   if(this.isLoad() && undefined === properties.characs.loadtype) {
+      this.characs.loadtype = (properties.characs.inpartlist) ? 0 : 1;
    }
 };
 
