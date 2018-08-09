@@ -50,12 +50,17 @@ app.on('ready', () => {
    // Open the dev tools...
 	if ((undefined !== debug) && debug) appWindows.tree.webContents.openDevTools();
 
-	// Emitted when the window is closed.
-	appWindows.tree.on('closed', function () {
-		// Dereference the window object
-		appWindows.tree = null;
-      appWindows.stats = null;
-      app.quit();
+   // Emitted just before closing the window
+   appWindows.tree.on('close', function(e){
+      // do not close the window
+      e.preventDefault();
+      // prevent the tree renderer that the user want to quit
+      appWindows.tree.webContents.send('close');
+   });
+
+   // The tree is OK to exit
+	ipcMain.once('quit', function() {
+      process.exit();
 	});
 
    // configuration of the Application menu

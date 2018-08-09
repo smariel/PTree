@@ -104,7 +104,7 @@ PTree.prototype.open = function() {
 PTree.prototype.save = function(saveas = false) {
    // do not try a simple save if it's not needed
    if(!saveas && !this.unsaved) {
-      return;
+      return false;
    }
 
    // if the app as no file to work on
@@ -128,7 +128,7 @@ PTree.prototype.save = function(saveas = false) {
 
       // save the new path only if its not undefined (canceled)
       if (undefined !== path) this.filePath = path;
-      else return;
+      else return false;
    }
 
    // save a reference to this PTree object
@@ -153,6 +153,8 @@ PTree.prototype.save = function(saveas = false) {
          alert(err);
       }
    });
+
+   return true;
 };
 
 
@@ -957,12 +959,43 @@ PTree.prototype.listenKeyboard = function() {
 // listen to all events (messages) from main.js
 PTree.prototype.listenMessages = function() {
    let that = this;
-   // use ipcRender to communicate with main main process
+   // use ipcRenderer to communicate with main main process
    const {ipcRenderer} = require('electron');
 
    // update the chart every time a message is received from main.js
    ipcRenderer.on('tree-selectItem', function(event, itemID){
       that.canvas.selectItem(that.tree.getItem(itemID));
       that.updateUpDownButtons();
+   });
+
+   // main.js want to close the window
+   ipcRenderer.on('close', function(event) {
+      // if the project is not saved
+      if(that.unsaved) {
+         // ask the user to save
+         let popupData = {
+            title      : 'Save before exit?',
+            width      : 500,
+            height     : 135,
+            sender     : 'tree',
+            content    : `<strong>You have made changes which were not saved.</strong><br />
+            Do you want to save them before exit?`,
+            btn_ok     : 'Save and exit',
+            btn_cancel : 'Exit without saving'
+         };
+         let saveBeforeExit = popup(popupData);
+
+         // if the user want to save, save the project
+         if (saveBeforeExit) {
+            // if the user canceled the save
+            if(!that.save()) {
+               // do not exit
+               return;
+            }
+         }
+      }
+
+      // ask main.js to quit the app
+      ipcRenderer.send('quit');
    });
 };
