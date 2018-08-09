@@ -87,7 +87,7 @@ Stats.prototype.update = function() {
             }
          });
 
-         if(!this.item.characs.inpartlist || 0 === labels.length) {
+         if(!this.item.isInPartlist() || 0 === labels.length) {
             this.empty('No part');
             return;
          }

@@ -61,7 +61,7 @@ Part.prototype.getPower = function(tree) {
 
    // Can't use tree.forEachLoad() without creating an anonymous function in this loop
    for (let item of tree.item_list) {
-      if (item !== undefined && item.isLoad() && item.characs.inpartlist) {
+      if (item !== undefined && item.isLoad() && item.isInPartlist()) {
          // get the consumption on this item
          let ityp = that.getConsumption(item, 'typ');
          let imax = that.getConsumption(item, 'max');

@@ -48,7 +48,7 @@ PartTable.prototype.refresh = function() {
       // Part consumptions on each load
       // Can't use tree.forEachLoad() without creating an anonymous function in this loop
       for(let item of that.tree.item_list) {
-         if(item !== undefined && item.isLoad() && item.characs.inpartlist) {
+         if(item !== undefined && item.isLoad() && item.isInPartlist()) {
             // get the consumption on this item
             let ityp = part.getConsumption(item, 'typ');
             let imax = part.getConsumption(item, 'max');
@@ -510,7 +510,7 @@ PartTable.prototype.fromSpreadsheet = function(sheet_json) {
          let col_id = 5;
          // can not use that.tree.forEachLoad() because it need an anonymous functions which is not permited in a loop
          for(let item of this.tree.item_list) {
-            if(item !== undefined && item.isLoad() && item.characs.inpartlist) {
+            if(item !== undefined && item.isLoad() && item.isInPartlist()) {
                part.setConsumption(sheet_line[col_id],   item, 'typ');
                part.setConsumption(sheet_line[col_id+1], item, 'max');
                col_id += 2;

@@ -24,7 +24,7 @@ $(function() {
 
       // complete the header of the table withe the list of loads
       partTable.tree.forEachLoad(function(load) {
-         if(load.characs.inpartlist) {
+         if(load.isInPartlist()) {
             let th1 =  `<th colspan="2" class="th_current">${load.characs.name}</th>`;
             $('.tr_top > .th_power:last-child').before(th1);
 

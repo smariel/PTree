@@ -115,27 +115,45 @@ Item.prototype.isChildOfRoot = function() {
 };
 
 
-// Check if the item is a DC/DC
+// Check if the item is a DC/DC reg
 Item.prototype.isDCDC = function() {
    return this.isSource() && ('0' == this.characs.regtype || '3' == this.characs.regtype);
 };
 
 
-// Check if the item is a LDO
+// Check if the item is a LDO reg
 Item.prototype.isLDO = function() {
    return this.isSource() && ('1' == this.characs.regtype || '4' == this.characs.regtype);
 };
 
 
-// Check if the item is a LDO
+// Check if the item is a Dummy reg
 Item.prototype.isDummy = function() {
    return this.isSource() && ('6' == this.characs.regtype);
 };
 
 
-// Check if the item is a LDO
+// Check if the item is a Perfect reg
 Item.prototype.isPerfect = function() {
    return this.isSource() && ('7' == this.characs.regtype);
+};
+
+
+// Check if the item is a load with the current in the partlist
+Item.prototype.isInPartlist = function() {
+   return this.isLoad() && ('0' == this.characs.loadtype);
+};
+
+
+// Check if the item is a load with the current defined as raw data
+Item.prototype.isRaw = function() {
+   return this.isLoad() && ('1' == this.characs.loadtype);
+};
+
+
+// Check if the item is a load with the current synced
+Item.prototype.isSynced = function() {
+   return this.isLoad() && ('2' == this.characs.loadtype);
 };
 
 
@@ -557,7 +575,7 @@ Item.prototype.edit = function(partList, sheet) {
 
    // if the load is not in the part list
    // remove all consumptions on the parts
-   if(!this.characs.inpartlist) {
+   if(!this.isInPartlist()) {
       let that = this;
       partList.forEachPart(function(part){
          if(part.isConsuming(that)) {

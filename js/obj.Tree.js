@@ -83,7 +83,7 @@ Tree.prototype.getLoadInPartList = function(load, direction) {
    }
    else {
       // if the load is allowed in the partlist, return it
-      if(newload.characs.inpartlist) {
+      if(newload.isInPartlist()) {
          return newload;
       }
       // if the  load is not allowed, got an other one... recursively
