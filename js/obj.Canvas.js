@@ -454,7 +454,7 @@ Canvas.prototype.selectItem = function(item) {
    });
 
    // if the item is a load
-   if (item.isLoad()) {
+   if (item.isLoad() && item.isInPartlist()) {
       this.showParts(item);
    }
    else {
