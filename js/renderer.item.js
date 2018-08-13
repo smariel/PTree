@@ -278,13 +278,11 @@ var itemData = {};
 var effChart = null;
 
 // prepare to fill the form when data will be received from the main process
-ipcRenderer.on('edit-window-open-resp', function(event, data) {
+ipcRenderer.on('edit-window-open', function(event, data) {
    itemData = JSON.parse(data);
    fillData(itemData);
 });
 
-// request data to the main process
-ipcRenderer.send('edit-window-open-req');
 
 
 // -----------------------------------------------------------------------------

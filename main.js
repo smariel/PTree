@@ -230,10 +230,10 @@ ipcMain.on('edit-request', function (itemEvent, itemdata) {
 	// Load the *.html of the window.
 	appWindows.item.loadURL(`file://${__dirname}/html/item.html`);
 
-	// wait for the edit window to request the data, then send them
-	ipcMain.once('edit-window-open-req', function(event_wopen, arg){
-		event_wopen.sender.send('edit-window-open-resp', itemdata);
-	});
+   // send data to the item window after loading
+   appWindows.item.webContents.on('did-finish-load', function() {
+      appWindows.item.webContents.send('edit-window-open', itemdata);
+   });
 
 	// wait for the edit window to send data when it closes
 	ipcMain.once('edit-window-close', function(event_wclose, newitemdata) {
@@ -277,10 +277,10 @@ ipcMain.on('partTable-request', function (partEvent, treeData, partlistData) {
 	// Load the *.html of the window.
 	appWindows.partTable.loadURL(`file://${__dirname}/html/partTable.html`);
 
-	// wait for the window to request the data then send them
-	ipcMain.once('partTable-window-open-req', function(event_wopen, arg){
-		event_wopen.sender.send('partTable-window-open-resp', treeData, partlistData);
-	});
+   // send data to the partTable window after loading
+   appWindows.partTable.webContents.on('did-finish-load', function() {
+      appWindows.partTable.webContents.send('partTable-window-open', treeData, partlistData);
+   });
 
 	// wait for the edit window to send data when it closes
 	ipcMain.once('partTable-window-close', function(event_wclose, newPartlistData) {
@@ -327,10 +327,10 @@ ipcMain.on('stats-request', function (statsEvent, data) {
 	// Load the *.html of the window.
 	appWindows.stats.loadURL(`file://${__dirname}/html/stats.html`);
 
-	// wait for the window to request the data then send them
-	ipcMain.once('stats-window-open-req', function(event_wopen, arg){
-		event_wopen.sender.send('stats-window-open-resp', data);
-	});
+   // send data to the stats window after loading
+   appWindows.stats.webContents.on('did-finish-load', function() {
+      appWindows.stats.webContents.send('stats-window-open', data);
+   });
 
 	// Emitted when the window is closed.
 	appWindows.stats.on('closed', function () {
@@ -342,13 +342,6 @@ ipcMain.on('stats-request', function (statsEvent, data) {
 // inform the stats window (if open) that an item has been selected on the tree
 ipcMain.on('stats-selectItem', function (event, data) {
    if(null !== appWindows.stats) {
-      /*// wait for the window to request the data then send them
-   	ipcMain.once('stats-window-open-req', function(event_wopen, arg){
-   		event_wopen.sender.send('stats-window-open-resp', data);
-   	});
-      // reload the stats window
-      appWindows.stats.webContents.reload();*/
-
       appWindows.stats.webContents.send('stats-selectItem',data);
    }
 });

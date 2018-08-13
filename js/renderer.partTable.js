@@ -11,11 +11,8 @@ $(function() {
    // init the two mains object of the partlist
    var partTable = new PartTable();
 
-   // use ipcRender to communicate with main main process
-   const {ipcRenderer} = require('electron');
-
    // prepare to receive the init data from the main process
-   ipcRenderer.on('partTable-window-open-resp', function(event, treeData, partListData) {
+   require('electron').ipcRenderer.on('partTable-window-open', function(event, treeData, partListData) {
 
       // reconstruct a Tree and a PartList object
       partTable.tree.fromString(treeData);
@@ -38,8 +35,4 @@ $(function() {
       // refresh the table to fill all data
       partTable.refresh();
    });
-
-   // request the main process for the init data (that will be processed by the function above)
-   ipcRenderer.send('partTable-window-open-req');
-
 });
