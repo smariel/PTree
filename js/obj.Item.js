@@ -127,6 +127,18 @@ Item.prototype.isLDO = function() {
 };
 
 
+// Check if the item is an adjustable regulator (DC/DC or LDO)
+Item.prototype.isAdjReg = function() {
+   return this.isSource() && ('3' == this.characs.regtype || '4' == this.characs.regtype);
+};
+
+
+// Check if the item is a fixed output regulator (DC/DC or LDO)
+Item.prototype.isFixedReg = function() {
+   return this.isSource() && ('0' == this.characs.regtype || '1' == this.characs.regtype);
+};
+
+
 // Check if the item is a Dummy reg
 Item.prototype.isDummy = function() {
    return this.isSource() && ('6' == this.characs.regtype);
@@ -552,41 +564,28 @@ Item.prototype.getPowerLoss = function(valType) {
 // Need a partlist to update the consumptions in some cases
 // Need the sync sheet to update other consumptions
 Item.prototype.edit = function(partList, sheet) {
-   // require ipcRenderer to send/receive message with main.js
-   const { ipcRenderer } = require('electron');
+   // ask main.js to open the item editor window
+   let datastr = require('electron').ipcRenderer.sendSync('edit-request', this.toString());
 
-   // prepare datas to be sent to the edit window
-   var requestData = {
-      id     : this.id,
-      type   : this.type,
-      characs: this.characs
-   };
+   // import the new data
+   if(null !== datastr) this.fromString(datastr);
 
-   // ask main.js to edit the item with the given data and wait for a response
-   var resultData = JSON.parse(ipcRenderer.sendSync('edit-request', JSON.stringify(requestData)));
-
-   // update the item
-   for (let charac in resultData.characs) {
-      // no need to check hasOwnProperty on the parsed object
-      if (typeof resultData.characs[charac] !== 'function') {
-         this.characs[charac] = resultData.characs[charac];
+   if(this.isLoad()) {
+      // if the load is not in the part list
+      // remove all consumptions on the parts
+      if(!this.isInPartlist()) {
+         let that = this;
+         partList.forEachPart(function(part){
+            if(part.isConsuming(that)) {
+               part.setConsumption(0, that, 'typ');
+               part.setConsumption(0, that, 'max');
+            }
+         });
       }
-   }
 
-   // if the load is not in the part list
-   // remove all consumptions on the parts
-   if(!this.isInPartlist()) {
-      let that = this;
-      partList.forEachPart(function(part){
-         if(part.isConsuming(that)) {
-            part.setConsumption(0, that, 'typ');
-            part.setConsumption(0, that, 'max');
-         }
-      });
+      // refresh the consumption
+      this.refreshConsumption(partList, sheet);
    }
-
-   // refresh the consumption
-   this.refreshConsumption(partList, sheet);
 };
 
 
