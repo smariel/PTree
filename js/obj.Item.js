@@ -634,6 +634,12 @@ Item.prototype.fromString = function(str) {
       }
    }
 
+   // compatibility with < v1.1.0
+   // conversions of efficiency single number to array
+   if(this.isDCDC() && !isNaN(this.characs.efficiency)) {
+      this.characs.efficiency = [{i:1, eff:this.characs.efficiency}];
+   }
+
    // compatibility with < v1.3.0
    // conversions of old reg types to Perfect Source
    if(this.isSource() && (2 == this.characs.regtype || 5 == this.characs.regtype)) {
