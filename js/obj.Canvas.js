@@ -414,6 +414,10 @@ Canvas.prototype.refresh = function() {
    $(document).scrollLeft(scroll_position[1]);
    // refresh the config
    this.refreshConfig();
+
+   // refresh the total power
+   $('.totalpower.typ').text(this.tree.getRoot().getPower('typ', 'out', 3, false));
+   $('.totalpower.max').text(this.tree.getRoot().getPower('max', 'out', 3, false));
 };
 
 

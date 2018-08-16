@@ -280,3 +280,27 @@ $info_border_color:     rgba(255,255,255,0.2);
 #bt_remove_sheet {
    @include square-btn($red, white);
 }
+
+
+// -----------------------------------------------------------------------------
+//   Total power section
+//
+
+#totalpower {
+   position:      fixed;
+   bottom:        0;
+   border-radius: 0 5px 0 0;
+   background:    rgba($grey, 0.7);
+}
+
+#totalpower > p {
+   margin:  0;
+   padding: 7px 15px;
+   color:   white;
+   text-transform: uppercase;
+   letter-spacing: .1rem;
+}
+
+.totalpower.max {
+   margin-left: 8px;
+}

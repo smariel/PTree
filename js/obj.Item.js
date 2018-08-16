@@ -390,6 +390,13 @@ Item.prototype.getOutputCurrent = function(valType) {
          i_out += this.tree.getItem(childID).getInputCurrent(valType);
       }
    }
+   // root output current represent the total currents of the project
+   else if (this.isRoot()) {
+      // i_out = sum of children i_out
+      for (let childID of this.childrenID) {
+         i_out += this.tree.getItem(childID).getOutputCurrent(valType);
+      }
+   }
 
    return i_out;
 };
@@ -482,6 +489,13 @@ Item.prototype.getOutputPower = function(valType) {
    if (this.isSource()) {
       // p_out = v_out_typ * i_out
       p_out = this.getOutputVoltage('typ') * this.getOutputCurrent(valType);
+   }
+   // ROOT output power represent the total power of the project
+   else if (this.isRoot()) {
+      // p_out = sum of children p_out
+      for (let childID of this.childrenID) {
+         p_out += this.tree.getItem(childID).getOutputPower(valType);
+      }
    }
 
    return p_out;
