@@ -565,7 +565,7 @@ Item.prototype.getPowerLoss = function(valType) {
 // Need the sync sheet to update other consumptions
 Item.prototype.edit = function(partList, sheet) {
    // ask main.js to open the item editor window
-   let datastr = require('electron').ipcRenderer.sendSync('edit-request', this.toString());
+   let datastr = require('electron').ipcRenderer.sendSync('itemEditor-request', this.toString(), this.type);
 
    // import the new data
    if(null !== datastr) this.fromString(datastr);

@@ -254,7 +254,7 @@ ItemEditor.prototype.closeOk = function() {
    // update the focused item (because it may not have trig "change")
    this.updateItemFromHTML($(document.activeElement));
    // send the updated item to main.js
-   require('electron').ipcRenderer.send('edit-window-close', this.item.toString());
+   require('electron').ipcRenderer.send('itemEditor-window-close', this.item.toString());
    // close the window
    window.close();
 };

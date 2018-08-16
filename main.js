@@ -22,12 +22,12 @@ for (let arg of process.argv) {
 
 // Keep a global reference of the window object to avaoid JS garbage collected to close them automatically
 let appWindows = {
-	tree      : null,
-	item      : null,
+	tree           : null,
+	itemEditor     : null,
 	PartListEditor : null,
-   stats     : null,
-   popup     : null,
-   about     : null,
+   stats          : null,
+   popup          : null,
+   about          : null,
 };
 
 
@@ -112,7 +112,7 @@ app.on('ready', () => {
 				{
 					label: `About ${packagejson.name}`,
 					click () {
-                  // Create the item window if it doesn't exist
+                  // Create the about window if it doesn't exist
                   if(null === appWindows.about) {
                   	appWindows.about = new BrowserWindow({
                   		width           : 450,
@@ -203,20 +203,17 @@ app.on('window-all-closed', function () {
 
 
 // -----------------------------------------------------------------------------
-// ITEM EDITION
+// ITEM EDITOR EDITION
 // -----------------------------------------------------------------------------
 
 // bind an event handler on a request to edit an item
 // this request is sent synchronusly by an item object on the tree view
 // so the tree view script is blocked untill it received a response
-ipcMain.on('edit-request', function (itemEvent, itemdata) {
-	// parse the data to resize the window
-	var item = JSON.parse(itemdata);
-
-	// Create the item window
-	appWindows.item = new BrowserWindow({
-		width           : ('source' == item.type) ? 840 : 600,
-		height          : ('source' == item.type) ? 485 : 485,
+ipcMain.on('itemEditor-request', function (itemevent, itemdata, itemtype) {
+	// Create the itemEditor window
+	appWindows.itemEditor = new BrowserWindow({
+		width           : ('source' == itemtype) ? 840 : 600,
+		height          : ('source' == itemtype) ? 485 : 485,
 		parent          : appWindows.tree,
 		modal           : true,
 		resizable       : false,
@@ -225,28 +222,28 @@ ipcMain.on('edit-request', function (itemEvent, itemdata) {
 	});
 
 	// Open the dev tools...
-	if ((undefined !== debug) && debug) appWindows.item.webContents.openDevTools();
+	if ((undefined !== debug) && debug) appWindows.itemEditor.webContents.openDevTools();
 
 	// Load the *.html of the window.
-	appWindows.item.loadURL(`file://${__dirname}/html/item.html`);
+	appWindows.itemEditor.loadURL(`file://${__dirname}/html/itemEditor.html`);
 
-   // send data to the item window after loading
-   appWindows.item.webContents.on('did-finish-load', function() {
-      appWindows.item.webContents.send('edit-window-open', itemdata);
+   // send data to the itemEditor window after loading
+   appWindows.itemEditor.webContents.on('did-finish-load', function() {
+      appWindows.itemEditor.webContents.send('itemEditor-window-open', itemdata);
    });
 
 	// wait for the edit window to send data when it closes
-	ipcMain.once('edit-window-close', function(event_wclose, newitemdata) {
+	ipcMain.once('itemEditor-window-close', function(event_wclose, newitemdata) {
 		// save those datas before sending them when the close event is trigged
 		itemdata = newitemdata;
 	});
 
 	// Emitted when the window is closed.
-	appWindows.item.on('closed', function () {
+	appWindows.itemEditor.on('closed', function () {
 		// sent the (new or old) data to the tree window
-		itemEvent.returnValue = itemdata;
+		itemevent.returnValue = itemdata;
 		// Dereference the window object
-		appWindows.item = null;
+		appWindows.itemEditor = null;
 	});
 });
 
