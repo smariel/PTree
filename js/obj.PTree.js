@@ -750,9 +750,10 @@ PTree.prototype.listenTreeMenu = function() {
    });
 
 
-   // add a source to the root when the button is clicked
+   // add a perfet source to the root when the button is clicked
    $('#bt_addrootsource').click(function() {
-      that.canvas.tree.addSourceToRoot();
+      let newItem = that.tree.addSourceToRoot();
+      newItem.characs.regtype = 7;
       that.canvas.refresh();
       that.updateClearButtons();
       that.saveHistory();
@@ -780,7 +781,7 @@ PTree.prototype.listenTreeMenu = function() {
 
    // Add a child source to the selected item
    $('#bt_addsource').click(function() {
-      that.canvas.tree.addSource(that.canvas.getSelectedItem());
+      that.tree.addSource(that.canvas.getSelectedItem());
       that.canvas.refresh();
       that.saveHistory();
    });
@@ -788,7 +789,7 @@ PTree.prototype.listenTreeMenu = function() {
 
    // Add a child load to the selected item
    $('#bt_addload').click(function() {
-      that.canvas.tree.addLoad(that.canvas.getSelectedItem());
+      that.tree.addLoad(that.canvas.getSelectedItem());
       that.canvas.refresh();
       that.saveHistory();
    });
