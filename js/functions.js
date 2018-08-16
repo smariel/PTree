@@ -225,7 +225,7 @@ Object.defineProperty(Array.prototype, "equals", {
 
 // get a sheet as JSON object from a file
 // popup the user if multiple tabs found
-function getSpreadsheet(path=null, return_path=false) {
+function getSpreadsheet(path=null, return_path=false, sender='PTree') {
    // of no path given, ask the user
    if (null === path) {
       // open a dialog
@@ -256,7 +256,7 @@ function getSpreadsheet(path=null, return_path=false) {
          title      : 'Choose a sheet',
          width      : 500,
          height     : 135,
-         sender     : 'tree',
+         sender     : sender,
          content    : `Multiple sheets found in this document.<br />Please choose one: <select id="list"></select>`,
          btn_ok     : 'Choose',
          list       : workbook.SheetNames

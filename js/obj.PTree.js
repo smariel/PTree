@@ -305,7 +305,7 @@ PTree.prototype.fromString = function(datastr) {
          title      : 'Incorrect file',
          width      : 500,
          height     : 135,
-         sender     : 'tree',
+         sender     : 'PTree',
          content    : `<strong>This file does not appear to be a valid Power Tree.</strong><br />
                       This could result in an unexpected behavior. <br />
                       Do you still want to proceed ? `,
@@ -325,7 +325,7 @@ PTree.prototype.fromString = function(datastr) {
          title      : 'Incorrect file',
          width      : 520,
          height     : 225,
-         sender     : 'tree',
+         sender     : 'PTree',
          content    : `<strong>This file was made with an older version of PTree.</strong><br />
                       This could result in an unexpected behavior. <br />
                       Do you still want to proceed ?<br />
@@ -343,7 +343,7 @@ PTree.prototype.fromString = function(datastr) {
          title      : 'Incorrect file',
          width      : 520,
          height     : 245,
-         sender     : 'tree',
+         sender     : 'PTree',
          content    : `<strong>This file was made with a newer version of PTree.</strong><br />
                       This could result in an unexpected behavior. <br />
                       Do you still want to proceed ?<br />
@@ -389,7 +389,7 @@ PTree.prototype.checkUpdate = function() {
             title      : 'New version available',
             width      : 350,
             height     : 160,
-            sender     : 'tree',
+            sender     : 'PTree',
             content    : `<strong>A new version of PTree is available !</strong><br />
                           You are using PTree v${this_version}. <br />
                           Would you like to download v${latest_version}?`,
@@ -722,7 +722,7 @@ PTree.prototype.listenTreeMenu = function() {
             title      : 'Save before continue?',
             width      : 500,
             height     : 135,
-            sender     : 'tree',
+            sender     : 'PTree',
             content    : `<strong>You have made changes which were not saved.</strong><br />
             Are you sure you want to continue?`,
             btn_ok     : 'Cancel',
@@ -977,7 +977,7 @@ PTree.prototype.listenMessages = function() {
             title      : 'Save before exit?',
             width      : 500,
             height     : 135,
-            sender     : 'tree',
+            sender     : 'PTree',
             content    : `<strong>You have made changes which were not saved.</strong><br />
             Do you want to save them before exit?`,
             btn_ok     : 'Save and exit',

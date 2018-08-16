@@ -22,7 +22,7 @@ for (let arg of process.argv) {
 
 // Keep a global reference of the window object to avaoid JS garbage collected to close them automatically
 let appWindows = {
-	tree           : null,
+	PTree          : null,
 	itemEditor     : null,
 	PartListEditor : null,
    stats          : null,
@@ -38,24 +38,24 @@ let appWindows = {
 // When Electron has finished initialization
 app.on('ready', () => {
 	// Create the browser window.
-	appWindows.tree = new BrowserWindow({
+	appWindows.PTree = new BrowserWindow({
       width    : 1200,
       height   : 800,
       minWidth : 800
    });
 
 	// and load the index.html of the app.
-	appWindows.tree.loadURL(`file://${__dirname}/html/tree.html`);
+	appWindows.PTree.loadURL(`file://${__dirname}/html/PTree.html`);
 
    // Open the dev tools...
-	if ((undefined !== debug) && debug) appWindows.tree.webContents.openDevTools();
+	if ((undefined !== debug) && debug) appWindows.PTree.webContents.openDevTools();
 
    // Emitted just before closing the window
-   appWindows.tree.on('close', function(e){
+   appWindows.PTree.on('close', function(e){
       // do not close the window
       e.preventDefault();
-      // prevent the tree renderer that the user want to quit
-      appWindows.tree.webContents.send('close');
+      // prevent the PTree renderer that the user want to quit
+      appWindows.PTree.webContents.send('close');
    });
 
    // The tree is OK to exit
@@ -214,7 +214,7 @@ ipcMain.on('itemEditor-request', function (itemevent, itemdata, itemtype) {
 	appWindows.itemEditor = new BrowserWindow({
 		width           : ('source' == itemtype) ? 840 : 600,
 		height          : ('source' == itemtype) ? 485 : 485,
-		parent          : appWindows.tree,
+		parent          : appWindows.PTree,
 		modal           : true,
 		resizable       : false,
       autoHideMenuBar : true,
@@ -262,7 +262,7 @@ ipcMain.on('partListEditor-request', function (partEvent, treeData, partlistData
 	appWindows.PartListEditor = new BrowserWindow({
 		width           : 1024,
 		height          : 768,
-		parent          : appWindows.tree,
+		parent          : appWindows.PTree,
 		modal           : process.platform !== 'darwin',
 		resizable       : true,
       useContentSize  : true
@@ -345,7 +345,7 @@ ipcMain.on('stats-selectItem', function (event, data) {
 
 // inform the PTree window that an item has been selected on the stats
 ipcMain.on('tree-selectItem', function (event, data) {
-   appWindows.tree.webContents.send('tree-selectItem',data);
+   appWindows.PTree.webContents.send('tree-selectItem',data);
 });
 
 

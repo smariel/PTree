@@ -481,12 +481,12 @@ PartListEditor.prototype.fromSpreadsheet = function(sheet_json) {
       title      : 'Merge or replace ?',
       width      : 500,
       height     : 135,
-      sender     : 'PartListEditor',
+      sender     : 'partListEditor',
       content    : `Do you want to <strong>add</strong> those data to the table or <strong>replace</strong> everything ?`,
       btn_ok     : 'Add',
       btn_cancel : 'Replace'
    };
-   if(!popup(popupData)) {
+   if(!popup(popupData, false, 'partListEditor')) {
       this.partList.deleteAllParts();
    }
 
