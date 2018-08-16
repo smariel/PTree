@@ -1,10 +1,10 @@
 // -----------------------------------------------------------------------------
-// PartTable constructor
-//    A PartTable contains a partlist associated with a tree
+// PartListEditor constructor
+//    A PartListEditor contains a partlist associated with a tree
 //    It provides methods to manipulate those parts within a <table> element
 // -----------------------------------------------------------------------------
 
-var PartTable = function() {
+var PartListEditor = function() {
    this.partList      = new PartList();
    this.tree          = new Tree();
    this.editType      = null;
@@ -19,7 +19,7 @@ var PartTable = function() {
 
 
 // refresh the table with new values
-PartTable.prototype.refresh = function() {
+PartListEditor.prototype.refresh = function() {
    // empty the table content
    $('.partTable tbody').empty();
 
@@ -74,7 +74,7 @@ PartTable.prototype.refresh = function() {
 
 
 // print a UI to edit a charac
-PartTable.prototype.editCharac = function(part, charac) {
+PartListEditor.prototype.editCharac = function(part, charac) {
    // if a previous element whas in edition
    if ('charac' === this.editType) {
       // get the previous edited element
@@ -104,7 +104,7 @@ PartTable.prototype.editCharac = function(part, charac) {
 
 
 // print a UI to edit a current
-PartTable.prototype.editCurrent = function(part, load, typmax) {
+PartListEditor.prototype.editCurrent = function(part, load, typmax) {
    // if a previous element whas in edition
    if ('current' === this.editType) {
       // get the previous edited element
@@ -134,7 +134,7 @@ PartTable.prototype.editCurrent = function(part, load, typmax) {
 
 
 // remove the UI from editing by validating (or not) the data
-PartTable.prototype.clearCharac = function(validate){
+PartListEditor.prototype.clearCharac = function(validate){
    // get datas from html elements
    var part    = this.getEditedPart();
    var charac  = this.getEditedCharac();
@@ -158,7 +158,7 @@ PartTable.prototype.clearCharac = function(validate){
 
 
 // remove the UI from editing by validating (or not) the data
-PartTable.prototype.clearCurrent = function(validate){
+PartListEditor.prototype.clearCurrent = function(validate){
    // get datas from html elements
    let part     = this.getEditedPart();
    let load     = this.getEditedLoad();
@@ -195,7 +195,7 @@ PartTable.prototype.clearCurrent = function(validate){
 
 
 // validate the occuring edition
-PartTable.prototype.validateEdition = function() {
+PartListEditor.prototype.validateEdition = function() {
    if ('charac' === this.editType) {
       this.clearCharac(true);
    }
@@ -206,7 +206,7 @@ PartTable.prototype.validateEdition = function() {
 
 
 // cancel the occuring edition
-PartTable.prototype.cancelEdition = function() {
+PartListEditor.prototype.cancelEdition = function() {
    if ('charac' === this.editType) {
       this.clearCharac(false);
    }
@@ -218,7 +218,7 @@ PartTable.prototype.cancelEdition = function() {
 
 
 // get the edited part
-PartTable.prototype.getEditedPart = function() {
+PartListEditor.prototype.getEditedPart = function() {
    var partID = $('.edition').data('partid');
    var part = this.partList.getPart(partID);
    return part;
@@ -226,7 +226,7 @@ PartTable.prototype.getEditedPart = function() {
 
 
 // get the edited load
-PartTable.prototype.getEditedLoad = function() {
+PartListEditor.prototype.getEditedLoad = function() {
    var loadID = $('.edition').data('loadid');
    var load = this.tree.getItem(loadID);
    return load;
@@ -234,13 +234,13 @@ PartTable.prototype.getEditedLoad = function() {
 
 
 // get the edited TypMax
-PartTable.prototype.getEditedTypMax = function() {
+PartListEditor.prototype.getEditedTypMax = function() {
    return $('.edition').data('typmax');
 };
 
 
 // get the edited value
-PartTable.prototype.getEditedValue = function() {
+PartListEditor.prototype.getEditedValue = function() {
    var value = $('.edition').val();
 
    if ('current' === this.editType) {
@@ -252,19 +252,19 @@ PartTable.prototype.getEditedValue = function() {
 
 
 // get the edited characteristic
-PartTable.prototype.getEditedCharac = function() {
+PartListEditor.prototype.getEditedCharac = function() {
    return $('.edition').parent().data('charac');
 };
 
 
 // Return true if at least one part is selected
-PartTable.prototype.selectionExist = function() {
+PartListEditor.prototype.selectionExist = function() {
    return (this.selectedParts.length > 0);
 };
 
 
 // select the given part (add to the selection)
-PartTable.prototype.addToSelection = function(part) {
+PartListEditor.prototype.addToSelection = function(part) {
    // validate any editon before selection
    this.validateEdition();
 
@@ -282,7 +282,7 @@ PartTable.prototype.addToSelection = function(part) {
 
 
 // select the given part (unselect other part)
-PartTable.prototype.selectPart = function(part) {
+PartListEditor.prototype.selectPart = function(part) {
    // validate any editon before selection
    this.validateEdition();
 
@@ -303,7 +303,7 @@ PartTable.prototype.selectPart = function(part) {
 
 
 // select all parts between the given and the selected
-PartTable.prototype.selectToPart = function(part) {
+PartListEditor.prototype.selectToPart = function(part) {
    // if there is no selection, just select the part
    if(!this.selectionExist()) {
       return this.selectPart(part);
@@ -355,7 +355,7 @@ PartTable.prototype.selectToPart = function(part) {
 
 
 // deselect the actual part
-PartTable.prototype.unselectPart = function(fade) {
+PartListEditor.prototype.unselectPart = function(fade) {
    if(null !== this.editType) {
       this.cancelEdition();
    }
@@ -369,7 +369,7 @@ PartTable.prototype.unselectPart = function(fade) {
 
 
 // empty the history and add only one data
-PartTable.prototype.clearHistory = function() {
+PartListEditor.prototype.clearHistory = function() {
    // save the actual tree into the history
    var data = this.partList.toString();
    this.history.list  = [data];
@@ -379,7 +379,7 @@ PartTable.prototype.clearHistory = function() {
 
 
 // save the app data into the history
-PartTable.prototype.saveHistory = function() {
+PartListEditor.prototype.saveHistory = function() {
    // save the actual partList into the history
    var data = this.partList.toString();
    // if the index is not the last element, remove everything over index
@@ -394,7 +394,7 @@ PartTable.prototype.saveHistory = function() {
 
 
 // load data from the history at the given index (to undo/redo)
-PartTable.prototype.loadHistory = function(index) {
+PartListEditor.prototype.loadHistory = function(index) {
    // unselect all part
    this.unselectPart();
    // restore the the part list from the history
@@ -406,7 +406,7 @@ PartTable.prototype.loadHistory = function(index) {
 
 
 // undo an action
-PartTable.prototype.undo = function() {
+PartListEditor.prototype.undo = function() {
    // is there a previous part list ?
    if (this.history.index > 0) {
       // load the previous tree in the history
@@ -417,7 +417,7 @@ PartTable.prototype.undo = function() {
 
 
 // redo un action
-PartTable.prototype.redo = function() {
+PartListEditor.prototype.redo = function() {
    // is there a next tree ?
    if(this.history.index < this.history.list.length - 1) {
       // load the next tree in the history
@@ -428,7 +428,7 @@ PartTable.prototype.redo = function() {
 
 
 // enable or disable the undo/redo buttons
-PartTable.prototype.updateUndoRedoButtons = function() {
+PartListEditor.prototype.updateUndoRedoButtons = function() {
    // if there is no data to undo, hide the undo button
    if (0 === this.history.index) {
       $(".undo").fadeOut(200);
@@ -449,8 +449,8 @@ PartTable.prototype.updateUndoRedoButtons = function() {
 };
 
 
-// Import a parttable from an XLSX sheet passed as JSON
-PartTable.prototype.fromSpreadsheet = function(sheet_json) {
+// Import a part list from an XLSX sheet passed as JSON
+PartListEditor.prototype.fromSpreadsheet = function(sheet_json) {
    // check if the values of the sheet are numbers
    let line_id = 0;
    for(let sheet_line of sheet_json) {
@@ -481,7 +481,7 @@ PartTable.prototype.fromSpreadsheet = function(sheet_json) {
       title      : 'Merge or replace ?',
       width      : 500,
       height     : 135,
-      sender     : 'partTable',
+      sender     : 'PartListEditor',
       content    : `Do you want to <strong>add</strong> those data to the table or <strong>replace</strong> everything ?`,
       btn_ok     : 'Add',
       btn_cancel : 'Replace'
@@ -524,7 +524,7 @@ PartTable.prototype.fromSpreadsheet = function(sheet_json) {
 };
 
 // Listen to all event on the page
-PartTable.prototype.listenEvents = function() {
+PartListEditor.prototype.listenEvents = function() {
    var that = this;
 
    // send back data when the window is clossing
@@ -532,7 +532,7 @@ PartTable.prototype.listenEvents = function() {
       // request ipcRenderer to communicate with main.js
       const {ipcRenderer} = require('electron');
       // send data to main.js
-      ipcRenderer.send('partTable-window-close',that.partList.toString());
+      ipcRenderer.send('partListEditor-window-close',that.partList.toString());
    };
 
    // add a new empty part to the PartList

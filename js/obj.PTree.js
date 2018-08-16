@@ -687,7 +687,7 @@ PTree.prototype.listenTreeMenu = function() {
       const {ipcRenderer} = require('electron');
 
       // ask main.js to edit the item with the given data and wait for a response
-      var partListString = ipcRenderer.sendSync('partTable-request', that.tree.toString(), that.partList.toString());
+      var partListString = ipcRenderer.sendSync('partListEditor-request', that.tree.toString(), that.partList.toString());
 
       // update the partList
       that.partList.fromString(partListString);

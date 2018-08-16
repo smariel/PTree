@@ -9,10 +9,10 @@ $(function() {
    });
 
    // init the two mains object of the partlist
-   var partTable = new PartTable();
+   var partTable = new PartListEditor();
 
    // prepare to receive the init data from the main process
-   require('electron').ipcRenderer.on('partTable-window-open', function(event, treeData, partListData) {
+   require('electron').ipcRenderer.on('partListEditor-window-open', function(event, treeData, partListData) {
 
       // reconstruct a Tree and a PartList object
       partTable.tree.fromString(treeData);

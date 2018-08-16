@@ -24,7 +24,7 @@ for (let arg of process.argv) {
 let appWindows = {
 	tree      : null,
 	item      : null,
-	partTable : null,
+	PartListEditor : null,
    stats     : null,
    popup     : null,
    about     : null,
@@ -259,10 +259,10 @@ ipcMain.on('edit-request', function (itemEvent, itemdata) {
 // bind an event handler on a request to open the part list
 // this request is sent synchronusly by the tree window
 // so the tree script is blocked untill it received a response
-ipcMain.on('partTable-request', function (partEvent, treeData, partlistData) {
+ipcMain.on('partListEditor-request', function (partEvent, treeData, partlistData) {
 
-	// Create the partTable window
-	appWindows.partTable = new BrowserWindow({
+	// Create the PartListEditor window
+	appWindows.PartListEditor = new BrowserWindow({
 		width           : 1024,
 		height          : 768,
 		parent          : appWindows.tree,
@@ -272,28 +272,28 @@ ipcMain.on('partTable-request', function (partEvent, treeData, partlistData) {
 	});
 
 	// Open the dev tools...
-	if ((undefined !== debug) && debug) appWindows.partTable.webContents.openDevTools();
+	if ((undefined !== debug) && debug) appWindows.PartListEditor.webContents.openDevTools();
 
 	// Load the *.html of the window.
-	appWindows.partTable.loadURL(`file://${__dirname}/html/partTable.html`);
+	appWindows.PartListEditor.loadURL(`file://${__dirname}/html/partListEditor.html`);
 
-   // send data to the partTable window after loading
-   appWindows.partTable.webContents.on('did-finish-load', function() {
-      appWindows.partTable.webContents.send('partTable-window-open', treeData, partlistData);
+   // send data to the PartListEditor window after loading
+   appWindows.PartListEditor.webContents.on('did-finish-load', function() {
+      appWindows.PartListEditor.webContents.send('partListEditor-window-open', treeData, partlistData);
    });
 
 	// wait for the edit window to send data when it closes
-	ipcMain.once('partTable-window-close', function(event_wclose, newPartlistData) {
+	ipcMain.once('partListEditor-window-close', function(event_wclose, newPartlistData) {
 		// save the new data before sending them when the close event is trigged
 		partlistData = newPartlistData;
 	});
 
 	// Emitted when the window is closed.
-	appWindows.partTable.on('closed', function () {
+	appWindows.PartListEditor.on('closed', function () {
 		// sent the (new or old) data to the tree window
 		partEvent.returnValue = partlistData;
 		// Dereference the window object
-		appWindows.partTable = null;
+		appWindows.PartListEditor = null;
 	});
 });
 
