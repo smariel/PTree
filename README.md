@@ -26,7 +26,7 @@ The project is ready. Launch PTree:
 
     $ npm start
 
-# Compile CSS
+# Compile SASS to CSS
 The stylesheets are not directly wrotten in CSS but compiled with [Sass](http://sass-lang.com/). You can install it *globally* with npm.
 
     $ npm install -g npm-sass
@@ -73,7 +73,7 @@ What the script do:
 # Verifications
 You can verify multiple items before deploying.
 
-1.
+## Local dependencies
 Maintain the dependencies up to date. ncu will check package.json:
 
     $ npm install -g ncu
@@ -87,7 +87,7 @@ To update a package:
 
     $ npm update <package name>@<version>
 
-2.
+## Global dependencies
 Maintain other programs, not listed in package.json, up to date :
  - node.js
  - npm
@@ -95,18 +95,27 @@ Maintain other programs, not listed in package.json, up to date :
  - electron-packager
  - ...
 
+ncu can check those global packages:
+
+     $ ncu -g
+     $    All global packages are up-to-date :)
+
 To update a global package:
 
-     $ npm update -g <package name>@<version>
+    $ npm update -g <package name>@<version>
 
-You could also install sass and electron-packager locally to use ncu.
+## Other programs
+n can manage node.js versions
 
-3.
+     $ npm install -g n
+     $ sudo n lts
+
+## NPM audit
 Use npm to search for security problems in all dependencies:
 
     $ npm audit
 
-4.
+## Chromium tips
 Have a look to the Chromium console. Chromium and Electron may give good advices there.
 
 
