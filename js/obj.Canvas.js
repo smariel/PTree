@@ -28,6 +28,12 @@ const app_template = {
    nodeNet: {
       left_coef : 0.9
    },
+   proportion : {
+      width_min : 1,
+      width_max : 10,
+      color_min : '#D0D0D0',
+      color_max : '#000000'
+   },
    text: {
       margin_x : 10,
       margin_y : 3,
@@ -127,6 +133,7 @@ Canvas.prototype.setDefaultConfig = function() {
       show_ref     : true,
       show_custom1 : true,
       align_load   : false,
+      proportional : false,
       //zoom         : 100,
       cell_width   : app_template.cell.width,
       cell_height  : app_template.cell.height,
@@ -268,46 +275,82 @@ Canvas.prototype.addItem = function(item) {
    var width_error  = (itemRect.get('width' ) - itemGroup.get('width' ) + 1) / 2;
    var height_error = (itemRect.get('height') - itemGroup.get('height') + 1) / 2;
 
-   // if the item is a source and has children, process the child nets
-   if (item.isSource() && item.childrenID.length > 0) {
 
-      // set the childNet to canvas at the correct coords
-      var childNet = new fabric.Line([
+   let totalpower = this.tree.getRoot().getOutputPower('typ');
+
+   // if the item is a source and has children, process the output nets
+   if (item.isSource() && item.childrenID.length > 0) {
+      // init the style of the net
+      let outputNetStyle = Object.assign({},fabric_template.net);
+
+      // adjust the proportions of the net according to the power ratio
+      if(this.config.proportional) {
+         let outputNetRatio = item.getOutputPower('typ')/totalpower;
+         outputNetStyle.stroke      = pickColorHex(app_template.proportion.color_max, app_template.proportion.color_min, outputNetRatio);
+         outputNetStyle.strokeWidth = outputNetRatio * app_template.proportion.width_max + app_template.proportion.width_min;
+      }
+
+      // create the fabric item
+      var outputNet = new fabric.Line([
          Math.round(itemGroup.get('left') + item_width   - width_error),
-         Math.round(itemGroup.get('top' ) + item_height / 2 - fabric_template.net.strokeWidth / 2 - height_error),
+         Math.round(itemGroup.get('top' ) + item_height / 2 - outputNetStyle.strokeWidth / 2 - height_error),
          Math.round(itemGroup.get('left') + nodeNet_left - width_error),
-         Math.round(itemGroup.get('top' ) + item_height / 2 - fabric_template.net.strokeWidth / 2 - height_error)
-      ], fabric_template.net);
-      this.fabricCanvas.add(childNet);
-      childNet.sendToBack();
+         Math.round(itemGroup.get('top' ) + item_height / 2 - outputNetStyle.strokeWidth / 2 - height_error)
+      ], outputNetStyle);
+
+      // add the net to the canvas
+      this.fabricCanvas.add(outputNet);
+      outputNet.sendToBack();
    }
 
    // set the parent net to canvas at the correct coords if it exist
    if (!item.isRoot() && !item.isChildOfRoot()) {
+      // init the style of the net
+      let inputNetStyle = Object.assign({},fabric_template.net);
       let offset = (this.config.align_load && item.isLoad()) ? (this.size.col - parent.col -1) * this.config.cell_width : 0;
 
-      // set the fabric item
-      var parentNet = new fabric.Line([
-         Math.round(itemGroup.get('left') - fabric_template.net.strokeWidth - width_error),
-         Math.round(itemGroup.get('top' ) + item_height / 2 - fabric_template.net.strokeWidth / 2 - height_error),
+      // adjust the proportions of the net according to the power ratio
+      if(this.config.proportional) {
+         let inputNetRatio = item.getInputPower('typ')/totalpower;
+         inputNetStyle.stroke      = pickColorHex(app_template.proportion.color_max, app_template.proportion.color_min, inputNetRatio);
+         inputNetStyle.strokeWidth = inputNetRatio * app_template.proportion.width_max + app_template.proportion.width_min;
+      }
+
+      // create the fabric item
+      var inputNet = new fabric.Line([
+         Math.round(itemGroup.get('left') - inputNetStyle.strokeWidth - width_error),
+         Math.round(itemGroup.get('top' ) + item_height / 2 - inputNetStyle.strokeWidth / 2 - height_error),
          Math.round(itemGroup.get('left') - (this.config.cell_width - nodeNet_left) - width_error - offset),
-         Math.round(itemGroup.get('top' ) + item_height / 2 - fabric_template.net.strokeWidth / 2 - height_error),
-      ], fabric_template.net);
-      this.fabricCanvas.add(parentNet);
-      parentNet.sendToBack();
+         Math.round(itemGroup.get('top' ) + item_height / 2 - inputNetStyle.strokeWidth / 2 - height_error),
+      ], inputNetStyle);
+
+      // add the net to the canvas
+      this.fabricCanvas.add(inputNet);
+      inputNet.sendToBack();
 
 
-      // if the item is the last child of its parent, process the childNode_net of its parentNet
+      // if the item is the last child of its parent, process the childNodeNet of its inputNet
       if (item.child_index == (parent.childrenID.length - 1) && parent.childrenID.length > 1) {
-         // set the childNet_node to canvas at the correct coords
-         var parentNode_net = new fabric.Line([
-            parentNet.get('x2'),
-            Math.round((parent.line * this.config.cell_height) + app_template.canvas.margin_top + item_height / 2 - fabric_template.net.strokeWidth / 2),
-            parentNet.get('x2'),
-            parentNet.get('y2')
-         ], fabric_template.net);
-         this.fabricCanvas.add(parentNode_net);
-         parentNode_net.sendToBack();
+         // init the style of the net
+         let verticalNetStyle = Object.assign({},fabric_template.net);
+
+         // adjust the proportions of the net according to the power ratio
+         if(this.config.proportional) {
+            let verticalNetRatio = item.getParent().getOutputPower('typ')/totalpower;
+            verticalNetStyle.stroke      = pickColorHex(app_template.proportion.color_max, app_template.proportion.color_min, verticalNetRatio);
+            verticalNetStyle.strokeWidth = verticalNetRatio * app_template.proportion.width_max + app_template.proportion.width_min;
+         }
+
+         // set the outputNet_node to canvas at the correct coords
+         var verticalNet = new fabric.Line([
+            inputNet.get('x2'),
+            Math.round((parent.line * this.config.cell_height) + app_template.canvas.margin_top + item_height / 2 - verticalNetStyle.strokeWidth / 2),
+            inputNet.get('x2'),
+            inputNet.get('y2') - verticalNetStyle.strokeWidth
+         ], verticalNetStyle);
+
+         // add the net to the canvas
+         this.fabricCanvas.add(verticalNet);
       }
    }
 };

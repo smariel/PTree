@@ -13,6 +13,31 @@ function getOpositeBorW(color) {
 }
 
 
+// pick the color between color1 and color2 at the given weight
+// colors are RGB arrays and weitht is 0 to 1
+function pickColorRgb(color1, color2, weight) {
+    var p   = weight;
+    var w   = p * 2 - 1;
+    var w1  = (w/1+1) / 2;
+    var w2  = 1 - w1;
+    var rgb = [Math.round(color1[0] * w1 + color2[0] * w2),
+               Math.round(color1[1] * w1 + color2[1] * w2),
+               Math.round(color1[2] * w1 + color2[2] * w2)];
+    return rgb;
+}
+
+
+// same as pickRgb with Hex colors
+// needs Fabricjs
+function pickColorHex(color1, color2, weight) {
+   let color1rgb = fabric.Color.fromHex(color1).getSource();
+   let color2rgb = fabric.Color.fromHex(color2).getSource();
+   let resultrgb = pickColorRgb(color1rgb, color2rgb, weight);
+   let resulthex = fabric.Color.fromSource(resultrgb).toHex();
+   return '#'+resulthex;
+}
+
+
 // Round a number with the specified number of decimal
 //    round(12.48, 1) = 12.5
 //    round(12.48, -1) = 10
