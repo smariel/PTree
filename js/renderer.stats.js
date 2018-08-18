@@ -1,3 +1,9 @@
+// Framworks and libraries
+window.$ = window.jQuery = require('jquery');
+require('chart.js');
+require('bootstrap');
+
+// When jQuery is ready
 $(function() {
    // enable all tooltips
    $('[data-toggle="tooltip"]').tooltip({

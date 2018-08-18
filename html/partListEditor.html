@@ -2,6 +2,7 @@
 <html>
    <head>
       <meta charset="UTF-8">
+      <meta http-equiv="Content-Security-Policy" content="default-src 'self'; style-src 'self' 'unsafe-inline'">
       <title>PTree</title>
 
       <!-- CSS -->
@@ -66,14 +67,6 @@
       </div>
    </body>
 
-   <!-- JS framworks and libraries -->
-   <script>
-      window.$ = window.jQuery = require('jquery');
-      require('bootstrap');
-      require('tablesorter');
-      require('mousetrap');
-      const XLSX = require('xlsx');
-   </script>
 
    <!-- application JS: functions & constructors -->
    <script src="../js/functions.js"></script>
@@ -85,7 +78,5 @@
 
 
    <!-- application JS: this window -->
-   <script>
-      require('../js/renderer.partListEditor.js');
-   </script>
+   <script src="../js/renderer.partListEditor.js"></script>
 </html>

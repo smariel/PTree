@@ -1,3 +1,8 @@
+// Framworks and libraries
+window.$ = window.jQuery = require('jquery');
+require('bootstrap');
+require('chart.js');
+
 // Global object that handle this renderer
 var itemEditor = new ItemEditor();
 

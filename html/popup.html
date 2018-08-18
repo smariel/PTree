@@ -3,6 +3,7 @@
 
    <head>
       <meta charset="UTF-8">
+      <meta http-equiv="Content-Security-Policy" content="default-src 'self'">
       <title>Popup</title>
 
       <!-- CSS -->
@@ -19,14 +20,7 @@
    </body>
 
 
-   <!-- JS framworks and libraries -->
-   <script>
-      window.$ = window.jQuery = require('jquery');
-   </script>
-
-
    <!-- application JS: this window -->
-   <script>
-      require('../js/renderer.popup.js');
-   </script>
+   <script src="../js/renderer.popup.js"></script>
+
 </html>

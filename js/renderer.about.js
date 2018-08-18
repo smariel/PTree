@@ -1,3 +1,7 @@
+// Framworks and libraries
+window.$ = window.jQuery = require('jquery');
+
+// When jQuery is ready
 $(function() {
    const packagejson = require('../package.json');
    const {shell} = require('electron');
@@ -20,6 +24,4 @@ $(function() {
       let license = packagejson[$(this).data('pkg')];
       shell.openExternal(`https://spdx.org/licenses/${license}.html`);
    });
-
-
 });

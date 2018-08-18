@@ -3,6 +3,7 @@
 
    <head>
       <meta charset="UTF-8">
+      <meta http-equiv="Content-Security-Policy" content="default-src 'self'; style-src 'self' 'unsafe-inline'">
       <title>Item edition</title>
 
       <!-- CSS -->
@@ -195,21 +196,14 @@
       </menu>
    </body>
 
-   <!-- JS framworks and libraries -->
-   <script>
-      window.$ = window.jQuery = require('jquery');
-      require('bootstrap');
-      require('chart.js');
-   </script>
 
    <!-- application JS: functions & constructors -->
    <script src="../js/obj.Item.js"></script>
    <script src="../js/obj.ItemEditor.js"></script>
    <script src="../js/functions.js"></script>
 
+
    <!-- application JS: this window -->
-   <script>
-      require('../js/renderer.itemEditor.js');
-   </script>
+   <script src="../js/renderer.itemEditor.js"></script>
 
 </html>

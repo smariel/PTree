@@ -2,6 +2,7 @@
 <html>
    <head>
       <meta charset="UTF-8">
+      <meta http-equiv="Content-Security-Policy" content="default-src 'self'; style-src 'self' 'unsafe-inline'; script-src 'self' 'unsafe-inline'">
       <title>Stats</title>
 
       <!-- CSS -->
@@ -33,12 +34,6 @@
       </section>
    </body>
 
-   <!-- JS framworks and libraries -->
-   <script>
-      window.$ = window.jQuery = require('jquery');
-      require('chart.js');
-      require('bootstrap');
-   </script>
 
    <!-- application JS: functions & constructors -->
    <script src="../js/functions.js"></script>

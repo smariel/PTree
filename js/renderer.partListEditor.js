@@ -1,3 +1,11 @@
+// Framworks and libraries
+window.$ = window.jQuery = require('jquery');
+require('bootstrap');
+require('tablesorter');
+require('mousetrap');
+const XLSX = require('xlsx');
+
+// When jQuery is ready
 $(function() {
    // enable all tooltips
    $('[data-toggle="tooltip"]').tooltip({

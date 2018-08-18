@@ -1,3 +1,11 @@
+// Framworks and libraries
+window.$ = window.jQuery = require('jquery');
+require('mousetrap');
+require('bootstrap');
+require('fabric');
+
+
+// when jQuery is ready
 $(function() {
    // bootstrap tooltip initialization
    $('[data-toggle="tooltip"]').tooltip({

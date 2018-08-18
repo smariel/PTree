@@ -375,6 +375,9 @@ ipcMain.on('popup-request', function (popupEvent, popupData) {
       useContentSize  : true
    });
 
+	// Open the dev tools...
+	//if ((undefined !== debug) && debug) appWindows.popup.webContents.openDevTools();
+
    // set as CANCEL by default
    var isOK = false;
 

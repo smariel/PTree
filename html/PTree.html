@@ -3,6 +3,7 @@
 
    <head>
       <meta charset="UTF-8">
+      <meta http-equiv="Content-Security-Policy" content="default-src 'self'; connect-src https://api.github.com">
       <title>PTree</title>
 
       <!-- CSS -->
@@ -259,15 +260,6 @@
    </body>
 
 
-   <!-- JS framworks and libraries -->
-   <script>
-      window.$ = window.jQuery = require('jquery');
-      require('mousetrap');
-      require('bootstrap');
-      require('fabric');
-   </script>
-
-
    <!-- application JS: functions & constructors -->
    <script src="../js/functions.js"    ></script>
    <script src="../js/obj.Item.js"     ></script>
@@ -279,8 +271,6 @@
 
 
    <!-- application JS: this window -->
-   <script>
-      require('../js/renderer.PTree.js');
-   </script>
+   <script src="../js/renderer.PTree.js"></script>
 
 </html>

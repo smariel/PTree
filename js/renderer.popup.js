@@ -1,3 +1,7 @@
+// Framworks and libraries
+window.$ = window.jQuery = require('jquery');
+
+// When jQuery is ready
 $(function() {
    // ask main.js for the data to print in the popup
    const {ipcRenderer} = require('electron');

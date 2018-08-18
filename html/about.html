@@ -3,6 +3,7 @@
 
    <head>
       <meta charset="UTF-8">
+      <meta http-equiv="Content-Security-Policy" content="default-src 'self'">
       <title>About</title>
 
       <!-- CSS -->
@@ -26,14 +27,8 @@
          This program comes with ABSOLUTELY NO WARRANTY. This is free software, and you are welcome to redistribute it under the conditions of the <a href="#" class="url license pkg_data" data-pkg="license"></a> license.
       </p>
 
-      <!-- JS framworks and libraries -->
-      <script>
-         window.$ = window.jQuery = require('jquery');
-      </script>
 
       <!-- application JS: this window -->
-      <script>
-         require('../js/renderer.about.js');
-      </script>
+      <script src="../js/renderer.about.js"></script>
    </body>
 </html>
