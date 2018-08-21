@@ -64,7 +64,7 @@ $thead_colors: ( charac: $teal, current: $grey, power: $red );
 }
 
 @each $dir in 'Asc' 'Desc' {
-   .tablesorter-header#{$dir} {
+   .sort#{$dir} {
       background-image:    url('../img/chevron-#{$dir}.png');
       background-repeat:   no-repeat;
       background-position: center right;

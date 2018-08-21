@@ -23,14 +23,12 @@ PartListEditor.prototype.refresh = function() {
    // empty the table content
    $('.partTable tbody').empty();
 
+   // unselect all parts
    this.unselectPart();
 
-   // init TableSorter on the empty table
-   $('.partTable').tablesorter({sortList: [[0,0]]});
-
+   // loop on each part
    var that = this;
    var niceid = 0;
-
    this.partList.forEachPart(function(part){
       // Init the total power
       let ptyp = 0;
@@ -38,11 +36,11 @@ PartListEditor.prototype.refresh = function() {
 
       // Part characteristics
       let tr = `<tr data-partid="${part.id}">
-         <td class="td_charac" data-charac="id" data-value="${part.id}">${niceid++}</td>
-         <td class="td_charac td_editable" data-charac="name">${part.getCharac_formated('name')}</td>
-         <td class="td_charac td_editable" data-charac="ref">${part.getCharac_formated('ref')}</td>
-         <td class="td_charac td_editable" data-charac="function">${part.getCharac_formated('function')}</td>
-         <td class="td_charac td_editable" data-charac="tags">${part.getCharac_formated('tags')}</td>
+         <td class="td_charac"             data-charac="id"       data-value="${part.id}"                            >${niceid++}</td>
+         <td class="td_charac td_editable" data-charac="name"     data-value="${part.getCharac_formated('name')}"    >${part.getCharac_formated('name')}</td>
+         <td class="td_charac td_editable" data-charac="ref"      data-value="${part.getCharac_formated('ref')}"     >${part.getCharac_formated('ref')}</td>
+         <td class="td_charac td_editable" data-charac="function" data-value="${part.getCharac_formated('function')}">${part.getCharac_formated('function')}</td>
+         <td class="td_charac td_editable" data-charac="tags"     data-value="${part.characs.tags}"                  >${part.getCharac_formated('tags')}</td>
       `;
 
       // Part consumptions on each load
@@ -68,8 +66,54 @@ PartListEditor.prototype.refresh = function() {
       $('.partTable tbody').append(tr);
    });
 
-   // Let TableSorter know that the table has changed
-   $('.partTable').trigger('update');
+   // sort the table
+   this.sortTable(0);
+};
+
+
+// sort the part table
+PartListEditor.prototype.sortTable = function(col) {
+   // init sort direction
+   let dir = 'asc';
+
+   // if th clicked th is already sorted
+   let th_elt = $(`thead > .tr_bottom > th:nth-child(${col+1})`);
+   if(th_elt.hasClass('sort')) {
+      // toggle direction
+      th_elt.toggleClass('sortAsc sortDesc');
+      if(th_elt.hasClass('sortDesc')) dir = 'desc';
+   }
+   // if th clicked is not sorted
+   else {
+      // remove sorting to the precedent th
+      $('.sort').removeClass('sort sortAsc sortDesc');
+      // sort this by asc
+      $(th_elt).addClass('sort sortAsc');
+   }
+
+   // prepare a compare function
+   let compareParts = function(partA, partB, col, dir){
+      let a = $(partA).children().eq(col).data('value');
+      let b = $(partB).children().eq(col).data('value');
+      if      ('asc'  === dir) return a < b;
+      else if ('desc' === dir) return a > b;
+   };
+
+   // Insertion sort... slightly modified
+   let tr_elts = $('.partTable > tbody > tr');
+   for(let i=1; i<tr_elts.length; i++) {
+      let tr_i = tr_elts[i];
+      for(let j=i-1; j>=0; j--) {
+         let tr_j = $('.partTable > tbody > tr')[j];
+         if(compareParts(tr_j,tr_i,col,dir)) {
+            $(tr_i).insertAfter($(tr_j));
+            break;
+         }
+         else if(j==0) {
+            $(tr_i).insertBefore($(tr_j));
+         }
+      }
+   }
 };
 
 
@@ -631,6 +675,12 @@ PartListEditor.prototype.listenEvents = function() {
       var load    = that.tree.getItem(loadID);
 
       that.editCurrent(part, load, typmax);
+   });
+
+
+   // sort the table when clicking on TH elements
+   $('.partTable').on('click','.tr_bottom > th', function(){
+      that.sortTable($(this).index());
    });
 
    // Undo
