@@ -38,9 +38,6 @@ $.get('https://api.github.com/repos/smariel/ptree/releases/latest', function(git
       // Email Anti Spam
       $('.email').prop('href','mailto:'+mail_name+'@'+mail_domain+'?subject=Contact PTree');
 
-      // Lazy Load the images
-      lazyload();
-
       // print the version
       $('.dl-version a').append(version);
 
