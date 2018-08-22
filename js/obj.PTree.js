@@ -591,11 +591,18 @@ PTree.prototype.listenCanvas = function() {
 
 
    // Edit item on double click
-   $(that.canvas.canvas$).parent().dblclick(function() {
+   that.canvas.canvas$.parent().dblclick(function() {
       if (null !== that.canvas.getSelectedItem()) {
          that.canvas.getSelectedItem().edit(that.partList, that.usersheet.sheet);
          that.canvas.refresh();
          that.saveHistory();
+      }
+   });
+
+
+   that.canvas.canvas$.parent().on('wheel',function(evt) {
+      if(evt.originalEvent.ctrlKey) {
+         $('#config_zoom').trigger(evt);
       }
    });
 };

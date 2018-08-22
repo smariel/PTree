@@ -134,7 +134,7 @@ Canvas.prototype.setDefaultConfig = function() {
       show_custom1 : true,
       align_load   : false,
       proportional : false,
-      //zoom         : 100,
+      zoom         : 100,
       cell_width   : app_template.cell.width,
       cell_height  : app_template.cell.height,
       text_size    : app_template.text.size
@@ -432,20 +432,22 @@ Canvas.prototype.refresh = function() {
    // reprint the canvas by adding the root and all its children
    this.addItems(this.tree.getRoot());
 
+   var zoom = this.config.zoom/100;
    // compute the minimum size of the canvas according to the lines/cols
-   var canvas_minwidth  = (this.size.col+1)  * this.config.cell_width;
-   var canvas_minheight = (this.size.line+1) * this.config.cell_height + app_template.canvas.margin_top + app_template.canvas.margin_bottom;
+   var canvas_minwidth1  = (this.size.col +1) * this.config.cell_width  * zoom;
+   var canvas_minheight1 = (this.size.line+1) * this.config.cell_height * zoom + app_template.canvas.margin_top + app_template.canvas.margin_bottom;
    // compute the minimum size of the canvas according to the window
-   var canvas_minwidth2  = $(window).width()  - parseInt($('body').css('margin-left')); // - $('#canvas').offset().left;
-   var canvas_minheight2 = $(window).height() - parseInt($('body').css('margin-top' )); // - $('#canvas').offset().top;
-   // set the canvas size at either the grid or the window size
+   var canvas_minwidth2  = $(window).width()  - parseInt($('body').css('margin-left'));
+   var canvas_minheight2 = $(window).height() - parseInt($('body').css('margin-top' ));
+   // define the canvas size at either the grid or the window size
+   var canvas_minwidth  = (canvas_minwidth2  < canvas_minwidth1 ) ? canvas_minwidth1  : canvas_minwidth2;
+   var canvas_minheight = (canvas_minheight2 < canvas_minheight1) ? canvas_minheight1 : canvas_minheight2;
+   // set the canvas size, eventualy zoomed
    this.fabricCanvas.setDimensions({
-      'width' : (canvas_minwidth2  < canvas_minwidth ) ? canvas_minwidth  : canvas_minwidth2,
-      'height': (canvas_minheight2 < canvas_minheight) ? canvas_minheight : canvas_minheight2
+      'width' : canvas_minwidth ,
+      'height': canvas_minheight,
    });
-
-   // set the canvas zoom
-   //this.fabricCanvas.setZoom(this.config.zoom/100);
+   this.fabricCanvas.setZoom(zoom);
 
    // render the Fabric item
    this.fabricCanvas.renderAll();
@@ -472,7 +474,9 @@ Canvas.prototype.refreshConfig = function() {
    });
 
    $('.config_range').each(function() {
-      $(this).val(that.config[$(this).data('config')]);
+      let val = that.config[$(this).data('config')];
+      $(this).val(val);
+      $(this).prev('.range_val').text(val);
    });
 };
 
@@ -555,7 +559,7 @@ Canvas.prototype.displayInfo = function(item) {
    var margin      = 10;
    var item_width  = app_template.item.width_coef * this.config.cell_width;
    var item_height = app_template.item.height_coef * this.config.cell_height;
-
+   var zoom = this.config.zoom/100;
 
    // if the item has an input
    if (0 !== item.parentID) {
@@ -568,11 +572,11 @@ Canvas.prototype.displayInfo = function(item) {
       $('#pin_max').text(item.getPower  ('max', 'in', 3, true));
 
       // move the info div next to the item
-      left = this.canvas$.offset().left + fabric_obj.get('left') - $('#item_info_left').outerWidth(true) - margin;
-      top  = this.canvas$.offset().top  + fabric_obj.get('top' ) + item_height / 2 - $('#item_info_left').outerHeight() / 2;
+      left = this.canvas$.offset().left + fabric_obj.get('left')*zoom                        - $('#item_info_left').outerWidth(true) - margin;
+      top  = this.canvas$.offset().top  + fabric_obj.get('top' )*zoom + item_height*zoom / 2 - $('#item_info_left').outerHeight() / 2;
       $('#item_info_left').css({
          'left': left + 'px',
-         'top': top + 'px'
+         'top' : top  + 'px'
       });
 
       // show the info div
@@ -589,8 +593,8 @@ Canvas.prototype.displayInfo = function(item) {
       $('#pout_max').text(item.getPower  ('max', 'out', 3, true));
 
       // move the info div next to the item
-      left = $('#canvas').offset().left + fabric_obj.get('left') + item_width + margin;
-      top  = $('#canvas').offset().top  + fabric_obj.get('top' ) + item_height / 2 - $('#item_info_right').outerHeight() / 2;
+      left = this.canvas$.offset().left + fabric_obj.get('left')*zoom + item_width*zoom + margin;
+      top  = this.canvas$.offset().top  + fabric_obj.get('top' )*zoom + item_height*zoom / 2 - $('#item_info_right').outerHeight() / 2;
       $('#item_info_right').css({
          'left': left + 'px',
          'top' : top  + 'px'
@@ -606,8 +610,8 @@ Canvas.prototype.displayInfo = function(item) {
          $('#loss_max').text(item.getPower('max', 'loss', 3, true));
 
          // move the info div next to the item
-         left = $('#canvas').offset().left + fabric_obj.get('left') + item_width / 2 - $('#item_info_center').outerWidth(true) / 2;
-         top  = $('#canvas').offset().top  + fabric_obj.get('top')  + item_height + margin;
+         left = this.canvas$.offset().left + fabric_obj.get('left')*zoom + item_width *zoom / 2 - $('#item_info_center').outerWidth(true) / 2;
+         top  = this.canvas$.offset().top  + fabric_obj.get('top') *zoom + item_height*zoom + margin;
          $('#item_info_center').css({
             'left': left + 'px',
             'top' : top  + 'px'
