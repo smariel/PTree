@@ -634,8 +634,6 @@ Canvas.prototype.toJPEGdataURL = function() {
    var dataURL = this.fabricCanvas.toDataURL({
       format   : 'jpeg',
       quality  : 1,
-      width    : this.fabricCanvas.col  * this.config.cell_width,
-      height   : this.fabricCanvas.line * this.config.cell_height + app_template.canvas.margin_top
    });
 
    // select any previous selected item
