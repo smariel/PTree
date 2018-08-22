@@ -20,7 +20,7 @@ for (let arg of process.argv) {
 }
 
 
-// Keep a global reference of the window object to avaoid JS garbage collected to close them automatically
+// Keep a global reference of the window object to avoid JS garbage collector to close them automatically
 let appWindows = {
 	PTree          : null,
 	itemEditor     : null,
@@ -29,6 +29,13 @@ let appWindows = {
    popup          : null,
    about          : null,
 };
+
+
+// Quit the app when all windows are closed.
+app.on('window-all-closed', function () {
+   process.exit();
+});
+
 
 
 // -----------------------------------------------------------------------------
@@ -54,7 +61,7 @@ app.on('ready', () => {
    appWindows.PTree.on('close', function(e){
       // do not close the window
       e.preventDefault();
-      // prevent the PTree renderer that the user want to quit
+      // warn the PTree renderer that the user want to quit
       appWindows.PTree.webContents.send('close');
    });
 
@@ -67,43 +74,23 @@ app.on('ready', () => {
 	const {Menu} = require('electron');
 	const template = [
 		{
-			label: 'Edit',
+			label: 'edit',
 			submenu: [
-				{
-					role: 'undo'
-				},
-				{
-					role: 'redo'
-				},
-				{
-					type: 'separator'
-				},
-				{
-					role: 'cut'
-				},
-				{
-					role: 'copy'
-				},
-				{
-					role: 'paste'
-				},
-				{
-					role: 'delete'
-				},
-				{
-					role: 'selectall'
-				}
+				{role: 'undo'},
+				{role: 'redo'},
+				{type: 'separator'},
+				{role: 'cut'},
+				{role: 'copy'},
+				{role: 'paste'},
+				{role: 'delete'},
+				{role: 'selectall'}
 			]
 		},
-		{
+      {
 			role: 'window',
 			submenu: [
-				{
-					role: 'minimize'
-				},
-				{
-					role: 'close'
-				}
+				{role: 'minimize'},
+				{role: 'close'}
 			]
 		},
 		{
@@ -179,12 +166,8 @@ app.on('ready', () => {
 		template.unshift({
 			label: app.getName(),
 			submenu: [
-				{
-					role: 'hide'
-				},
-				{
-					role: 'quit'
-				}
+				{role: 'hide'},
+				{role: 'quit'}
 			]
 		});
 	}
@@ -195,15 +178,8 @@ app.on('ready', () => {
 });
 
 
-// Quit the app when all windows are closed.
-app.on('window-all-closed', function () {
-	app.quit();
-});
-
-
-
 // -----------------------------------------------------------------------------
-// ITEM EDITOR EDITION
+// ITEM EDITOR
 // -----------------------------------------------------------------------------
 
 // bind an event handler on a request to edit an item
@@ -250,7 +226,7 @@ ipcMain.on('itemEditor-request', function (itemevent, itemdata, itemtype) {
 
 
 // -----------------------------------------------------------------------------
-// PART TABLE
+// PART LIST EDITOR
 // -----------------------------------------------------------------------------
 
 // bind an event handler on a request to open the part list
