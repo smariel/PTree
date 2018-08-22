@@ -466,17 +466,8 @@ PTree.prototype.updateStats = function(itemID) {
 
 // Toggle the option panel
 PTree.prototype.toggleOptions = function() {
-   let that = this;
-
+   this.canvas.refreshConfig();
    $('#bottom_menu').slideToggle(300, 'swing');
-
-   $('.config_checkbox').each(function() {
-      $(this).prop('checked', that.canvas.config[$(this).data('config')]);
-   });
-
-   $('.config_range').each(function() {
-      $(this).val(that.canvas.config[$(this).data('config')]);
-   });
 };
 
 
@@ -626,13 +617,53 @@ PTree.prototype.listenDOM = function() {
          that.canvas.config[$(this).data('config')] = $(this).prop("checked");
       }
       else if ("range" == $(this).attr("type")) {
-         that.canvas.config[$(this).data('config')] = parseInt($(this).val());
+         let val = parseInt($(this).val());
+         that.canvas.config[$(this).data('config')] = val;
+         $(this).prev('.range_val').text(val);
       }
       else {
          return;
       }
 
       that.canvas.refresh();
+   });
+
+   // modify the range inputs on wheel up/down
+   $('.config_range').on('wheel',function(evt){
+      // get actual values
+      let step   = parseInt($(this).prop('step'));
+      let val    = parseInt($(this).val());
+      let newval = val;
+
+      // wheel down, decrement
+      if(evt.originalEvent.deltaY > 0) {
+         // get the min
+         let min = parseInt($(this).prop('min'));
+         // if already the min, do nothing
+         if(val == min) return;
+         // decrement from one step
+         newval = val - step;
+         // if below the min, stay to the min
+         if(newval < min) newval = min;
+      }
+      // wheel up, increment
+      else if(evt.originalEvent.deltaY < 0) {
+         // get the max
+         let max = parseInt($(this).prop('max'));
+         // if already the max
+         if(val == max) return;
+         // increment from one step
+         newval = val + step;
+         // if above the max, stay to the max
+         if(newval > max) newval = max;
+      }
+
+      // update the value
+      $(this).val(newval);
+      // fire the CHANGE event
+      $(this).trigger('change');
+      // fade out all item infos (to avoid strange display)
+      $(".item_info").fadeOut(0);
    });
 
    // set the config to default
