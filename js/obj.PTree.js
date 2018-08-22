@@ -62,6 +62,10 @@ PTree.prototype.open = function() {
    var paths = dialog.showOpenDialog({
       title: 'Open...',
       filters: [{
+            name: 'PTree project file',
+            extensions: ['ptree']
+         },
+         {
             name: 'JSON',
             extensions: ['json']
          },
@@ -110,12 +114,19 @@ PTree.prototype.save = function(saveas = false) {
    // if the app as no file to work on
    // or if the app data must be save as a new file
    if (saveas || null === this.filePath) {
+
+      let name = ('string' === typeof this.filePath) ? require('path').parse(this.filePath).name+'_copy.ptree' : 'Untitled.ptree';
+
       // prompt the user
       const {dialog} = require('electron').remote;
       var path = dialog.showSaveDialog({
          title: 'Save as...',
-         defaultPath: 'tree.json',
+         defaultPath: name,
          filters: [{
+               name: 'PTree project file',
+               extensions: ['ptree']
+            },
+            {
                name: 'JSON',
                extensions: ['json']
             },
@@ -888,7 +899,7 @@ PTree.prototype.listenTreeMenu = function() {
 
 
    // exportImg the canvas as an Image
-   $('#bt_exportImg_img').click(function() {
+   $('#bt_export_img').click(function() {
       that.exportImg();
    });
 
