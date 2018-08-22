@@ -795,6 +795,7 @@ PTree.prototype.listenTreeMenu = function() {
       that.canvas.refresh();
       that.updateClearButtons();
       that.saveHistory();
+      that.canvas.selectItem(newItem);
    });
 
 
@@ -819,17 +820,19 @@ PTree.prototype.listenTreeMenu = function() {
 
    // Add a child source to the selected item
    $('#bt_addsource').click(function() {
-      that.tree.addSource(that.canvas.getSelectedItem());
+      let newItem = that.tree.addSource(that.canvas.getSelectedItem());
       that.canvas.refresh();
       that.saveHistory();
+      that.canvas.selectItem(newItem);
    });
 
 
    // Add a child load to the selected item
    $('#bt_addload').click(function() {
-      that.tree.addLoad(that.canvas.getSelectedItem());
+      let newItem = that.tree.addLoad(that.canvas.getSelectedItem());
       that.canvas.refresh();
       that.saveHistory();
+      that.canvas.selectItem(newItem);
    });
 
 
