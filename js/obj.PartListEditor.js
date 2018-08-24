@@ -67,7 +67,7 @@ PartListEditor.prototype.refresh = function() {
    });
 
    // sort the table
-   this.sortTable(0);
+   this.sortTable();
 };
 
 
@@ -75,10 +75,16 @@ PartListEditor.prototype.refresh = function() {
 PartListEditor.prototype.sortTable = function(col) {
    // init sort direction
    let dir = 'asc';
+   let toggle = true;
+
+   if(undefined === col) {
+      col = 0;
+      toggle = false;
+   }
 
    // if th clicked th is already sorted
    let th_elt = $(`thead > .tr_bottom > th:nth-child(${col+1})`);
-   if(th_elt.hasClass('sort')) {
+   if(toggle && th_elt.hasClass('sort')) {
       // toggle direction
       th_elt.toggleClass('sortAsc sortDesc');
       if(th_elt.hasClass('sortDesc')) dir = 'desc';
