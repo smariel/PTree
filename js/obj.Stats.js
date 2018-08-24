@@ -48,7 +48,7 @@ Stats.prototype.update = function() {
       var that = this;
       let max = 0;
 
-      // plot the charts
+      // if the item is a source
       if(this.item.isSource()) {
          // prepare data for the chart
          for (let childID of this.item.childrenID) {
@@ -72,24 +72,35 @@ Stats.prototype.update = function() {
             }
          };
       }
+      // else if the item is a load
       else if(this.item.isLoad()) {
-         // check each part of the partlist to get the charts data
-         this.partList.forEachPart(function(part){
-            // if the part is consuming on this load, add it to the canvas
-            if(part.isConsuming(that.item)) {
-               let valtyp = smartRound(part.getConsumption(that.item, 'typ'),2);
-               let valmax = smartRound(part.getConsumption(that.item, 'max'),2);
-               datasets.typ.push(valtyp);
-               datasets.max.push(valmax);
-               labels.push(part.characs.name);
-               if(valmax > max) max = valmax;
-               if(valtyp > max) max = valtyp;
-            }
-         });
+         // if the currents are in the partlist
+         if(this.item.isInPartlist()) {
+            // check each part of the partlist to get the charts data
+            this.partList.forEachPart(function(part){
+               // if the part is consuming on this load, add it to the chart
+               if(part.isConsuming(that.item)) {
+                  let valtyp = smartRound(part.getConsumption(that.item, 'typ'),2);
+                  let valmax = smartRound(part.getConsumption(that.item, 'max'),2);
+                  datasets.typ.push(valtyp);
+                  datasets.max.push(valmax);
+                  labels.push(part.characs.name);
+                  if(valmax > max) max = valmax;
+                  if(valtyp > max) max = valtyp;
+               }
+            });
 
-         if(!this.item.isInPartlist() || 0 === labels.length) {
-            this.empty('No part');
-            return;
+            // if there is no parts
+            if(0 === labels.length) {
+               this.empty('No part');
+               return;
+            }
+         }
+         // else if the current is Raw or in the Spreadsheet
+         else if(this.item.isRaw() || this.item.isSynced()) {
+            datasets.typ.push(this.item.characs.ityp);
+            datasets.max.push(this.item.characs.imax);
+            labels.push(this.item.isRaw()?'Raw current':'Spreadsheet');
          }
       }
 
