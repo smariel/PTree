@@ -11,10 +11,10 @@ const {ipcMain} = require('electron');
 
 
 // parsing arguments using node.js process
-var debug = false;
+global.debug = false;
 for (let arg of process.argv) {
    if("--debug" == arg) {
-      debug = true;
+      global.debug = true;
       break;
    }
 }
@@ -55,7 +55,7 @@ app.on('ready', () => {
 	appWindows.PTree.loadURL(`file://${__dirname}/html/PTree.html`);
 
    // Open the dev tools...
-	if ((undefined !== debug) && debug) appWindows.PTree.webContents.openDevTools();
+	if (global.debug) appWindows.PTree.webContents.openDevTools();
 
    // Emitted just before closing the window
    appWindows.PTree.on('close', function(e){
@@ -113,7 +113,7 @@ app.on('ready', () => {
                      });
 
                   	// Open the dev tools...
-                  	if ((undefined !== debug) && debug) appWindows.about.webContents.openDevTools();
+                  	if (global.debug) appWindows.about.webContents.openDevTools();
 
                   	// Load the *.html of the window.
                   	appWindows.about.loadURL(`file://${__dirname}/html/about.html`);
@@ -140,7 +140,7 @@ app.on('ready', () => {
 				},
 			]
 		},
-      ((undefined !== debug) && debug) ? {
+      (global.debug) ? {
 		label: 'Debug',
 			submenu: [
 				{
@@ -198,7 +198,7 @@ ipcMain.on('itemEditor-request', function (itemevent, itemdata, itemtype) {
 	});
 
 	// Open the dev tools...
-	if ((undefined !== debug) && debug) appWindows.itemEditor.webContents.openDevTools();
+	if (global.debug) appWindows.itemEditor.webContents.openDevTools();
 
 	// Load the *.html of the window.
 	appWindows.itemEditor.loadURL(`file://${__dirname}/html/itemEditor.html`);
@@ -245,7 +245,7 @@ ipcMain.on('partListEditor-request', function (partEvent, treeData, partlistData
 	});
 
 	// Open the dev tools...
-	if ((undefined !== debug) && debug) appWindows.PartListEditor.webContents.openDevTools();
+	if (global.debug) appWindows.PartListEditor.webContents.openDevTools();
 
 	// Load the *.html of the window.
 	appWindows.PartListEditor.loadURL(`file://${__dirname}/html/partListEditor.html`);
@@ -295,7 +295,7 @@ ipcMain.on('stats-request', function (statsEvent, data) {
 	});
 
 	// Open the dev tools...
-	if ((undefined !== debug) && debug) appWindows.stats.webContents.openDevTools();
+	if (global.debug) appWindows.stats.webContents.openDevTools();
 
 	// Load the *.html of the window.
 	appWindows.stats.loadURL(`file://${__dirname}/html/stats.html`);
@@ -352,7 +352,7 @@ ipcMain.on('popup-request', function (popupEvent, popupData) {
    });
 
 	// Open the dev tools...
-	//if ((undefined !== debug) && debug) appWindows.popup.webContents.openDevTools();
+	//if (global.debug) appWindows.popup.webContents.openDevTools();
 
    // set as CANCEL by default
    var isOK = false;

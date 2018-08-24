@@ -27,7 +27,11 @@ var PTree = function(canvas_selector) {
 
    window.document.title = "Untitled";
 
-   this.checkUpdate();
+   // if not in debug mode
+   if(!require('electron').remote.getGlobal('debug')) {
+      // check for update
+      this.checkUpdate();
+   }
 };
 
 
