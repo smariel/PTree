@@ -744,8 +744,16 @@ PartListEditor.prototype.listenEvents = function() {
          // SHIFT+TAB = previous
          if(e.shiftKey) {
             // if editing the ref, jump to name
-            if('charac' === editType && 'ref' === charac) {
-               that.editCharac(part, 'name');
+            if('charac' === editType) {
+               if('tags' === charac) {
+                  that.editCharac(part, 'function');
+               }
+               else if('function' === charac) {
+                  that.editCharac(part, 'ref');
+               }
+               else if('ref' === charac) {
+                  that.editCharac(part, 'name');
+               }
             }
             // else if editing any current, find what is the previous cell
             else if ('current' === editType) {
@@ -763,7 +771,7 @@ PartListEditor.prototype.listenEvents = function() {
                   }
                   // else, jump to the ref
                   else {
-                     that.editCharac(part, 'ref');
+                     that.editCharac(part, 'tags');
                   }
                }
             }
@@ -776,8 +784,16 @@ PartListEditor.prototype.listenEvents = function() {
                if('name' === charac) {
                   that.editCharac(part, 'ref');
                }
-               // if editing the ref, jump to the first load (if their is one)
+               // if editing the ref, jump to the function
                else if ('ref' === charac) {
+                  that.editCharac(part, 'function');
+               }
+               // if editing the function, jump to the tags
+               else if ('function' === charac) {
+                  that.editCharac(part, 'tags');
+               }
+               // if editing the tags, jump to the first load (if their is one)
+               else if ('tags' === charac) {
                   let firstLoad = that.tree.getLoadInPartList(that.tree.getRoot(), 'next');
                   if(null !== firstLoad) that.editCurrent(part, firstLoad, 'typ');
                }
