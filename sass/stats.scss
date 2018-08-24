@@ -8,10 +8,48 @@ html, body {
    padding:   0;
 }
 
+$topmenu_height: 30px;
 $title_height:   30px;
 $title_margin:   10px;
 $header_height:  $title_height + $title_margin*2;;
 
+.topmenu {
+   display:       flex;
+   height:        $topmenu_height;
+   width:         100%;
+   background:    lighten($grey,6);
+   border-bottom: 4px solid $dark;
+   box-shadow:    0 0 5px rgba($dark,0.8);
+}
+
+.topmenu > a {
+   margin-right: 1px;
+   padding:      2px;
+   display:      block;
+   width:        33.33%;
+   border-top:   4px solid $grey;
+   background:   $grey;
+   text-align:   center;
+   color:        white;
+   font-size:    13px;
+   transition:   all 200ms ease;
+
+   &:last-child {
+      margin-right: 0;
+   }
+
+   &:hover {
+      cursor:          pointer;
+      text-decoration: none;
+      background:      darken($grey,4);
+      border-top:      4px solid lighten($grey,6);
+   }
+
+   &.selected {
+      background: $dark;
+      border-top: 4px solid $teal;
+   }
+}
 
 .header {
    height:  $header_height;
@@ -28,7 +66,7 @@ $header_height:  $title_height + $title_margin*2;;
 
 .stats {
    position: fixed;
-   top:      $header_height;
+   top:      $topmenu_height + $header_height;
    bottom:   0;
    width:    100%;
    display:  flex;
@@ -41,7 +79,7 @@ $header_height:  $title_height + $title_margin*2;;
 .goToParent {
    display:  none;
    position: fixed;
-   top:      $title_margin;
+   top:      $topmenu_height + $title_margin;
    left:     10px;
 
    & > button {
@@ -51,7 +89,7 @@ $header_height:  $title_height + $title_margin*2;;
 
 .chartType {
    position: fixed;
-   top:      $title_margin;
+   top:      $topmenu_height + $title_margin;
    right:    10px;
 
    & > button {
@@ -62,7 +100,7 @@ $header_height:  $title_height + $title_margin*2;;
 .normalize {
    display:  none;
    position: fixed;
-   top:      $title_margin;
+   top:      $topmenu_height + $title_margin;
    right:    50px;
 
    & > button {
