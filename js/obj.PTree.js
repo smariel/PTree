@@ -12,7 +12,7 @@ var PTree = function(canvas_selector) {
    this.canvas       = new Canvas(canvas_selector, this.tree, this.partList);
    this.statsAreOpen = false;
    this.filePath     = null;
-   this.unsaved      = true;
+   this.unsaved      = false;
    this.history      = {list: [], index: 0};
 
    this.setSheet(null);
@@ -23,7 +23,6 @@ var PTree = function(canvas_selector) {
    this.listenMessages();
    this.clearHistory();
    this.canvas.refresh();
-   this.setUnsaved();
    this.updateClearButtons();
 
    window.document.title = "Untitled";
