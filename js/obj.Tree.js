@@ -88,7 +88,7 @@ Tree.prototype.getLoadInPartList = function(load, direction) {
       }
       // if the  load is not allowed, got an other one... recursively
       else {
-         return this[method[direction]](newload);
+         return this.getLoadInPartList(newload,direction);
       }
    }
 };
