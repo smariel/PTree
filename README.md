@@ -39,36 +39,27 @@ Open a dedicated terminal and let the following command running while you are de
 
 # Build and deploy
 
-electron-packager is used to create binaries for all platforms. Install it *globally*:
+electron-builder is used to create binaries for all platforms. Install it as a dev dependency:
 
-    $ npm install -g electron-packager
+    $ npm install electron-builder --save-dev
 
 package.json contains multiple scripts to easily build PTree. Just run:
 
-    $ npm run build:xxx
+    $ npm run xxx
 
 Where "xxx" must be replaced by:
 
-| xxx     | Platform                  |
-| ------- | ------------------------- |
-| mac     | macOS                     |
-| mas     | macOS [Mac App Store](https://electron.atom.io/docs/tutorial/mac-app-store-submission-guide/)  |
-| lin32   | Linux x86 32 bits         |
-| lin64   | Linux x86 64 bits         |
-| linArm7 | Linux ARMv7               |
-| win32   | Windows 32 bits           |
-| win64   | Windows 64 bits           |
-| macos   | = mac + mas               |
-| windows | = win32 + win64           |
-| linux   | = lin32 + lin64 + linArm7 |
-| 64      | = mac + win64 + lin64     |
-| all     | = macos + windows + linux |
+| xxx       | Platform                                            |
+| --------- | --------------------------------------------------- |
+| build:mac | folder with macOS .app                              |
+| build:win | folder with windows .exe + windows stuff            |
+| build:lin | folder with linux binary + linux stuff              |
+| dist:mac  | macOS .app in .dmg disk image + extras files        |
+| dist:win  | windows portable .exe in a .zip file + extras files |
+| dist:lin  | linux AppImage in a .zip file + extras files        |
+| build:all | = build:mac + build:win + build:lin                 |
+| dist:all  | = dist:mac  + dist:win  + dist:lin                  |
 
-What the script do:
- - Package the app for the specifed platform into a folder
- - Set the icon to the binary
- - Copy the license, equations.pdf and a project example to the folder
- - Zip the folder
 
 # Verifications
 You can verify multiple items before deploying.

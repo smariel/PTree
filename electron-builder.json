@@ -1,0 +1,70 @@
+{
+   "appId"        : "fr.sylvain-mariel.PTree",
+   "artifactName" : "${productName}.${ext}",
+   "directories"  : {"output" : "bin"},
+   "asar"         : false,
+   "files": [
+      "!bin/*",
+      "!icons/*",
+      "!docs/*",
+      "!sass/*",
+      "!test/*"
+   ],
+   "extraResources": {
+      "from" : "docs/equations.pdf",
+      "to"   : "app/docs/equations.pdf"
+   },
+   "win": {
+      "icon"   : "icons/win/icon.ico",
+      "target" : "portable"
+   },
+   "linux": {
+      "icon"   : "icons/png/",
+      "target" : {"target":"AppImage", "arch": "ia32"}
+   },
+   "mac": {
+      "category" : "public.app-category.developer-tools",
+      "icon"     : "icons/mac/icon.icns",
+      "target"   : "dmg"
+   },
+   "dmg": {
+      "iconSize": 80,
+      "window"  : {
+         "x"      : 400,
+         "y"      : 100,
+         "width"  : 540,
+         "height" : 380
+      },
+      "contents": [
+         {
+            "x"    : 130,
+            "y"    : 170,
+            "type" : "file"
+         },
+         {
+            "x"    : 410,
+            "y"    : 170,
+            "type" : "link",
+            "path" : "/Applications"
+         },
+         {
+            "x"    : 130,
+            "y"    : 0,
+            "type" : "file",
+            "path" : "docs/example.ptree"
+         },
+         {
+            "x"    : 270,
+            "y"    : 0,
+            "type" : "file",
+            "path" : "docs/equations.pdf"
+         },
+         {
+            "x"    : 410,
+            "y"    : 0,
+            "type" : "file",
+            "path" : "LICENSE.md"
+         }
+      ]
+    }
+}
