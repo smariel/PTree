@@ -163,9 +163,14 @@ Stats.prototype.updateFunctions = function() {
       if(power.max > max) max = power.max;
    });
 
-   // create two charts and fill them, without click callback
-   this.plotChart('typ', datasets.typ, labels, max, 'power (W)', null);
-   this.plotChart('max', datasets.max, labels, max, 'power (W)', null);
+   if(0 === labels.length) {
+      this.empty("No function");
+   }
+   else {
+      // create two charts and fill them, without click callback
+      this.plotChart('typ', datasets.typ, labels, max, 'power (W)', null);
+      this.plotChart('max', datasets.max, labels, max, 'power (W)', null);
+   }
 };
 
 
@@ -209,9 +214,14 @@ Stats.prototype.updateTags = function() {
       }
    });
 
-   // create two charts and fill them, without click callback
-   this.plotChart('typ', datasets.typ, labels, max, 'power (W)', null);
-   this.plotChart('max', datasets.max, labels, max, 'power (W)', null);
+   if(0 === labels.length) {
+      this.empty("No tag");
+   }
+   else {
+      // create two charts and fill them, without click callback
+      this.plotChart('typ', datasets.typ, labels, max, 'power (W)', null);
+      this.plotChart('max', datasets.max, labels, max, 'power (W)', null);
+   }
 };
 
 // remove both canvas and print a default text
