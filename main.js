@@ -74,7 +74,7 @@ app.on('ready', () => {
 	const {Menu} = require('electron');
 	const template = [
 		{
-			label: 'edit',
+			label: 'Edit',
 			submenu: [
 				{role: 'undo'},
 				{role: 'redo'},
