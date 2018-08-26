@@ -3,7 +3,10 @@ window.$ = window.jQuery = require('jquery');
 require('mousetrap');
 require('bootstrap');
 require('fabric');
+const {ipcRenderer} = require('electron');
 
+// creation of the main app object
+var app = new PTree('canvas');
 
 // when jQuery is ready
 $(function() {
@@ -16,6 +19,14 @@ $(function() {
    });
 });
 
+// data received from the main process
+ipcRenderer.once('PTree-window-open', function(event, opendata) {
+   if(null !== opendata.fileToOpen) {
+      app.open(opendata.fileToOpen);
+   }
+});
 
-// creation of the main app object
-var app = new PTree('canvas');
+// data received from the main process
+ipcRenderer.on('PTree-openFile', function(event, fileToOpen) {
+   app.open(fileToOpen);
+});

@@ -59,30 +59,35 @@ PTree.prototype.reset = function() {
 
 
 // load the app data from a file
-PTree.prototype.open = function() {
+PTree.prototype.open = function(path=null) {
    var that = this;
-   const {dialog} = require('electron').remote;
-   var paths = dialog.showOpenDialog({
-      title: 'Open...',
-      filters: [{
-            name: 'PTree project file',
-            extensions: ['ptree']
-         },
-         {
-            name: 'JSON',
-            extensions: ['json']
-         },
-         {
-            name: 'All Files',
-            extensions: ['*']
-         }
-      ],
-      properties: ['openFile']
-   });
+   if(null === path) {
+      const {dialog} = require('electron').remote;
+      var paths = dialog.showOpenDialog({
+         title: 'Open...',
+         filters: [{
+               name: 'PTree project file',
+               extensions: ['ptree']
+            },
+            {
+               name: 'JSON',
+               extensions: ['json']
+            },
+            {
+               name: 'All Files',
+               extensions: ['*']
+            }
+         ],
+         properties: ['openFile']
+      });
 
-   // save the new path only if its not undefined (canceled)
-   if (undefined !== paths) this.filePath = paths[0];
-   else return;
+      // save the new path only if its not undefined (canceled)
+      if (undefined !== paths) this.filePath = paths[0];
+      else return;
+   }
+   else {
+      this.filePath = path;
+   }
 
    // read the content of the file using node.js fs module
    const fs = require('fs');

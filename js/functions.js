@@ -65,7 +65,7 @@ function smartRound(number, precision) {
 //    numberToSi(0.00000012, 10) = 120n
 function numberToSi(number, digits) {
    if (!$.isNumeric(number)) {
-      console.log("Error, " + number + " is not a number");
+      console.error("numberToSi: " + number + " is not a number");
       return 0;
    }
 

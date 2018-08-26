@@ -1,21 +1,31 @@
+// Electron Module
 const electron = require('electron');
+// Electron module to control application life.
+const app = electron.app;
+// Electron module to create native browser window.
+const BrowserWindow = electron.BrowserWindow;
+// Electron module to send/receive message with all renderers
+const ipcMain = electron.ipcMain;
+// Node.js module to access File System
+const fs = require('fs');
+// The package.json file
 const packagejson = require('./package.json');
 
 
-// Module to control application life.
-const app = electron.app;
-// Module to create native browser window.
-const BrowserWindow = electron.BrowserWindow;
-// Module to send/receive message with all renderers
-const {ipcMain} = require('electron');
-
-
 // parsing arguments using node.js process
+// ignore the first argument which is the app location
 global.debug = false;
-for (let arg of process.argv) {
+let fileToOpen = null;
+for (let i=1; i<process.argv.length; i++) {
+   let arg = process.argv[i];
+   // Debug mode
    if("--debug" == arg) {
       global.debug = true;
       break;
+   }
+   // Open files passed as argument or, on Windows, files "open with" PTree
+   else if(fs.statSync(arg).isFile()) {
+      fileToOpen = arg;
    }
 }
 
@@ -32,10 +42,27 @@ let appWindows = {
 
 
 // Quit the app when all windows are closed.
-app.on('window-all-closed', function () {
+app.on('window-all-closed', () => {
    process.exit();
 });
 
+
+// macOS : file open while the app is running or dropped on the app icon
+app.on('open-file', (evt, path) => {
+   // test if the received path is a file
+   if(fs.statSync(path).isFile()) {
+      // if the PTree window does not exist yet
+      if(undefined === appWindows.PTree || null === appWindows.PTree) {
+         // save the file path to be sent later
+         fileToOpen = path;
+      }
+      // else if the PTree window exist
+      else {
+         // send the file path
+         appWindows.PTree.webContents.send('PTree-openFile', path);
+      }
+   }
+});
 
 
 // -----------------------------------------------------------------------------
@@ -54,11 +81,17 @@ app.on('ready', () => {
 	// and load the index.html of the app.
 	appWindows.PTree.loadURL(`file://${__dirname}/html/PTree.html`);
 
+   // send data to the PTree window after loading
+   appWindows.PTree.webContents.on('did-finish-load', () => {
+      let opendata = {fileToOpen};
+      appWindows.PTree.webContents.send('PTree-window-open', opendata);
+   });
+
    // Open the dev tools...
 	if (global.debug) appWindows.PTree.webContents.openDevTools();
 
    // Emitted just before closing the window
-   appWindows.PTree.on('close', function(e){
+   appWindows.PTree.on('close', (e) => {
       // do not close the window
       e.preventDefault();
       // warn the PTree renderer that the user want to quit
@@ -66,7 +99,7 @@ app.on('ready', () => {
    });
 
    // The tree is OK to exit
-	ipcMain.once('quit', function() {
+	ipcMain.once('quit', () => {
       process.exit();
 	});
 
@@ -119,7 +152,7 @@ app.on('ready', () => {
                   	appWindows.about.loadURL(`file://${__dirname}/html/about.html`);
 
                   	// Emitted when the window is closed.
-                  	appWindows.about.on('closed', function () {
+                  	appWindows.about.on('closed', () => {
                   		// Dereference the window object
                   		appWindows.about = null;
                   	});
@@ -132,12 +165,17 @@ app.on('ready', () => {
                   require('electron').shell.openExternal('https://github.com/smariel/PTree/issues');
                }
             },
+            // not compatible withe ASAR archive made when packaging with Electron Builder
+            // because __dirname point to the archive that can not be treated as a real folder by shell.openItem
+            // ASAR is prefered than this menu, even if ASAR may be disabled
+            /*
             {
 					label: 'Equation Summary',
 					click () {
                   require('electron').shell.openItem(`${__dirname}/docs/equations.pdf`);
                }
 				},
+            */
 			]
 		},
       (global.debug) ? {
@@ -185,7 +223,7 @@ app.on('ready', () => {
 // bind an event handler on a request to edit an item
 // this request is sent synchronusly by an item object on the tree view
 // so the tree view script is blocked untill it received a response
-ipcMain.on('itemEditor-request', function (itemevent, itemdata, itemtype) {
+ipcMain.on('itemEditor-request', (itemevent, itemdata, itemtype) => {
 	// Create the itemEditor window
 	appWindows.itemEditor = new BrowserWindow({
 		width           : ('source' == itemtype) ? 840 : 600,
@@ -204,18 +242,18 @@ ipcMain.on('itemEditor-request', function (itemevent, itemdata, itemtype) {
 	appWindows.itemEditor.loadURL(`file://${__dirname}/html/itemEditor.html`);
 
    // send data to the itemEditor window after loading
-   appWindows.itemEditor.webContents.on('did-finish-load', function() {
+   appWindows.itemEditor.webContents.on('did-finish-load', () => {
       appWindows.itemEditor.webContents.send('itemEditor-window-open', itemdata);
    });
 
 	// wait for the edit window to send data when it closes
-	ipcMain.once('itemEditor-window-close', function(event_wclose, newitemdata) {
+	ipcMain.once('itemEditor-window-close', (event_wclose, newitemdata) => {
 		// save those datas before sending them when the close event is trigged
 		itemdata = newitemdata;
 	});
 
 	// Emitted when the window is closed.
-	appWindows.itemEditor.on('closed', function () {
+	appWindows.itemEditor.on('closed', () => {
 		// sent the (new or old) data to the tree window
 		itemevent.returnValue = itemdata;
 		// Dereference the window object
@@ -232,7 +270,7 @@ ipcMain.on('itemEditor-request', function (itemevent, itemdata, itemtype) {
 // bind an event handler on a request to open the part list
 // this request is sent synchronusly by the tree window
 // so the tree script is blocked untill it received a response
-ipcMain.on('partListEditor-request', function (partEvent, treeData, partlistData) {
+ipcMain.on('partListEditor-request', (partEvent, treeData, partlistData) => {
 
 	// Create the PartListEditor window
 	appWindows.PartListEditor = new BrowserWindow({
@@ -251,18 +289,18 @@ ipcMain.on('partListEditor-request', function (partEvent, treeData, partlistData
 	appWindows.PartListEditor.loadURL(`file://${__dirname}/html/partListEditor.html`);
 
    // send data to the PartListEditor window after loading
-   appWindows.PartListEditor.webContents.on('did-finish-load', function() {
+   appWindows.PartListEditor.webContents.on('did-finish-load', () => {
       appWindows.PartListEditor.webContents.send('partListEditor-window-open', treeData, partlistData);
    });
 
 	// wait for the edit window to send data when it closes
-	ipcMain.once('partListEditor-window-close', function(event_wclose, newPartlistData) {
+	ipcMain.once('partListEditor-window-close', (event_wclose, newPartlistData) => {
 		// save the new data before sending them when the close event is trigged
 		partlistData = newPartlistData;
 	});
 
 	// Emitted when the window is closed.
-	appWindows.PartListEditor.on('closed', function () {
+	appWindows.PartListEditor.on('closed', () => {
 		// sent the (new or old) data to the tree window
 		partEvent.returnValue = partlistData;
 		// Dereference the window object
@@ -278,7 +316,7 @@ ipcMain.on('partListEditor-request', function (partEvent, treeData, partlistData
 
 // bind an event handler on a request to open the stats window
 // this request is sent asynchronusly by the tree window
-ipcMain.on('stats-request', function (statsEvent, data) {
+ipcMain.on('stats-request', (statsEvent, data) => {
    // if the windows is already open
    if(appWindows.stats !== null) {
       appWindows.stats.focus();
@@ -301,26 +339,26 @@ ipcMain.on('stats-request', function (statsEvent, data) {
 	appWindows.stats.loadURL(`file://${__dirname}/html/stats.html`);
 
    // send data to the stats window after loading
-   appWindows.stats.webContents.on('did-finish-load', function() {
+   appWindows.stats.webContents.on('did-finish-load', () => {
       appWindows.stats.webContents.send('stats-window-open', data);
    });
 
 	// Emitted when the window is closed.
-	appWindows.stats.on('closed', function () {
+	appWindows.stats.on('closed', () => {
 		// Dereference the window object
 		appWindows.stats = null;
 	});
 });
 
 // inform the stats window (if open) that an item has been selected on the tree
-ipcMain.on('stats-selectItem', function (event, data) {
+ipcMain.on('stats-selectItem', (event, data) => {
    if(null !== appWindows.stats) {
       appWindows.stats.webContents.send('stats-selectItem',data);
    }
 });
 
 // inform the PTree window that an item has been selected on the stats
-ipcMain.on('tree-selectItem', function (event, data) {
+ipcMain.on('tree-selectItem', (event, data) => {
    appWindows.PTree.webContents.send('tree-selectItem',data);
 });
 
@@ -336,7 +374,7 @@ ipcMain.on('tree-selectItem', function (event, data) {
 // when the popup is validates/closed, it send back the value of OK/CANCEL
 // then main.js send back the OK/CANCEL value to the initiatior of the popup
 // popupData has the following properties : title, width, height, sender, content, btn_ok, btn_cancel
-ipcMain.on('popup-request', function (popupEvent, popupData) {
+ipcMain.on('popup-request', (popupEvent, popupData) => {
    // Create the window
    appWindows.popup = new BrowserWindow({
       title           : (undefined === popupData.title ) ? ''   : popupData.title,
@@ -354,26 +392,22 @@ ipcMain.on('popup-request', function (popupEvent, popupData) {
 	// Open the dev tools...
 	//if (global.debug) appWindows.popup.webContents.openDevTools();
 
-   // set as CANCEL by default
-   var isOK = false;
-
 	// Load the *.html of the window.
 	appWindows.popup.loadURL(`file://${__dirname}/html/popup.html`);
 
    // wait for the popup to request the data then send them
-	ipcMain.once('popup-open', function(event_wopen, response){
+	ipcMain.once('popup-open', (event_wopen, response) => {
 		event_wopen.returnValue = popupData;
 	});
 
    // wait for the popup to send data when it closes
-	ipcMain.once('popup-close', function(event_wclose, response) {
-      isOK = response;
+	ipcMain.once('popup-close', (event_wclose, response) => {
+      // send the command to the tree renderer which is waiting to close
+		popupEvent.returnValue = response;
 	});
 
    // Emitted when the window is closed.
-	appWindows.popup.on('closed', function () {
-		// send the command to the tree renderer which is waiting to close
-		popupEvent.returnValue = isOK;
+	appWindows.popup.on('closed', () => {
 		// Dereference the window object
       appWindows.popup = null;
 	});
