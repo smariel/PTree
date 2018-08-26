@@ -286,21 +286,37 @@ $info_border_color:     rgba(255,255,255,0.2);
 //   Total power section
 //
 
+$border-color: rgba(white,0.3);
+
 #totalpower {
-   position:      fixed;
-   bottom:        0;
-   border-radius: 0 5px 0 0;
-   background:    rgba($grey, 0.7);
+   position       : fixed;
+   bottom         : 0;
+   padding        : 7px 7px;
+   border-radius  : 0 5px 0 0;
+   background     : rgba($dark, 0.8);
+   color          : white;
+   letter-spacing : .1rem;
+
 }
 
-#totalpower > p {
-   margin:  0;
-   padding: 7px 15px;
-   color:   white;
-   text-transform: uppercase;
-   letter-spacing: .1rem;
+#totalpower th.totalcell {
+   border-bottom: 1px solid $border-color;
+   text-transform : uppercase;
+   font-size: 10px;
 }
 
-.totalpower.max {
-   margin-left: 8px;
+.totalcell {
+   padding: 2px 5px;
+
+   &:not(:first-child) {
+      text-align: center;
+   }
+
+   &:first-child {
+      border-right: 1px solid $border-color;
+   }
+
+   &:last-child {
+      border-left: 1px solid $border-color;
+   }
 }

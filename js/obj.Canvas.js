@@ -418,9 +418,11 @@ Canvas.prototype.setItemsCoord = function(item) {
 Canvas.prototype.refresh = function() {
    // save the scroll position
    var scroll_position = [$(document).scrollTop(), $(document).scrollLeft()];
+
    // get the selected item
    var selected_item = this.getSelectedItem();
-   // clear the canvas
+
+   // init the canvas
    this.fabricCanvas.clear();
    this.fabricCanvas.line = 0;
    this.fabricCanvas.col  = 0;
@@ -432,37 +434,51 @@ Canvas.prototype.refresh = function() {
    // reprint the canvas by adding the root and all its children
    this.addItems(this.tree.getRoot());
 
-   var zoom = this.config.zoom/100;
-   // compute the minimum size of the canvas according to the lines/cols
-   var canvas_minwidth1  = (this.size.col +1) * this.config.cell_width  * zoom;
-   var canvas_minheight1 = (this.size.line+1) * this.config.cell_height * zoom + app_template.canvas.margin_top + app_template.canvas.margin_bottom;
-   // compute the minimum size of the canvas according to the window
-   var canvas_minwidth2  = $(window).width()  - parseInt($('body').css('margin-left'));
-   var canvas_minheight2 = $(window).height() - parseInt($('body').css('margin-top' ));
-   // define the canvas size at either the grid or the window size
-   var canvas_minwidth  = (canvas_minwidth2  < canvas_minwidth1 ) ? canvas_minwidth1  : canvas_minwidth2;
-   var canvas_minheight = (canvas_minheight2 < canvas_minheight1) ? canvas_minheight1 : canvas_minheight2;
-   // set the canvas size, eventualy zoomed
-   this.fabricCanvas.setDimensions({
-      'width' : canvas_minwidth ,
-      'height': canvas_minheight,
-   });
-   this.fabricCanvas.setZoom(zoom);
+   // adjust the canvas size and zoom
+   this.resize();
 
    // render the Fabric item
    this.fabricCanvas.renderAll();
 
    // reselect the item if it has been deselected
    if (null !== selected_item) this.selectItem(selected_item);
-   // set the scroll as saved before canvas modifications
+
+   // set the scroll as like it was before canvas modifications
    $(document).scrollTop (scroll_position[0]);
    $(document).scrollLeft(scroll_position[1]);
-   // refresh the config
-   this.refreshConfig();
 
    // refresh the total power
-   $('.totalpower.typ').text(this.tree.getRoot().getPower('typ', 'out', 3, false));
-   $('.totalpower.max').text(this.tree.getRoot().getPower('max', 'out', 3, false));
+   this.refreshTotalPower();
+
+   // refresh the config
+   this.refreshConfig();
+};
+
+
+// Refresh the total power and efficiency table
+Canvas.prototype.refreshTotalPower = function() {
+   // refresh the total power
+   const totalpower = {
+      typ: this.tree.getRoot().getPower('typ', 'out', 3, false),
+      max: this.tree.getRoot().getPower('max', 'out', 3, false)
+   };
+   $('.totalpower.typ').text(totalpower.typ);
+   $('.totalpower.max').text(totalpower.max);
+
+   // get the total usefull power
+   let loadpower = {typ:0, max:0};
+   this.tree.forEachLoad(function(load){
+      loadpower.typ += load.getInputPower('typ');
+      loadpower.max += load.getInputPower('max');
+   });
+
+   // refresh the total efficiency
+   const efficiency = {
+      typ: (0 == totalpower.typ) ? 100 : (loadpower.typ / totalpower.typ) * 100,
+      max: (0 == totalpower.max) ? 100 : (loadpower.max / totalpower.max) * 100
+   };
+   $('.totaleff.typ').text(numberToSi(efficiency.typ,3));
+   $('.totaleff.max').text(numberToSi(efficiency.max,3));
 };
 
 
@@ -478,6 +494,34 @@ Canvas.prototype.refreshConfig = function() {
       $(this).val(val);
       $(this).prev('.range_val').text(val);
    });
+};
+
+
+// resize the canvas size to fit its content and refresh its zoom factor
+Canvas.prototype.resize = function() {
+   // get the zoom factor
+   var zoom = this.config.zoom/100;
+
+   // compute the minimum size of the canvas according to the lines/cols
+   var canvas_minwidth1  = (this.size.col +1) * this.config.cell_width  * zoom;
+   var canvas_minheight1 = (this.size.line+1) * this.config.cell_height * zoom + app_template.canvas.margin_top + app_template.canvas.margin_bottom;
+
+   // compute the minimum size of the canvas according to the window
+   var canvas_minwidth2  = $(window).width()  - parseInt($('body').css('margin-left'));
+   var canvas_minheight2 = $(window).height() - parseInt($('body').css('margin-top' ));
+
+   // define the canvas size at either the grid or the window size
+   var canvas_minwidth  = (canvas_minwidth2  < canvas_minwidth1 ) ? canvas_minwidth1  : canvas_minwidth2;
+   var canvas_minheight = (canvas_minheight2 < canvas_minheight1) ? canvas_minheight1 : canvas_minheight2;
+
+   // set the canvas size, eventualy zoomed
+   this.fabricCanvas.setDimensions({
+      'width' : canvas_minwidth ,
+      'height': canvas_minheight,
+   });
+
+   // set the fabric canvas zoom
+   this.fabricCanvas.setZoom(zoom);
 };
 
 
