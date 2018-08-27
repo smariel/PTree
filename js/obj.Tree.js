@@ -6,7 +6,7 @@
 
 
 // Tree object constructor
-var Tree = function(init=true) {
+let Tree = function(init=true) {
    this.item_list  = [];
    this.item_index = 0;
 
@@ -97,7 +97,7 @@ Tree.prototype.getLoadInPartList = function(load, direction) {
 // Create an item : root, source or load, whithout any connection with the canvas
 Tree.prototype.addItem = function(parent, type) {
 
-   var newItem = new Item(this.item_index, parent, type, this);
+   let newItem = new Item(this.item_index, parent, type, this);
    this.setItem(this.item_index++, newItem);
 
    // If it as a parent (if it is not the root...)
@@ -148,7 +148,7 @@ Tree.prototype.copyItem = function(parent, itemToCopy) {
 
 // refresh the consumptions of each load based on the given partList and sheet
 Tree.prototype.refreshConsumptions = function(partList, sheet) {
-   this.forEachLoad(function(load) {
+   this.forEachLoad((load) => {
       load.refreshConsumption(partList, sheet);
    });
 };
@@ -157,7 +157,7 @@ Tree.prototype.refreshConsumptions = function(partList, sheet) {
 // Remove the reference to this tree from each item
 // Caution! Call .convertToCircular() before calling any other method
 Tree.prototype.convertToUncircular = function() {
-   this.forEachItem(function(item) {
+   this.forEachItem((item) => {
       item.tree = null;
    });
 };
@@ -165,19 +165,18 @@ Tree.prototype.convertToUncircular = function() {
 // Replace the reference to this tree in each item
 // This method is only usefull after .convertToUncircular()
 Tree.prototype.convertToCircular = function() {
-   var that = this;
-   this.forEachItem(function(item) {
-      item.tree = that;
+   this.forEachItem((item) => {
+      item.tree = this;
    });
 };
 
 
 // Convert this tree to a string
 Tree.prototype.toString = function() {
-   var tree = new Tree(false);
+   let tree = new Tree(false);
    tree.item_index = this.item_index;
 
-   this.forEachItem(function(item) {
+   this.forEachItem((item) => {
       tree.setItem(item.id, item.toString());
    });
 
@@ -188,14 +187,14 @@ Tree.prototype.toString = function() {
 // Import a tree exported with .toString()
 Tree.prototype.fromString = function(str) {
    // get all properties from the stringified object with items as strings
-   var treeProp = JSON.parse(str);
+   let treeProp = JSON.parse(str);
 
    // reinit the tree with new values
    this.item_list  = [];
    this.item_index = treeProp.item_index;
 
    // for each item in the list
-   for (var item_str of treeProp.item_list) {
+   for (let item_str of treeProp.item_list) {
       // if there is no data, continue to the next item
       if (null === item_str) continue;
 
@@ -222,7 +221,7 @@ Tree.prototype.forEachItem = function(theFunction) {
 
 // loop on each source and process a given function
 Tree.prototype.forEachSource = function(theFunction) {
-   this.forEachItem(function(item) {
+   this.forEachItem((item) => {
       if (item.isSource()) {
          theFunction(item);
       }
@@ -232,7 +231,7 @@ Tree.prototype.forEachSource = function(theFunction) {
 
 // loop on each load and process a given function
 Tree.prototype.forEachLoad = function(theFunction) {
-   this.forEachItem(function(item) {
+   this.forEachItem((item) => {
       if (item.isLoad()) {
          theFunction(item);
       }

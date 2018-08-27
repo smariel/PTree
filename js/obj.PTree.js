@@ -6,7 +6,7 @@
 //    See synop.jpg for more informations
 // -----------------------------------------------------------------------------
 
-var PTree = function(canvas_selector) {
+let PTree = function(canvas_selector) {
    this.tree         = new Tree();
    this.partList     = new PartList();
    this.canvas       = new Canvas(canvas_selector, this.tree, this.partList);
@@ -25,7 +25,7 @@ var PTree = function(canvas_selector) {
    this.canvas.refresh();
    this.updateClearButtons();
 
-   window.document.title = "Untitled";
+   window.document.title = 'Untitled';
 
    // if not in debug mode
    if(!require('electron').remote.getGlobal('debug')) {
@@ -54,16 +54,15 @@ PTree.prototype.reset = function() {
    this.updateClearButtons();
 
    // update the window title
-   window.document.title = "Untitled";
+   window.document.title = 'Untitled';
 };
 
 
 // load the app data from a file
 PTree.prototype.open = function(path=null) {
-   var that = this;
    if(null === path) {
       const {dialog} = require('electron').remote;
-      var paths = dialog.showOpenDialog({
+      const paths = dialog.showOpenDialog({
          title: 'Open...',
          filters: [{
                name: 'PTree project file',
@@ -91,22 +90,22 @@ PTree.prototype.open = function(path=null) {
 
    // read the content of the file using node.js fs module
    const fs = require('fs');
-   fs.readFile(this.filePath, 'utf8', function(err, datastr) {
+   fs.readFile(this.filePath, 'utf8', (err, datastr) => {
       if (null !== err) {
          alert(err);
       }
       else {
          // reconstruct the tree from the data
-         that.fromString(datastr);
+         this.fromString(datastr);
 
          // update the app environement
-         that.clearHistory();
-         that.canvas.refresh();
-         that.setSaved();
-         that.updateClearButtons();
+         this.clearHistory();
+         this.canvas.refresh();
+         this.setSaved();
+         this.updateClearButtons();
 
          // update the window title
-         window.document.title = that.filePath;
+         window.document.title = this.filePath;
       }
    });
 };
@@ -127,7 +126,7 @@ PTree.prototype.save = function(saveas = false) {
 
       // prompt the user
       const {dialog} = require('electron').remote;
-      var path = dialog.showSaveDialog({
+      const path = dialog.showSaveDialog({
          title: 'Save as...',
          defaultPath: name,
          filters: [{
@@ -150,23 +149,20 @@ PTree.prototype.save = function(saveas = false) {
       else return false;
    }
 
-   // save a reference to this PTree object
-   var that = this;
-
    // open the file or create it if it does not exist using node.js fs module
    const fs = require('fs');
-   fs.open(this.filePath, 'w+', function(err, fd) {
+   fs.open(this.filePath, 'w+', (err, fd) => {
       if (null === err) {
          // write the data
          let extradata = {version: require('../package.json').version};
-         let data = that.toString(extradata);
+         let data = this.toString(extradata);
          fs.write(fd, data);
 
          // mark the workspace as saved
-         that.setSaved();
+         this.setSaved();
 
          // update the window title
-         window.document.title = that.filePath;
+         window.document.title = this.filePath;
       }
       else {
          alert(err);
@@ -194,7 +190,7 @@ PTree.prototype.setSaved = function() {
 // empty the history and add only one data
 PTree.prototype.clearHistory = function() {
    // save the actual tree into the history
-   var data = this.tree.toString();
+   const data = this.tree.toString();
    this.history.list  = [data];
    this.history.index = 0;
    this.updateUndoRedoButtons();
@@ -204,7 +200,7 @@ PTree.prototype.clearHistory = function() {
 // save the app data into the history
 PTree.prototype.saveHistory = function() {
    // save the actual tree into the history
-   var data = this.tree.toString();
+   const data = this.tree.toString();
    // if the index is not the last element, remove everything over index
    this.history.list.splice(this.history.index + 1, this.history.list.length - (this.history.index + 1));
    // save the element in the history at the last position
@@ -293,7 +289,7 @@ PTree.prototype.reloadSheet = function() {
 // Return the PTree as a string
 // add extra properties to the string if needed
 PTree.prototype.toString = function(extra={}) {
-   var data = {
+   let data = {
       tree     : this.tree.toString(),
       partList : this.partList.toString(),
       usersheet: this.usersheet,
@@ -308,12 +304,12 @@ PTree.prototype.toString = function(extra={}) {
 
 PTree.prototype.fromString = function(datastr) {
    // Try to parse the string
-   var data = {};
+   let data = {};
    try {
       data = JSON.parse(datastr);
    }
    catch(parseError) {
-      console.log(parseError);
+      console.warn(parseError);
       alert ('Impossible to open this file.');
       return false;
    }
@@ -393,7 +389,7 @@ PTree.prototype.fromString = function(datastr) {
 // Check GitHub for update
 PTree.prototype.checkUpdate = function() {
    // get informations about the latest release using GitHub API
-   $.get('https://api.github.com/repos/smariel/ptree/releases/latest', function(github_data){
+   $.get('https://api.github.com/repos/smariel/ptree/releases/latest', (github_data) => {
       // get the version of the latest release
       let latest_version = github_data.tag_name.substr(1);
 
@@ -415,7 +411,7 @@ PTree.prototype.checkUpdate = function() {
             btn_ok     : 'Yes',
             btn_cancel : 'Not now'
          };
-         // if the user clicked on "download"
+         // if the user clicked on 'download'
          if(popup(popupData)) {
             // open the PTree home page in an external browser
             const {shell} = require('electron');
@@ -429,17 +425,17 @@ PTree.prototype.checkUpdate = function() {
 // enable or disable the undo/redo buttons
 PTree.prototype.updateUndoRedoButtons = function() {
    if (0 === this.history.index) {
-      $("#bt_undo").addClass("disabled");
+      $('#bt_undo').addClass('disabled');
    }
    else {
-      $("#bt_undo").removeClass("disabled");
+      $('#bt_undo').removeClass('disabled');
    }
 
    if (this.history.index >= (this.history.list.length - 1)) {
-      $("#bt_redo").addClass("disabled");
+      $('#bt_redo').addClass('disabled');
    }
    else {
-      $("#bt_redo").removeClass("disabled");
+      $('#bt_redo').removeClass('disabled');
    }
 };
 
@@ -447,17 +443,17 @@ PTree.prototype.updateUndoRedoButtons = function() {
 // enable or disable the clear buttons
 PTree.prototype.updateClearButtons = function() {
    if (0 === this.tree.getRoot().childrenID.length) {
-      $("#bt_clear").addClass("disabled");
+      $('#bt_clear').addClass('disabled');
    }
    else {
-      $("#bt_clear").removeClass("disabled");
+      $('#bt_clear').removeClass('disabled');
    }
 };
 
 
 // Show/Hide up & down button depending on the position of the selected item
 PTree.prototype.updateUpDownButtons = function() {
-   var item = this.canvas.getSelectedItem();
+   let item = this.canvas.getSelectedItem();
 
    if (null === item || 0 === item.child_index)
       $('#bt_up').addClass('disabled');
@@ -473,8 +469,8 @@ PTree.prototype.updateUpDownButtons = function() {
 // Show stats in the stat window (if it is open) for the given itemID
 PTree.prototype.updateStats = function(itemID) {
    if(this.statsAreOpen) {
-      const {ipcRenderer} = require('electron');
-      ipcRenderer.send('stats-selectItem', {
+      // Send an IPC async msg to main.js: request to update the item in Stats
+      require('electron').ipcRenderer.send('Stats-updateItemReq', {
          itemID:       itemID,
          treeData:     this.tree.toString(),
          partListData: this.partList.toString()
@@ -499,38 +495,35 @@ PTree.prototype.exportImg = function() {
 
 // listen to all events on canvas
 PTree.prototype.listenCanvas = function() {
-   // save 'this' to use into event callbacks
-   var that = this;
-
    // click (mouse button pressed) on an object in the canvas
-   this.canvas.fabricCanvas.on('mouse:down', function(e) {
-      var fabric_obj = e.target;
-      // if the fabric obj is an "item", select it
+   this.canvas.fabricCanvas.on('mouse:down', (evt) => {
+      let fabric_obj = evt.target;
+      // if the fabric obj is an 'item', select it
       if (null !== fabric_obj && undefined !== fabric_obj && undefined !== fabric_obj.item) {
          // select the item
-         that.canvas.selectItem(fabric_obj.item);
-         that.updateUpDownButtons();
-         that.canvas.fabricCanvas.dragedItem = fabric_obj.item;
-         that.canvas.fabricCanvas.defaultCursor = "move";
+         this.canvas.selectItem(fabric_obj.item);
+         this.updateUpDownButtons();
+         this.canvas.fabricCanvas.dragedItem = fabric_obj.item;
+         this.canvas.fabricCanvas.defaultCursor = 'move';
          // show stats if they are already open
-         that.updateStats(fabric_obj.item.id);
+         this.updateStats(fabric_obj.item.id);
       }
       else {
-         that.canvas.unselectItem(true);
-         that.updateStats(null);
+         this.canvas.unselectItem(true);
+         this.updateStats(null);
       }
 
       $('#bottom_menu').slideUp(300, 'swing');
    });
 
    // mouse button released (click or drop) on an object in the canvas
-   this.canvas.fabricCanvas.on('mouse:up', function(e) {
-      var fabric_obj = e.target;
-      var dragedItem = that.canvas.fabricCanvas.dragedItem;
+   this.canvas.fabricCanvas.on('mouse:up', (evt) => {
+      let fabric_obj = evt.target;
+      let dragedItem = this.canvas.fabricCanvas.dragedItem;
 
-      // if the event occured on a fabric obj (on an "item")
+      // if the event occured on a fabric obj (on an 'item')
       if (null !== fabric_obj && undefined !== fabric_obj && undefined !== fabric_obj.item && null !== dragedItem) {
-         var receiverItem = fabric_obj.item;
+         let receiverItem = fabric_obj.item;
          // if the receiver item is different than the dragged item
          if (receiverItem.id !== dragedItem.id) {
             // if the receiver item is a source
@@ -539,9 +532,9 @@ PTree.prototype.listenCanvas = function() {
                if (!receiverItem.isChildOf(dragedItem)) {
                   // move the item into the receiver and refresh the Tree
                   dragedItem.moveTo(receiverItem);
-                  that.canvas.refresh();
-                  that.saveHistory();
-                  that.updateUpDownButtons();
+                  this.canvas.refresh();
+                  this.saveHistory();
+                  this.updateUpDownButtons();
                }
             }
          }
@@ -552,75 +545,76 @@ PTree.prototype.listenCanvas = function() {
          if (null !== dragedItem && dragedItem.isSource()) {
             // move the item to the root
             dragedItem.moveTo(dragedItem.tree.getRoot());
-            that.canvas.refresh();
-            that.saveHistory();
+            this.canvas.refresh();
+            this.saveHistory();
          }
       }
 
       // in every cases, change the cursor to default and forget the dragedItem
-      that.canvas.fabricCanvas.defaultCursor = "default";
-      that.canvas.fabricCanvas.dragedItem = null;
+      this.canvas.fabricCanvas.defaultCursor = 'default';
+      this.canvas.fabricCanvas.dragedItem = null;
    });
 
 
    // mouse enter in an object on the canvas
-   this.canvas.fabricCanvas.on('mouse:over', function(e) {
-      var fabric_obj = e.target;
-      // if the fabric obj is an "item"
+   this.canvas.fabricCanvas.on('mouse:over', (evt) => {
+      let fabric_obj = evt.target;
+      // if the fabric obj is an 'item'
       if (null !== fabric_obj && undefined !== fabric_obj && undefined !== fabric_obj.item) {
-         var receiverItem = fabric_obj.item;
-         var dragedItem = that.canvas.fabricCanvas.dragedItem;
+         let receiverItem = fabric_obj.item;
+         let dragedItem = this.canvas.fabricCanvas.dragedItem;
          // if an item is being draged
          if (null !== dragedItem) {
             // change the receiver style if it can receive the dragged item
             if (fabric_obj.item.id !== dragedItem.id && receiverItem.isSource() && !receiverItem.isChildOf(dragedItem)) {
                fabric_obj.rect.set(fabric_template.receiver);
-               that.canvas.fabricCanvas.renderAll();
+               this.canvas.fabricCanvas.renderAll();
             }
          }
          // if no item is dragged, show the item infos
          else  {
-            that.canvas.displayInfo(receiverItem);
+            this.canvas.displayInfo(receiverItem);
          }
       }
    });
 
 
    // mouse exit from an object on the canvas
-   this.canvas.fabricCanvas.on('mouse:out', function(e) {
-      var fabric_obj = e.target;
-      // if the fabric obj is an "item"
+   this.canvas.fabricCanvas.on('mouse:out', (evt) => {
+      let fabric_obj = evt.target;
+      // if the fabric obj is an 'item'
       if (null !== fabric_obj && undefined !== fabric_obj && undefined !== fabric_obj.item) {
          // if an item is being dragged
-         if (null !== that.canvas.fabricCanvas.dragedItem) {
+         if (null !== this.canvas.fabricCanvas.dragedItem) {
             // if the draged item is different than the exited item, reset the style
-            if (fabric_obj.item.id !== that.canvas.fabricCanvas.dragedItem.id) {
+            if (fabric_obj.item.id !== this.canvas.fabricCanvas.dragedItem.id) {
                fabric_obj.rect.set(fabric_template.deselected);
-               that.canvas.fabricCanvas.renderAll();
+               this.canvas.fabricCanvas.renderAll();
             }
             // if the draged item IS the exited one, fadeOut the item infos
             else {
-               $(".item_info").fadeOut(0);
+               $('.item_info').fadeOut(0);
             }
          }
          else {
-            $(".item_info").fadeOut(0);
+            $('.item_info').fadeOut(0);
          }
       }
    });
 
 
    // Edit item on double click
-   that.canvas.canvas$.parent().dblclick(function() {
-      if (null !== that.canvas.getSelectedItem()) {
-         that.canvas.getSelectedItem().edit(that.partList, that.usersheet.sheet);
-         that.canvas.refresh();
-         that.saveHistory();
+   this.canvas.canvas$.parent().dblclick(() => {
+      if (null !== this.canvas.getSelectedItem()) {
+         this.canvas.getSelectedItem().edit(this.partList, this.usersheet.sheet);
+         this.canvas.refresh();
+         this.saveHistory();
       }
    });
 
 
-   that.canvas.canvas$.parent().on('wheel',function(evt) {
+   // Mouse wheel turning
+   this.canvas.canvas$.parent().on('wheel',(evt) => {
       if(evt.originalEvent.ctrlKey) {
          $('#config_zoom').trigger(evt);
       }
@@ -630,42 +624,40 @@ PTree.prototype.listenCanvas = function() {
 
 // listen DOM events (except for the top menu)
 PTree.prototype.listenDOM = function() {
-   var that = this;
-
    // refresh the canvas when the window is resized
    // could be slow, may be recoded
-   $(window).resize(function() {
-      that.canvas.refresh();
+   $(window).resize(() => {
+      this.canvas.refresh();
    });
 
    // refresh the config when inputs changed
-   $('.config_input').change(function() {
-      if ("checkbox" == $(this).attr("type")) {
-         that.canvas.config[$(this).data('config')] = $(this).prop("checked");
+   $('.config_input').change((evt) => {
+      if ('checkbox' == $(evt.currentTarget).attr('type')) {
+         this.canvas.config[$(evt.currentTarget).data('config')] = $(evt.currentTarget).prop('checked');
       }
-      else if ("range" == $(this).attr("type")) {
-         let val = parseInt($(this).val());
-         that.canvas.config[$(this).data('config')] = val;
-         $(this).prev('.range_val').text(val);
+      else if ('range' == $(evt.currentTarget).attr('type')) {
+         let val = parseInt($(evt.currentTarget).val());
+         this.canvas.config[$(evt.currentTarget).data('config')] = val;
+         $(evt.currentTarget).prev('.range_val').text(val);
       }
       else {
          return;
       }
 
-      that.canvas.refresh();
+      this.canvas.refresh();
    });
 
    // modify the range inputs on wheel up/down
-   $('.config_range').on('wheel',function(evt){
+   $('.config_range').on('wheel',(evt) => {
       // get actual values
-      let step   = parseInt($(this).prop('step'));
-      let val    = parseInt($(this).val());
+      let step   = parseInt($(evt.currentTarget).prop('step'));
+      let val    = parseInt($(evt.currentTarget).val());
       let newval = val;
 
       // wheel down, decrement
       if(evt.originalEvent.deltaY > 0) {
          // get the min
-         let min = parseInt($(this).prop('min'));
+         let min = parseInt($(evt.currentTarget).prop('min'));
          // if already the min, do nothing
          if(val == min) return;
          // decrement from one step
@@ -676,7 +668,7 @@ PTree.prototype.listenDOM = function() {
       // wheel up, increment
       else if(evt.originalEvent.deltaY < 0) {
          // get the max
-         let max = parseInt($(this).prop('max'));
+         let max = parseInt($(evt.currentTarget).prop('max'));
          // if already the max
          if(val == max) return;
          // increment from one step
@@ -686,96 +678,92 @@ PTree.prototype.listenDOM = function() {
       }
 
       // update the value
-      $(this).val(newval);
+      $(evt.currentTarget).val(newval);
       // fire the CHANGE event
-      $(this).trigger('change');
+      $(evt.currentTarget).trigger('change');
       // fade out all item infos (to avoid strange display)
-      $(".item_info").fadeOut(0);
+      $('.item_info').fadeOut(0);
    });
 
    // set the config to default
-   $('.mybtn-defaultConfig').click(function() {
-      that.canvas.setDefaultConfig();
-      that.canvas.refresh();
+   $('.mybtn-defaultConfig').click(() => {
+      this.canvas.setDefaultConfig();
+      this.canvas.refresh();
    });
 
    // select a sheet to sync with
-   $('#bt_select_sheet').click(function() {
+   $('#bt_select_sheet').click(() => {
       // ask the user for a sheet
       let usersheet = getSpreadsheet(null, true);
       if (null === usersheet.sheet) return;
       // save the sheet and refresh Consumptions
-      that.setSheet(usersheet);
-      that.tree.refreshConsumptions(null, that.usersheet.sheet);
-      that.canvas.refresh();
-      that.setUnsaved();
+      this.setSheet(usersheet);
+      this.tree.refreshConsumptions(null, this.usersheet.sheet);
+      this.canvas.refresh();
+      this.setUnsaved();
    });
 
    // refresh the sheet to sync with
-   $('#bt_refresh_sheet').click(function() {
-      that.reloadSheet();
-      that.tree.refreshConsumptions(null, that.usersheet.sheet);
-      that.canvas.refresh();
-      that.setUnsaved();
+   $('#bt_refresh_sheet').click(() => {
+      this.reloadSheet();
+      this.tree.refreshConsumptions(null, this.usersheet.sheet);
+      this.canvas.refresh();
+      this.setUnsaved();
    });
 
    // refresh the sheet to sync with
-   $('#bt_remove_sheet').click(function() {
-      that.setSheet(null);
-      that.tree.refreshConsumptions(null, that.usersheet.sheet);
-      that.canvas.refresh();
-      that.setUnsaved();
+   $('#bt_remove_sheet').click(() => {
+      this.setSheet(null);
+      this.tree.refreshConsumptions(null, this.usersheet.sheet);
+      this.canvas.refresh();
+      this.setUnsaved();
    });
 
    // close the config menu when click on the cross
-   $('#bottom_close').click(function(){
-      that.toggleOptions();
+   $('#bottom_close').click(() => {
+      this.toggleOptions();
    });
 };
 
 
 // listen to all events on the top-menu of the Tree view
 PTree.prototype.listenTreeMenu = function() {
-   var that = this;
-
-
    // open a new window to manipulate the part list
-   $('#bt_partTable').click(function() {
-      // require ipcRenderer to send/receive message with main.js
-      const {ipcRenderer} = require('electron');
+   $('#bt_partTable').click(() => {
+      // Send an IPC async msg to the main.js: request to edit the part list
+      let partListString = require('electron').ipcRenderer.sendSync('PartList-editReq', this.tree.toString(), this.partList.toString());
 
-      // ask main.js to edit the item with the given data and wait for a response
-      var partListString = ipcRenderer.sendSync('partListEditor-request', that.tree.toString(), that.partList.toString());
+      // if the part list was not edited, do nothing
+      if(null === partListString) {
+         return;
+      }
 
       // update the partList
-      that.partList.fromString(partListString);
+      this.partList.fromString(partListString);
 
       // update consumptions
-      that.tree.refreshConsumptions(that.partList, that.usersheet.sheet);
-      that.canvas.refresh();
-      that.setUnsaved();
+      this.tree.refreshConsumptions(this.partList, this.usersheet.sheet);
+      this.canvas.refresh();
+      this.setUnsaved();
    });
 
 
    // open a new window to see stats
-   $('#bt_stats').click(function() {
-      // require ipcRenderer to send/receive message with main.js
-      const {ipcRenderer} = require('electron');
-
-      // ask main.js open the stats window
-      ipcRenderer.send('stats-request', {
-         itemID:       (null === that.canvas.getSelectedItem()) ? null : that.canvas.getSelectedItem().id,
-         treeData:     that.tree.toString(),
-         partListData: that.partList.toString()
+   $('#bt_stats').click(() => {
+      // Send an IPC async msg to the main.js: request to open the stats window
+      require('electron').ipcRenderer.send('Stats-openReq', {
+         itemID:       (null === this.canvas.getSelectedItem()) ? null : this.canvas.getSelectedItem().id,
+         treeData:     this.tree.toString(),
+         partListData: this.partList.toString()
       });
-      that.statsAreOpen = true;
+      this.statsAreOpen = true;
    });
 
 
    // create a new project
-   $('#bt_new').click(function() {
+   $('#bt_new').click(() => {
       // if current project is unsaved, popup
-      if(that.unsaved) {
+      if(this.unsaved) {
          let popupData = {
             title      : 'Save before continue?',
             width      : 500,
@@ -791,227 +779,226 @@ PTree.prototype.listenTreeMenu = function() {
          if(popup(popupData)) return;
       }
 
-      that.reset();
+      this.reset();
    });
 
 
    // create a new tree within the same project
-   $('#bt_clear').click(function() {
-      if (!$(this).hasClass('disabled')) {
-         that.canvas.unselectItem(true);
-         that.tree.clear();
-         that.canvas.refresh();
-         that.updateClearButtons();
-         that.saveHistory();
-         that.updateStats(null);
+   $('#bt_clear').click((evt) => {
+      if (!$(evt.currentTarget).hasClass('disabled')) {
+         this.canvas.unselectItem(true);
+         this.tree.clear();
+         this.canvas.refresh();
+         this.updateClearButtons();
+         this.saveHistory();
+         this.updateStats(null);
       }
    });
 
 
    // add a perfet source to the root when the button is clicked
-   $('#bt_addrootsource').click(function() {
-      let newItem = that.tree.addSourceToRoot();
+   $('#bt_addrootsource').click(() => {
+      let newItem = this.tree.addSourceToRoot();
       newItem.characs.regtype = 7;
-      that.canvas.refresh();
-      that.updateClearButtons();
-      that.saveHistory();
-      that.canvas.selectItem(newItem);
+      this.canvas.refresh();
+      this.updateClearButtons();
+      this.saveHistory();
+      this.canvas.selectItem(newItem);
    });
 
 
    // remove the item when clicked
-   $('#bt_remove').click(function() {
-      that.canvas.getSelectedItem().remove();
-      that.canvas.unselectItem(true);
-      that.canvas.refresh();
-      that.updateClearButtons();
-      that.saveHistory();
-      that.updateStats(null);
+   $('#bt_remove').click(() => {
+      this.canvas.getSelectedItem().remove();
+      this.canvas.unselectItem(true);
+      this.canvas.refresh();
+      this.updateClearButtons();
+      this.saveHistory();
+      this.updateStats(null);
    });
 
 
    // show the correct modal for edition
-   $('#bt_edit').click(function() {
-      that.canvas.getSelectedItem().edit(that.partList, that.usersheet.sheet);
-      that.canvas.refresh();
-      that.saveHistory();
+   $('#bt_edit').click(() => {
+      this.canvas.getSelectedItem().edit(this.partList, this.usersheet.sheet);
+      this.canvas.refresh();
+      this.saveHistory();
    });
 
 
    // Add a child source to the selected item
-   $('#bt_addsource').click(function() {
-      let newItem = that.tree.addSource(that.canvas.getSelectedItem());
-      that.canvas.refresh();
-      that.saveHistory();
-      that.canvas.selectItem(newItem);
+   $('#bt_addsource').click(() => {
+      let newItem = this.tree.addSource(this.canvas.getSelectedItem());
+      this.canvas.refresh();
+      this.saveHistory();
+      this.canvas.selectItem(newItem);
    });
 
 
    // Add a child load to the selected item
-   $('#bt_addload').click(function() {
-      let newItem = that.tree.addLoad(that.canvas.getSelectedItem());
-      that.canvas.refresh();
-      that.saveHistory();
-      that.canvas.selectItem(newItem);
+   $('#bt_addload').click(() => {
+      let newItem = this.tree.addLoad(this.canvas.getSelectedItem());
+      this.canvas.refresh();
+      this.saveHistory();
+      this.canvas.selectItem(newItem);
    });
 
 
    // invert the item position with the previous one
-   $('#bt_up').click(function() {
-      var item = that.canvas.getSelectedItem();
+   $('#bt_up').click(() => {
+      let item = this.canvas.getSelectedItem();
       item.moveUp();
-      that.canvas.refresh();
-      that.updateUpDownButtons();
-      that.saveHistory();
+      this.canvas.refresh();
+      this.updateUpDownButtons();
+      this.saveHistory();
    });
 
 
    // invert the item position with the next one
-   $('#bt_down').click(function() {
-      var item = that.canvas.getSelectedItem();
+   $('#bt_down').click(() => {
+      let item = this.canvas.getSelectedItem();
       item.moveDown();
-      that.canvas.refresh();
-      that.updateUpDownButtons();
-      that.saveHistory();
+      this.canvas.refresh();
+      this.updateUpDownButtons();
+      this.saveHistory();
    });
 
 
    // undo action
-   $('#bt_undo').click(function() {
-      that.undo();
+   $('#bt_undo').click(() => {
+      this.undo();
    });
 
 
    // redo action
-   $('#bt_redo').click(function() {
-      that.redo();
+   $('#bt_redo').click(() => {
+      this.redo();
    });
 
 
    // open a tree from a filename
-   $('#bt_open').click(function() {
-      that.open();
+   $('#bt_open').click(() => {
+      this.open();
    });
 
 
    // save the tree into a file
-   $('#bt_save').click(function() {
-      that.save(false);
+   $('#bt_save').click(() => {
+      this.save(false);
    });
 
 
    // save the tree into a file
-   $('#bt_saveas').click(function() {
-      that.save(true);
+   $('#bt_saveas').click(() => {
+      this.save(true);
    });
 
 
    // exportImg the canvas as an Image
-   $('#bt_export_img').click(function() {
-      that.exportImg();
+   $('#bt_export_img').click(() => {
+      this.exportImg();
    });
 
 
    // toggle the config bar
-   $('#bt_config').click(function() {
-      that.toggleOptions();
+   $('#bt_config').click(() => {
+      this.toggleOptions();
    });
 };
 
 
 // listen to all keyboard shortcuts
 PTree.prototype.listenKeyboard = function() {
-   let that = this;
    // Mousetrap: return false to prevent default browser behavior and stop event from bubbling
 
    // Undo
-   Mousetrap.bind(['command+z', 'ctrl+z'], function() {
-      that.undo();
+   Mousetrap.bind(['command+z', 'ctrl+z'], () => {
+      this.undo();
       return false;
    });
 
    // Redo
-   Mousetrap.bind(['command+y', 'ctrl+y', 'command+shift+z', 'ctrl+shift+z'], function() {
-      that.redo();
+   Mousetrap.bind(['command+y', 'ctrl+y', 'command+shift+z', 'ctrl+shift+z'], () => {
+      this.redo();
       return false;
    });
 
    // Open
-   Mousetrap.bind(['command+o', 'ctrl+o'], function() {
-      that.open();
+   Mousetrap.bind(['command+o', 'ctrl+o'], () => {
+      this.open();
       return false;
    });
 
    // Save
-   Mousetrap.bind(['command+s', 'ctrl+s'], function() {
-      that.save(false);
+   Mousetrap.bind(['command+s', 'ctrl+s'], () => {
+      this.save(false);
       return false;
    });
 
    // Save as
-   Mousetrap.bind(['command+shift+s', 'ctrl+shift+s'], function() {
-      that.save(true);
+   Mousetrap.bind(['command+shift+s', 'ctrl+shift+s'], () => {
+      this.save(true);
       return false;
    });
 
 
    // exportImg
-   Mousetrap.bind(['command+e', 'ctrl+e'], function() {
-      that.exportImg();
+   Mousetrap.bind(['command+e', 'ctrl+e'], () => {
+      this.exportImg();
       return false;
    });
 
    // Options
-   Mousetrap.bind(['command+,', 'ctrl+,'], function() {
-      that.toggleOptions();
+   Mousetrap.bind(['command+,', 'ctrl+,'], () => {
+      this.toggleOptions();
       return false;
    });
 
    // Cut / Delete
-   Mousetrap.bind(['command+x', 'ctrl+x', 'backspace', 'del'], function() {
-      if(null !== that.canvas.getSelectedItem()) {
-         that.canvas.getSelectedItem().remove();
-         that.canvas.unselectItem(true);
-         that.canvas.refresh();
-         that.updateClearButtons();
-         that.saveHistory();
-         that.updateStats(null);
+   Mousetrap.bind(['command+x', 'ctrl+x', 'backspace', 'del'], () => {
+      if(null !== this.canvas.getSelectedItem()) {
+         this.canvas.getSelectedItem().remove();
+         this.canvas.unselectItem(true);
+         this.canvas.refresh();
+         this.updateClearButtons();
+         this.saveHistory();
+         this.updateStats(null);
       }
       return false;
    });
 
    // Copy
-   Mousetrap.bind(['command+c', 'ctrl+c'], function() {
-      if(null !== that.canvas.getSelectedItem()) {
-         that.canvas.copiedItem = that.canvas.getSelectedItem();
+   Mousetrap.bind(['command+c', 'ctrl+c'], () => {
+      if(null !== this.canvas.getSelectedItem()) {
+         this.canvas.copiedItem = this.canvas.getSelectedItem();
       }
       return false;
    });
 
    // Paste
-   Mousetrap.bind(['command+v', 'ctrl+v'], function() {
-      let selectedItem = that.canvas.getSelectedItem();
-      let copiedItem = that.canvas.getCopiedItem();
+   Mousetrap.bind(['command+v', 'ctrl+v'], () => {
+      let selectedItem = this.canvas.getSelectedItem();
+      let copiedItem = this.canvas.getCopiedItem();
 
       // if there is something to copy
       if(null !== copiedItem) {
          // if copy of any item into a source
          if(null !== selectedItem && selectedItem.isSource()) {
-            that.tree.copyItem(selectedItem, copiedItem);
+            this.tree.copyItem(selectedItem, copiedItem);
          }
          // else if copy of a source in the root
          else if(null === selectedItem && copiedItem.isSource()) {
-            that.tree.copyItem(that.tree.getRoot(), copiedItem);
+            this.tree.copyItem(this.tree.getRoot(), copiedItem);
          }
          else {
             return false;
          }
       }
 
-      that.canvas.refresh();
-      that.updateClearButtons();
-      that.saveHistory();
-      that.updateStats(null);
+      this.canvas.refresh();
+      this.updateClearButtons();
+      this.saveHistory();
+      this.updateStats(null);
 
       return false;
    });
@@ -1020,20 +1007,24 @@ PTree.prototype.listenKeyboard = function() {
 
 // listen to all events (messages) from main.js
 PTree.prototype.listenMessages = function() {
-   let that = this;
-   // use ipcRenderer to communicate with main main process
+   // use ipcRenderer to communicate with main process
    const {ipcRenderer} = require('electron');
 
-   // update the chart every time a message is received from main.js
-   ipcRenderer.on('tree-selectItem', function(event, itemID){
-      that.canvas.selectItem(that.tree.getItem(itemID));
-      that.updateUpDownButtons();
+   // IPC async msg received from main.js: select the given item
+   ipcRenderer.on('PTree-selectItemCmd', (event, itemID) => {
+      this.canvas.selectItem(this.tree.getItem(itemID));
+      this.updateUpDownButtons();
    });
 
-   // main.js want to close the window
-   ipcRenderer.on('close', function(event) {
+   // IPC async msg received from main.js: open the given file
+   ipcRenderer.on('PTree-openFileCmd', (event, fileToOpen) => {
+      app.open(fileToOpen);
+   });
+
+   // IPC async msg received from main.js: prepare to close
+   ipcRenderer.on('PTree-beforeCloseCmd', (event) => {
       // if the project is not saved
-      if(that.unsaved) {
+      if(this.unsaved) {
          // ask the user to save
          let popupData = {
             title      : 'Save before exit?',
@@ -1050,14 +1041,14 @@ PTree.prototype.listenMessages = function() {
          // if the user want to save, save the project
          if (saveBeforeExit) {
             // if the user canceled the save
-            if(!that.save()) {
+            if(!this.save()) {
                // do not exit
                return;
             }
          }
       }
 
-      // ask main.js to quit the app
-      ipcRenderer.send('quit');
+      // Send an IPC async msg to the main.js: ready to close
+      ipcRenderer.send('PTree-beforeCloseReturn', true);
    });
 };

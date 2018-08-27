@@ -4,7 +4,7 @@
 //    It provides methods to manipulate a Canvas with those datas
 // -----------------------------------------------------------------------------
 
-var Stats = function(item, tree, partList) {
+let Stats = function(item, tree, partList) {
    this.item      = null;
    this.tree      = new Tree();
    this.partList  = new PartList();
@@ -46,7 +46,7 @@ Stats.prototype.updateTree = function() {
    // display the title
    $('.title').html(`${this.item.characs.name}`);
 
-   // display a "go to parent" button if needed
+   // display a 'go to parent' button if needed
    let parent = this.item.getParent();
    if(null !== parent && !parent.isRoot()) {
       $('.goToParent > button').attr('title', parent.characs.name).tooltip('fixTitle');
@@ -60,7 +60,6 @@ Stats.prototype.updateTree = function() {
    let datasets = {typ:[], max:[]};
    let labels = [];
    let clickCallback = null;
-   var that = this;
    let max = 0;
 
    // if the item is a source
@@ -77,12 +76,12 @@ Stats.prototype.updateTree = function() {
          if(valtyp > max) max = valtyp;
       }
 
-      // prepare the callback for the "click" event
-      clickCallback = function(event,elements) {
+      // prepare the callback for the 'click' event
+      clickCallback = (event,elements) => {
          if(elements.length > 0) {
-            that.item = that.tree.getItem(that.item.childrenID[elements[0]._index]);
-            that.updateTreeSelection();
-            that.update();
+            this.item = this.tree.getItem(this.item.childrenID[elements[0]._index]);
+            this.updateTreeSelection();
+            this.update();
             // TODO : do something with the Chart.js error
          }
       };
@@ -92,11 +91,11 @@ Stats.prototype.updateTree = function() {
       // if the currents are in the partlist
       if(this.item.isInPartlist()) {
          // check each part of the partlist to get the charts data
-         this.partList.forEachPart(function(part){
+         this.partList.forEachPart((part) => {
             // if the part is consuming on this load, add it to the chart
-            if(part.isConsuming(that.item)) {
-               let valtyp = smartRound(part.getConsumption(that.item, 'typ'),2);
-               let valmax = smartRound(part.getConsumption(that.item, 'max'),2);
+            if(part.isConsuming(this.item)) {
+               let valtyp = smartRound(part.getConsumption(this.item, 'typ'),2);
+               let valmax = smartRound(part.getConsumption(this.item, 'max'),2);
                datasets.typ.push(valtyp);
                datasets.max.push(valmax);
                labels.push(part.characs.name);
@@ -138,11 +137,11 @@ Stats.prototype.updateFunctions = function() {
    // display the title
    $('.title').html('Global Power');
 
-   // hide the "go to parent" button
+   // hide the 'go to parent' button
    $('.goToParent').fadeOut(200);
 
 
-   this.partList.forEachPart(function(part){
+   this.partList.forEachPart((part) => {
       if('' === part.characs.function) return;
       let func  = part.characs.function;
       let power = part.getPower(tree);
@@ -164,7 +163,7 @@ Stats.prototype.updateFunctions = function() {
    });
 
    if(0 === labels.length) {
-      this.empty("No function");
+      this.empty('No function');
    }
    else {
       // create two charts and fill them, without click callback
@@ -187,11 +186,11 @@ Stats.prototype.updateTags = function() {
    // display the title
    $('.title').html('Global Power');
 
-   // hide the "go to parent" button
+   // hide the 'go to parent' button
    $('.goToParent').fadeOut(200);
 
 
-   this.partList.forEachPart(function(part){
+   this.partList.forEachPart((part) => {
       if('' === part.characs.tags) return;
       let power     = part.getPower(tree);
       let part_tags = part.characs.tags.split(/[\s]/);
@@ -215,7 +214,7 @@ Stats.prototype.updateTags = function() {
    });
 
    if(0 === labels.length) {
-      this.empty("No tag");
+      this.empty('No tag');
    }
    else {
       // create two charts and fill them, without click callback
@@ -308,71 +307,67 @@ Stats.prototype.import = function(data) {
 };
 
 
-// send an update to the PTree
+// Select a new item
 Stats.prototype.updateTreeSelection = function() {
-   const {ipcRenderer} = require('electron');
-   ipcRenderer.send('tree-selectItem', this.item.id);
+   // Send an IPC async msg to main.js: request to select the given item
+   require('electron').ipcRenderer.send('PTree-selectItemReq', this.item.id);
 };
 
 
 // Listen to all event on the page
 Stats.prototype.listenEvents = function() {
-   var that = this;
-
-   // use ipcRender to communicate with main main process
-   const {ipcRenderer} = require('electron');
-
-   // update the chart every time a message is received from main.js
-   ipcRenderer.on('stats-selectItem', function(event, data){
-      that.import(data);
-      that.update();
+   // IPC async msg received from main.js
+   // request to update the Stats with the given data
+   require('electron').ipcRenderer.on('Stats-updateItemCmd', (event, data) => {
+      this.import(data);
+      this.update();
    });
 
-   // click on the "go to parent" button
-   $('.goToParent').click(function(){
-      that.item = that.item.getParent();
-      that.update();
-      that.updateTreeSelection();
+   // click on the 'go to parent' button
+   $('.goToParent').click(() => {
+      this.item = this.item.getParent();
+      this.update();
+      this.updateTreeSelection();
    });
 
-   // click on the "change chart type" button
-   $('.chartType').click(function(){
-      if('doughnut' === that.chartType) {
-         that.chartType = "bar";
+   // click on the 'change chart type' button
+   $('.chartType').click(() => {
+      if('doughnut' === this.chartType) {
+         this.chartType = 'bar';
          $('.chartType .fa').removeClass('fa-bar-chart').addClass('fa-pie-chart');
          $('.chartType > button').attr('title', 'pie').tooltip('fixTitle').tooltip('show');
          $('.normalize').fadeIn(200);
       }
-      else if('bar' === that.chartType) {
-         that.chartType = "doughnut";
+      else if('bar' === this.chartType) {
+         this.chartType = 'doughnut';
          $('.chartType .fa').removeClass('fa-pie-chart').addClass('fa-bar-chart');
          $('.chartType > button').attr('title', 'bar').tooltip('fixTitle').tooltip('show');
          $('.normalize').fadeOut(200);
       }
-      that.update();
+      this.update();
    });
 
-   // click on the "normalize" button
-   $('.normalize').click(function(){
-      if(that.normalize) {
-         that.normalize = false;
+   // click on the 'normalize' button
+   $('.normalize').click(() => {
+      if(this.normalize) {
+         this.normalize = false;
          $('.normalize .fa').removeClass('fa-compress').addClass('fa-expand');
          $('.normalize > button').attr('title', 'normalize').tooltip('fixTitle').tooltip('show');
       }
       else {
-         that.normalize = true;
+         this.normalize = true;
          $('.normalize .fa').removeClass('fa-expand').addClass('fa-compress');
          $('.normalize > button').attr('title', 'adjust').tooltip('fixTitle').tooltip('show');
       }
-      that.update();
+      this.update();
    });
 
    // click on a button of the top menu
-   $('.topmenu > a').click(function(){
-      if(!$(this).hasClass('selected')) {
+   $('.topmenu > a').click((evt) => {
+      if(!$(evt.currentTarget).hasClass('selected')) {
          $('.selected').removeClass('selected');
-         $(this).addClass('selected');
-         that.update();
+         $(evt.currentTarget).addClass('selected');
+         this.update();
       }
    });
 };

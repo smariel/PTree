@@ -99,7 +99,7 @@ const fabric_template = {
 // Tree canvas object constructor
 // -----------------------------------------------------------------------------
 
-var Canvas = function(html_id, tree, partList) {
+let Canvas = function(html_id, tree, partList) {
    this.tree         = tree;              // a reference to the tree
    this.partList     = partList;          // a reference to the partlist
    this.html_id      = html_id;           // the html ID of the canvas
@@ -163,16 +163,16 @@ Canvas.prototype.addItem = function(item) {
    // Needed when exporting to jpeg (no alpha)
    this.fabricCanvas.setBackgroundColor('#FFFFFF');
 
-   var parent        = item.getParent();
+   let parent        = item.getParent();
 
-   var item_width    = app_template.item.width_coef * this.config.cell_width;
-   var item_height   = app_template.item.height_coef * this.config.cell_height;
-   var nodeNet_left  = app_template.nodeNet.left_coef * this.config.cell_width;
+   let item_width    = app_template.item.width_coef   * this.config.cell_width;
+   let item_height   = app_template.item.height_coef  * this.config.cell_height;
+   let nodeNet_left  = app_template.nodeNet.left_coef * this.config.cell_width;
 
 
    // create a rectangle with the correct template
    // and add it to the canvas
-   var itemRect = new fabric.Rect(fabric_template[item.type]);
+   let itemRect = new fabric.Rect(fabric_template[item.type]);
    let item_col = (this.config.align_load && item.isLoad()) ? this.size.col : item.col;
    itemRect.set({
       left  : (item_col  * this.config.cell_width ) + app_template.canvas.margin_left,
@@ -183,7 +183,7 @@ Canvas.prototype.addItem = function(item) {
    });
 
    // Print the name of sources and loads
-   var text = '';
+   let text = '';
    if (this.config.show_name) {
       text += item.characs.name;
    }
@@ -196,7 +196,7 @@ Canvas.prototype.addItem = function(item) {
       text += item.characs.custom1;
    }
 
-   var itemText = new fabric.Text(text, fabric_template.text);
+   let itemText = new fabric.Text(text, fabric_template.text);
    itemText.set({
       'originX'   : 'center',
       'originY'   : 'center',
@@ -208,7 +208,7 @@ Canvas.prototype.addItem = function(item) {
    });
 
    // group the rect and the name and add it to canvas
-   var itemGroup = new fabric.Group([itemRect, itemText], fabric_template.group);
+   let itemGroup = new fabric.Group([itemRect, itemText], fabric_template.group);
    itemGroup.item = item;
    itemGroup.rect = itemRect;
    itemGroup.name = itemText;
@@ -222,11 +222,11 @@ Canvas.prototype.addItem = function(item) {
       if ('source' == item.type) {
       if(this.config.show_vtyp || this.config.show_vmax) {
          // Print the Vout of sources
-         var vtext = '';
+         let vtext = '';
          if(this.config.show_vtyp)                          vtext += item.getVoltage('typ', 'out', 3, true);
          if(this.config.show_vtyp && this.config.show_vmax) vtext += ' / ';
          if(this.config.show_vmax)                          vtext += item.getVoltage('max', 'out', 3, true);
-         var itemText_vout = new fabric.Text(vtext, fabric_template.text);
+         let itemText_vout = new fabric.Text(vtext, fabric_template.text);
          itemText_vout.set({
             'originX': 'left',
             'originY': 'bottom',
@@ -242,7 +242,7 @@ Canvas.prototype.addItem = function(item) {
       if(this.config.show_ityp || this.config.show_imax || this.config.show_ptyp || this.config.show_pmax) {
 
          // Prepare the text for Iout and/or Pout
-         var iptext = "";
+         let iptext = '';
          if(this.config.show_ityp)                          iptext += item.getCurrent('typ', 'out', 3, true);
          if(this.config.show_ityp && this.config.show_imax) iptext += ' / ';
          if(this.config.show_imax)                          iptext += item.getCurrent('max', 'out', 3, true);
@@ -255,7 +255,7 @@ Canvas.prototype.addItem = function(item) {
          if(this.config.show_pmax)                          iptext += item.getPower('max', 'out', 3, true);
 
          // Print the prepared text
-         var itemText_ipout = new fabric.Text(iptext, fabric_template.text);
+         let itemText_ipout = new fabric.Text(iptext, fabric_template.text);
          itemText_ipout.set({
             'originX' : 'left',
             'originY' : 'top',
@@ -272,8 +272,8 @@ Canvas.prototype.addItem = function(item) {
    // Process the nets around the source
 
    // compute errors when the group and the rect are not the same size (ex: text overflow)
-   var width_error  = (itemRect.get('width' ) - itemGroup.get('width' ) + 1) / 2;
-   var height_error = (itemRect.get('height') - itemGroup.get('height') + 1) / 2;
+   let width_error  = (itemRect.get('width' ) - itemGroup.get('width' ) + 1) / 2;
+   let height_error = (itemRect.get('height') - itemGroup.get('height') + 1) / 2;
 
 
    let totalpower = this.tree.getRoot().getOutputPower('typ');
@@ -291,7 +291,7 @@ Canvas.prototype.addItem = function(item) {
       }
 
       // create the fabric item
-      var outputNet = new fabric.Line([
+      let outputNet = new fabric.Line([
          Math.round(itemGroup.get('left') + item_width   - width_error),
          Math.round(itemGroup.get('top' ) + item_height / 2 - outputNetStyle.strokeWidth / 2 - height_error),
          Math.round(itemGroup.get('left') + nodeNet_left - width_error),
@@ -317,7 +317,7 @@ Canvas.prototype.addItem = function(item) {
       }
 
       // create the fabric item
-      var inputNet = new fabric.Line([
+      let inputNet = new fabric.Line([
          Math.round(itemGroup.get('left') - inputNetStyle.strokeWidth - width_error),
          Math.round(itemGroup.get('top' ) + item_height / 2 - inputNetStyle.strokeWidth / 2 - height_error),
          Math.round(itemGroup.get('left') - (this.config.cell_width - nodeNet_left) - width_error - offset),
@@ -342,7 +342,7 @@ Canvas.prototype.addItem = function(item) {
          }
 
          // set the outputNet_node to canvas at the correct coords
-         var verticalNet = new fabric.Line([
+         let verticalNet = new fabric.Line([
             inputNet.get('x2'),
             Math.round((parent.line * this.config.cell_height) + app_template.canvas.margin_top + item_height / 2 - verticalNetStyle.strokeWidth / 2),
             inputNet.get('x2'),
@@ -365,7 +365,7 @@ Canvas.prototype.addItems = function(item) {
 
    // recursively add all the item children to the canvas
    for (let childID of item.childrenID) {
-      var child = item.tree.getItem(childID);
+      let child = item.tree.getItem(childID);
       this.addItems(child);
    }
 };
@@ -408,7 +408,7 @@ Canvas.prototype.setItemsCoord = function(item) {
 
    // continue, recursively, with all the item children
    for (let childID of item.childrenID) {
-      var child = item.tree.getItem(childID);
+      let child = item.tree.getItem(childID);
       this.setItemsCoord(child);
    }
 };
@@ -417,10 +417,10 @@ Canvas.prototype.setItemsCoord = function(item) {
 // clean the canvas and reprint everything
 Canvas.prototype.refresh = function() {
    // save the scroll position
-   var scroll_position = [$(document).scrollTop(), $(document).scrollLeft()];
+   let scroll_position = [$(document).scrollTop(), $(document).scrollLeft()];
 
    // get the selected item
-   var selected_item = this.getSelectedItem();
+   let selected_item = this.getSelectedItem();
 
    // init the canvas
    this.fabricCanvas.clear();
@@ -459,15 +459,15 @@ Canvas.prototype.refresh = function() {
 Canvas.prototype.refreshTotalPower = function() {
    // refresh the total power
    const totalpower = {
-      typ: this.tree.getRoot().getPower('typ', 'out', 3, false),
-      max: this.tree.getRoot().getPower('max', 'out', 3, false)
+      typ: this.tree.getRoot().getOutputPower('typ'),
+      max: this.tree.getRoot().getOutputPower('max')
    };
-   $('.totalpower.typ').text(totalpower.typ);
-   $('.totalpower.max').text(totalpower.max);
+   $('.totalpower.typ').text(numberToSi(totalpower.typ,3));
+   $('.totalpower.max').text(numberToSi(totalpower.max,3));
 
    // get the total usefull power
    let loadpower = {typ:0, max:0};
-   this.tree.forEachLoad(function(load){
+   this.tree.forEachLoad((load) => {
       loadpower.typ += load.getInputPower('typ');
       loadpower.max += load.getInputPower('max');
    });
@@ -484,15 +484,14 @@ Canvas.prototype.refreshTotalPower = function() {
 
 // Refresh the config html inputs
 Canvas.prototype.refreshConfig = function() {
-   var that = this;
-   $('.config_checkbox').each(function() {
-      $(this).prop('checked', that.config[$(this).data('config')]);
+   $('.config_checkbox').each((index, elt) => {
+      $(elt).prop('checked', this.config[$(elt).data('config')]);
    });
 
-   $('.config_range').each(function() {
-      let val = that.config[$(this).data('config')];
-      $(this).val(val);
-      $(this).prev('.range_val').text(val);
+   $('.config_range').each((index, elt) => {
+      let val = this.config[$(elt).data('config')];
+      $(elt).val(val);
+      $(elt).prev('.range_val').text(val);
    });
 };
 
@@ -500,19 +499,19 @@ Canvas.prototype.refreshConfig = function() {
 // resize the canvas size to fit its content and refresh its zoom factor
 Canvas.prototype.resize = function() {
    // get the zoom factor
-   var zoom = this.config.zoom/100;
+   let zoom = this.config.zoom/100;
 
    // compute the minimum size of the canvas according to the lines/cols
-   var canvas_minwidth1  = (this.size.col +1) * this.config.cell_width  * zoom;
-   var canvas_minheight1 = (this.size.line+1) * this.config.cell_height * zoom + app_template.canvas.margin_top + app_template.canvas.margin_bottom;
+   let canvas_minwidth1  = (this.size.col +1) * this.config.cell_width  * zoom;
+   let canvas_minheight1 = (this.size.line+1) * this.config.cell_height * zoom + app_template.canvas.margin_top + app_template.canvas.margin_bottom;
 
    // compute the minimum size of the canvas according to the window
-   var canvas_minwidth2  = $(window).width()  - parseInt($('body').css('margin-left'));
-   var canvas_minheight2 = $(window).height() - parseInt($('body').css('margin-top' ));
+   let canvas_minwidth2  = $(window).width()  - parseInt($('body').css('margin-left'));
+   let canvas_minheight2 = $(window).height() - parseInt($('body').css('margin-top' ));
 
    // define the canvas size at either the grid or the window size
-   var canvas_minwidth  = (canvas_minwidth2  < canvas_minwidth1 ) ? canvas_minwidth1  : canvas_minwidth2;
-   var canvas_minheight = (canvas_minheight2 < canvas_minheight1) ? canvas_minheight1 : canvas_minheight2;
+   let canvas_minwidth  = (canvas_minwidth2  < canvas_minwidth1 ) ? canvas_minwidth1  : canvas_minwidth2;
+   let canvas_minheight = (canvas_minheight2 < canvas_minheight1) ? canvas_minheight1 : canvas_minheight2;
 
    // set the canvas size, eventualy zoomed
    this.fabricCanvas.setDimensions({
@@ -528,7 +527,7 @@ Canvas.prototype.resize = function() {
 // Select an item (by its fabric object)
 Canvas.prototype.selectItem = function(item) {
    // get the fabric obj of the selected item
-   var fabric_obj = this.fabricCanvas.fabric_obj[item.id].rect;
+   let fabric_obj = this.fabricCanvas.fabric_obj[item.id].rect;
 
    // deselect the last item
    this.unselectItem(false);
@@ -541,7 +540,7 @@ Canvas.prototype.selectItem = function(item) {
    this.selectedItem = item;
 
    // show/hide menus depending of the item type
-   var ctrl = $('#item_control');
+   let ctrl = $('#item_control');
    ctrl.removeClass('item_control_source item_control_load');
    ctrl.addClass('item_control_' + item.type);
    ctrl.css({
@@ -591,19 +590,19 @@ Canvas.prototype.getCopiedItem = function() {
 
 // Display info under an item
 Canvas.prototype.displayInfo = function(item) {
-   var text = '';
+   let text = '';
 
-   var fabric_obj = this.fabricCanvas.fabric_obj[item.id];
+   let fabric_obj = this.fabricCanvas.fabric_obj[item.id];
    $('.item_info').hide();
    $('.item_info_data td:not(.item_info_name)').empty();
 
-   var left        = 0;
-   var top         = 0;
-   var fade        = 0;
-   var margin      = 10;
-   var item_width  = app_template.item.width_coef * this.config.cell_width;
-   var item_height = app_template.item.height_coef * this.config.cell_height;
-   var zoom = this.config.zoom/100;
+   let left        = 0;
+   let top         = 0;
+   let fade        = 0;
+   let margin      = 10;
+   let item_width  = app_template.item.width_coef * this.config.cell_width;
+   let item_height = app_template.item.height_coef * this.config.cell_height;
+   let zoom = this.config.zoom/100;
 
    // if the item has an input
    if (0 !== item.parentID) {
@@ -671,11 +670,11 @@ Canvas.prototype.displayInfo = function(item) {
 // Export the canvas as a JPEG image within a dataURL object
 Canvas.prototype.toJPEGdataURL = function() {
    // save the reference of the eventual selected item (may be null)
-   var selected = this.getSelectedItem();
+   let selected = this.getSelectedItem();
    this.unselectItem();
 
    // get the dataURL from the Fabric object (only the usefull part of the canvas)
-   var dataURL = this.fabricCanvas.toDataURL({
+   let dataURL = this.fabricCanvas.toDataURL({
       format   : 'jpeg',
       quality  : 1,
    });
@@ -690,13 +689,13 @@ Canvas.prototype.toJPEGdataURL = function() {
 
 // Display a tab containing all the parts consuming on the given load
 Canvas.prototype.showParts = function(load) {
-   $("#part_table tbody").empty();
+   $('#part_table tbody').empty();
 
-   var noparts = true;
-   this.partList.forEachPart(function(part) {
+   let noparts = true;
+   this.partList.forEachPart((part) => {
       if (part.isConsuming(load)) {
          noparts = false;
-         $("#part_table tbody").append(
+         $('#part_table tbody').append(
             `<tr>
                <td class="part_data part_name">${part.characs.name}</td>
                <td class="part_data part_ityp part_i">${part.getConsumption(load, 'typ')}</td>
@@ -706,17 +705,17 @@ Canvas.prototype.showParts = function(load) {
    });
 
    if (noparts) {
-      $("#part_table tbody").append(
+      $('#part_table tbody').append(
          `<tr>
             <td colspan="3" class="part_data part_nopart">No part found</td>
          </tr>`);
    }
 
-   $("#part_table").fadeIn(200);
+   $('#part_table').fadeIn(200);
 };
 
 
 // Hide the tab containing the parts
 Canvas.prototype.hideParts = function() {
-   $("#part_table").fadeOut(200);
+   $('#part_table').fadeOut(200);
 };

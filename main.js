@@ -11,34 +11,34 @@ const fs = require('fs');
 // The package.json file
 const packagejson = require('./package.json');
 
+// Keep a global reference of the renderers data
+// to avoid JS garbage collector to close them automatically
+let renderers = {
+	PTree          : { browserWindow:null, initData: null,                                  },
+	itemEditor     : { browserWindow:null, initData: null, returnData: null, reqEvent: null },
+	partListEditor : { browserWindow:null, initData: null, returnData: null, reqEvent: null },
+   stats          : { browserWindow:null, initData: null, returnData: null,                },
+   popup          : { browserWindow:null, initData: null, returnData: null, reqEvent: null },
+   about          : { browserWindow:null,                                                  },
+};
+
 
 // parsing arguments using node.js process
 // ignore the first argument which is the app location
 global.debug = false;
-let fileToOpen = null;
+renderers.PTree.initData = {fileToOpen: null};
 for (let i=1; i<process.argv.length; i++) {
    let arg = process.argv[i];
    // Debug mode
-   if("--debug" == arg) {
+   if('--debug' == arg) {
       global.debug = true;
       break;
    }
    // Open files passed as argument or, on Windows, files "open with" PTree
    else if(fs.statSync(arg).isFile()) {
-      fileToOpen = arg;
+      renderers.PTree.initData.fileToOpen = arg;
    }
 }
-
-
-// Keep a global reference of the window object to avoid JS garbage collector to close them automatically
-let appWindows = {
-	PTree          : null,
-	itemEditor     : null,
-	PartListEditor : null,
-   stats          : null,
-   popup          : null,
-   about          : null,
-};
 
 
 // Quit the app when all windows are closed.
@@ -52,14 +52,14 @@ app.on('open-file', (evt, path) => {
    // test if the received path is a file
    if(fs.statSync(path).isFile()) {
       // if the PTree window does not exist yet
-      if(undefined === appWindows.PTree || null === appWindows.PTree) {
+      if(undefined === renderers.PTree.browserWindow || null === renderers.PTree.browserWindow) {
          // save the file path to be sent later
-         fileToOpen = path;
+         renderers.PTree.initData.fileToOpen = path;
       }
       // else if the PTree window exist
       else {
          // send the file path
-         appWindows.PTree.webContents.send('PTree-openFile', path);
+         renderers.PTree.browserWindow.webContents.send('PTree-openFile', path);
       }
    }
 });
@@ -72,36 +72,25 @@ app.on('open-file', (evt, path) => {
 // When Electron has finished initialization
 app.on('ready', () => {
 	// Create the browser window.
-	appWindows.PTree = new BrowserWindow({
+	renderers.PTree.browserWindow = new BrowserWindow({
       width    : 1200,
       height   : 800,
       minWidth : 800
    });
 
 	// and load the index.html of the app.
-	appWindows.PTree.loadURL(`file://${__dirname}/html/PTree.html`);
-
-   // send data to the PTree window after loading
-   appWindows.PTree.webContents.on('did-finish-load', () => {
-      let opendata = {fileToOpen};
-      appWindows.PTree.webContents.send('PTree-window-open', opendata);
-   });
+	renderers.PTree.browserWindow.loadURL(`file://${__dirname}/html/PTree.html`);
 
    // Open the dev tools...
-	if (global.debug) appWindows.PTree.webContents.openDevTools();
+	if (global.debug) renderers.PTree.browserWindow.webContents.openDevTools();
 
-   // Emitted just before closing the window
-   appWindows.PTree.on('close', (e) => {
+      // Emitted just before closing the window
+   renderers.PTree.browserWindow.on('close', (evt) => {
       // do not close the window
-      e.preventDefault();
-      // warn the PTree renderer that the user want to quit
-      appWindows.PTree.webContents.send('close');
+      evt.preventDefault();
+      // Send an IPC async msg to PTree: prepare to close
+      renderers.PTree.browserWindow.webContents.send('PTree-beforeCloseCmd');
    });
-
-   // The tree is OK to exit
-	ipcMain.once('quit', () => {
-      process.exit();
-	});
 
    // configuration of the Application menu
 	const {Menu} = require('electron');
@@ -133,8 +122,8 @@ app.on('ready', () => {
 					label: `About ${packagejson.name}`,
 					click () {
                   // Create the about window if it doesn't exist
-                  if(null === appWindows.about) {
-                  	appWindows.about = new BrowserWindow({
+                  if(null === renderers.about.browserWindow) {
+                  	renderers.about.browserWindow = new BrowserWindow({
                   		width           : 450,
                   		height          : 420,
                         alwaysOnTop     : true,
@@ -146,15 +135,15 @@ app.on('ready', () => {
                      });
 
                   	// Open the dev tools...
-                  	if (global.debug) appWindows.about.webContents.openDevTools();
+                  	if (global.debug) renderers.about.browserWindow.webContents.openDevTools();
 
                   	// Load the *.html of the window.
-                  	appWindows.about.loadURL(`file://${__dirname}/html/about.html`);
+                  	renderers.about.browserWindow.loadURL(`file://${__dirname}/html/about.html`);
 
                   	// Emitted when the window is closed.
-                  	appWindows.about.on('closed', () => {
+                  	renderers.about.browserWindow.on('closed', () => {
                   		// Dereference the window object
-                  		appWindows.about = null;
+                  		renderers.about.browserWindow = null;
                   	});
                   }
                }
@@ -215,20 +204,35 @@ app.on('ready', () => {
 	Menu.setApplicationMenu(menu);
 });
 
+// IPC sync msg received from PTree : request for init data
+ipcMain.on('PTree-initDataReq', (evt) => {
+   // send back the requested data
+   evt.returnValue = renderers.PTree.initData;
+});
+
+// IPC async msg received from PTree : ready to close
+ipcMain.on('PTree-beforeCloseReturn', (evt, isPTreeReady) => {
+   // quit the app by killing the main process
+   if(isPTreeReady) process.exit();
+});
+
 
 // -----------------------------------------------------------------------------
 // ITEM EDITOR
 // -----------------------------------------------------------------------------
 
-// bind an event handler on a request to edit an item
-// this request is sent synchronusly by an item object on the tree view
-// so the tree view script is blocked untill it received a response
-ipcMain.on('itemEditor-request', (itemevent, itemdata, itemtype) => {
+// IPC sync msg received from Item : request edition
+ipcMain.on('Item-editReq', (evt, itemStr, itemType) => {
+   // save the given itemStr for future async use
+   renderers.itemEditor.initData = {itemStr};
+   // save the event to respond to this sync msg later
+   renderers.itemEditor.reqEvent = evt;
+
 	// Create the itemEditor window
-	appWindows.itemEditor = new BrowserWindow({
-		width           : ('source' == itemtype) ? 840 : 600,
-		height          : ('source' == itemtype) ? 485 : 485,
-		parent          : appWindows.PTree,
+	renderers.itemEditor.browserWindow = new BrowserWindow({
+		width           : ('source' == itemType) ? 840 : 600,
+		height          : ('source' == itemType) ? 485 : 485,
+		parent          : renderers.PTree.browserWindow,
 		modal           : true,
 		resizable       : false,
       autoHideMenuBar : true,
@@ -236,130 +240,145 @@ ipcMain.on('itemEditor-request', (itemevent, itemdata, itemtype) => {
 	});
 
 	// Open the dev tools...
-	if (global.debug) appWindows.itemEditor.webContents.openDevTools();
+	if (global.debug) renderers.itemEditor.browserWindow.webContents.openDevTools();
 
 	// Load the *.html of the window.
-	appWindows.itemEditor.loadURL(`file://${__dirname}/html/itemEditor.html`);
-
-   // send data to the itemEditor window after loading
-   appWindows.itemEditor.webContents.on('did-finish-load', () => {
-      appWindows.itemEditor.webContents.send('itemEditor-window-open', itemdata);
-   });
-
-	// wait for the edit window to send data when it closes
-	ipcMain.once('itemEditor-window-close', (event_wclose, newitemdata) => {
-		// save those datas before sending them when the close event is trigged
-		itemdata = newitemdata;
-	});
+	renderers.itemEditor.browserWindow.loadURL(`file://${__dirname}/html/itemEditor.html`);
 
 	// Emitted when the window is closed.
-	appWindows.itemEditor.on('closed', () => {
-		// sent the (new or old) data to the tree window
-		itemevent.returnValue = itemdata;
-		// Dereference the window object
-		appWindows.itemEditor = null;
+	renderers.itemEditor.browserWindow.on('closed', () => {
+      // send back the new data to the Item
+      renderers.itemEditor.reqEvent.returnValue = renderers.itemEditor.returnData;
+		// Dereference the window object, initData and returnData
+		renderers.itemEditor.browserWindow = null;
+      renderers.itemEditor.initData      = null;
+      renderers.itemEditor.returnData    = null;
 	});
 });
 
+// IPC sync msg received from ItemEditor : request for init data
+ipcMain.on('ItemEditor-initDataReq', (evt) => {
+   // send back the requested data
+   evt.returnValue = renderers.itemEditor.initData;
+});
+
+// IPC async msg received from ItemEditor : edited data returned
+ipcMain.on('ItemEditor-returnData', (evt, newitemStr) => {
+   // save the returned data to be sent when window is closed
+   renderers.itemEditor.returnData = newitemStr;
+});
 
 
 // -----------------------------------------------------------------------------
 // PART LIST EDITOR
 // -----------------------------------------------------------------------------
 
-// bind an event handler on a request to open the part list
-// this request is sent synchronusly by the tree window
-// so the tree script is blocked untill it received a response
-ipcMain.on('partListEditor-request', (partEvent, treeData, partlistData) => {
+// IPC sync msg received from PTree : request partList edition
+ipcMain.on('PartList-editReq', (evt, treeStr, partListStr) => {
+   // save the given data for future async use
+   renderers.partListEditor.initData = {treeStr, partListStr};
+   // save the event to respond to this sync msg later
+   renderers.partListEditor.reqEvent = evt;
 
-	// Create the PartListEditor window
-	appWindows.PartListEditor = new BrowserWindow({
+	// Create the partListEditor window
+	renderers.partListEditor.browserWindow = new BrowserWindow({
 		width           : 1024,
 		height          : 768,
-		parent          : appWindows.PTree,
+		parent          : renderers.PTree.browserWindow,
 		modal           : process.platform !== 'darwin',
 		resizable       : true,
       useContentSize  : true
 	});
 
 	// Open the dev tools...
-	if (global.debug) appWindows.PartListEditor.webContents.openDevTools();
+	if (global.debug) renderers.partListEditor.browserWindow.webContents.openDevTools();
 
 	// Load the *.html of the window.
-	appWindows.PartListEditor.loadURL(`file://${__dirname}/html/partListEditor.html`);
-
-   // send data to the PartListEditor window after loading
-   appWindows.PartListEditor.webContents.on('did-finish-load', () => {
-      appWindows.PartListEditor.webContents.send('partListEditor-window-open', treeData, partlistData);
-   });
-
-	// wait for the edit window to send data when it closes
-	ipcMain.once('partListEditor-window-close', (event_wclose, newPartlistData) => {
-		// save the new data before sending them when the close event is trigged
-		partlistData = newPartlistData;
-	});
+	renderers.partListEditor.browserWindow.loadURL(`file://${__dirname}/html/partListEditor.html`);
 
 	// Emitted when the window is closed.
-	appWindows.PartListEditor.on('closed', () => {
-		// sent the (new or old) data to the tree window
-		partEvent.returnValue = partlistData;
-		// Dereference the window object
-		appWindows.PartListEditor = null;
+	renderers.partListEditor.browserWindow.on('closed', () => {
+      // send back the new data to the Item
+      renderers.partListEditor.reqEvent.returnValue = renderers.partListEditor.returnData;
+		// Dereference the window object, initData and returnData
+		renderers.partListEditor.browserWindow = null;
+      renderers.partListEditor.initData      = null;
+      renderers.partListEditor.returnData    = null;
 	});
 });
 
+// IPC sync msg received from PartListEditor : request for init data
+ipcMain.on('PartListEditor-initDataReq', (evt) => {
+   // send back the requested data
+   evt.returnValue = renderers.partListEditor.initData;
+});
+
+// IPC async msg received from PartListEditor : edited data returned
+ipcMain.on('PartListEditor-returnData', (evt, newPartListStr) => {
+   // save the returned data to be sent when window is closed
+   renderers.partListEditor.returnData = newPartListStr;
+});
 
 
 // -----------------------------------------------------------------------------
 // STATS
 // -----------------------------------------------------------------------------
 
-// bind an event handler on a request to open the stats window
-// this request is sent asynchronusly by the tree window
-ipcMain.on('stats-request', (statsEvent, data) => {
+// IPC async msg received from PTree : request to open the Stats
+ipcMain.on('Stats-openReq', (evt, initData) => {
+   // save the given data for future async use
+   renderers.stats.initData = initData;
+
    // if the windows is already open
-   if(appWindows.stats !== null) {
-      appWindows.stats.focus();
+   if(renderers.stats.browserWindow !== null) {
+      renderers.stats.browserWindow.focus();
       return;
    }
-
-	// Create the  window
-	appWindows.stats = new BrowserWindow({
-		width           : 800,
-		height          : 400,
-		resizable       : true,
-      useContentSize  : true,
-      alwaysOnTop     : true
-	});
+   else {
+   	// Create the  window
+   	renderers.stats.browserWindow = new BrowserWindow({
+   		width           : 800,
+   		height          : 400,
+   		resizable       : true,
+         useContentSize  : true,
+         alwaysOnTop     : true
+   	});
+   }
 
 	// Open the dev tools...
-	if (global.debug) appWindows.stats.webContents.openDevTools();
+	if (global.debug) renderers.stats.browserWindow.webContents.openDevTools();
 
 	// Load the *.html of the window.
-	appWindows.stats.loadURL(`file://${__dirname}/html/stats.html`);
-
-   // send data to the stats window after loading
-   appWindows.stats.webContents.on('did-finish-load', () => {
-      appWindows.stats.webContents.send('stats-window-open', data);
-   });
+	renderers.stats.browserWindow.loadURL(`file://${__dirname}/html/stats.html`);
 
 	// Emitted when the window is closed.
-	appWindows.stats.on('closed', () => {
-		// Dereference the window object
-		appWindows.stats = null;
+	renderers.stats.browserWindow.on('closed', () => {
+      // Dereference the window object, initData and returnData
+		renderers.stats.browserWindow = null;
+		renderers.popup.browserWindow = null;
+      renderers.popup.initData      = null;
 	});
 });
 
-// inform the stats window (if open) that an item has been selected on the tree
-ipcMain.on('stats-selectItem', (event, data) => {
-   if(null !== appWindows.stats) {
-      appWindows.stats.webContents.send('stats-selectItem',data);
+// IPC sync msg received from Stats : request for init data
+ipcMain.on('Stats-initDataReq', (evt) => {
+   // send back the requested data
+   evt.returnValue = renderers.stats.initData;
+});
+
+// IPC async msg received from PTree : request to update the Stats with the given data
+ipcMain.on('Stats-updateItemReq', (evt, data) => {
+   // if the stats are open
+   if(null !== renderers.stats.browserWindow) {
+      // Send an IPC async msg to the Stats: ask to update with those data
+      renderers.stats.browserWindow.webContents.send('Stats-updateItemCmd',data);
    }
 });
 
-// inform the PTree window that an item has been selected on the stats
-ipcMain.on('tree-selectItem', (event, data) => {
-   appWindows.PTree.webContents.send('tree-selectItem',data);
+// IPC async msg received from Stats : request to select a new item
+ipcMain.on('PTree-selectItemReq', (evt, data) => {
+   // Send an IPC async msg to PTree: select a new item
+   renderers.PTree.browserWindow.webContents.send('PTree-selectItemCmd',data);
 });
 
 
@@ -368,47 +387,51 @@ ipcMain.on('tree-selectItem', (event, data) => {
 // POPUP
 // -----------------------------------------------------------------------------
 
-// bind an event handler on a request to open a generic popup with OK/Cancel commands
-// this request is sent synchronusly by any window with a data object describing the popup
-// when the popup opens, it ask main.js for the data
-// when the popup is validates/closed, it send back the value of OK/CANCEL
-// then main.js send back the OK/CANCEL value to the initiatior of the popup
-// popupData has the following properties : title, width, height, sender, content, btn_ok, btn_cancel
-ipcMain.on('popup-request', (popupEvent, popupData) => {
+// IPC sync msg received from anywhere : request to open a popup (and return state)
+ipcMain.on('Popup-openReq', (evt, popupData) => {
+   // save the given data for future async use
+   renderers.popup.initData = popupData;
+   // save the event to respond to this sync msg later
+   renderers.popup.reqEvent = evt;
+
    // Create the window
-   appWindows.popup = new BrowserWindow({
+   renderers.popup.browserWindow = new BrowserWindow({
       title           : (undefined === popupData.title ) ? ''   : popupData.title,
       width           : (undefined === popupData.width ) ? 500  : popupData.width,
       height          : (undefined === popupData.height) ? 180  : popupData.height,
-      parent          : (undefined === popupData.sender) ? null : appWindows[popupData.sender],
+      parent          : (undefined === popupData.sender) ? null : renderers[popupData.sender].browserWindow,
       modal           : true,
       autoHideMenuBar : true,
       resizable       : false,
       minimizable     : false,
       maximizable     : false,
-      useContentSize  : true
+      useContentSize  : true,
    });
 
 	// Open the dev tools...
-	//if (global.debug) appWindows.popup.webContents.openDevTools();
+	//if (global.debug) renderers.popup.browserWindow.webContents.openDevTools();
 
 	// Load the *.html of the window.
-	appWindows.popup.loadURL(`file://${__dirname}/html/popup.html`);
-
-   // wait for the popup to request the data then send them
-	ipcMain.once('popup-open', (event_wopen, response) => {
-		event_wopen.returnValue = popupData;
-	});
-
-   // wait for the popup to send data when it closes
-	ipcMain.once('popup-close', (event_wclose, response) => {
-      // send the command to the tree renderer which is waiting to close
-		popupEvent.returnValue = response;
-	});
+	renderers.popup.browserWindow.loadURL(`file://${__dirname}/html/popup.html`);
 
    // Emitted when the window is closed.
-	appWindows.popup.on('closed', () => {
-		// Dereference the window object
-      appWindows.popup = null;
+	renderers.popup.browserWindow.on('closed', () => {
+      // send back the new data
+      renderers.popup.reqEvent.returnValue = renderers.popup.returnData;
+		// Dereference the window object, initData and returnData
+		renderers.popup.browserWindow = null;
+      renderers.popup.initData      = null;
+      renderers.popup.returnData    = null;
 	});
+});
+
+// IPC sync msg received from Stats : request for init data
+ipcMain.on('Popup-initDataReq', (evt) => {
+   evt.returnValue = renderers.popup.initData;
+});
+
+// IPC async msg received from PartListEditor : popup data returned
+ipcMain.on('Popup-returnData', (evt, returnData) => {
+   // save the returned data to be sent when window is closed
+   renderers.popup.returnData = returnData;
 });

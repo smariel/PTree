@@ -3,30 +3,25 @@ window.$ = window.jQuery = require('jquery');
 require('mousetrap');
 require('bootstrap');
 require('fabric');
-const {ipcRenderer} = require('electron');
 
-// creation of the main app object
-var app = new PTree('canvas');
+// Send an IPC sync msg to main.js: request init data
+const initData = require('electron').ipcRenderer.sendSync('PTree-initDataReq');
+
+// init the global object that will handle this renderer
+let app = {};
 
 // when jQuery is ready
-$(function() {
-   // bootstrap tooltip initialization
-   $('[data-toggle="tooltip"]').tooltip({
-      delay: {
-         show: 1000,
-         hide: 100
-      }
-   });
-});
+$(() => {
+   // creation of the PTree object
+   app = new PTree('canvas');
 
-// data received from the main process
-ipcRenderer.once('PTree-window-open', function(event, opendata) {
-   if(null !== opendata.fileToOpen) {
+   // if there is a file to open on startup
+   if(null !== initData.fileToOpen) {
       app.open(opendata.fileToOpen);
    }
-});
 
-// data received from the main process
-ipcRenderer.on('PTree-openFile', function(event, fileToOpen) {
-   app.open(fileToOpen);
+   // bootstrap tooltip initialization
+   $('[data-toggle="tooltip"]').tooltip({
+      delay: {show: 1000, hide: 100}
+   });
 });

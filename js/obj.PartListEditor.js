@@ -4,9 +4,9 @@
 //    It provides methods to manipulate those parts within a <table> element
 // -----------------------------------------------------------------------------
 
-var PartListEditor = function() {
-   this.partList      = new PartList();
-   this.tree          = new Tree();
+let PartListEditor = function(partList = new PartList(), tree = new Tree()) {
+   this.partList      = partList;
+   this.tree          = tree;
    this.editType      = null;
    this.selectedParts = [];
    this.history  = {
@@ -15,6 +15,7 @@ var PartListEditor = function() {
    };
 
    this.listenEvents();
+   this.clearHistory();
 };
 
 
@@ -27,9 +28,8 @@ PartListEditor.prototype.refresh = function() {
    this.unselectPart();
 
    // loop on each part
-   var that = this;
-   var niceid = 0;
-   this.partList.forEachPart(function(part){
+   let niceid = 0;
+   this.partList.forEachPart((part) => {
       // Init the total power
       let ptyp = 0;
       let pmax = 0;
@@ -45,7 +45,7 @@ PartListEditor.prototype.refresh = function() {
 
       // Part consumptions on each load
       // Can't use tree.forEachLoad() without creating an anonymous function in this loop
-      for(let item of that.tree.item_list) {
+      for(let item of this.tree.item_list) {
          if(item !== undefined && item.isLoad() && item.isInPartlist()) {
             // get the consumption on this item
             let ityp = part.getConsumption(item, 'typ');
@@ -98,7 +98,7 @@ PartListEditor.prototype.sortTable = function(col) {
    }
 
    // prepare a compare function
-   let compareParts = function(partA, partB, col, dir){
+   let compareParts = (partA, partB, col, dir) => {
       let a = $(partA).children().eq(col).data('value');
       let b = $(partB).children().eq(col).data('value');
       if      ('asc'  === dir) return a < b;
@@ -144,9 +144,9 @@ PartListEditor.prototype.editCharac = function(part, charac) {
    this.editType = 'charac';
 
    // print an input element
-   var value      = part.getCharac_raw(charac);
-   var html       = `<input class='edition' type='text' value='${value}' data-partid='${part.id}' />`;
-   var selector   = `tr[data-partid=${part.id}] > .td_charac[data-charac=${charac}]`;
+   let value      = part.getCharac_raw(charac);
+   let html       = `<input class='edition' type='text' value='${value}' data-partid='${part.id}' />`;
+   let selector   = `tr[data-partid=${part.id}] > .td_charac[data-charac=${charac}]`;
    $(selector).html(html);
    $('.edition').focus();
    $('.edition').get(0).setSelectionRange(0, value.length);
@@ -174,9 +174,9 @@ PartListEditor.prototype.editCurrent = function(part, load, typmax) {
    this.editType = 'current';
 
    // print an input element
-   var value      = part.getConsumption(load,typmax).toString();
-   var html       = `<input class='edition input_num' type='text' value='${value}' data-loadid='${load.id}' data-partid='${part.id}' data-typmax='${typmax}' />`;
-   var selector   = `tr[data-partid=${part.id}] > .td_${typmax}[data-loadid=${load.id}]`;
+   let value      = part.getConsumption(load,typmax).toString();
+   let html       = `<input class='edition input_num' type='text' value='${value}' data-loadid='${load.id}' data-partid='${part.id}' data-typmax='${typmax}' />`;
+   let selector   = `tr[data-partid=${part.id}] > .td_${typmax}[data-loadid=${load.id}]`;
    $(selector).html(html);
    $('.edition').focus();
    $('.edition').get(0).setSelectionRange(0, value.length);
@@ -186,8 +186,8 @@ PartListEditor.prototype.editCurrent = function(part, load, typmax) {
 // remove the UI from editing by validating (or not) the data
 PartListEditor.prototype.clearCharac = function(validate){
    // get datas from html elements
-   var part    = this.getEditedPart();
-   var charac  = this.getEditedCharac();
+   let part    = this.getEditedPart();
+   let charac  = this.getEditedCharac();
 
    // validate or not the data
    let oldValue = part.getCharac_raw(charac);
@@ -269,16 +269,16 @@ PartListEditor.prototype.cancelEdition = function() {
 
 // get the edited part
 PartListEditor.prototype.getEditedPart = function() {
-   var partID = $('.edition').data('partid');
-   var part = this.partList.getPart(partID);
+   let partID = $('.edition').data('partid');
+   let part = this.partList.getPart(partID);
    return part;
 };
 
 
 // get the edited load
 PartListEditor.prototype.getEditedLoad = function() {
-   var loadID = $('.edition').data('loadid');
-   var load = this.tree.getItem(loadID);
+   let loadID = $('.edition').data('loadid');
+   let load = this.tree.getItem(loadID);
    return load;
 };
 
@@ -291,7 +291,7 @@ PartListEditor.prototype.getEditedTypMax = function() {
 
 // get the edited value
 PartListEditor.prototype.getEditedValue = function() {
-   var value = $('.edition').val();
+   let value = $('.edition').val();
 
    if ('current' === this.editType) {
       value = ('' === value) ? 0 : parseFloat(value);
@@ -364,30 +364,28 @@ PartListEditor.prototype.selectToPart = function(part) {
    }
    // if there is only one part
    else {
-      // save the context before entering tghe jQuery "each" method
-      var that = this;
       // loop on the user-ordered partlist
       let partList = [];
-      var state = 0;
-      $('.partTable tbody tr').each(function(){
-         partId = $(this).data('partid');
+      let state = 0;
+      $('.partTable tbody tr').each((index, elt) => {
+         partId = $(elt).data('partid');
 
          // STATE 0
          if(0 === state) {
             // DO NOTHING
 
             // Go to STATE1 if the partId is one of the two selected (the first)
-            if(partId === part.id || partId === that.selectedParts[0].id) {
-               that.addToSelection(that.partList.getPart(partId));
+            if(partId === part.id || partId === this.selectedParts[0].id) {
+               this.addToSelection(this.partList.getPart(partId));
                state = 1;
                return;
             }
          }
          // STATE 1
          else if (1 === state) {
-            that.addToSelection(that.partList.getPart(partId));
+            this.addToSelection(this.partList.getPart(partId));
             // Go to STATE2 if the partId is one of the two selected (the second)
-            if(partId === part.id || partId === that.selectedParts[0].id) {
+            if(partId === part.id || partId === this.selectedParts[0].id) {
                state = 2;
                return;
             }
@@ -421,7 +419,7 @@ PartListEditor.prototype.unselectPart = function(fade) {
 // empty the history and add only one data
 PartListEditor.prototype.clearHistory = function() {
    // save the actual tree into the history
-   var data = this.partList.toString();
+   let data = this.partList.toString();
    this.history.list  = [data];
    this.history.index = 0;
    this.updateUndoRedoButtons();
@@ -431,7 +429,7 @@ PartListEditor.prototype.clearHistory = function() {
 // save the app data into the history
 PartListEditor.prototype.saveHistory = function() {
    // save the actual partList into the history
-   var data = this.partList.toString();
+   let data = this.partList.toString();
    // if the index is not the last element, remove everything over index
    this.history.list.splice(this.history.index + 1, this.history.list.length - (this.history.index + 1));
    // save the element in the history at the last position
@@ -481,20 +479,20 @@ PartListEditor.prototype.redo = function() {
 PartListEditor.prototype.updateUndoRedoButtons = function() {
    // if there is no data to undo, hide the undo button
    if (0 === this.history.index) {
-      $(".undo").fadeOut(200);
+      $('.undo').fadeOut(200);
    }
    // else, show the undo button
    else {
-      $(".undo").fadeIn(200);
+      $('.undo').fadeIn(200);
    }
 
    // if there is no data to redo, hide the redo button
    if (this.history.index >= (this.history.list.length - 1)) {
-      $(".redo").fadeOut(200);
+      $('.redo').fadeOut(200);
    }
    // else, show the redo button
    else {
-      $(".redo").fadeIn(200);
+      $('.redo').fadeIn(200);
    }
 };
 
@@ -558,7 +556,7 @@ PartListEditor.prototype.fromSpreadsheet = function(sheet_json) {
          // parse each load (same order as the columns) to set the consumptions
          // the col number can be incremented with each load because each data is correctly ordered
          let col_id = 5;
-         // can not use that.tree.forEachLoad() because it need an anonymous functions which is not permited in a loop
+         // can not use this.tree.forEachLoad() because it need an anonymous functions which is not permited in a loop
          for(let item of this.tree.item_list) {
             if(item !== undefined && item.isLoad() && item.isInPartlist()) {
                part.setConsumption(sheet_line[col_id],   item, 'typ');
@@ -575,203 +573,200 @@ PartListEditor.prototype.fromSpreadsheet = function(sheet_json) {
 
 // Listen to all event on the page
 PartListEditor.prototype.listenEvents = function() {
-   var that = this;
-
    // send back data when the window is clossing
-   window.onbeforeunload = function() {
-      // request ipcRenderer to communicate with main.js
-      const {ipcRenderer} = require('electron');
-      // send data to main.js
-      ipcRenderer.send('partListEditor-window-close',that.partList.toString());
+   window.onbeforeunload = () => {
+      // Send an IPC async msg to main.js: return the PartList or null if not modified
+      let returnData = (0 === this.history.index) ? null : this.partList.toString();
+      require('electron').ipcRenderer.send('PartListEditor-returnData', returnData);
    };
 
    // add a new empty part to the PartList
-   $('.addPart').click(function(){
-      that.unselectPart();
-      that.partList.addPart();
-      that.refresh();
-      that.saveHistory();
+   $('.addPart').click(() => {
+      this.unselectPart();
+      this.partList.addPart();
+      this.refresh();
+      this.saveHistory();
    });
 
    // remove parts from the PartList
-   $('.removePart').click(function(){
-      var partsToDelete = that.selectedParts.slice();
-      that.unselectPart(true);
+   $('.removePart').click(() => {
+      let partsToDelete = this.selectedParts.slice();
+      this.unselectPart(true);
       for(let part of partsToDelete) {
-         that.partList.deletePart(part);
+         this.partList.deletePart(part);
       }
-      that.refresh();
-      that.saveHistory();
+      this.refresh();
+      this.saveHistory();
    });
 
    // export the table to excel
-   $('.undo').click(function(){
-      that.undo();
+   $('.undo').click(() => {
+      this.undo();
    });
 
    // export the table to excel
-   $('.redo').click(function(){
-      that.redo();
+   $('.redo').click(() => {
+      this.redo();
    });
 
    // export the table to excel
-   $('.exportTable').click(function(){
+   $('.exportTable').click(() => {
       downloadTable($('.partTable'), 'ptree.xlsx');
    });
 
    // export an empty pre-formated excel
-   $('.exportTemplate').click(function(){
+   $('.exportTemplate').click(() => {
       downloadTable($('.partTable thead'),'template.xlsx');
    });
 
    // import the data from the excel
-   $('.importTable').click(function(){
+   $('.importTable').click(() => {
       // ask the user for a sheet
       let json_sheet = getSpreadsheet();
       if (null === json_sheet) return;
 
       // Import the file into the partlist
-      let noerror = that.fromSpreadsheet(json_sheet);
+      let noerror = this.fromSpreadsheet(json_sheet);
 
       // finally, refresh the table with the new values
       if(noerror) {
-         that.refresh();
-         that.saveHistory();
+         this.refresh();
+         this.saveHistory();
       }
    });
 
    // unselect any part when the emptyzone is clicked
-   $('.emptyzone').click(function(){
-      that.validateEdition();
-      that.unselectPart(true);
+   $('.emptyzone').click(() => {
+      this.validateEdition();
+      this.unselectPart(true);
    });
 
    // click on a charac
-   $('.partTable').on('click', '.td_charac', function(event) {
-      var charac  = $(this).data('charac');
-      var partID  = $(this).parent().data('partid');
-      var part    = that.partList.getPart(partID);
+   $('.partTable').on('click', '.td_charac', (evt) => {
+      let charac  = $(evt.currentTarget).data('charac');
+      let partID  = $(evt.currentTarget).parent().data('partid');
+      let part    = this.partList.getPart(partID);
 
       // click on the ID
       if('id' === charac) {
          // If ctrl is pressed : add to selection
-         if(event.ctrlKey || event.metaKey) {
-            that.addToSelection(part);
+         if(evt.ctrlKey || evt.metaKey) {
+            this.addToSelection(part);
          }
          // if shift is pressed : multiple selection
-         else if(event.shiftKey) {
-            that.selectToPart(part);
+         else if(evt.shiftKey) {
+            this.selectToPart(part);
          }
          // Else, monoselection
          else {
-            that.selectPart(part);
+            this.selectPart(part);
          }
       }
       else {
-         that.editCharac(part, charac);
+         this.editCharac(part, charac);
       }
    });
 
    // edit a current
-   $('.partTable').on('click', '.td_current', function() {
-      var partID  = $(this).parent().data('partid');
-      var loadID  = $(this).data('loadid');
-      var typmax  = $(this).data('typmax');
-      var part    = that.partList.getPart(partID);
-      var load    = that.tree.getItem(loadID);
+   $('.partTable').on('click', '.td_current', (evt) => {
+      let partID  = $(evt.currentTarget).parent().data('partid');
+      let loadID  = $(evt.currentTarget).data('loadid');
+      let typmax  = $(evt.currentTarget).data('typmax');
+      let part    = this.partList.getPart(partID);
+      let load    = this.tree.getItem(loadID);
 
-      that.editCurrent(part, load, typmax);
+      this.editCurrent(part, load, typmax);
    });
 
 
    // sort the table when clicking on TH elements
-   $('.partTable').on('click','.tr_bottom > th', function(){
-      that.sortTable($(this).index());
+   $('.partTable').on('click','.tr_bottom > th', (evt) => {
+      this.sortTable($(evt.currentTarget).index());
    });
 
    // Undo
-   Mousetrap.bind(['command+z', 'ctrl+z'], function() {
-      that.undo();
+   Mousetrap.bind(['command+z', 'ctrl+z'], () => {
+      this.undo();
       return false;
    });
 
    // Redo
-   Mousetrap.bind(['command+y', 'ctrl+y', 'command+shift+z', 'ctrl+shift+z'], function() {
-      that.redo();
+   Mousetrap.bind(['command+y', 'ctrl+y', 'command+shift+z', 'ctrl+shift+z'], () => {
+      this.redo();
       return false;
    });
 
    // Select all
-   Mousetrap.bind(['command+a', 'ctrl+a'], function() {
-      that.partList.forEachPart(function(part){
-         that.addToSelection(part);
+   Mousetrap.bind(['command+a', 'ctrl+a'], () => {
+      this.partList.forEachPart((part) => {
+         this.addToSelection(part);
       });
       return false;
    });
 
    // Global keydown
-   $(document).keydown(function(e){
+   $(document).keydown((evt) => {
       // ESCAPE (=> cancel)
-      if (27 === e.keyCode) {
-         that.cancelEdition();
-         that.unselectPart(true);
+      if (27 === evt.keyCode) {
+         this.cancelEdition();
+         this.unselectPart(true);
       }
    });
 
    // trig KEYDOWN and KEYUP on the edition of any value in the partTable
-   $('.partTable').on('keydown', '.edition', function(e){
+   $('.partTable').on('keydown', '.edition', (evt) => {
       // , (replace , by .) if a number is edited
-      if("188" == event.which || "110" == event.which){
-         if(undefined !== that.getEditedLoad()) {
-            event.preventDefault();
-            $(this).val($(this).val() + '.');
+      if(188 == evt.keyCode || 110 == evt.keyCode){
+         if(undefined !== this.getEditedLoad()) {
+            evt.preventDefault();
+            $(evt.currentTarget).val($(evt.currentTarget).val() + '.');
          }
       }
       // ENTER (=> validate)
-      else if (13 === e.keyCode) {
-         that.validateEdition();
-         that.unselectPart(true);
+      else if (13 === evt.keyCode) {
+         this.validateEdition();
+         this.unselectPart(true);
       }
       // TAB (=> validate and edit next)
-      else if (9 === e.keyCode) {
-         event.preventDefault();
-         let part     = that.getEditedPart();
-         let load     = that.getEditedLoad();
-         var typmax   = that.getEditedTypMax();
-         var charac   = that.getEditedCharac();
-         var editType = that.editType;
+      else if (9 === evt.keyCode) {
+         evt.preventDefault();
+         let part     = this.getEditedPart();
+         let load     = this.getEditedLoad();
+         let typmax   = this.getEditedTypMax();
+         let charac   = this.getEditedCharac();
+         let editType = this.editType;
 
          // SHIFT+TAB = previous
-         if(e.shiftKey) {
+         if(evt.shiftKey) {
             // if editing the ref, jump to name
             if('charac' === editType) {
                if('tags' === charac) {
-                  that.editCharac(part, 'function');
+                  this.editCharac(part, 'function');
                }
                else if('function' === charac) {
-                  that.editCharac(part, 'ref');
+                  this.editCharac(part, 'ref');
                }
                else if('ref' === charac) {
-                  that.editCharac(part, 'name');
+                  this.editCharac(part, 'name');
                }
             }
             // else if editing any current, find what is the previous cell
             else if ('current' === editType) {
                // if the current is a max, jump to the typ of the same load
                if('max' === typmax) {
-                  that.editCurrent(part, load, 'typ');
+                  this.editCurrent(part, load, 'typ');
                }
                // else, if the current is a typ
                else {
-                  let prevload = that.tree.getLoadInPartList(load, 'prev');
+                  let prevload = this.tree.getLoadInPartList(load, 'prev');
 
                   // if there is a previous load, jump to its max
                   if(null !== prevload) {
-                     that.editCurrent(part, prevload, 'max');
+                     this.editCurrent(part, prevload, 'max');
                   }
                   // else, jump to the ref
                   else {
-                     that.editCharac(part, 'tags');
+                     this.editCharac(part, 'tags');
                   }
                }
             }
@@ -782,33 +777,33 @@ PartListEditor.prototype.listenEvents = function() {
             if('charac' === editType) {
                // if editing the name, jump to the ref
                if('name' === charac) {
-                  that.editCharac(part, 'ref');
+                  this.editCharac(part, 'ref');
                }
                // if editing the ref, jump to the function
                else if ('ref' === charac) {
-                  that.editCharac(part, 'function');
+                  this.editCharac(part, 'function');
                }
                // if editing the function, jump to the tags
                else if ('function' === charac) {
-                  that.editCharac(part, 'tags');
+                  this.editCharac(part, 'tags');
                }
                // if editing the tags, jump to the first load (if their is one)
                else if ('tags' === charac) {
-                  let firstLoad = that.tree.getLoadInPartList(that.tree.getRoot(), 'next');
-                  if(null !== firstLoad) that.editCurrent(part, firstLoad, 'typ');
+                  let firstLoad = this.tree.getLoadInPartList(this.tree.getRoot(), 'next');
+                  if(null !== firstLoad) this.editCurrent(part, firstLoad, 'typ');
                }
             }
             // else if editing any current
             else if ('current' === editType) {
                // if the current is a typ, jump to the max of the same load
                if('typ' === typmax) {
-                  that.editCurrent(part, load, 'max');
+                  this.editCurrent(part, load, 'max');
                }
                // else if the current is a max
                else {
                   // jump to the typ of the next load (if their is one)
-                  let nextLoad = that.tree.getLoadInPartList(load, 'next');
-                  if(null !== nextLoad) that.editCurrent(part, nextLoad, 'typ');
+                  let nextLoad = this.tree.getLoadInPartList(load, 'next');
+                  if(null !== nextLoad) this.editCurrent(part, nextLoad, 'typ');
                }
             }
          }

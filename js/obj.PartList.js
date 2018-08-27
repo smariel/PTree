@@ -4,7 +4,7 @@
 // -----------------------------------------------------------------------------
 
 
-var PartList = function() {
+let PartList = function() {
    this.part_list  = [];
    this.part_index = 0;
 };
@@ -51,7 +51,7 @@ PartList.prototype.getPreviousPart = function(part) {
 
 // add a part to the BOM
 PartList.prototype.addPart = function() {
-   var part = new Part(this.part_index, this);
+   let part = new Part(this.part_index, this);
    this.part_list[this.part_index++] = part;
    return part;
 };
@@ -72,10 +72,10 @@ PartList.prototype.deleteAllParts = function() {
 
 // Export the partlist content as a string by deletin all reference to itself
 PartList.prototype.toString = function() {
-   var partList = new PartList();
+   let partList = new PartList();
    partList.part_index = this.part_index;
 
-   this.forEachPart(function(part) {
+   this.forEachPart((part) => {
       partList.part_list[part.id] = part.toString();
    });
 
@@ -86,21 +86,21 @@ PartList.prototype.toString = function() {
 // Import a partlist from a string and reconstruct all references
 PartList.prototype.fromString = function(str) {
    // get all properties from the stringified object where parts are strings
-   var partListProp = JSON.parse(str);
+   let partListProp = JSON.parse(str);
 
    // reinit the partlist data
    this.part_index = partListProp.part_index;
    this.part_list  = [];
 
    // for each part in the list
-   for (var part_str of partListProp.part_list) {
+   for (let part_str of partListProp.part_list) {
       if (null === part_str) continue;
 
       // get the properties of the part
-      var partProp = JSON.parse(part_str);
+      let partProp = JSON.parse(part_str);
 
       // create a new empty part (without giving a ref to partList yet)
-      var newPart = new Part(partProp.id, null);
+      let newPart = new Part(partProp.id, null);
       this.setPart(partProp.id, newPart);
 
       // for each property of the part

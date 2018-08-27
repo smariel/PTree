@@ -3,23 +3,22 @@ window.$ = window.jQuery = require('jquery');
 require('chart.js');
 require('bootstrap');
 
+// Send an IPC sync msg to main.js: request init data
+const initData = require('electron').ipcRenderer.sendSync('Stats-initDataReq');
+
+// init the global object that will handle this renderer
+let stats = {};
+
 // When jQuery is ready
-$(function() {
+$(() => {
+   // Init the main Stats object
+   stats = new Stats();
+   stats.import(initData);
+   stats.update();
+
    // enable all tooltips
    $('[data-toggle="tooltip"]').tooltip({
-      delay: {
-         show: 1000,
-         hide: 0
-      },
+      delay: {show: 1000, hide: 0},
       trigger: 'hover'
-   });
-
-   // Create the main Stats object
-   var stats = new Stats();
-
-   // prepare to receive the init data from the main process
-   require('electron').ipcRenderer.on('stats-window-open', function(event, data) {
-      stats.import(data);
-      stats.update();
    });
 });

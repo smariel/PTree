@@ -1,12 +1,20 @@
 // Framworks and libraries
 window.$ = window.jQuery = require('jquery');
+const {ipcRenderer} = require('electron');
+
+// Send an IPC sync msg to main.js: request init data
+const popupData = ipcRenderer.sendSync('Popup-initDataReq');
+
+// function to close the popup and returning the result
+let close = (returnData) => {
+   // Send an IPC async msg to main.js: return the popup data
+   ipcRenderer.send('Popup-returnData', returnData);
+   // close the window
+   window.close();
+};
 
 // When jQuery is ready
-$(function() {
-   // ask main.js for the data to print in the popup
-   const {ipcRenderer} = require('electron');
-   var popupData = ipcRenderer.sendSync('popup-open', null);
-
+$(() => {
    // display the data
    $('.content').html(popupData.content);
 
@@ -28,15 +36,8 @@ $(function() {
       else                              $('.mybtn-cancel').html(popupData.btn_cancel);
    }
 
-   // prepare the close function to send back OK or CANCEL to main.js
-   var close = function (isOK) {
-      const {ipcRenderer} = require('electron');
-      ipcRenderer.send('popup-close', isOK);
-      window.close();
-   };
-
    // close with OK
-   $('.mybtn-ok').click(function () {
+   $('.mybtn-ok').click(() => {
       if(undefined !== popupData.type && 'list' === popupData.type) {
          close($('#list option:selected').text());
       }
@@ -46,12 +47,12 @@ $(function() {
    });
 
    // close with CANCEL
-   $('.mybtn-cancel').click(function () {
+   $('.mybtn-cancel').click(() => {
       close (false);
    });
 
    // Trigger key press
-   $(document).keydown(function(event) {
+   $(document).keydown((event) => {
       // ESCAPE
       if (27 == event.which) {
          close(false);
@@ -66,5 +67,4 @@ $(function() {
          }
       }
    });
-
 });

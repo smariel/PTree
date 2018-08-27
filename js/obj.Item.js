@@ -9,7 +9,7 @@
 
 
 // Item object constructor
-var Item = function(id, parent, type, tree) {
+let Item = function(id, parent, type, tree) {
    // Construction datas
    this.id           = id;    // item unique ID in the tree
    this.type         = type;  // item type (source or load)
@@ -93,19 +93,19 @@ Item.prototype.setCharacs = function(type) {
 
 // check if the item is a source
 Item.prototype.isSource = function() {
-   return ("source" === this.type);
+   return ('source' === this.type);
 };
 
 
 // check if the item is a load
 Item.prototype.isLoad = function() {
-   return ("load" === this.type);
+   return ('load' === this.type);
 };
 
 
 // check if the item is a source
 Item.prototype.isRoot = function() {
-   return ("root" === this.type);
+   return ('root' === this.type);
 };
 
 
@@ -169,7 +169,7 @@ Item.prototype.isSynced = function() {
 };
 
 
-// recursively test if this item is a child of "potentialParent"
+// recursively test if this item is a child of 'potentialParent'
 Item.prototype.isChildOf = function(potentialParent) {
    // test if this item is a child of potentialParent
    if (-1 !== potentialParent.childrenID.indexOf(this.id)) {
@@ -179,7 +179,7 @@ Item.prototype.isChildOf = function(potentialParent) {
    else if (potentialParent.isSource()) {
       // recursively test if THIS is child of potentialParent children
       for (let childID of potentialParent.childrenID) {
-         var child = this.tree.getItem(childID);
+         let child = this.tree.getItem(childID);
          // if the child of potentialParent is the parent of the item, return true
          if (this.isChildOf(child)) return true;
          // else, continue to the next child
@@ -220,10 +220,10 @@ Item.prototype.nextOffsetDecrement = function(amount) {
 
 // get an array with all the descendants IDs of the item
 Item.prototype.getDescendants = function() {
-   var ids = this.childrenID.slice();
+   let ids = this.childrenID.slice();
 
    for (let childID of this.childrenID) {
-      var moreIds = this.tree.getItem(childID).getDescendants();
+      let moreIds = this.tree.getItem(childID).getDescendants();
       ids = ids.concat(moreIds);
    }
 
@@ -233,9 +233,9 @@ Item.prototype.getDescendants = function() {
 
 // remove all the children of the item
 Item.prototype.removeChildren = function() {
-   var descendants = this.getDescendants();
+   let descendants = this.getDescendants();
 
-   for (var i = 0; i < descendants.length; ++i) {
+   for (let i = 0; i < descendants.length; ++i) {
       this.tree.deleteItem(descendants[i]);
    }
 };
@@ -243,14 +243,14 @@ Item.prototype.removeChildren = function() {
 
 // remove the item from its parent
 Item.prototype.detach = function() {
-   var parent = this.getParent();
+   let parent = this.getParent();
 
    // decrement the index of the next children
    for (let i = this.child_index + 1; i < parent.childrenID.length; ++i) {
       this.tree.getItem(parent.childrenID[i]).child_index--;
    }
    // remove from parents the amount of offset that was due to this item
-   var amount = (parent.childrenID.length > 1) ? this.nextOffset + 1 : this.nextOffset;
+   let amount = (parent.childrenID.length > 1) ? this.nextOffset + 1 : this.nextOffset;
    parent.nextOffsetDecrement(amount);
 
    // remove from the parent
@@ -273,7 +273,7 @@ Item.prototype.remove = function() {
 // Move up or down an item by inverting it with the next or prev item
 Item.prototype.move = function(direction) {
    if (!this.isRoot()) {
-      var parent = this.getParent();
+      let parent = this.getParent();
       if ('up' == direction && this.child_index > 0) {
          parent.childrenID[this.child_index]     = parent.childrenID[this.child_index - 1];
          parent.childrenID[this.child_index - 1] = this.id;
@@ -323,7 +323,7 @@ Item.prototype.moveTo = function(newparent) {
 
 // get the input voltage of the item
 Item.prototype.getInputVoltage = function(valType) {
-   var v_in = 0.0;
+   let v_in = 0.0;
 
    // item v_in = parent v_out
    if (!this.isChildOfRoot()) {
@@ -336,7 +336,7 @@ Item.prototype.getInputVoltage = function(valType) {
 
 // get the output voltage of an item
 Item.prototype.getOutputVoltage = function(valType) {
-   var v_out = 0.0;
+   let v_out = 0.0;
 
    // only sources have output
    if (this.isSource()) {
@@ -356,7 +356,7 @@ Item.prototype.getOutputVoltage = function(valType) {
 
 // get the input current of an item
 Item.prototype.getInputCurrent = function(valType) {
-   var i_in = 0.0;
+   let i_in = 0.0;
 
    // LDO: i_in = i_out + i_q
    if (this.isLDO()) {
@@ -381,7 +381,7 @@ Item.prototype.getInputCurrent = function(valType) {
 
 // get the output current of an item
 Item.prototype.getOutputCurrent = function(valType) {
-   var i_out = 0.0;
+   let i_out = 0.0;
 
    // only sources have outout
    if (this.isSource()) {
@@ -404,7 +404,7 @@ Item.prototype.getOutputCurrent = function(valType) {
 
 // get the input power of an item
 Item.prototype.getInputPower = function(valType) {
-   var p_in = 0.0;
+   let p_in = 0.0;
 
    // if the item is a load or a LDO or a dummy item
    if (this.isLoad() || this.isLDO() || this.isDummy()) {
@@ -418,7 +418,7 @@ Item.prototype.getInputPower = function(valType) {
    }
    // if the item is a DC/DC
    else if (this.isDCDC()) {
-      var efficiency = 1;
+      let efficiency = 1;
 
       // if the efficiency is an array (>= v1.1.0)
       if(typeof this.characs.efficiency === 'object') {
@@ -483,7 +483,7 @@ Item.prototype.getInputPower = function(valType) {
 
 // get the output power of an item
 Item.prototype.getOutputPower = function(valType) {
-   var p_out = 0.0;
+   let p_out = 0.0;
 
    // only sources have output
    if (this.isSource()) {
@@ -509,13 +509,13 @@ Item.prototype.getCurrent = function(valType, inout, roundToSI, show_unit) {
    if (undefined === show_unit) show_unit = false;
 
    // get current value
-   var current = 0.0;
-   if      ("in"  === inout) current = this.getInputCurrent (valType);
-   else if ("out" === inout) current = this.getOutputCurrent(valType);
+   let current = 0.0;
+   if      ('in'  === inout) current = this.getInputCurrent (valType);
+   else if ('out' === inout) current = this.getOutputCurrent(valType);
 
    // format value
    if ($.isNumeric(roundToSI)) current = numberToSi(current, roundToSI);
-   if (show_unit) current += "A";
+   if (show_unit) current += 'A';
 
    return current;
 };
@@ -528,13 +528,13 @@ Item.prototype.getVoltage = function(valType, inout, roundToSI, show_unit) {
    if (undefined === show_unit) show_unit = false;
 
    // get voltage value
-   var voltage = 0.0;
-   if      ("in"  === inout) voltage = this.getInputVoltage (valType);
-   else if ("out" === inout) voltage = this.getOutputVoltage(valType);
+   let voltage = 0.0;
+   if      ('in'  === inout) voltage = this.getInputVoltage (valType);
+   else if ('out' === inout) voltage = this.getOutputVoltage(valType);
 
    // format value
    if ($.isNumeric(roundToSI)) voltage = numberToSi(voltage, roundToSI);
-   if (show_unit) voltage += "V";
+   if (show_unit) voltage += 'V';
 
    return voltage;
 };
@@ -547,14 +547,14 @@ Item.prototype.getPower = function(valType, inoutloss, roundToSI, show_unit) {
    if (undefined === show_unit) show_unit = false;
 
    // get power value
-   var power = 0.0;
-   if      ("in"   === inoutloss) power = this.getInputPower (valType);
-   else if ("out"  === inoutloss) power = this.getOutputPower(valType);
-   else if ("loss" === inoutloss) power = this.getPowerLoss  (valType);
+   let power = 0.0;
+   if      ('in'   === inoutloss) power = this.getInputPower (valType);
+   else if ('out'  === inoutloss) power = this.getOutputPower(valType);
+   else if ('loss' === inoutloss) power = this.getPowerLoss  (valType);
 
    // format value
    if ($.isNumeric(roundToSI)) power = numberToSi(power, roundToSI);
-   if (show_unit) power += "W";
+   if (show_unit) power += 'W';
 
    return power;
 };
@@ -562,7 +562,7 @@ Item.prototype.getPower = function(valType, inoutloss, roundToSI, show_unit) {
 
 // get the power loss in an item
 Item.prototype.getPowerLoss = function(valType) {
-   var p_loss = 0.0;
+   let p_loss = 0.0;
 
    // In sources, p_loss = p_in - p_out
    if (this.isSource() && !this.isChildOfRoot()) {
@@ -578,8 +578,8 @@ Item.prototype.getPowerLoss = function(valType) {
 // Need a partlist to update the consumptions in some cases
 // Need the sync sheet to update other consumptions
 Item.prototype.edit = function(partList, sheet) {
-   // ask main.js to open the item editor window
-   let datastr = require('electron').ipcRenderer.sendSync('itemEditor-request', this.toString(), this.type);
+   // Send an IPC sync msg to main.js: request to edit this item
+   let datastr = require('electron').ipcRenderer.sendSync('Item-editReq', this.toString(), this.type);
 
    // import the new data
    if(null !== datastr) this.fromString(datastr);
@@ -588,11 +588,10 @@ Item.prototype.edit = function(partList, sheet) {
       // if the load is not in the part list
       // remove all consumptions on the parts
       if(!this.isInPartlist()) {
-         let that = this;
-         partList.forEachPart(function(part){
-            if(part.isConsuming(that)) {
-               part.setConsumption(0, that, 'typ');
-               part.setConsumption(0, that, 'max');
+         partList.forEachPart((part) => {
+            if(part.isConsuming(this)) {
+               part.setConsumption(0, this, 'typ');
+               part.setConsumption(0, this, 'max');
             }
          });
       }
@@ -605,11 +604,11 @@ Item.prototype.edit = function(partList, sheet) {
 
 // Export the item as a string
 Item.prototype.toString = function() {
-   var tree  = this.tree;
+   let tree  = this.tree;
    // remove the ref to the tree to avoid circular object
    this.tree = null;
    // stringify
-   var str   = JSON.stringify(this);
+   let str   = JSON.stringify(this);
    // set back the ref to the tree
    this.tree = tree;
    // return the string
@@ -679,12 +678,10 @@ Item.prototype.refreshConsumption = function(partList, sheet) {
             this.characs.ityp = 0;
             this.characs.imax = 0;
 
-            var that = this;
-
             // parcour all part to add all currents
-            partList.forEachPart(function(part) {
-               that.characs.ityp += parseFloat(part.getConsumption(that, 'typ'));
-               that.characs.imax += parseFloat(part.getConsumption(that, 'max'));
+            partList.forEachPart((part) => {
+               this.characs.ityp += parseFloat(part.getConsumption(this, 'typ'));
+               this.characs.imax += parseFloat(part.getConsumption(this, 'max'));
             });
          }
       }

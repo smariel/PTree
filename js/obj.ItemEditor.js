@@ -4,19 +4,14 @@
 //
 // -----------------------------------------------------------------------------
 
-var ItemEditor = function() {
-   this.item     = null;
+let ItemEditor = function(item = null) {
+   this.item     = item;
    this.effChart = null;
 
    this.listenEvents();
+
+   this.updateHTML_form();
 };
-
-
-// set an Item
-ItemEditor.prototype.setItem = function(item) {
-   this.item = item;
-};
-
 
 // fill the form with data from an item
 ItemEditor.prototype.updateHTML_form = function() {
@@ -117,8 +112,6 @@ ItemEditor.prototype.updateHTML_regVoltage = function() {
 
 // update the DC/DC efficiency chart
 ItemEditor.prototype.updateHTML_regEff = function() {
-   let that = this;
-
    // create a chart dataset from the item datas
    let dataset = [];
    for(let data of this.item.characs.efficiency) {
@@ -142,11 +135,11 @@ ItemEditor.prototype.updateHTML_regEff = function() {
             display: false
          },
          // Client event
-         onClick: function(event, elements){
+         onClick: (event, elements) => {
             // if click on a point, delete it and redraw the chart
             if(elements.length > 0) {
-               that.item.characs.efficiency.splice(elements[0]._index,1);
-               that.updateHTML_regEff();
+               this.item.characs.efficiency.splice(elements[0]._index,1);
+               this.updateHTML_regEff();
             }
          }
       },
@@ -167,8 +160,8 @@ ItemEditor.prototype.updateHTML_regEff = function() {
 ItemEditor.prototype.addEfficiency = function() {
    // get the new data from the form
    let new_data = {
-      eff: parseFloat($("#input_eff").val()),
-      i: parseFloat($("#input_eff_i").val())
+      eff: parseFloat($('#input_eff').val()),
+      i: parseFloat($('#input_eff_i').val())
    };
 
    // get the old data
@@ -212,8 +205,8 @@ ItemEditor.prototype.addEfficiency = function() {
       }
 
       // remove the data from the form
-      $("#input_eff").val("");
-      $("#input_eff_i").val("");
+      $('#input_eff').val('');
+      $('#input_eff_i').val('');
 
       // update the chart
       this.updateHTML_regEff();
@@ -231,15 +224,15 @@ ItemEditor.prototype.updateItemFromHTML = function($elt) {
 
       // if the elt is a source_adj, also update vmin/vtyp/vmax
       if($elt.hasClass('source_adj')) {
-         var r1       = this.item.characs.r1;
-         var r2       = this.item.characs.r2;
-         var rtol     = this.item.characs.rtol;
-         var vref_min = this.item.characs.vref_min;
-         var vref_typ = this.item.characs.vref_typ;
-         var vref_max = this.item.characs.vref_max;
+         let r1       = this.item.characs.r1;
+         let r2       = this.item.characs.r2;
+         let rtol     = this.item.characs.rtol;
+         let vref_min = this.item.characs.vref_min;
+         let vref_typ = this.item.characs.vref_typ;
+         let vref_max = this.item.characs.vref_max;
 
-         var rtolmax = 1 + rtol / 100;
-         var rtolmin = 1 - rtol / 100;
+         let rtolmax = 1 + rtol / 100;
+         let rtolmin = 1 - rtol / 100;
 
          this.item.characs.vout_min = vref_min * ((r1 * rtolmin) / (r2 * rtolmax) + 1);
          this.item.characs.vout_typ = vref_typ * (r1 / r2 + 1);
@@ -251,10 +244,10 @@ ItemEditor.prototype.updateItemFromHTML = function($elt) {
 
 // Send new item to main.js and close the window
 ItemEditor.prototype.closeOk = function() {
-   // update the focused item (because it may not have trig "change")
+   // update the focused item (because it may not have trig 'change')
    this.updateItemFromHTML($(document.activeElement));
-   // send the updated item to main.js
-   require('electron').ipcRenderer.send('itemEditor-window-close', this.item.toString());
+   // Send an IPC async msg to main.js: return the edited item
+   require('electron').ipcRenderer.send('ItemEditor-returnData', this.item.toString());
    // close the window
    window.close();
 };
@@ -262,8 +255,8 @@ ItemEditor.prototype.closeOk = function() {
 
 // Send old, unmodifided, item to main.js and close the window
 ItemEditor.prototype.closeCancel = function() {
-   // send null to main.js
-   require('electron').ipcRenderer.send('edit-window-close', null);
+   // Send an IPC async msg to main.js: return null instead of the item
+   require('electron').ipcRenderer.send('ItemEditor-returnData', null);
    // close the window
    window.close();
 };
@@ -271,71 +264,69 @@ ItemEditor.prototype.closeCancel = function() {
 
 // listen DOM events
 ItemEditor.prototype.listenEvents = function() {
-   let that = this;
-
    // BT cancel clicked
-   $('#edit_cancel').click(function() {
-      that.closeCancel();
+   $('#edit_cancel').click(() => {
+      this.closeCancel();
    });
 
 
    // BT OK clicked
-   $('#edit_ok').click(function() {
-      that.closeOk();
+   $('#edit_ok').click(() => {
+      this.closeOk();
    });
 
 
    // BT + (efficiency) clicked
-   $('#add_eff').click(function(){
+   $('#add_eff').click(() => {
       // add the new efficiency to the chart
-      that.addEfficiency();
+      this.addEfficiency();
    });
 
 
    // Replace ',' by '.' on numeric inputs
-   $('.input_num').keypress(function(event) {
-      if ('44' == event.which) {
+   $('.input_num').keypress((event) => {
+      if (44 == event.keyCode) {
          event.preventDefault();
-         $(this).val($(this).val() + '.');
+         $(event.currentTarget).val($(event.currentTarget).val() + '.');
       }
    });
 
 
    // update the item every time an input change
-   $('.form-control').change(function(){
-      // update the item with the value of $(this)
-      that.updateItemFromHTML($(this));
+   $('.form-control').change(() => {
+      // update the item with the value of $(event.currentTarget)
+      this.updateItemFromHTML($(event.currentTarget));
 
       // Modify the available inputs when the user change the regtype
-      if('source_regtype' === $(this).prop('id')){
-         that.updateHTML_regType();
+      if('source_regtype' === $(event.currentTarget).prop('id')){
+         this.updateHTML_regType();
       }
       // Modify the available inputs when the user change the loadtype
-      else if('load_type' === $(this).prop('id')){
-         that.updateHTML_loadType();
+      else if('load_type' === $(event.currentTarget).prop('id')){
+         this.updateHTML_loadType();
       }
       // update vmin/vtyp/vmax if any adj property has changed
-      else if($(this).hasClass('source_adj')){
-         that.updateHTML_regVoltage();
+      else if($(event.currentTarget).hasClass('source_adj')){
+         this.updateHTML_regVoltage();
       }
    });
 
 
    // Trigger key press
-   $(document).keydown(function(event,a) {
+   $(document).keydown((event) => {
       // ESCAPE
-      if (27 == event.which) {
-         that.closeCancel();
+      if (27 == event.keyCode) {
+         this.closeCancel();
       }
       // ENTER
-      else if (13 == event.which) {
+      else if (13 == event.keyCode) {
          // editing efficiency, add it
-         if(event.target.id === "input_eff" || event.target.id === "input_eff_i") {
-            that.addEfficiency();
+         if(event.target.id === 'input_eff' || event.target.id === 'input_eff_i') {
+            this.addEfficiency();
          }
          // else, validate the editon
          else {
-            that.closeOk();
+            this.closeOk();
          }
       }
    });

@@ -3,12 +3,17 @@
 // -----------------------------------------------------------------------------
 
 
+
+// -----------------------------------------------------------------------------
+// Colors
+// -----------------------------------------------------------------------------
+
 // return BLACK or WHITE based on bgcolor
 // if color is light, return black. if color is dark, return white.
 // yellow is considered lighter than other colors
 function getOpositeBorW(color) {
-   var color_hsl = fabric.Color.reHSLa.exec(new fabric.Color(color).toHsl());
-   return ((parseInt(color_hsl[3]) > 70) || (parseInt(color_hsl[1]) > 50 && parseInt(color_hsl[1]) < 75 && parseInt(color_hsl[3]) > 45)) ? "#000000" : "#FFFFFF";
+   let color_hsl = fabric.Color.reHSLa.exec(new fabric.Color(color).toHsl());
+   return ((parseInt(color_hsl[3]) > 70) || (parseInt(color_hsl[1]) > 50 && parseInt(color_hsl[1]) < 75 && parseInt(color_hsl[3]) > 45)) ? '#000000' : '#FFFFFF';
 
 }
 
@@ -16,11 +21,11 @@ function getOpositeBorW(color) {
 // pick the color between color1 and color2 at the given weight
 // colors are RGB arrays and weitht is 0 to 1
 function pickColorRgb(color1, color2, weight) {
-    var p   = weight;
-    var w   = p * 2 - 1;
-    var w1  = (w/1+1) / 2;
-    var w2  = 1 - w1;
-    var rgb = [Math.round(color1[0] * w1 + color2[0] * w2),
+    let p   = weight;
+    let w   = p * 2 - 1;
+    let w1  = (w/1+1) / 2;
+    let w2  = 1 - w1;
+    let rgb = [Math.round(color1[0] * w1 + color2[0] * w2),
                Math.round(color1[1] * w1 + color2[1] * w2),
                Math.round(color1[2] * w1 + color2[2] * w2)];
     return rgb;
@@ -37,6 +42,27 @@ function pickColorHex(color1, color2, weight) {
    return '#'+resulthex;
 }
 
+
+// create the specified number of HSL colors from main_color
+// main_color must be [H,S,L]
+function getHSLcolorset(main_color, color_number)
+{
+	let colors = [];
+	let space = parseInt(360/color_number);
+
+	for(let i=0; i<color_number; i+=1) {
+		let hue = main_color[0]+(space*i);
+		colors.push('hsl('+hue+', '+main_color[1]+'%, '+main_color[2]+'%)');
+	}
+
+	return colors;
+}
+
+
+
+// -----------------------------------------------------------------------------
+// Numbers
+// -----------------------------------------------------------------------------
 
 // Round a number with the specified number of decimal
 //    round(12.48, 1) = 12.5
@@ -65,13 +91,13 @@ function smartRound(number, precision) {
 //    numberToSi(0.00000012, 10) = 120n
 function numberToSi(number, digits) {
    if (!$.isNumeric(number)) {
-      console.error("numberToSi: " + number + " is not a number");
+      console.warn(`numberToSi: ${number} is not a number`);
       return 0;
    }
 
    if (undefined === digits) digits = 3;
 
-   var prefix = {
+   let prefix = {
       '7'  : 'Y',
       '6'  : 'Z',
       '5'  : 'P',
@@ -98,9 +124,9 @@ function numberToSi(number, digits) {
    //    $4: decimal part of $1
    //    $5: power (e+,e- or undefined)
    //    $6: exponent (xxx for y.yye+xxx)
-   var reg = /^-?(([0-9]+)(\.?)([0-9]*))(e[+-])?([0-9]*)/;
-   var reg_result = reg.exec(number.toString());
-   var i = 0;
+   let reg = /^-?(([0-9]+)(\.?)([0-9]*))(e[+-])?([0-9]*)/;
+   let reg_result = reg.exec(number.toString());
+   let i = 0;
 
    // if the number is a very big float (*10^xxx)
    if (undefined !== reg_result[5] && 'e+' == reg_result[5]) {
@@ -118,7 +144,7 @@ function numberToSi(number, digits) {
          i = parseInt((reg_result[2].length - 1) / 3);
       }
       else {
-         var nbzero = reg_result[4].length - parseInt(reg_result[4]).toString().length;
+         let nbzero = reg_result[4].length - parseInt(reg_result[4]).toString().length;
          i = -(parseInt((nbzero) / 3) + 1);
       }
 
@@ -134,11 +160,16 @@ function numberToSi(number, digits) {
 }
 
 
+
+// -----------------------------------------------------------------------------
+// Download data
+// -----------------------------------------------------------------------------
+
 // Downoad an item passed as a dataURL object
 function downloadDataURL(dataURL, fileName) {
    // Create an invisible <a> and force a download on it
-   var temporaryElement      = document.createElement('a');
-   temporaryElement.style    = "display: none";
+   let temporaryElement      = document.createElement('a');
+   temporaryElement.style    = 'display: none';
    temporaryElement.href     = dataURL;
    temporaryElement.download = fileName;
    document.body.appendChild(temporaryElement);
@@ -150,10 +181,10 @@ function downloadDataURL(dataURL, fileName) {
 
 // Download a data in file
 function downloadData(data, fileName) {
-   var blob = new Blob([data], {
-      type: "application/octet-stream"
+   let blob = new Blob([data], {
+      type: 'application/octet-stream'
    });
-   var dataURL = URL.createObjectURL(blob);
+   let dataURL = URL.createObjectURL(blob);
    downloadDataURL(dataURL, fileName);
 }
 
@@ -164,58 +195,62 @@ function downloadTable(jQuery_table, fileName) {
    // Create a workbook from the table passed as a jQuery element
    // this entire code is from the XLSX documentation...
    const XLSX = require('xlsx');
-   var workbook = XLSX.utils.table_to_book(jQuery_table[0]);
-   var wopts = {
+   let workbook = XLSX.utils.table_to_book(jQuery_table[0]);
+   let wopts = {
       bookType: 'xlsx',
       bookSST:  false,
       type:     'binary'
    };
-   var wbout = XLSX.write(workbook, wopts);
+   let wbout = XLSX.write(workbook, wopts);
 
    function s2ab(s) {
-      var buf  = new ArrayBuffer(s.length);
-      var view = new Uint8Array(buf);
-      for (var i = 0; i != s.length; ++i) view[i] = s.charCodeAt(i) & 0xFF;
+      let buf  = new ArrayBuffer(s.length);
+      let view = new Uint8Array(buf);
+      for (let i = 0; i != s.length; ++i) view[i] = s.charCodeAt(i) & 0xFF;
       return buf;
    }
-   var data = s2ab(wbout);
+   let data = s2ab(wbout);
 
    // download the data into a file
    downloadData(data, fileName);
 }
 
 
-// create the specified number of HSL colors from main_color
-// main_color must be [H,S,L]
-function getHSLcolorset(main_color, color_number)
-{
-	var colors = [];
-	var space = parseInt(360/color_number);
 
-	for(var i=0; i<color_number; i+=1) {
-		var hue = main_color[0]+(space*i);
-		colors.push('hsl('+hue+', '+main_color[1]+'%, '+main_color[2]+'%)');
-	}
-
-	return colors;
-}
+// -----------------------------------------------------------------------------
+// Comparison
+// -----------------------------------------------------------------------------
 
 
-// ask main.js to open a popup (OK/CANCEL by default)
-// data = {type (string), title (string), width (int), height (int), sender (string), content (string), btn_ok (string), btn_cancel (string)}
-// where data.type must be :
-//   undefined (optional) => OK/CANCEL                  => return BOOL => no additional data
-//   list                 => list selection + OK/CANCEL => return INT  => additional data.list (array)
-function popup(popupData) {
-   const {ipcRenderer} = require('electron');
-   return ipcRenderer.sendSync('popup-request', popupData);
+// compare two versions as strings like '1.3.4'
+// return 0 if v1=v2, 1 if v1>v2, -1 if v1<v2
+function compareVersions(v1, v2) {
+   if(v1 === v2) return 0;
+
+   v1 = v1.split('.');
+   v2 = v2.split('.');
+
+   if(
+      v1[0]   >  v2[0] ||
+      (v1[0] === v2[0] && v1[1]  >  v2[1]) ||
+      (v1[0] === v2[0] && v1[1] === v2[1]  && v1[2] > v2[2])) {
+      return 1;
+   }
+   else if(
+      v1[0]   <  v2[0] ||
+      (v1[0] === v2[0] && v1[1]  <  v2[1]) ||
+      (v1[0] === v2[0] && v1[1] === v2[1]  && v1[2] < v2[2])) {
+      return -1;
+   }
+
+   return null;
 }
 
 
 // Compare two arrays by adding a new methode Array
 // Warn if overriding existing method
 if (Array.prototype.equals) {
-   console.warn("Overriding existing Array.prototype.equals. Possible causes: New API defines the method, there's a framework conflict or a double inclusions in this code.");
+   console.warn('Overriding existing Array.prototype.equals. Possible causes: New API defines the method, there\'s a framework conflict or a double inclusions in this code.');
 }
 // attach the .equals method to Array's prototype to call it on any array
 Array.prototype.equals = function(array) {
@@ -229,7 +264,7 @@ Array.prototype.equals = function(array) {
       return false;
    }
 
-   for (var i = 0, l = this.length; i < l; i++) {
+   for (let i = 0, l = this.length; i < l; i++) {
       // Check if we have nested arrays
       if (this[i] instanceof Array && array[i] instanceof Array) {
          // recurse into the nested arrays
@@ -243,9 +278,26 @@ Array.prototype.equals = function(array) {
    return true;
 };
 // Hide method from for-in loops
-Object.defineProperty(Array.prototype, "equals", {
+Object.defineProperty(Array.prototype, 'equals', {
    enumerable: false
 });
+
+
+
+// -----------------------------------------------------------------------------
+// Other
+// -----------------------------------------------------------------------------
+
+
+// ask main.js to open a popup (OK/CANCEL by default)
+// data = {type (string), title (string), width (int), height (int), sender (string), content (string), btn_ok (string), btn_cancel (string)}
+// where data.type must be :
+//   undefined (optional) => OK/CANCEL                  => return BOOL => no additional data
+//   list                 => list selection + OK/CANCEL => return INT  => additional data.list (array)
+function popup(popupData) {
+   // Send an IPC sync msg to main.js: open a popup with the given data
+   return require('electron').ipcRenderer.sendSync('Popup-openReq', popupData);
+}
 
 
 // get a sheet as JSON object from a file
@@ -255,7 +307,7 @@ function getSpreadsheet(path=null, return_path=false, sender='PTree') {
    if (null === path) {
       // open a dialog
       const {dialog} = require('electron').remote;
-      var paths = dialog.showOpenDialog({
+      let paths = dialog.showOpenDialog({
          title: 'Select a spreadsheet',
          filters: [
             {name: 'Spreadsheet', extensions: ['xls','xlsx','csv']},
@@ -282,7 +334,7 @@ function getSpreadsheet(path=null, return_path=false, sender='PTree') {
          width      : 500,
          height     : 135,
          sender     : sender,
-         content    : `Multiple sheets found in this document.<br />Please choose one: <select id="list"></select>`,
+         content    : 'Multiple sheets found in this document.<br />Please choose one: <select id="list"></select>',
          btn_ok     : 'Choose',
          list       : workbook.SheetNames
       };
@@ -299,29 +351,4 @@ function getSpreadsheet(path=null, return_path=false, sender='PTree') {
    // return
    if(return_path) return {sheet:sheet_json, path:path};
    return sheet_json;
-}
-
-
-// compare two versions as strings like "1.3.4"
-// return 0 if v1=v2, 1 if v1>v2, -1 if v1<v2
-function compareVersions(v1, v2) {
-   if(v1 === v2) return 0;
-
-   v1 = v1.split('.');
-   v2 = v2.split('.');
-
-   if(
-      v1[0]   >  v2[0] ||
-      (v1[0] === v2[0] && v1[1]  >  v2[1]) ||
-      (v1[0] === v2[0] && v1[1] === v2[1]  && v1[2] > v2[2])) {
-      return 1;
-   }
-   else if(
-      v1[0]   <  v2[0] ||
-      (v1[0] === v2[0] && v1[1]  <  v2[1]) ||
-      (v1[0] === v2[0] && v1[1] === v2[1]  && v1[2] < v2[2])) {
-      return -1;
-   }
-
-   return null;
 }
