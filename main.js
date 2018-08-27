@@ -14,7 +14,7 @@ const packagejson = require('./package.json');
 // Keep a global reference of the renderers data
 // to avoid JS garbage collector to close them automatically
 let renderers = {
-	PTree          : { browserWindow:null, initData: {fileToOpen: null},                                  },
+	PTree          : { browserWindow:null, initData: {fileToOpen: null},                    },
 	itemEditor     : { browserWindow:null, initData: null, returnData: null, reqEvent: null },
 	partListEditor : { browserWindow:null, initData: null, returnData: null, reqEvent: null },
    stats          : { browserWindow:null, initData: null, returnData: null,                },

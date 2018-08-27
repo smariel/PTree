@@ -17,7 +17,7 @@ $(() => {
 
    // if there is a file to open on startup
    if(null !== initData.fileToOpen) {
-      app.open(opendata.fileToOpen);
+      app.open(initData.fileToOpen);
    }
 
    // bootstrap tooltip initialization
