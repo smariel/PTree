@@ -14,7 +14,7 @@ const packagejson = require('./package.json');
 // Keep a global reference of the renderers data
 // to avoid JS garbage collector to close them automatically
 let renderers = {
-	PTree          : { browserWindow:null, initData: null,                                  },
+	PTree          : { browserWindow:null, initData: {fileToOpen: null},                                  },
 	itemEditor     : { browserWindow:null, initData: null, returnData: null, reqEvent: null },
 	partListEditor : { browserWindow:null, initData: null, returnData: null, reqEvent: null },
    stats          : { browserWindow:null, initData: null, returnData: null,                },
@@ -22,16 +22,17 @@ let renderers = {
    about          : { browserWindow:null,                                                  },
 };
 
+// debug global var
+let debug = false;
 
-// parsing arguments using node.js process
+
+// parsing arguments using node.js process module
 // ignore the first argument which is the app location
-global.debug = false;
-renderers.PTree.initData = {fileToOpen: null};
 for (let i=1; i<process.argv.length; i++) {
    let arg = process.argv[i];
    // Debug mode
    if('--debug' == arg) {
-      global.debug = true;
+      debug = true;
       break;
    }
    // Open files passed as argument or, on Windows, files "open with" PTree
@@ -82,7 +83,7 @@ app.on('ready', () => {
 	renderers.PTree.browserWindow.loadURL(`file://${__dirname}/html/PTree.html`);
 
    // Open the dev tools...
-	if (global.debug) renderers.PTree.browserWindow.webContents.openDevTools();
+	if (debug) renderers.PTree.browserWindow.webContents.openDevTools();
 
       // Emitted just before closing the window
    renderers.PTree.browserWindow.on('close', (evt) => {
@@ -135,7 +136,7 @@ app.on('ready', () => {
                      });
 
                   	// Open the dev tools...
-                  	if (global.debug) renderers.about.browserWindow.webContents.openDevTools();
+                  	if (debug) renderers.about.browserWindow.webContents.openDevTools();
 
                   	// Load the *.html of the window.
                   	renderers.about.browserWindow.loadURL(`file://${__dirname}/html/about.html`);
@@ -167,7 +168,7 @@ app.on('ready', () => {
             */
 			]
 		},
-      (global.debug) ? {
+      (debug) ? {
 		label: 'Debug',
 			submenu: [
 				{
@@ -240,7 +241,7 @@ ipcMain.on('Item-editReq', (evt, itemStr, itemType) => {
 	});
 
 	// Open the dev tools...
-	if (global.debug) renderers.itemEditor.browserWindow.webContents.openDevTools();
+	if (debug) renderers.itemEditor.browserWindow.webContents.openDevTools();
 
 	// Load the *.html of the window.
 	renderers.itemEditor.browserWindow.loadURL(`file://${__dirname}/html/itemEditor.html`);
@@ -291,7 +292,7 @@ ipcMain.on('PartList-editReq', (evt, treeStr, partListStr) => {
 	});
 
 	// Open the dev tools...
-	if (global.debug) renderers.partListEditor.browserWindow.webContents.openDevTools();
+	if (debug) renderers.partListEditor.browserWindow.webContents.openDevTools();
 
 	// Load the *.html of the window.
 	renderers.partListEditor.browserWindow.loadURL(`file://${__dirname}/html/partListEditor.html`);
@@ -346,7 +347,7 @@ ipcMain.on('Stats-openReq', (evt, initData) => {
    }
 
 	// Open the dev tools...
-	if (global.debug) renderers.stats.browserWindow.webContents.openDevTools();
+	if (debug) renderers.stats.browserWindow.webContents.openDevTools();
 
 	// Load the *.html of the window.
 	renderers.stats.browserWindow.loadURL(`file://${__dirname}/html/stats.html`);
@@ -409,7 +410,7 @@ ipcMain.on('Popup-openReq', (evt, popupData) => {
    });
 
 	// Open the dev tools...
-	//if (global.debug) renderers.popup.browserWindow.webContents.openDevTools();
+	//if (debug) renderers.popup.browserWindow.webContents.openDevTools();
 
 	// Load the *.html of the window.
 	renderers.popup.browserWindow.loadURL(`file://${__dirname}/html/popup.html`);

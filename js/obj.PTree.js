@@ -25,13 +25,11 @@ let PTree = function(canvas_selector) {
    this.canvas.refresh();
    this.updateClearButtons();
 
+   // set the window title
    window.document.title = 'Untitled';
 
-   // if not in debug mode
-   if(!require('electron').remote.getGlobal('debug')) {
-      // check for update
-      this.checkUpdate();
-   }
+   // check for update
+   this.checkUpdate();
 };
 
 
@@ -397,8 +395,9 @@ PTree.prototype.checkUpdate = function() {
       const packagejson = require('../package.json');
       let this_version = packagejson.version;
 
-      // if this version is not equal to the latest on github
-      if(this_version != latest_version) {
+      // if this version is older than the latest on github
+      let version_comp = compareVersions(this_version,latest_version);
+      if(version_comp < 0) {
          // open a popup and propose the user to download
          let popupData = {
             title      : 'New version available',
@@ -417,6 +416,10 @@ PTree.prototype.checkUpdate = function() {
             const {shell} = require('electron');
             shell.openExternal(packagejson.homepage);
          }
+      }
+      // else if this version is newer than the latest on github
+      else if(version_comp > 0) {
+         console.warn(`Running PTree v${this_version} which is newer than the last official v${latest_version} on GitHub`);
       }
    });
 };
