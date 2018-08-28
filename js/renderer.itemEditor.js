@@ -19,6 +19,6 @@ item.fromString(initData.itemStr);
 
 // When jQuery is ready
 $(() => {
-   // init the ItemEditor
-   itemEditor = new ItemEditor(item);
+  // init the ItemEditor
+  itemEditor = new ItemEditor(item);
 });

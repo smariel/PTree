@@ -15,14 +15,14 @@ let stats = {};
 
 // When jQuery is ready
 $(() => {
-   // Init the main Stats object
-   stats = new Stats();
-   stats.import(initData);
-   stats.update();
+  // Init the main Stats object
+  stats = new Stats();
+  stats.import(initData);
+  stats.update();
 
-   // enable all tooltips
-   $('[data-toggle="tooltip"]').tooltip({
-      delay: {show: 1000, hide: 0},
-      trigger: 'hover'
-   });
+  // enable all tooltips
+  $('[data-toggle="tooltip"]').tooltip({
+    delay: {show: 1000, hide: 0},
+    trigger: 'hover'
+  });
 });

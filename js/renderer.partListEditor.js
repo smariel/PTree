@@ -13,37 +13,37 @@ let partListEditor = {};
 
 // When jQuery is ready
 $(() => {
-   // Send an IPC sync msg to main.js: request init data
-   const initData = require('electron').ipcRenderer.sendSync('PartListEditor-initDataReq');
-   // Reconstruct the partList
-   let partList = new PartList();
-   partList.fromString(initData.partListStr);
-   // Reconstruct the tree
-   let tree = new Tree();
-   tree.fromString(initData.treeStr);
+  // Send an IPC sync msg to main.js: request init data
+  const initData = require('electron').ipcRenderer.sendSync('PartListEditor-initDataReq');
+  // Reconstruct the partList
+  let partList = new PartList();
+  partList.fromString(initData.partListStr);
+  // Reconstruct the tree
+  let tree = new Tree();
+  tree.fromString(initData.treeStr);
 
-   // init the PartListEditor
-   partListEditor = new PartListEditor(partList, tree);
+  // init the PartListEditor
+  partListEditor = new PartListEditor(partList, tree);
 
-   // complete the header of the table withe the list of loads
-   partListEditor.tree.forEachLoad((load) => {
-      if(load.isInPartlist()) {
-         let th1 =  `<th colspan="2" class="th_current">${load.characs.name}</th>`;
-         $('.tr_top > .th_power:last-child').before(th1);
+  // complete the header of the table withe the list of loads
+  partListEditor.tree.forEachLoad((load) => {
+    if(load.isInPartlist()) {
+      let th1 =  `<th colspan="2" class="th_current">${load.characs.name}</th>`;
+      $('.tr_top > .th_power:last-child').before(th1);
 
-         let th2 = '<th class="th_current th_typ">I<sub>TYP</sub></th>';
-         let th3 = '<th class="th_current th_max">I<sub>MAX</sub></th>';
+      let th2 = '<th class="th_current th_typ">I<sub>TYP</sub></th>';
+      let th3 = '<th class="th_current th_max">I<sub>MAX</sub></th>';
 
-         $('.tr_bottom > .th_charac:nth-child(5)').after(th2, th3);
-      }
-   });
+      $('.tr_bottom > .th_charac:nth-child(5)').after(th2, th3);
+    }
+  });
 
-   // refresh the table to fill all data
-   partListEditor.refresh();
+  // refresh the table to fill all data
+  partListEditor.refresh();
 
-   // enable all tooltips
-   $('[data-toggle="tooltip"]').tooltip({
-      delay: {show: 1000, hide: 0},
-      trigger: 'hover'
-   });
+  // enable all tooltips
+  $('[data-toggle="tooltip"]').tooltip({
+    delay: {show: 1000, hide: 0},
+    trigger: 'hover'
+  });
 });

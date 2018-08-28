@@ -11,64 +11,64 @@ const popupData = ipcRenderer.sendSync('Popup-initDataReq');
 
 // function to close the popup and returning the result
 let close = (returnData) => {
-   // Send an IPC async msg to main.js: return the popup data
-   ipcRenderer.send('Popup-returnData', returnData);
-   // close the window
-   window.close();
+  // Send an IPC async msg to main.js: return the popup data
+  ipcRenderer.send('Popup-returnData', returnData);
+  // close the window
+  window.close();
 };
 
 // When jQuery is ready
 $(() => {
-   // display the data
-   $('.content').html(popupData.content);
+  // display the data
+  $('.content').html(popupData.content);
 
-   // popup type = list
-   if(undefined !== popupData.type && 'list' === popupData.type) {
-      $('.mybtn-cancel').remove();
-      $('.mybtn-ok').html(popupData.btn_ok);
+  // popup type = list
+  if(undefined !== popupData.type && 'list' === popupData.type) {
+    $('.mybtn-cancel').remove();
+    $('.mybtn-ok').html(popupData.btn_ok);
 
-      for(let item of popupData.list) {
-         $('#list').append(`<option>${item}</option>\n`);
-      }
-   }
-   // popup type = OK/Cancel
-   else {
-      if(null === popupData.btn_ok)     $('.mybtn-ok').remove();
-      else                              $('.mybtn-ok').html(popupData.btn_ok);
+    for(let item of popupData.list) {
+      $('#list').append(`<option>${item}</option>\n`);
+    }
+  }
+  // popup type = OK/Cancel
+  else {
+    if(null === popupData.btn_ok)     $('.mybtn-ok').remove();
+    else                              $('.mybtn-ok').html(popupData.btn_ok);
 
-      if(null === popupData.btn_cancel) $('.mybtn-cancel').remove();
-      else                              $('.mybtn-cancel').html(popupData.btn_cancel);
-   }
+    if(null === popupData.btn_cancel) $('.mybtn-cancel').remove();
+    else                              $('.mybtn-cancel').html(popupData.btn_cancel);
+  }
 
-   // close with OK
-   $('.mybtn-ok').click(() => {
+  // close with OK
+  $('.mybtn-ok').click(() => {
+    if(undefined !== popupData.type && 'list' === popupData.type) {
+      close($('#list option:selected').text());
+    }
+    else {
+      close (true);
+    }
+  });
+
+  // close with CANCEL
+  $('.mybtn-cancel').click(() => {
+    close (false);
+  });
+
+  // Trigger key press
+  $(document).keydown((event) => {
+    // ESCAPE
+    if (27 == event.which) {
+      close(false);
+    }
+    // ENTER
+    else if (13 == event.which) {
       if(undefined !== popupData.type && 'list' === popupData.type) {
-         close($('#list option:selected').text());
+        close($('#list option:selected').text());
       }
       else {
-         close (true);
+        close (true);
       }
-   });
-
-   // close with CANCEL
-   $('.mybtn-cancel').click(() => {
-      close (false);
-   });
-
-   // Trigger key press
-   $(document).keydown((event) => {
-      // ESCAPE
-      if (27 == event.which) {
-         close(false);
-      }
-      // ENTER
-      else if (13 == event.which) {
-         if(undefined !== popupData.type && 'list' === popupData.type) {
-            close($('#list option:selected').text());
-         }
-         else {
-            close (true);
-         }
-      }
-   });
+    }
+  });
 });
