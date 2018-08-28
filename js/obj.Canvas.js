@@ -1,5 +1,5 @@
 // -----------------------------------------------------------------------------
-// Canvas constructors
+// Canvas Class
 //    Describes the canvas item (using Fabric.js) associated with a Tree Item
 //    Provides method to manipulate the Canvas with the Tree data
 //    Events on the Fabric item are also listen in the constructor

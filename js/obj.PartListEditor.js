@@ -1,5 +1,5 @@
 // -----------------------------------------------------------------------------
-// PartListEditor constructor
+// PartListEditor Class
 //    A PartListEditor contains a partlist associated with a tree
 //    It provides methods to manipulate those parts within a <table> element
 // -----------------------------------------------------------------------------

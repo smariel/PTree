@@ -1,3 +1,7 @@
+// -----------------------------------------------------------------------------
+// Popup renderer script
+// -----------------------------------------------------------------------------
+
 // Framworks and libraries
 window.$ = window.jQuery = require('jquery');
 const {ipcRenderer} = require('electron');

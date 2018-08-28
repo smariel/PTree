@@ -1,5 +1,5 @@
 // -----------------------------------------------------------------------------
-// PartList constructor
+// PartList Class
 //    A PartList object contains all the parts, orders and classifications
 // -----------------------------------------------------------------------------
 

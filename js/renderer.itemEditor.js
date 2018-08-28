@@ -1,3 +1,7 @@
+// -----------------------------------------------------------------------------
+// ItemEditor renderer script
+// -----------------------------------------------------------------------------
+
 // Framworks and libraries
 window.$ = window.jQuery = require('jquery');
 require('bootstrap');

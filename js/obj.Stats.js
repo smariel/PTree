@@ -1,5 +1,5 @@
 // -----------------------------------------------------------------------------
-// Stats constructor
+// Stats Class
 //    A Stats object contains a partlist and a tree
 //    It provides methods to manipulate a Canvas with those datas
 // -----------------------------------------------------------------------------

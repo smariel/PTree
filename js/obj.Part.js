@@ -1,5 +1,5 @@
 // -----------------------------------------------------------------------------
-// Part constructor
+// Part Class
 //    A part object contains the description of an electronic component,
 //    its classification and its consumption on multiple loads of the tree
 // -----------------------------------------------------------------------------

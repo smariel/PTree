@@ -1,5 +1,5 @@
 // -----------------------------------------------------------------------------
-// PTree constructor
+// PTree Class
 //    A PTree object represent the whole PowerTree application
 //    It contains every methods, data, UI and sub-objects
 //    It only needs a selector on the Canvas HTML item

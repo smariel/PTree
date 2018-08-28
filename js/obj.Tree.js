@@ -1,5 +1,5 @@
 // -----------------------------------------------------------------------------
-// Tree constructor
+// Tree Class
 //    Tree object contains a simple array of items
 //    Its prototype provides methods to manipulate this list
 // -----------------------------------------------------------------------------

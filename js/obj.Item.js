@@ -1,5 +1,5 @@
 // -----------------------------------------------------------------------------
-// Item constructor
+// Item Class
 //    An Item object contains the non-graphical data of a source, load or root
 //    and their relations with other items
 //    Its prototype provides methods dedicated to manipulate the item
