@@ -1,82 +1,80 @@
 <!DOCTYPE html>
 <html>
-   <head>
-      <meta charset="UTF-8">
-      <meta http-equiv="Content-Security-Policy" content="default-src 'self'">
-      <title>PTree</title>
+  <head>
+    <meta charset="UTF-8">
+    <meta http-equiv="Content-Security-Policy" content="default-src 'self'">
+    <title>PTree</title>
 
-      <!-- CSS -->
-      <link rel="stylesheet" href="../node_modules/bootstrap/dist/css/bootstrap.min.css">
-      <link rel="stylesheet" href="../node_modules/font-awesome/css/font-awesome.min.css">
-      <link rel="stylesheet" href="../css/partListEditor.css">
-   </head>
+    <!-- CSS -->
+    <link rel="stylesheet" href="../node_modules/bootstrap/dist/css/bootstrap.min.css">
+    <link rel="stylesheet" href="../node_modules/font-awesome/css/font-awesome.min.css">
+    <link rel="stylesheet" href="../css/partListEditor.css">
 
-   <body>
-      <table class="partTable">
-         <thead>
-            <tr class="tr_top">
-               <th class="th_charac" colspan="5">Part Description</th>
-               <th class="th_power" colspan="2">Total Power</th>
-            </tr>
-            <tr class="tr_bottom">
-               <th class="th_charac">#</th>
-               <th class="th_charac">Name</th>
-               <th class="th_charac">Part Number</th>
-               <th class="th_charac">Function</th>
-               <th class="th_charac">Tags</th>
-               <th class="th_power th_typ">P<sub>TYP</sub></th>
-               <th class="th_power th_max">P<sub>MAX</sub></th>
-            </tr>
-         </thead>
-         <tbody>
+    <!-- application JS: functions & constructors -->
+    <script async src="../js/functions.js"></script>
+    <script async src="../js/obj.Item.js"></script>
+    <script async src="../js/obj.Tree.js"></script>
+    <script async src="../js/obj.Part.js"></script>
+    <script async src="../js/obj.PartList.js"></script>
+    <script async src="../js/obj.PartListEditor.js"></script>
 
-         </tbody>
-      </table>
-      <div class="emptyzone">
+    <!-- application JS: this window -->
+    <script async src="../js/renderer.partListEditor.js"></script>
+  </head>
+
+  <body>
+    <table class="partTable">
+      <thead>
+        <tr class="tr_top">
+          <th class="th_charac" colspan="5">Part Description</th>
+          <th class="th_power" colspan="2">Total Power</th>
+        </tr>
+        <tr class="tr_bottom">
+          <th class="th_charac">#</th>
+          <th class="th_charac">Name</th>
+          <th class="th_charac">Part Number</th>
+          <th class="th_charac">Function</th>
+          <th class="th_charac">Tags</th>
+          <th class="th_power th_typ">P<sub>TYP</sub></th>
+          <th class="th_power th_max">P<sub>MAX</sub></th>
+        </tr>
+      </thead>
+      <tbody>
+
+      </tbody>
+    </table>
+    <div class="emptyzone">
+    </div>
+
+    <div class="addPart">
+      <button><span class="fa fa-lg fa-plus"></span></button>
+    </div>
+    <div class="removePart">
+      <button><span class="fa fa-lg fa-trash"></span></button>
+    </div>
+
+    <div class="undo-redo">
+      <div class="undo">
+        <button><span class="fa fa-lg fa-undo"></span></button>
       </div>
-
-      <div class="addPart">
-         <button><span class="fa fa-lg fa-plus"></span></button>
+      <div class="redo">
+        <button><span class="fa fa-lg fa-repeat"></span></button>
       </div>
-      <div class="removePart">
-         <button><span class="fa fa-lg fa-trash"></span></button>
+    </div>
+
+    <div class="more">
+      <div class="exportTable">
+        <button data-toggle="tooltip" data-placement="top" title="Export table"><span class="fa fa-lg fa-file-excel-o"></span></button>
       </div>
-
-      <div class="undo-redo">
-         <div class="undo">
-            <button><span class="fa fa-lg fa-undo"></span></button>
-         </div>
-         <div class="redo">
-            <button><span class="fa fa-lg fa-repeat"></span></button>
-         </div>
+      <div class="exportTemplate">
+        <button data-toggle="tooltip" data-placement="top" title="Export empty template"><span class="fa fa-lg fa-file-o"></span></button>
       </div>
-
-      <div class="more">
-         <div class="exportTable">
-            <button data-toggle="tooltip" data-placement="top" title="Export table"><span class="fa fa-lg fa-file-excel-o"></span></button>
-         </div>
-         <div class="exportTemplate">
-            <button data-toggle="tooltip" data-placement="top" title="Export empty template"><span class="fa fa-lg fa-file-o"></span></button>
-         </div>
-         <div class="importTable">
-            <button data-toggle="tooltip" data-placement="top" title="Import table"><span class="fa fa-lg fa-folder-open-o"></span></button>
-         </div>
-         <div class="showMore">
-            <button><span class="fa fa-lg fa-ellipsis-h"></span></button>
-         </div>
+      <div class="importTable">
+        <button data-toggle="tooltip" data-placement="top" title="Import table"><span class="fa fa-lg fa-folder-open-o"></span></button>
       </div>
-   </body>
-
-
-   <!-- application JS: functions & constructors -->
-   <script src="../js/functions.js"></script>
-   <script src="../js/obj.Item.js"></script>
-   <script src="../js/obj.Tree.js"></script>
-   <script src="../js/obj.Part.js"></script>
-   <script src="../js/obj.PartList.js"></script>
-   <script src="../js/obj.PartListEditor.js"></script>
-
-
-   <!-- application JS: this window -->
-   <script src="../js/renderer.partListEditor.js"></script>
+      <div class="showMore">
+        <button><span class="fa fa-lg fa-ellipsis-h"></span></button>
+      </div>
+    </div>
+  </body>
 </html>

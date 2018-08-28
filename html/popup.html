@@ -1,26 +1,22 @@
 <!DOCTYPE html>
 <html>
+  <head>
+    <meta charset="UTF-8">
+    <meta http-equiv="Content-Security-Policy" content="default-src 'self'">
+    <title>Popup</title>
 
-   <head>
-      <meta charset="UTF-8">
-      <meta http-equiv="Content-Security-Policy" content="default-src 'self'">
-      <title>Popup</title>
+    <!-- CSS -->
+    <link rel="stylesheet" href="../node_modules/bootstrap/dist/css/bootstrap.min.css">
+    <link rel="stylesheet" href="../css/popup.css">
 
-      <!-- CSS -->
-      <link rel="stylesheet" href="../node_modules/bootstrap/dist/css/bootstrap.min.css">
-      <link rel="stylesheet" href="../css/popup.css">
-   </head>
-
-   <body class="container-fluid">
-      <p class="content">Content</p>
-      <menu>
-         <button class="mybtn mybtn-cancel">Cancel</button>
-         <button class="mybtn mybtn-ok">OK</button>
-      </menu>
-   </body>
-
-
-   <!-- application JS: this window -->
-   <script src="../js/renderer.popup.js"></script>
-
+    <!-- JS -->
+    <script async src="../js/renderer.popup.js"></script>
+  </head>
+  <body class="container-fluid">
+    <p class="content">Content</p>
+    <menu>
+      <button class="mybtn mybtn-cancel">Cancel</button>
+      <button class="mybtn mybtn-ok">OK</button>
+    </menu>
+  </body>
 </html>

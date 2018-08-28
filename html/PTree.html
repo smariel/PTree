@@ -1,297 +1,290 @@
 <!DOCTYPE html>
 <html>
+  <head>
+    <meta charset="UTF-8">
+    <meta http-equiv="Content-Security-Policy" content="default-src 'self'; connect-src https://api.github.com">
+    <title>PTree</title>
 
-   <head>
-      <meta charset="UTF-8">
-      <meta http-equiv="Content-Security-Policy" content="default-src 'self'; connect-src https://api.github.com">
-      <title>PTree</title>
+    <!-- CSS -->
+    <link rel="stylesheet" href="../node_modules/bootstrap/dist/css/bootstrap.min.css">
+    <link rel="stylesheet" href="../node_modules/font-awesome/css/font-awesome.min.css">
+    <link rel="stylesheet" href="../css/PTree.css">
 
-      <!-- CSS -->
-      <link rel="stylesheet" href="../node_modules/bootstrap/dist/css/bootstrap.min.css">
-      <link rel="stylesheet" href="../node_modules/font-awesome/css/font-awesome.min.css">
-      <link rel="stylesheet" href="../css/PTree.css">
-   </head>
-
-   <body>
-      <!-- Top Menu -->
-      <nav id="top_menu" class="navbar">
-         <ul id="windows_control" class="nav navbar-nav navbar-left">
-            <li id="bt_partTable"     ><a><span class="fa fa-lg fa-microchip"></span> Part list</a></li>
-            <li id="bt_stats"         ><a><span class="fa fa-lg fa-pie-chart"></span> Stats</a></li>
-         </ul>
-         <ul id="canvas_control" class="nav navbar-nav navbar-left">
-            <li id="bt_new"           ><a data-toggle="tooltip" data-placement="bottom" title="New project"                                                                       ><span class="fa fa-lg fa-file"        ></span> New</a></li>
-            <li id="bt_clear"         ><a data-toggle="tooltip" data-placement="bottom" title="Clear drawing"                                                                  ><span class="fa fa-lg fa-trash-o"     ></span> Clear</a></li>
-            <li id="bt_addrootsource" ><a data-toggle="tooltip" data-placement="bottom" title="Add&nbsp;a&nbsp;new&nbsp;voltage source&nbsp;or&nbsp;regulator"                    ><span class="fa fa-lg fa-plus"        ></span> Source</a></li>
-         </ul>
-         <ul id="item_control" class="nav navbar-nav navbar-left">
-            <li id="bt_remove"        ><a data-toggle="tooltip" data-placement="bottom" title="Delete the selected&nbsp;item"                                                      ><span class="fa fa-lg fa-times"       ></span> Remove</a></li>
-            <li id="bt_edit"          ><a data-toggle="tooltip" data-placement="bottom" title="Modify the selected&nbsp;item"                                                      ><span class="fa fa-lg fa-pencil"      ></span> Edit</a></li>
-            <li id="bt_addsource"     ><a data-toggle="tooltip" data-placement="bottom" title="Add&nbsp;a&nbsp;voltage&nbsp;regulator downstream&nbsp;the&nbsp;selected&nbsp;item" ><span class="fa fa-lg fa-plus-square" ></span> Source</a></li>
-            <li id="bt_addload"       ><a data-toggle="tooltip" data-placement="bottom" title="Add&nbsp;a&nbsp;new&nbsp;plane downstream&nbsp;the&nbsp;selected&nbsp;item"         ><span class="fa fa-lg fa-plus-circle" ></span> Load</a></li>
-            <li id="bt_up"            ><a data-toggle="tooltip" data-placement="bottom" title="Move&nbsp;up the&nbsp;selected&nbsp;item"                                           ><span class="fa fa-lg fa-arrow-up"    ></span> Up</a></li>
-            <li id="bt_down"          ><a data-toggle="tooltip" data-placement="bottom" title="Move&nbsp;down the&nbsp;selected&nbsp;item"                                         ><span class="fa fa-lg fa-arrow-down"  ></span> Down</a></li>
-         </ul>
-         <ul id="global_control" class="nav navbar-nav navbar-right">
-            <li id="bt_undo"          ><a data-toggle="tooltip" data-placement="bottom" title="Undo"                                                                               ><span class="fa fa-lg fa-undo"        ></span></a></li>
-            <li id="bt_redo"          ><a data-toggle="tooltip" data-placement="bottom" title="Redo"                                                                               ><span class="fa fa-lg fa-repeat"      ></span></a></li>
-            <li id="bt_open"          ><a data-toggle="tooltip" data-placement="bottom" title="Open"                                                                               ><span class="fa fa-lg fa-folder-open" ></span></a></li>
-            <li id="bt_save"          ><a data-toggle="tooltip" data-placement="bottom" title="Save"                                                                               ><span class="fa fa-lg fa-floppy-o"    ></span></a></li>
-            <li id="bt_saveas"        ><a data-toggle="tooltip" data-placement="bottom" title="Save&nbsp;As..."                                                                    ><span class="fa fa-lg fa-files-o"     ></span></a></li>
-            <li id="bt_export_img"    ><a data-toggle="tooltip" data-placement="bottom" title="Export&nbsp;image"                                                                  ><span class="fa fa-lg fa-file-image-o"></span></a></li>
-            <li id="bt_config"        ><a data-toggle="tooltip" data-placement="bottom" title="Options"                                                                            ><span class="fa fa-lg fa-sliders"     ></span></a></li>
-         </ul>
-      </nav>
-
-
-      <!-- Section1 : Tree -->
-      <section>
-         <canvas id="canvas" class="canvas" width="1000" height="600"></canvas>
-      </section>
+    <!-- JS -->
+    <script async src="../js/functions.js"     ></script>
+    <script async src="../js/obj.Item.js"      ></script>
+    <script async src="../js/obj.Tree.js"      ></script>
+    <script async src="../js/obj.Canvas.js"    ></script>
+    <script async src="../js/obj.Part.js"      ></script>
+    <script async src="../js/obj.PartList.js"  ></script>
+    <script async src="../js/obj.PTree.js"     ></script>
+    <script async src="../js/renderer.PTree.js"></script>
+  </head>
+  <body>
+    <!-- Top Menu -->
+    <nav id="top_menu" class="navbar">
+      <ul id="windows_control" class="nav navbar-nav navbar-left">
+        <li id="bt_partTable"     ><a><span class="fa fa-lg fa-microchip"></span> Part list</a></li>
+        <li id="bt_stats"         ><a><span class="fa fa-lg fa-pie-chart"></span> Stats</a></li>
+      </ul>
+      <ul id="canvas_control" class="nav navbar-nav navbar-left">
+        <li id="bt_new"           ><a data-toggle="tooltip" data-placement="bottom" title="New project"                                                                        ><span class="fa fa-lg fa-file"        ></span> New</a></li>
+        <li id="bt_clear"         ><a data-toggle="tooltip" data-placement="bottom" title="Clear drawing"                                                                      ><span class="fa fa-lg fa-trash-o"     ></span> Clear</a></li>
+        <li id="bt_addrootsource" ><a data-toggle="tooltip" data-placement="bottom" title="Add&nbsp;a&nbsp;new&nbsp;voltage source&nbsp;or&nbsp;regulator"                     ><span class="fa fa-lg fa-plus"        ></span> Source</a></li>
+      </ul>
+      <ul id="item_control" class="nav navbar-nav navbar-left">
+        <li id="bt_remove"        ><a data-toggle="tooltip" data-placement="bottom" title="Delete the selected&nbsp;item"                                                      ><span class="fa fa-lg fa-times"       ></span> Remove</a></li>
+        <li id="bt_edit"          ><a data-toggle="tooltip" data-placement="bottom" title="Modify the selected&nbsp;item"                                                      ><span class="fa fa-lg fa-pencil"      ></span> Edit</a></li>
+        <li id="bt_addsource"     ><a data-toggle="tooltip" data-placement="bottom" title="Add&nbsp;a&nbsp;voltage&nbsp;regulator downstream&nbsp;the&nbsp;selected&nbsp;item" ><span class="fa fa-lg fa-plus-square" ></span> Source</a></li>
+        <li id="bt_addload"       ><a data-toggle="tooltip" data-placement="bottom" title="Add&nbsp;a&nbsp;new&nbsp;plane downstream&nbsp;the&nbsp;selected&nbsp;item"         ><span class="fa fa-lg fa-plus-circle" ></span> Load</a></li>
+        <li id="bt_up"            ><a data-toggle="tooltip" data-placement="bottom" title="Move&nbsp;up the&nbsp;selected&nbsp;item"                                           ><span class="fa fa-lg fa-arrow-up"    ></span> Up</a></li>
+        <li id="bt_down"          ><a data-toggle="tooltip" data-placement="bottom" title="Move&nbsp;down the&nbsp;selected&nbsp;item"                                         ><span class="fa fa-lg fa-arrow-down"  ></span> Down</a></li>
+      </ul>
+      <ul id="global_control" class="nav navbar-nav navbar-right">
+        <li id="bt_undo"          ><a data-toggle="tooltip" data-placement="bottom" title="Undo"                                                                               ><span class="fa fa-lg fa-undo"        ></span></a></li>
+        <li id="bt_redo"          ><a data-toggle="tooltip" data-placement="bottom" title="Redo"                                                                               ><span class="fa fa-lg fa-repeat"      ></span></a></li>
+        <li id="bt_open"          ><a data-toggle="tooltip" data-placement="bottom" title="Open"                                                                               ><span class="fa fa-lg fa-folder-open" ></span></a></li>
+        <li id="bt_save"          ><a data-toggle="tooltip" data-placement="bottom" title="Save"                                                                               ><span class="fa fa-lg fa-floppy-o"    ></span></a></li>
+        <li id="bt_saveas"        ><a data-toggle="tooltip" data-placement="bottom" title="Save&nbsp;As..."                                                                    ><span class="fa fa-lg fa-files-o"     ></span></a></li>
+        <li id="bt_export_img"    ><a data-toggle="tooltip" data-placement="bottom" title="Export&nbsp;image"                                                                  ><span class="fa fa-lg fa-file-image-o"></span></a></li>
+        <li id="bt_config"        ><a data-toggle="tooltip" data-placement="bottom" title="Options"                                                                            ><span class="fa fa-lg fa-sliders"     ></span></a></li>
+      </ul>
+    </nav>
 
 
-      <!-- Section2 : Total power -->
-      <section id="totalpower">
-         <table>
+    <!-- Section1 : Tree -->
+    <section>
+      <canvas id="canvas" class="canvas" width="1000" height="600"></canvas>
+    </section>
+
+
+    <!-- Section2 : Total power -->
+    <section id="totalpower">
+      <table>
+        <thead>
+          <tr>
+            <th class="totalcell"></th>
+            <th class="totalcell">Typ</th>
+            <th class="totalcell">Max</th>
+            <th class="totalcell">Unit</th>
+          </tr>
+        </thead>
+        <tr>
+          <td class="totalcell">Total Power</td>
+          <td class="totalcell totalpower typ">0</td>
+          <td class="totalcell totalpower max">0</td>
+          <td class="totalcell">W</td>
+        </tr>
+        <tr>
+          <td class="totalcell">Efficiency</td>
+          <td class="totalcell totaleff typ">100</td>
+          <td class="totalcell totaleff max">100</td>
+          <td class="totalcell">%</td>
+        </tr>
+      </table>
+    </section>
+
+
+    <!-- Div for info around items -->
+    <aside>
+      <div id="item_info_left" class="item_info">
+        <div class="item_info_data">
+          <table>
             <thead>
-               <tr>
-                  <th class="totalcell"></th>
-                  <th class="totalcell">Typ</th>
-                  <th class="totalcell">Max</th>
-                  <th class="totalcell">Unit</th>
-               </tr>
+              <tr>
+                <th colspan="3">Input</th>
+              </tr>
+              <tr>
+                <th>typ</th>
+                <th>max</th>
+              </tr>
             </thead>
-            <tr>
-               <td class="totalcell">Total Power</td>
-               <td class="totalcell totalpower typ">0</td>
-               <td class="totalcell totalpower max">0</td>
-               <td class="totalcell">W</td>
-            </tr>
-            <tr>
-               <td class="totalcell">Efficiency</td>
-               <td class="totalcell totaleff typ">100</td>
-               <td class="totalcell totaleff max">100</td>
-               <td class="totalcell">%</td>
-            </tr>
-         </table>
-      </section>
-
-
-      <!-- Div for info around items -->
-      <aside>
-         <div id="item_info_left" class="item_info">
-            <div class="item_info_data">
-               <table>
-                  <thead>
-                     <tr>
-                        <th colspan="3">Input</th>
-                     </tr>
-                     <tr>
-                        <th>typ</th>
-                        <th>max</th>
-                     </tr>
-                  </thead>
-                  <tbody>
-                     <tr>
-                        <td id="vin_typ"></td>
-                        <td id="vin_max"></td>
-                     </tr>
-                     <tr>
-                        <td id="iin_typ"></td>
-                        <td id="iin_max"></td>
-                     </tr>
-                     <tr>
-                        <td id="pin_typ"></td>
-                        <td id="pin_max"></td>
-                     </tr>
-                  </tbody>
-               </table>
-            </div>
-            <div class="item_info_border"></div>
-         </div>
-         <div id="item_info_right" class="item_info">
-            <div class="item_info_data">
-               <table>
-                  <thead>
-                     <tr>
-                        <th colspan="3">Output</th>
-                     </tr>
-                     <tr>
-                        <th>typ</th>
-                        <th>max</th>
-                     </tr>
-                  </thead>
-                  <tbody>
-                     <tr>
-                        <td id="vout_typ"></td>
-                        <td id="vout_max"></td>
-                     </tr>
-                     <tr>
-                        <td id="iout_typ"></td>
-                        <td id="iout_max"></td>
-                     </tr>
-                     <tr>
-                        <td id="pout_typ"></td>
-                        <td id="pout_max"></td>
-                     </tr>
-                  </tbody>
-               </table>
-            </div>
-            <div class="item_info_border"></div>
-         </div>
-         <div id="item_info_center" class="item_info">
-            <div class="item_info_data">
-               <table>
-                  <thead>
-                     <tr>
-                        <th colspan="3">Loss</th>
-                     </tr>
-                     <tr>
-                        <th>typ</th>
-                        <th>max</th>
-                     </tr>
-                  </thead>
-                  <tbody>
-                     <tr>
-                        <td id="loss_typ"></td>
-                        <td id="loss_max"></td>
-                     </tr>
-                  </tbody>
-               </table>
-            </div>
-            <div class="item_info_border"></div>
-         </div>
-      </aside>
-
-      <!-- Part table for selected load -->
-      <aside id="part_table">
-         <table>
+            <tbody>
+              <tr>
+                <td id="vin_typ"></td>
+                <td id="vin_max"></td>
+              </tr>
+              <tr>
+                <td id="iin_typ"></td>
+                <td id="iin_max"></td>
+              </tr>
+              <tr>
+                <td id="pin_typ"></td>
+                <td id="pin_max"></td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+        <div class="item_info_border"></div>
+      </div>
+      <div id="item_info_right" class="item_info">
+        <div class="item_info_data">
+          <table>
             <thead>
-               <tr>
-                  <th class="part_title part_name">Part</th>
-                  <th class="part_title part_i part_ityp">I<sub>TYP</sub></th>
-                  <th class="part_title part_i part_imax">I<sub>MAX</sub></th>
-               </tr>
+              <tr>
+                <th colspan="3">Output</th>
+              </tr>
+              <tr>
+                <th>typ</th>
+                <th>max</th>
+              </tr>
             </thead>
-            <tbody></tbody>
-         </table>
-      </aside>
+            <tbody>
+              <tr>
+                <td id="vout_typ"></td>
+                <td id="vout_max"></td>
+              </tr>
+              <tr>
+                <td id="iout_typ"></td>
+                <td id="iout_max"></td>
+              </tr>
+              <tr>
+                <td id="pout_typ"></td>
+                <td id="pout_max"></td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+        <div class="item_info_border"></div>
+      </div>
+      <div id="item_info_center" class="item_info">
+        <div class="item_info_data">
+          <table>
+            <thead>
+              <tr>
+                <th colspan="3">Loss</th>
+              </tr>
+              <tr>
+                <th>typ</th>
+                <th>max</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td id="loss_typ"></td>
+                <td id="loss_max"></td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+        <div class="item_info_border"></div>
+      </div>
+    </aside>
 
-      <!-- Configuration menu -->
-      <aside id="bottom_menu">
-         <button id="bottom_close" type="button" class="close" aria-label="Close"><span aria-hidden="true">&times;</span></button>
-         <h4 id="bottom_title">Project options</h4>
-         <h5 class="bottom_subtitle">Display</h5>
-         <form id="config_tree" class="option_section">
-            <p class="config">
-               <label for="config_infoVtyp">
-                  <input id="config_infoVtyp" data-config="show_vtyp" type="checkbox" class="config_input config_checkbox" />
-                  V<sub>TYP</sub>
-               </label>
-               <br />
-               <label for="config_infoItyp">
-                  <input id="config_infoItyp" data-config="show_ityp" type="checkbox" class="config_input config_checkbox" />
-                  I<sub>TYP</sub>
-               </label>
-               <br />
-               <label for="config_infoPtyp">
-                  <input id="config_infoPtyp" data-config="show_ptyp" type="checkbox" class="config_input config_checkbox" />
-                  P<sub>TYP</sub>
-               </label>
-            </p>
-            <p class="config">
-               <label for="config_infoVmax">
-                  <input id="config_infoVmax" data-config="show_vmax" type="checkbox" class="config_input config_checkbox" />
-                  V<sub>MAX</sub>
-               </label>
-               <br />
-               <label for="config_infoImax">
-                  <input id="config_infoImax" data-config="show_imax" type="checkbox" class="config_input config_checkbox" />
-                  I<sub>MAX</sub>
-               </label>
-               <br />
-               <label for="config_infoPmax">
-                  <input id="config_infoPmax" data-config="show_pmax" type="checkbox" class="config_input config_checkbox" />
-                  P<sub>MAX</sub>
-               </label>
-            </p>
-            <p class="config">
-               <label for="config_name">
-                  <input id="config_name" data-config="show_name" type="checkbox" class="config_input config_checkbox" />
-                  Name
-               </label>
-               <br />
-               <label for="config_ref">
-                  <input id="config_ref" data-config="show_ref" type="checkbox" class="config_input config_checkbox" />
-                  Part Number
-               </label>
-               <br />
-               <label for="config_custom1">
-                  <input id="config_custom1" data-config="show_custom1" type="checkbox" class="config_input config_checkbox" />
-                  Custom Field
-               </label>
-            </p>
-            <p class="config">
-               <label for="config_itemwidth">
-                  Item width: <span class="range_val">300</span>px
-                  <input id="config_itemwidth" data-config="cell_width" class="config_input config_range" type="range" min="150" max="500" value="300" step="10" />
-               </label>
-               <br />
-               <label for="config_itemheight">
-                  Item height: <span class="range_val">300</span>px
-                  <input id="config_itemheight" data-config="cell_height" class="config_input config_range" type="range" min="30" max="200" value="300" step="10" />
-               </label>
-               <br />
-               <label for="config_textsize">
-                  Text size: <span class="range_val">14</span>px
-                  <input id="config_textsize" data-config="text_size" class="config_input config_range" type="range" min="1" max="30" value="14" step="1" />
-               </label>
-               <br />
-               <label for="config_zoom">
-                  Zoom: <span class="range_val">100</span>%
-                  <input id="config_zoom" data-config="zoom" class="config_input config_range" type="range" min="30" max="300" value="100" step="10" />
-               </label>
-            </p>
-            <p class="config">
-               <label for="config_alignload">
-                  <input id="config_alignload" data-config="align_load" type="checkbox" class="config_input config_checkbox" />
-                  Vertical align loads
-               </label>
-               <br />
-               <label for="config_proportional">
-                  <input id="config_proportional" data-config="proportional" type="checkbox" class="config_input config_checkbox" />
-                  Proportional to power
-               </label>
-            </p>
-            <p class="config">
-               <a type="button" class="mybtn-defaultConfig" value="Reset"><span class="fa fa-retweet"></span> Reset</a>
-            </p>
-         </form>
+    <!-- Part table for selected load -->
+    <aside id="part_table">
+      <table>
+        <thead>
+          <tr>
+            <th class="part_title part_name">Part</th>
+            <th class="part_title part_i part_ityp">I<sub>TYP</sub></th>
+            <th class="part_title part_i part_imax">I<sub>MAX</sub></th>
+          </tr>
+        </thead>
+        <tbody></tbody>
+      </table>
+    </aside>
 
-         <h5 class="bottom_subtitle">Synchronization</h5>
-         <form class="option_section">
-            <p id="sheet_selection">
-               <span id="sheetpath">No spreadsheet</span><br />
-               <a id="bt_refresh_sheet" class="bt_sheet"><span class="fa fa-refresh"></span> Refresh</a>
-               <a id="bt_select_sheet" class="bt_sheet"><span class="fa fa-file-excel-o"></span> Select</a>
-               <a id="bt_remove_sheet" class="bt_sheet"><span class="fa fa-remove"></span> Remove</a>
-            </p>
-         </form>
-      </aside>
-   </body>
+    <!-- Configuration menu -->
+    <aside id="bottom_menu">
+      <button id="bottom_close" type="button" class="close" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+      <h4 id="bottom_title">Project options</h4>
+      <h5 class="bottom_subtitle">Display</h5>
+      <form id="config_tree" class="option_section">
+        <p class="config">
+          <label for="config_infoVtyp">
+            <input id="config_infoVtyp" data-config="show_vtyp" type="checkbox" class="config_input config_checkbox" />
+            V<sub>TYP</sub>
+          </label>
+          <br />
+          <label for="config_infoItyp">
+            <input id="config_infoItyp" data-config="show_ityp" type="checkbox" class="config_input config_checkbox" />
+            I<sub>TYP</sub>
+          </label>
+          <br />
+          <label for="config_infoPtyp">
+            <input id="config_infoPtyp" data-config="show_ptyp" type="checkbox" class="config_input config_checkbox" />
+            P<sub>TYP</sub>
+          </label>
+        </p>
+        <p class="config">
+          <label for="config_infoVmax">
+            <input id="config_infoVmax" data-config="show_vmax" type="checkbox" class="config_input config_checkbox" />
+            V<sub>MAX</sub>
+          </label>
+          <br />
+          <label for="config_infoImax">
+            <input id="config_infoImax" data-config="show_imax" type="checkbox" class="config_input config_checkbox" />
+            I<sub>MAX</sub>
+          </label>
+          <br />
+          <label for="config_infoPmax">
+            <input id="config_infoPmax" data-config="show_pmax" type="checkbox" class="config_input config_checkbox" />
+            P<sub>MAX</sub>
+          </label>
+        </p>
+        <p class="config">
+          <label for="config_name">
+            <input id="config_name" data-config="show_name" type="checkbox" class="config_input config_checkbox" />
+            Name
+          </label>
+          <br />
+          <label for="config_ref">
+            <input id="config_ref" data-config="show_ref" type="checkbox" class="config_input config_checkbox" />
+            Part Number
+          </label>
+          <br />
+          <label for="config_custom1">
+            <input id="config_custom1" data-config="show_custom1" type="checkbox" class="config_input config_checkbox" />
+            Custom Field
+          </label>
+        </p>
+        <p class="config">
+          <label for="config_itemwidth">
+            Item width: <span class="range_val">300</span>px
+            <input id="config_itemwidth" data-config="cell_width" class="config_input config_range" type="range" min="150" max="500" value="300" step="10" />
+          </label>
+          <br />
+          <label for="config_itemheight">
+            Item height: <span class="range_val">300</span>px
+            <input id="config_itemheight" data-config="cell_height" class="config_input config_range" type="range" min="30" max="200" value="300" step="10" />
+          </label>
+          <br />
+          <label for="config_textsize">
+            Text size: <span class="range_val">14</span>px
+            <input id="config_textsize" data-config="text_size" class="config_input config_range" type="range" min="1" max="30" value="14" step="1" />
+          </label>
+          <br />
+          <label for="config_zoom">
+            Zoom: <span class="range_val">100</span>%
+            <input id="config_zoom" data-config="zoom" class="config_input config_range" type="range" min="30" max="300" value="100" step="10" />
+          </label>
+        </p>
+        <p class="config">
+          <label for="config_alignload">
+            <input id="config_alignload" data-config="align_load" type="checkbox" class="config_input config_checkbox" />
+            Vertical align loads
+          </label>
+          <br />
+          <label for="config_proportional">
+            <input id="config_proportional" data-config="proportional" type="checkbox" class="config_input config_checkbox" />
+            Proportional to power
+          </label>
+        </p>
+        <p class="config">
+          <a type="button" class="mybtn-defaultConfig" value="Reset"><span class="fa fa-retweet"></span> Reset</a>
+        </p>
+      </form>
 
-
-   <!-- application JS: functions & constructors -->
-   <script src="../js/functions.js"    ></script>
-   <script src="../js/obj.Item.js"     ></script>
-   <script src="../js/obj.Tree.js"     ></script>
-   <script src="../js/obj.Canvas.js"   ></script>
-   <script src="../js/obj.Part.js"     ></script>
-   <script src="../js/obj.PartList.js" ></script>
-   <script src="../js/obj.PTree.js"    ></script>
-
-
-   <!-- application JS: this window -->
-   <script src="../js/renderer.PTree.js"></script>
-
+      <h5 class="bottom_subtitle">Synchronization</h5>
+      <form class="option_section">
+        <p id="sheet_selection">
+          <span id="sheetpath">No spreadsheet</span><br />
+          <a id="bt_refresh_sheet" class="bt_sheet"><span class="fa fa-refresh"></span> Refresh</a>
+          <a id="bt_select_sheet" class="bt_sheet"><span class="fa fa-file-excel-o"></span> Select</a>
+          <a id="bt_remove_sheet" class="bt_sheet"><span class="fa fa-remove"></span> Remove</a>
+        </p>
+      </form>
+    </aside>
+  </body>
 </html>

@@ -1,57 +1,51 @@
 <!DOCTYPE html>
 <html>
-   <head>
-      <meta charset="UTF-8">
-      <!-- Content Security Policy : unsafe inline styles and scripts because of Chart.js -->
-      <meta http-equiv="Content-Security-Policy" content="default-src 'self'; style-src 'self' 'unsafe-inline'; script-src 'self' 'unsafe-inline'">
-      <title>Stats</title>
+  <head>
+    <meta charset="UTF-8">
+    <!-- Content Security Policy : unsafe inline styles and scripts because of Chart.js -->
+    <meta http-equiv="Content-Security-Policy" content="default-src 'self'; style-src 'self' 'unsafe-inline'; script-src 'self' 'unsafe-inline'">
+    <title>Stats</title>
 
-      <!-- CSS -->
-      <link rel="stylesheet" href="../node_modules/bootstrap/dist/css/bootstrap.min.css">
-      <link rel="stylesheet" href="../node_modules/font-awesome/css/font-awesome.min.css">
-      <link rel="stylesheet" href="../css/stats.css">
-   </head>
+    <!-- CSS -->
+    <link rel="stylesheet" href="../node_modules/bootstrap/dist/css/bootstrap.min.css">
+    <link rel="stylesheet" href="../node_modules/font-awesome/css/font-awesome.min.css">
+    <link rel="stylesheet" href="../css/stats.css">
 
-   <body>
-      <nav class="topmenu">
-         <a class="selected" data-type="tree">Tree</a>
-         <a data-type="functions">Functions</a>
-         <a data-type="tags">Tags</a>
-      </nav>
-      <header class="header container">
-         <p class="title"></p>
-         <div class="goToParent">
-            <button data-toggle="tooltip" data-placement="bottom" title="parent"><span class="fa fa-arrow-left"></span></button>
-         </div>
-         <div class="normalize">
-            <button data-toggle="tooltip" data-placement="bottom" title="normalize"><span class="fa fa-expand"></span></button>
-         </div>
-         <div class="chartType">
-            <button data-toggle="tooltip" data-placement="bottom" title="bar"><span class="fa fa-bar-chart"></span></button>
-         </div>
-      </header>
-      <section class="stats">
-         <section class="canvas_container canvas_container_typ">
-            <canvas class="canvas canvas_typ"></canvas>
-         </section>
-         <section class="canvas_container canvas_container_max">
-            <canvas class="canvas canvas_max"></canvas>
-         </section>
+    <!-- JS -->
+    <script async src="../js/functions.js"     ></script>
+    <script async src="../js/obj.Item.js"      ></script>
+    <script async src="../js/obj.Tree.js"      ></script>
+    <script async src="../js/obj.Part.js"      ></script>
+    <script async src="../js/obj.PartList.js"  ></script>
+    <script async src="../js/obj.Stats.js"     ></script>
+    <script async src="../js/renderer.stats.js"></script>
+  </head>
+
+  <body>
+    <nav class="topmenu">
+      <a class="selected" data-type="tree">Tree</a>
+      <a data-type="functions">Functions</a>
+      <a data-type="tags">Tags</a>
+    </nav>
+    <header class="header container">
+      <p class="title"></p>
+      <div class="goToParent">
+        <button data-toggle="tooltip" data-placement="bottom" title="parent"><span class="fa fa-arrow-left"></span></button>
+      </div>
+      <div class="normalize">
+        <button data-toggle="tooltip" data-placement="bottom" title="normalize"><span class="fa fa-expand"></span></button>
+      </div>
+      <div class="chartType">
+        <button data-toggle="tooltip" data-placement="bottom" title="bar"><span class="fa fa-bar-chart"></span></button>
+      </div>
+    </header>
+    <section class="stats">
+      <section class="canvas_container canvas_container_typ">
+        <canvas class="canvas canvas_typ"></canvas>
       </section>
-   </body>
-
-
-   <!-- application JS: functions & constructors -->
-   <script src="../js/functions.js"></script>
-   <script src="../js/obj.Item.js"></script>
-   <script src="../js/obj.Tree.js"></script>
-   <script src="../js/obj.Part.js"></script>
-   <script src="../js/obj.PartList.js"></script>
-   <script src="../js/obj.Stats.js"></script>
-
-
-   <!-- application JS: this window -->
-   <script>
-      require('../js/renderer.stats.js');
-   </script>
+      <section class="canvas_container canvas_container_max">
+        <canvas class="canvas canvas_max"></canvas>
+      </section>
+    </section>
+  </body>
 </html>

@@ -1,34 +1,32 @@
 <!DOCTYPE html>
 <html>
+  <head>
+    <meta charset="UTF-8">
+    <meta http-equiv="Content-Security-Policy" content="default-src 'self'">
+    <title>About</title>
 
-   <head>
-      <meta charset="UTF-8">
-      <meta http-equiv="Content-Security-Policy" content="default-src 'self'">
-      <title>About</title>
+    <!-- CSS -->
+    <link rel="stylesheet" href="../node_modules/bootstrap/dist/css/bootstrap.min.css">
+    <link rel="stylesheet" href="../node_modules/font-awesome/css/font-awesome.min.css">
+    <link rel="stylesheet" href="../css/about.css">
 
-      <!-- CSS -->
-      <link rel="stylesheet" href="../node_modules/bootstrap/dist/css/bootstrap.min.css">
-      <link rel="stylesheet" href="../node_modules/font-awesome/css/font-awesome.min.css">
-      <link rel="stylesheet" href="../css/about.css">
-   </head>
+    <!-- JS -->
+    <script async src="../js/renderer.about.js"></script>
+  </head>
 
-   <body class="container-fluid">
-      <header class="title">
-         <p><img src="../icons/png/app/128x128.png" /></p>
-         <h1 class="pkg_data name" data-pkg="name"></h1>
-         <p class="pkg_data description" data-pkg="description"></p>
-      </header>
-      <p class="content">
-         By <a href="#" class="url author pkg_data" data-pkg="author"></a><br />
-         Version <span class="pkg_data version" data-pkg="version"></span><br />
-         More details and sources <a href="#" class="url homepage">on GitHub <span class="fa fa-github" aria-hidden="true"></span></a><br />
-      </p>
-      <p class="licensep">
-         This program comes with ABSOLUTELY NO WARRANTY. This is free software, and you are welcome to redistribute it under the conditions of the <a href="#" class="url license pkg_data" data-pkg="license"></a> license.
-      </p>
-
-
-      <!-- application JS: this window -->
-      <script src="../js/renderer.about.js"></script>
-   </body>
+  <body class="container-fluid">
+    <header class="title">
+      <p><img src="../icons/png/app/128x128.png" /></p>
+      <h1 class="pkg_data name" data-pkg="name"></h1>
+      <p class="pkg_data description" data-pkg="description"></p>
+    </header>
+    <p class="content">
+      By <a href="#" class="url author pkg_data" data-pkg="author"></a><br />
+      Version <span class="pkg_data version" data-pkg="version"></span><br />
+      More details and sources <a href="#" class="url homepage">on GitHub <span class="fa fa-github" aria-hidden="true"></span></a><br />
+    </p>
+    <p class="licensep">
+      This program comes with ABSOLUTELY NO WARRANTY. This is free software, and you are welcome to redistribute it under the conditions of the <a href="#" class="url license pkg_data" data-pkg="license"></a> license.
+    </p>
+  </body>
 </html>
