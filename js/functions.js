@@ -47,15 +47,15 @@ function pickColorHex(color1, color2, weight) {
 // main_color must be [H,S,L]
 function getHSLcolorset(main_color, color_number)
 {
-	let colors = [];
-	let space = parseInt(360/color_number);
+   let colors = [];
+   let space = parseInt(360/color_number);
 
-	for(let i=0; i<color_number; i+=1) {
-		let hue = main_color[0]+(space*i);
-		colors.push('hsl('+hue+', '+main_color[1]+'%, '+main_color[2]+'%)');
-	}
+   for(let i=0; i<color_number; i+=1) {
+      let hue = main_color[0]+(space*i);
+      colors.push('hsl('+hue+', '+main_color[1]+'%, '+main_color[2]+'%)');
+   }
 
-	return colors;
+   return colors;
 }
 
 

@@ -14,9 +14,9 @@ const packagejson = require('./package.json');
 // Keep a global reference of the renderers data
 // to avoid JS garbage collector to close them automatically
 let renderers = {
-	PTree          : { browserWindow:null, initData: {fileToOpen: null},                    },
-	itemEditor     : { browserWindow:null, initData: null, returnData: null, reqEvent: null },
-	partListEditor : { browserWindow:null, initData: null, returnData: null, reqEvent: null },
+   PTree          : { browserWindow:null, initData: {fileToOpen: null},                    },
+   itemEditor     : { browserWindow:null, initData: null, returnData: null, reqEvent: null },
+   partListEditor : { browserWindow:null, initData: null, returnData: null, reqEvent: null },
    stats          : { browserWindow:null, initData: null, returnData: null,                },
    popup          : { browserWindow:null, initData: null, returnData: null, reqEvent: null },
    about          : { browserWindow:null,                                                  },
@@ -72,18 +72,18 @@ app.on('open-file', (evt, path) => {
 
 // When Electron has finished initialization
 app.on('ready', () => {
-	// Create the browser window.
-	renderers.PTree.browserWindow = new BrowserWindow({
+   // Create the browser window.
+   renderers.PTree.browserWindow = new BrowserWindow({
       width    : 1200,
       height   : 800,
       minWidth : 800
    });
 
-	// and load the index.html of the app.
-	renderers.PTree.browserWindow.loadURL(`file://${__dirname}/html/PTree.html`);
+   // and load the index.html of the app.
+   renderers.PTree.browserWindow.loadURL(`file://${__dirname}/html/PTree.html`);
 
    // Open the dev tools...
-	if (debug) renderers.PTree.browserWindow.webContents.openDevTools();
+   if (debug) renderers.PTree.browserWindow.webContents.openDevTools();
 
       // Emitted just before closing the window
    renderers.PTree.browserWindow.on('close', (evt) => {
@@ -94,61 +94,61 @@ app.on('ready', () => {
    });
 
    // configuration of the Application menu
-	const {Menu} = require('electron');
-	const template = [
-		{
-			label: 'Edit',
-			submenu: [
-				{role: 'undo'},
-				{role: 'redo'},
-				{type: 'separator'},
-				{role: 'cut'},
-				{role: 'copy'},
-				{role: 'paste'},
-				{role: 'delete'},
-				{role: 'selectall'}
-			]
-		},
+   const {Menu} = require('electron');
+   const template = [
       {
-			role: 'window',
-			submenu: [
-				{role: 'minimize'},
-				{role: 'close'}
-			]
-		},
-		{
-			role: 'help',
-			submenu: [
-				{
-					label: `About ${packagejson.name}`,
-					click () {
+         label: 'Edit',
+         submenu: [
+            {role: 'undo'},
+            {role: 'redo'},
+            {type: 'separator'},
+            {role: 'cut'},
+            {role: 'copy'},
+            {role: 'paste'},
+            {role: 'delete'},
+            {role: 'selectall'}
+         ]
+      },
+      {
+         role: 'window',
+         submenu: [
+            {role: 'minimize'},
+            {role: 'close'}
+         ]
+      },
+      {
+         role: 'help',
+         submenu: [
+            {
+               label: `About ${packagejson.name}`,
+               click () {
                   // Create the about window if it doesn't exist
                   if(null === renderers.about.browserWindow) {
-                  	renderers.about.browserWindow = new BrowserWindow({
-                  		width           : 450,
-                  		height          : 420,
+                     renderers.about.browserWindow = new BrowserWindow({
+                        width           : 450,
+                        height          : 420,
                         alwaysOnTop     : true,
-                  		resizable       : false,
+                        resizable       : false,
                         autoHideMenuBar : true,
                         useContentSize  : true,
                         thickFrame      : true,
                         titleBarStyle   : 'hiddenInset'
                      });
 
-                  	// Open the dev tools...
-                  	if (debug) renderers.about.browserWindow.webContents.openDevTools();
+                     // Open the dev tools...
+                     if (debug) renderers.about.browserWindow.webContents.openDevTools();
 
-                  	// Load the *.html of the window.
-                  	renderers.about.browserWindow.loadURL(`file://${__dirname}/html/about.html`);
+                     // Load the *.html of the window.
+                     renderers.about.browserWindow.loadURL(`file://${__dirname}/html/about.html`);
 
-                  	// Emitted when the window is closed.
-                  	renderers.about.browserWindow.on('closed', () => {
-                  		// Dereference the window object
-                  		renderers.about.browserWindow = null;
-                  	});
+                     // Emitted when the window is closed.
+                     renderers.about.browserWindow.on('closed', () => {
+                        // Dereference the window object
+                        renderers.about.browserWindow = null;
+                     });
                   }
                }
-				},
+            },
             {
                label: 'Bug report and enhancement request',
                click () {
@@ -160,49 +160,49 @@ app.on('ready', () => {
             // ASAR is prefered than this menu, even if ASAR may be disabled
             /*
             {
-					label: 'Equation Summary',
-					click () {
+               label: 'Equation Summary',
+               click () {
                   require('electron').shell.openItem(`${__dirname}/docs/equations.pdf`);
                }
-				},
+            },
             */
-			]
-		},
+         ]
+      },
       (debug) ? {
-		label: 'Debug',
-			submenu: [
-				{
-					label: 'Reload',
-					accelerator: 'CmdOrCtrl+R',
-					click (item, focusedWindow) {
-						if (focusedWindow) focusedWindow.reload();
-					}
-				},
-				{
-					label: 'Toggle Developer Tools',
-					accelerator: process.platform === 'darwin' ? 'Alt+Command+I' : 'Ctrl+Shift+I',
-					click (item, focusedWindow) {
-						if (focusedWindow) focusedWindow.webContents.toggleDevTools();
-					}
-				}
-			]
-		} : {},
-	];
+      label: 'Debug',
+         submenu: [
+            {
+               label: 'Reload',
+               accelerator: 'CmdOrCtrl+R',
+               click (item, focusedWindow) {
+                  if (focusedWindow) focusedWindow.reload();
+               }
+            },
+            {
+               label: 'Toggle Developer Tools',
+               accelerator: process.platform === 'darwin' ? 'Alt+Command+I' : 'Ctrl+Shift+I',
+               click (item, focusedWindow) {
+                  if (focusedWindow) focusedWindow.webContents.toggleDevTools();
+               }
+            }
+         ]
+      } : {},
+   ];
 
    // menu add-ons for macOS
-	if (process.platform === 'darwin') {
-		template.unshift({
-			label: app.getName(),
-			submenu: [
-				{role: 'hide'},
-				{role: 'quit'}
-			]
-		});
-	}
+   if (process.platform === 'darwin') {
+      template.unshift({
+         label: app.getName(),
+         submenu: [
+            {role: 'hide'},
+            {role: 'quit'}
+         ]
+      });
+   }
 
    // set the menu
-	menu = Menu.buildFromTemplate(template);
-	Menu.setApplicationMenu(menu);
+   menu = Menu.buildFromTemplate(template);
+   Menu.setApplicationMenu(menu);
 });
 
 // IPC sync msg received from PTree : request for init data
@@ -229,32 +229,32 @@ ipcMain.on('Item-editReq', (evt, itemStr, itemType) => {
    // save the event to respond to this sync msg later
    renderers.itemEditor.reqEvent = evt;
 
-	// Create the itemEditor window
-	renderers.itemEditor.browserWindow = new BrowserWindow({
-		width           : ('source' == itemType) ? 840 : 600,
-		height          : ('source' == itemType) ? 485 : 485,
-		parent          : renderers.PTree.browserWindow,
-		modal           : true,
-		resizable       : false,
+   // Create the itemEditor window
+   renderers.itemEditor.browserWindow = new BrowserWindow({
+      width           : ('source' == itemType) ? 840 : 600,
+      height          : ('source' == itemType) ? 485 : 485,
+      parent          : renderers.PTree.browserWindow,
+      modal           : true,
+      resizable       : false,
       autoHideMenuBar : true,
       useContentSize  : true
-	});
+   });
 
-	// Open the dev tools...
-	if (debug) renderers.itemEditor.browserWindow.webContents.openDevTools();
+   // Open the dev tools...
+   if (debug) renderers.itemEditor.browserWindow.webContents.openDevTools();
 
-	// Load the *.html of the window.
-	renderers.itemEditor.browserWindow.loadURL(`file://${__dirname}/html/itemEditor.html`);
+   // Load the *.html of the window.
+   renderers.itemEditor.browserWindow.loadURL(`file://${__dirname}/html/itemEditor.html`);
 
-	// Emitted when the window is closed.
-	renderers.itemEditor.browserWindow.on('closed', () => {
+   // Emitted when the window is closed.
+   renderers.itemEditor.browserWindow.on('closed', () => {
       // send back the new data to the Item
       renderers.itemEditor.reqEvent.returnValue = renderers.itemEditor.returnData;
-		// Dereference the window object, initData and returnData
-		renderers.itemEditor.browserWindow = null;
+      // Dereference the window object, initData and returnData
+      renderers.itemEditor.browserWindow = null;
       renderers.itemEditor.initData      = null;
       renderers.itemEditor.returnData    = null;
-	});
+   });
 });
 
 // IPC sync msg received from ItemEditor : request for init data
@@ -281,31 +281,31 @@ ipcMain.on('PartList-editReq', (evt, treeStr, partListStr) => {
    // save the event to respond to this sync msg later
    renderers.partListEditor.reqEvent = evt;
 
-	// Create the partListEditor window
-	renderers.partListEditor.browserWindow = new BrowserWindow({
-		width           : 1024,
-		height          : 768,
-		parent          : renderers.PTree.browserWindow,
-		modal           : process.platform !== 'darwin',
-		resizable       : true,
+   // Create the partListEditor window
+   renderers.partListEditor.browserWindow = new BrowserWindow({
+      width           : 1024,
+      height          : 768,
+      parent          : renderers.PTree.browserWindow,
+      modal           : process.platform !== 'darwin',
+      resizable       : true,
       useContentSize  : true
-	});
+   });
 
-	// Open the dev tools...
-	if (debug) renderers.partListEditor.browserWindow.webContents.openDevTools();
+   // Open the dev tools...
+   if (debug) renderers.partListEditor.browserWindow.webContents.openDevTools();
 
-	// Load the *.html of the window.
-	renderers.partListEditor.browserWindow.loadURL(`file://${__dirname}/html/partListEditor.html`);
+   // Load the *.html of the window.
+   renderers.partListEditor.browserWindow.loadURL(`file://${__dirname}/html/partListEditor.html`);
 
-	// Emitted when the window is closed.
-	renderers.partListEditor.browserWindow.on('closed', () => {
+   // Emitted when the window is closed.
+   renderers.partListEditor.browserWindow.on('closed', () => {
       // send back the new data to the Item
       renderers.partListEditor.reqEvent.returnValue = renderers.partListEditor.returnData;
-		// Dereference the window object, initData and returnData
-		renderers.partListEditor.browserWindow = null;
+      // Dereference the window object, initData and returnData
+      renderers.partListEditor.browserWindow = null;
       renderers.partListEditor.initData      = null;
       renderers.partListEditor.returnData    = null;
-	});
+   });
 });
 
 // IPC sync msg received from PartListEditor : request for init data
@@ -336,29 +336,29 @@ ipcMain.on('Stats-openReq', (evt, initData) => {
       return;
    }
    else {
-   	// Create the  window
-   	renderers.stats.browserWindow = new BrowserWindow({
-   		width           : 800,
-   		height          : 400,
-   		resizable       : true,
+      // Create the  window
+      renderers.stats.browserWindow = new BrowserWindow({
+         width           : 800,
+         height          : 400,
+         resizable       : true,
          useContentSize  : true,
          alwaysOnTop     : true
-   	});
+      });
    }
 
-	// Open the dev tools...
-	if (debug) renderers.stats.browserWindow.webContents.openDevTools();
+   // Open the dev tools...
+   if (debug) renderers.stats.browserWindow.webContents.openDevTools();
 
-	// Load the *.html of the window.
-	renderers.stats.browserWindow.loadURL(`file://${__dirname}/html/stats.html`);
+   // Load the *.html of the window.
+   renderers.stats.browserWindow.loadURL(`file://${__dirname}/html/stats.html`);
 
-	// Emitted when the window is closed.
-	renderers.stats.browserWindow.on('closed', () => {
+   // Emitted when the window is closed.
+   renderers.stats.browserWindow.on('closed', () => {
       // Dereference the window object, initData and returnData
-		renderers.stats.browserWindow = null;
-		renderers.popup.browserWindow = null;
+      renderers.stats.browserWindow = null;
+      renderers.popup.browserWindow = null;
       renderers.popup.initData      = null;
-	});
+   });
 });
 
 // IPC sync msg received from Stats : request for init data
@@ -409,21 +409,21 @@ ipcMain.on('Popup-openReq', (evt, popupData) => {
       useContentSize  : true,
    });
 
-	// Open the dev tools...
-	//if (debug) renderers.popup.browserWindow.webContents.openDevTools();
+   // Open the dev tools...
+   //if (debug) renderers.popup.browserWindow.webContents.openDevTools();
 
-	// Load the *.html of the window.
-	renderers.popup.browserWindow.loadURL(`file://${__dirname}/html/popup.html`);
+   // Load the *.html of the window.
+   renderers.popup.browserWindow.loadURL(`file://${__dirname}/html/popup.html`);
 
    // Emitted when the window is closed.
-	renderers.popup.browserWindow.on('closed', () => {
+   renderers.popup.browserWindow.on('closed', () => {
       // send back the new data
       renderers.popup.reqEvent.returnValue = renderers.popup.returnData;
-		// Dereference the window object, initData and returnData
-		renderers.popup.browserWindow = null;
+      // Dereference the window object, initData and returnData
+      renderers.popup.browserWindow = null;
       renderers.popup.initData      = null;
       renderers.popup.returnData    = null;
-	});
+   });
 });
 
 // IPC sync msg received from Stats : request for init data
