@@ -93,6 +93,11 @@ app.on('ready', () => {
     renderers.PTree.browserWindow.webContents.send('PTree-beforeCloseCmd');
   });
 
+  // disable navigation in this renderer
+  renderers.PTree.browserWindow.webContents.on('will-navigate', (evt) => {
+    evt.preventDefault();
+  });
+
   // configuration of the Application menu
   const {Menu} = require('electron');
   const template = [
@@ -145,6 +150,11 @@ app.on('ready', () => {
               renderers.about.browserWindow.on('closed', () => {
                 // Dereference the window object
                 renderers.about.browserWindow = null;
+              });
+
+              // disable navigation in this renderer
+              renderers.about.browserWindow.webContents.on('will-navigate', (evt) => {
+                evt.preventDefault();
               });
             }
           }
@@ -255,6 +265,11 @@ ipcMain.on('Item-editReq', (evt, itemStr, itemType) => {
     renderers.itemEditor.initData      = null;
     renderers.itemEditor.returnData    = null;
   });
+
+  // disable navigation in this renderer
+  renderers.itemEditor.browserWindow.webContents.on('will-navigate', (evt) => {
+    evt.preventDefault();
+  });
 });
 
 // IPC sync msg received from ItemEditor : request for init data
@@ -306,6 +321,11 @@ ipcMain.on('PartList-editReq', (evt, treeStr, partListStr) => {
     renderers.partListEditor.initData      = null;
     renderers.partListEditor.returnData    = null;
   });
+
+  // disable navigation in this renderer
+  renderers.partListEditor.browserWindow.webContents.on('will-navigate', (evt) => {
+    evt.preventDefault();
+  });
 });
 
 // IPC sync msg received from PartListEditor : request for init data
@@ -356,8 +376,13 @@ ipcMain.on('Stats-openReq', (evt, initData) => {
   renderers.stats.browserWindow.on('closed', () => {
     // Dereference the window object, initData and returnData
     renderers.stats.browserWindow = null;
-    renderers.popup.browserWindow = null;
-    renderers.popup.initData      = null;
+    renderers.stats.browserWindow = null;
+    renderers.stats.initData      = null;
+  });
+
+  // disable navigation in this renderer
+  renderers.stats.browserWindow.webContents.on('will-navigate', (evt) => {
+    evt.preventDefault();
   });
 });
 
@@ -423,6 +448,11 @@ ipcMain.on('Popup-openReq', (evt, popupData) => {
     renderers.popup.browserWindow = null;
     renderers.popup.initData      = null;
     renderers.popup.returnData    = null;
+  });
+
+  // disable navigation in this renderer
+  renderers.popup.browserWindow.webContents.on('will-navigate', (evt) => {
+    evt.preventDefault();
   });
 });
 
