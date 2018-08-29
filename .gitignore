@@ -40,5 +40,6 @@ Thumbs.db
 #------------
 docs/equations.pages
 docs/*.graffle
+docs/test
 icons/original/*
 test/*
