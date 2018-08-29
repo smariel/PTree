@@ -37,7 +37,7 @@ for (let i=1; i<process.argv.length; i++) {
     debug = true;
     break;
   }
-  // If the arg is a valid path to a ptree project file
+  // If the arg is a valid path to a ptree project file (also Windows "open with" command)
   else if(fs.statSync(arg).isFile() && '.ptree' == path.extname(arg)) {
     // add the path to the init data of the PTree renderer
     renderers.PTree.initData.fileToOpen = arg;
@@ -69,12 +69,34 @@ app.on('open-file', (evt, path) => {
 });
 
 
+// Security: navigation disabled for all renderers
+app.on('web-contents-created', (event, contents) => {
+  contents.on('will-navigate', (event, navigationUrl) => {
+      event.preventDefault();
+  });
+});
+
+
+// Security: disable the creation of additional windows
+app.on('web-contents-created', (event, contents) => {
+  contents.on('new-window', (event, navigationUrl) => {
+    event.preventDefault();
+  });
+});
+
+
 // -----------------------------------------------------------------------------
 // TREE
 // -----------------------------------------------------------------------------
 
 // When Electron has finished initialization
 app.on('ready', () => {
+  // Security : denies all permissions request
+  const { session } = require('electron');
+  session.fromPartition('some-partition').setPermissionRequestHandler((webContents, permission, callback) => {
+    return callback(false);
+  });
+
   // Create the browser window.
   renderers.PTree.browserWindow = new BrowserWindow({
     width    : 1200,
@@ -94,11 +116,6 @@ app.on('ready', () => {
     evt.preventDefault();
     // Send an IPC async msg to PTree: prepare to close
     renderers.PTree.browserWindow.webContents.send('PTree-beforeCloseCmd');
-  });
-
-  // disable navigation in this renderer
-  renderers.PTree.browserWindow.webContents.on('will-navigate', (evt) => {
-    evt.preventDefault();
   });
 
   // configuration of the Application menu
@@ -153,11 +170,6 @@ app.on('ready', () => {
               renderers.about.browserWindow.on('closed', () => {
                 // Dereference the window object
                 renderers.about.browserWindow = null;
-              });
-
-              // disable navigation in this renderer
-              renderers.about.browserWindow.webContents.on('will-navigate', (evt) => {
-                evt.preventDefault();
               });
             }
           }
@@ -268,11 +280,6 @@ ipcMain.on('Item-editReq', (evt, itemStr, itemType) => {
     renderers.itemEditor.initData      = null;
     renderers.itemEditor.returnData    = null;
   });
-
-  // disable navigation in this renderer
-  renderers.itemEditor.browserWindow.webContents.on('will-navigate', (evt) => {
-    evt.preventDefault();
-  });
 });
 
 // IPC sync msg received from ItemEditor : request for init data
@@ -323,11 +330,6 @@ ipcMain.on('PartList-editReq', (evt, treeStr, partListStr) => {
     renderers.partListEditor.browserWindow = null;
     renderers.partListEditor.initData      = null;
     renderers.partListEditor.returnData    = null;
-  });
-
-  // disable navigation in this renderer
-  renderers.partListEditor.browserWindow.webContents.on('will-navigate', (evt) => {
-    evt.preventDefault();
   });
 });
 
@@ -381,11 +383,6 @@ ipcMain.on('Stats-openReq', (evt, initData) => {
     renderers.stats.browserWindow = null;
     renderers.stats.browserWindow = null;
     renderers.stats.initData      = null;
-  });
-
-  // disable navigation in this renderer
-  renderers.stats.browserWindow.webContents.on('will-navigate', (evt) => {
-    evt.preventDefault();
   });
 });
 
@@ -451,11 +448,6 @@ ipcMain.on('Popup-openReq', (evt, popupData) => {
     renderers.popup.browserWindow = null;
     renderers.popup.initData      = null;
     renderers.popup.returnData    = null;
-  });
-
-  // disable navigation in this renderer
-  renderers.popup.browserWindow.webContents.on('will-navigate', (evt) => {
-    evt.preventDefault();
   });
 });
 

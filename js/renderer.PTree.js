@@ -2,6 +2,11 @@
 // PTree window renderer script
 // -----------------------------------------------------------------------------
 
+// Security : disable window.eval() in this rendrer
+window.eval = global.eval = function () {
+  throw new Error(`This application does not support window.eval().`);
+};
+
 // Framworks and libraries
 window.$ = window.jQuery = require('jquery');
 require('mousetrap');
