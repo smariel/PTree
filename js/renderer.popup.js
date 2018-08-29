@@ -28,7 +28,7 @@ $(() => {
     $('.mybtn-ok').html(popupData.btn_ok);
 
     for(let item of popupData.list) {
-      $('#list').append(`<option>${item}</option>\n`);
+      $('#list').append(`<option value=${item.val}>${item.text}</option>\n`);
     }
   }
   // popup type = OK/Cancel
@@ -43,7 +43,7 @@ $(() => {
   // close with OK
   $('.mybtn-ok').click(() => {
     if(undefined !== popupData.type && 'list' === popupData.type) {
-      close($('#list option:selected').text());
+      close($('#list option:selected').val());
     }
     else {
       close (true);
@@ -59,7 +59,9 @@ $(() => {
   $(document).keydown((event) => {
     // ESCAPE
     if (27 == event.which) {
-      close(false);
+      if('list' !== popupData.type) {
+        close(false);
+      }
     }
     // ENTER
     else if (13 == event.which) {

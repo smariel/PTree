@@ -8,6 +8,8 @@ const BrowserWindow = electron.BrowserWindow;
 const ipcMain = electron.ipcMain;
 // Node.js module to access File System
 const fs = require('fs');
+// Node.js module to work with  paths
+const path = require('path');
 // The package.json file
 const packagejson = require('./package.json');
 
@@ -35,8 +37,9 @@ for (let i=1; i<process.argv.length; i++) {
     debug = true;
     break;
   }
-  // Open files passed as argument or, on Windows, files "open with" PTree
-  else if(fs.statSync(arg).isFile()) {
+  // If the arg is a valid path to a ptree project file
+  else if(fs.statSync(arg).isFile() && '.ptree' == path.extname(arg)) {
+    // add the path to the init data of the PTree renderer
     renderers.PTree.initData.fileToOpen = arg;
   }
 }
@@ -51,7 +54,7 @@ app.on('window-all-closed', () => {
 // macOS : file open while the app is running or dropped on the app icon
 app.on('open-file', (evt, path) => {
   // test if the received path is a file
-  if(fs.statSync(path).isFile()) {
+  if(fs.statSync(path).isFile() && '.ptree' == path.extname(path)) {
     // if the PTree window does not exist yet
     if(undefined === renderers.PTree.browserWindow || null === renderers.PTree.browserWindow) {
       // save the file path to be sent later
@@ -435,7 +438,7 @@ ipcMain.on('Popup-openReq', (evt, popupData) => {
   });
 
   // Open the dev tools...
-  //if (debug) renderers.popup.browserWindow.webContents.openDevTools();
+  if (debug) renderers.popup.browserWindow.webContents.openDevTools();
 
   // Load the *.html of the window.
   renderers.popup.browserWindow.loadURL(`file://${__dirname}/html/popup.html`);

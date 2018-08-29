@@ -689,7 +689,7 @@ class PTree {
     $('#bt_select_sheet').click(() => {
       // ask the user for a sheet
       let usersheet = getSpreadsheet(null, true);
-      if (null === usersheet.sheet) return;
+      if (null === usersheet) return;
       // save the sheet and refresh Consumptions
       this.setSheet(usersheet);
       this.tree.refreshConsumptions(null, this.usersheet.sheet);
@@ -716,6 +716,47 @@ class PTree {
     // close the config menu when click on the cross
     $('#bottom_close').click(() => {
       this.toggleOptions();
+    });
+
+    // the user dropped an object anywhere on the window
+    document.addEventListener('drop', (event) => {
+      event.preventDefault();
+
+      // extract the valid paths to ptree project files
+      let ptree_files = [];
+      for(let file of event.dataTransfer.files) {
+        console.log(require('path').extname(file.path));
+
+        // check the path with Node.js Fs and Path native modules
+        if(require('fs').statSync(file.path).isFile() && '.ptree' == require('path').extname(file.path)) {
+          ptree_files.push(file);
+        }
+      }
+
+      // init the path of the file to open
+      let path = null;
+
+      // one object droped, open it
+      if(1 === ptree_files.length) {
+        this.open(ptree_files[0].path);
+      }
+      // multiple objects droped
+      else if(ptree_files.length > 1) {
+        // ask the user which file to use
+        let popupData = {
+          type       : 'list',
+          title      : 'Which file to open',
+          width      : 500,
+          height     : 135,
+          sender     : 'PTree',
+          content    : 'Multiple files where droped. Which PTree object should be open ?<br />Please choose one: <select id="list"></select>',
+          btn_ok     : 'Open',
+          list       : ptree_files.map((f) => {return {val:f.path, text:f.name};})
+        };
+
+        // open the selected file
+        this.open(popup(popupData));
+      }
     });
   }
 

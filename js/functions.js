@@ -315,8 +315,12 @@ function getSpreadsheet(path=null, return_path=false, sender='PTree') {
     });
 
     // exit if the path is undefined (canceled)
-    if(undefined === paths) return null;
-    path = paths[0];
+    if(undefined === paths) {
+      return null;
+    }
+    else {
+      path = paths[0];
+    }
   }
 
   // construct a workbook from the file
@@ -334,7 +338,7 @@ function getSpreadsheet(path=null, return_path=false, sender='PTree') {
       sender     : sender,
       content    : 'Multiple sheets found in this document.<br />Please choose one: <select id="list"></select>',
       btn_ok     : 'Choose',
-      list       : workbook.SheetNames
+      list       : workbook.SheetNames.map((name) => {return {val:name, text:name};})
     };
     sheetName  = popup(popupData);
   }
@@ -343,8 +347,11 @@ function getSpreadsheet(path=null, return_path=false, sender='PTree') {
   }
 
   // translate the sheet to JSON, convert empty values to 0, starting by A1 even if empty
-  let sheet      = workbook.Sheets[sheetName];
-  let sheet_json = XLSX.utils.sheet_to_json(sheet, {header:1, defval:0, range:'A1:'+sheet['!ref'].split(':')[1]});
+  let sheet = workbook.Sheets[sheetName];
+  let sheet_json = [];
+  if(undefined !== sheet['!ref']) {
+    sheet_json = XLSX.utils.sheet_to_json(sheet, {header:1, defval:0, range:'A1:'+sheet['!ref'].split(':')[1]});
+  }
 
   // return
   if(return_path) return {sheet:sheet_json, path:path};
