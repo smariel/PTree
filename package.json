@@ -3,9 +3,9 @@
   "version": "1.4.2",
   "description": "Design power trees and estimate consumptions",
   "author": {
-    "name" : "Sylvain Mariel",
-    "email" : "sylvain.mariel@otmax.fr",
-    "url" : "https://github.com/smariel"
+    "name": "Sylvain Mariel",
+    "email": "sylvain.mariel@otmax.fr",
+    "url": "https://github.com/smariel"
   },
   "license": "GPL-3.0",
   "main": "main.js",
