@@ -4,7 +4,10 @@
 //    It provides methods to manipulate those parts within a <table> element
 // -----------------------------------------------------------------------------
 
-class PartListEditor {
+const PartList = require('../js/obj.PartList.js');
+const Tree     = require('../js/obj.Tree.js');
+
+class PartListEditor {
 
   constructor(partList = new PartList(), tree = new Tree()) {
     this.partList      = partList;
@@ -369,7 +372,7 @@ class PartListEditor {
       let partList = [];
       let state = 0;
       $('.partTable tbody tr').each((index, elt) => {
-        partId = $(elt).data('partid');
+        let partId = $(elt).data('partid');
 
         // STATE 0
         if(0 === state) {
@@ -572,6 +575,8 @@ class PartListEditor {
 
   // Listen to all event on the page
   listenEvents() {
+    const Mousetrap = require('mousetrap');
+    
     // send back data when the window is clossing
     window.onbeforeunload = () => {
       // Send an IPC async msg to main.js: return the PartList or null if not modified
@@ -641,10 +646,10 @@ class PartListEditor {
     });
 
     // click on a charac
-    $('.partTable').on('click', '.td_charac', (evt) => {
-      let charac  = $(evt.currentTarget).data('charac');
-      let partID  = $(evt.currentTarget).parent().data('partid');
-      let part    = this.partList.getPart(partID);
+    $('.partTable').on('click', '.td_charac', (evt) => {
+      let charac      = $(evt.currentTarget).data('charac');
+      let partID      = $(evt.currentTarget).parent().data('partid');
+      let part        = this.partList.getPart(partID);
 
       // click on the ID
       if('id' === charac) {
@@ -667,7 +672,7 @@ class PartListEditor {
     });
 
     // edit a current
-    $('.partTable').on('click', '.td_current', (evt) => {
+    $('.partTable').on('click', '.td_current', (evt) => {
       let partID  = $(evt.currentTarget).parent().data('partid');
       let loadID  = $(evt.currentTarget).data('loadid');
       let typmax  = $(evt.currentTarget).data('typmax');
@@ -738,7 +743,7 @@ class PartListEditor {
         // SHIFT+TAB = previous
         if(evt.shiftKey) {
           // if editing the ref, jump to name
-          if('charac' === editType) {
+          if('charac' === editType) {
             if('tags' === charac) {
               this.editCharac(part, 'function');
             }
@@ -773,7 +778,7 @@ class PartListEditor {
         // TAB = next
         else {
           // if editing a charac
-          if('charac' === editType) {
+          if('charac' === editType) {
             // if editing the name, jump to the ref
             if('name' === charac) {
               this.editCharac(part, 'ref');
@@ -810,3 +815,5 @@ class PartListEditor {
     });
   }
 }
+
+module.exports = PartListEditor;

@@ -414,7 +414,7 @@ class Item {
       p_in = this.getInputVoltage('typ') * this.getInputCurrent(valType);
     }
     // if the item is perfect
-    else if (this.isPerfect()) {
+    else if (this.isPerfect()) {
       // p_in = p_out
       p_in = this.getOutputPower(valType);
     }
@@ -723,3 +723,5 @@ class Item {
     }
   }
 }
+
+module.exports = Item;

@@ -6,6 +6,10 @@
 //    See synop.jpg for more informations
 // -----------------------------------------------------------------------------
 
+const Tree     = require('../js/obj.Tree.js');
+const PartList = require('../js/obj.PartList.js');
+const Canvas   = require('../js/obj.Canvas.js');
+
 class PTree {
 
   constructor(canvas_selector) {
@@ -566,7 +570,7 @@ class PTree {
           }
         }
         // if no item is dragged, show the item infos
-        else  {
+        else {
           this.canvas.displayInfo(receiverItem);
         }
       }
@@ -599,7 +603,7 @@ class PTree {
 
     // Edit item on double click
     this.canvas.canvas$.parent().dblclick(() => {
-      if (null !== this.canvas.getSelectedItem()) {
+      if(null !== this.canvas.getSelectedItem()) {
         this.canvas.getSelectedItem().edit(this.partList, this.usersheet.sheet);
         this.canvas.refresh();
         this.saveHistory();
@@ -609,7 +613,7 @@ class PTree {
 
     // Mouse wheel turning
     this.canvas.canvas$.parent().on('wheel',(evt) => {
-      if(evt.originalEvent.ctrlKey) {
+      if(evt.originalEvent.ctrlKey) {
         $('#config_zoom').trigger(evt);
       }
     });
@@ -649,7 +653,7 @@ class PTree {
       let newval = val;
 
       // wheel down, decrement
-      if(evt.originalEvent.deltaY > 0) {
+      if(evt.originalEvent.deltaY > 0) {
         // get the min
         let min = parseInt($(evt.currentTarget).prop('min'));
         // if already the min, do nothing
@@ -660,7 +664,7 @@ class PTree {
         if(newval < min) newval = min;
       }
       // wheel up, increment
-      else if(evt.originalEvent.deltaY < 0) {
+      else if(evt.originalEvent.deltaY < 0) {
         // get the max
         let max = parseInt($(evt.currentTarget).prop('max'));
         // if already the max
@@ -725,16 +729,11 @@ class PTree {
       // extract the valid paths to ptree project files
       let ptree_files = [];
       for(let file of event.dataTransfer.files) {
-        console.log(require('path').extname(file.path));
-
         // check the path with Node.js Fs and Path native modules
         if(require('fs').statSync(file.path).isFile() && '.ptree' == require('path').extname(file.path)) {
           ptree_files.push(file);
         }
       }
-
-      // init the path of the file to open
-      let path = null;
 
       // one object droped, open it
       if(1 === ptree_files.length) {
@@ -944,6 +943,7 @@ class PTree {
 
   // listen to all keyboard shortcuts
   listenKeyboard() {
+    const Mousetrap = require('mousetrap');
     // Mousetrap: return false to prevent default browser behavior and stop event from bubbling
 
     // Undo
@@ -1053,11 +1053,11 @@ class PTree {
 
     // IPC async msg received from main.js: open the given file
     ipcRenderer.on('PTree-openFileCmd', (event, fileToOpen) => {
-      app.open(fileToOpen);
+      this.open(fileToOpen);
     });
 
     // IPC async msg received from main.js: prepare to close
-    ipcRenderer.on('PTree-beforeCloseCmd', (event) => {
+    ipcRenderer.on('PTree-beforeCloseCmd', () => {
       // if the project is not saved
       if(this.unsaved) {
         // ask the user to save
@@ -1088,3 +1088,5 @@ class PTree {
     });
   }
 }
+
+module.exports = PTree;

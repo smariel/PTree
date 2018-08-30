@@ -3,6 +3,8 @@
 //    A PartList object contains all the parts, orders and classifications
 // -----------------------------------------------------------------------------
 
+const Part = require('../js/obj.Part.js');
+
 class PartList {
 
   constructor() {
@@ -41,7 +43,7 @@ class PartList {
   getPreviousPart(part) {
     for (let id = part.id - 1; id >= 0; id--) {
       let previousPart = this.getPart(id);
-      if (null !== nextPart && undefined !== nextPart) {
+      if (null !== previousPart && undefined !== previousPart) {
         return previousPart;
       }
     }
@@ -128,3 +130,5 @@ class PartList {
     }
   }
 }
+
+module.exports = PartList;

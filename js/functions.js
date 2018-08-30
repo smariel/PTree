@@ -11,41 +11,44 @@
 // return BLACK or WHITE based on bgcolor
 // if color is light, return black. if color is dark, return white.
 // yellow is considered lighter than other colors
-function getOpositeBorW(color) {
+const getOpositeBorW = (color) => {
+  const {fabric} = require('fabric');
   let color_hsl = fabric.Color.reHSLa.exec(new fabric.Color(color).toHsl());
   return ((parseInt(color_hsl[3]) > 70) || (parseInt(color_hsl[1]) > 50 && parseInt(color_hsl[1]) < 75 && parseInt(color_hsl[3]) > 45)) ? '#000000' : '#FFFFFF';
-}
+};
 
 
 // pick the color between color1 and color2 at the given weight
 // colors are RGB arrays and weitht is 0 to 1
-function pickColorRgb(color1, color2, weight) {
+const pickColorRgb = (color1, color2, weight) => {
   let p   = weight;
   let w   = p * 2 - 1;
   let w1  = (w/1+1) / 2;
   let w2  = 1 - w1;
-  let rgb = [Math.round(color1[0] * w1 + color2[0] * w2),
-  Math.round(color1[1] * w1 + color2[1] * w2),
-  Math.round(color1[2] * w1 + color2[2] * w2)];
+  let rgb = [
+    Math.round(color1[0] * w1 + color2[0] * w2),
+    Math.round(color1[1] * w1 + color2[1] * w2),
+    Math.round(color1[2] * w1 + color2[2] * w2)
+  ];
   return rgb;
-}
+};
 
 
 // same as pickRgb with Hex colors
 // needs Fabricjs
-function pickColorHex(color1, color2, weight) {
+const pickColorHex = (color1, color2, weight) => {
+  const {fabric} = require('fabric');
   let color1rgb = fabric.Color.fromHex(color1).getSource();
   let color2rgb = fabric.Color.fromHex(color2).getSource();
   let resultrgb = pickColorRgb(color1rgb, color2rgb, weight);
   let resulthex = fabric.Color.fromSource(resultrgb).toHex();
   return '#'+resulthex;
-}
+};
 
 
 // create the specified number of HSL colors from main_color
 // main_color must be [H,S,L]
-function getHSLcolorset(main_color, color_number)
-{
+const getHSLcolorset = (main_color, color_number) => {
   let colors = [];
   let space = parseInt(360/color_number);
 
@@ -55,7 +58,7 @@ function getHSLcolorset(main_color, color_number)
   }
 
   return colors;
-}
+};
 
 
 
@@ -66,20 +69,20 @@ function getHSLcolorset(main_color, color_number)
 // Round a number with the specified number of decimal
 //    round(12.48, 1) = 12.5
 //    round(12.48, -1) = 10
-function round(number, decimal) {
+const round = (number, decimal) => {
   return Math.round(number * Math.pow(10, decimal)) / Math.pow(10, decimal);
-}
+};
 
 
 // Round a number with the specified number of decimal if > 1 or digits if < 1
 //    round(12.4824, 2) = 12.48
 //    round(0.00124, 2) = 0.0012
-function smartRound(number, precision) {
+const smartRound = (number, precision) => {
   if(number > 1) return round(number,precision);
   else if (number == 0) return 0;
   let nb0 = -Math.floor(Math.log10(Math.abs(number)));
   return round(number,nb0+precision);
-}
+};
 
 
 // Round a number with a SI prefix
@@ -88,7 +91,7 @@ function smartRound(number, precision) {
 //    numberToSi(12345.6789, 4) = 12.34k
 //    numberToSi(0.00123456789, 4) = 1.234m
 //    numberToSi(0.00000012, 10) = 120n
-function numberToSi(number, digits) {
+const numberToSi = (number, digits) => {
   if (!$.isNumeric(number)) {
     console.warn(`numberToSi: ${number} is not a number`);
     return 0;
@@ -126,6 +129,7 @@ function numberToSi(number, digits) {
   let reg = /^-?(([0-9]+)(\.?)([0-9]*))(e[+-])?([0-9]*)/;
   let reg_result = reg.exec(number.toString());
   let i = 0;
+  let result = 0;
 
   // if the number is a very big float (*10^xxx)
   if (undefined !== reg_result[5] && 'e+' == reg_result[5]) {
@@ -155,7 +159,7 @@ function numberToSi(number, digits) {
   if (number < 0) result *= -1;
 
   return result + prefix[i];
-}
+};
 
 
 
@@ -164,7 +168,7 @@ function numberToSi(number, digits) {
 // -----------------------------------------------------------------------------
 
 // Downoad an item passed as a dataURL object
-function downloadDataURL(dataURL, fileName) {
+const downloadDataURL = (dataURL, fileName) => {
   // Create an invisible <a> and force a download on it
   let temporaryElement      = document.createElement('a');
   temporaryElement.style    = 'display: none';
@@ -174,22 +178,22 @@ function downloadDataURL(dataURL, fileName) {
   temporaryElement.click();
   document.body.removeChild(temporaryElement);
   window.URL.revokeObjectURL(dataURL);
-}
+};
 
 
 // Download a data in file
-function downloadData(data, fileName) {
+const downloadData = (data, fileName) => {
   let blob = new Blob([data], {
     type: 'application/octet-stream'
   });
   let dataURL = URL.createObjectURL(blob);
   downloadDataURL(dataURL, fileName);
-}
+};
 
 
 // Download a table in a fileName
 // require jQuery and XLSX to be included
-function downloadTable(jQuery_table, fileName) {
+const downloadTable = (jQuery_table, fileName) => {
   // Create a workbook from the table passed as a jQuery element
   // this entire code is from the XLSX documentation...
   const XLSX = require('xlsx');
@@ -211,7 +215,7 @@ function downloadTable(jQuery_table, fileName) {
 
   // download the data into a file
   downloadData(data, fileName);
-}
+};
 
 
 
@@ -222,7 +226,7 @@ function downloadTable(jQuery_table, fileName) {
 
 // compare two versions as strings like '1.3.4'
 // return 0 if v1=v2, 1 if v1>v2, -1 if v1<v2
-function compareVersions(v1, v2) {
+const compareVersions = (v1, v2) => {
   if(v1 === v2) return 0;
 
   v1 = v1.split('.');
@@ -242,7 +246,7 @@ function compareVersions(v1, v2) {
   }
 
   return null;
-}
+};
 
 
 // Compare two arrays by adding a new methode Array
@@ -292,15 +296,15 @@ Object.defineProperty(Array.prototype, 'equals', {
 // where data.type must be :
 //   undefined (optional) => OK/CANCEL                  => return BOOL => no additional data
 //   list                 => list selection + OK/CANCEL => return INT  => additional data.list (array)
-function popup(popupData) {
+const popup = (popupData) => {
   // Send an IPC sync msg to main.js: open a popup with the given data
   return require('electron').ipcRenderer.sendSync('Popup-openReq', popupData);
-}
+};
 
 
 // get a sheet as JSON object from a file
 // popup the user if multiple tabs found
-function getSpreadsheet(path=null, return_path=false, sender='PTree') {
+const getSpreadsheet = (path=null, return_path=false, sender='PTree') => {
   // of no path given, ask the user
   if (null === path) {
     // open a dialog
@@ -356,4 +360,4 @@ function getSpreadsheet(path=null, return_path=false, sender='PTree') {
   // return
   if(return_path) return {sheet:sheet_json, path:path};
   return sheet_json;
-}
+};

@@ -11,6 +11,8 @@ window.eval = global.eval = function () {
 window.$ = window.jQuery = require('jquery');
 require('bootstrap');
 require('chart.js');
+const Item       = require('../js/obj.Item.js');
+const ItemEditor = require('../js/obj.ItemEditor.js');
 
 // Send an IPC sync msg to main.js: request init data
 const initData = require('electron').ipcRenderer.sendSync('ItemEditor-initDataReq');

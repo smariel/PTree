@@ -9,9 +9,8 @@ window.eval = global.eval = function () {
 
 // Framworks and libraries
 window.$ = window.jQuery = require('jquery');
-require('mousetrap');
 require('bootstrap');
-require('fabric');
+const PTree = require('../js/obj.PTree.js');
 
 // Send an IPC sync msg to main.js: request init data
 const initData = require('electron').ipcRenderer.sendSync('PTree-initDataReq');

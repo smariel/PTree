@@ -10,6 +10,8 @@
 // Template definitions for canvas elements
 // -----------------------------------------------------------------------------
 
+const {fabric} = require('fabric');
+
 // Default values for canvas
 const app_template = {
   canvas: {
@@ -100,7 +102,7 @@ const fabric_template = {
 // -----------------------------------------------------------------------------
 
 class Canvas {
-  
+
   constructor(html_id, tree, partList) {
     this.tree         = tree;              // a reference to the tree
     this.partList     = partList;          // a reference to the partlist
@@ -250,7 +252,7 @@ class Canvas {
         if(this.config.show_imax)                          iptext += item.getCurrent('max', 'out', 3, true);
 
         if((this.config.show_ityp || this.config.show_imax) && (this.config.show_ptyp || this.config.show_pmax))
-        iptext += '\n';
+          iptext += '\n';
 
         if(this.config.show_ptyp)                          iptext += item.getPower('typ', 'out', 3, true);
         if(this.config.show_ptyp && this.config.show_pmax) iptext += ' / ';
@@ -592,8 +594,6 @@ class Canvas {
 
   // Display info under an item
   displayInfo(item) {
-    let text = '';
-
     let fabric_obj = this.fabricCanvas.fabric_obj[item.id];
     $('.item_info').hide();
     $('.item_info_data td:not(.item_info_name)').empty();
@@ -724,3 +724,5 @@ class Canvas {
     $('#part_table').fadeOut(200);
   }
 }
+
+module.exports = Canvas;

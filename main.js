@@ -76,7 +76,7 @@ app.on('open-file', (evt, path) => {
 // Security: navigation disabled for all renderers
 app.on('web-contents-created', (event, contents) => {
   contents.on('will-navigate', (event, navigationUrl) => {
-      event.preventDefault();
+    event.preventDefault();
   });
 });
 
@@ -230,7 +230,7 @@ app.on('ready', () => {
   }
 
   // set the menu
-  menu = Menu.buildFromTemplate(template);
+  let menu = Menu.buildFromTemplate(template);
   Menu.setApplicationMenu(menu);
 });
 

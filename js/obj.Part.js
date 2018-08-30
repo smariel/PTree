@@ -116,8 +116,7 @@ class Part {
   // Set any formated value to the characs
   setCharac(charac_name, charac_value) {
     if('tags' === charac_name) {
-      if('string' === typeof charac_value)
-      this.setTags(charac_value);
+      if('string' === typeof charac_value) this.setTags(charac_value);
     }
     else {
       if('string' !== typeof charac_value) charac_value = '';
@@ -147,3 +146,5 @@ class Part {
     return str;
   }
 }
+
+module.exports = Part;

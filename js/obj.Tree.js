@@ -4,6 +4,8 @@
 //    Its prototype provides methods to manipulate this list
 // -----------------------------------------------------------------------------
 
+const Item = require('../js/obj.Item.js');
+
 class Tree {
 
   constructor(init=true) {
@@ -96,7 +98,6 @@ class Tree {
 
   // Create an item : root, source or load, whithout any connection with the canvas
   addItem(parent, type) {
-
     let newItem = new Item(this.item_index, parent, type, this);
     this.setItem(this.item_index++, newItem);
 
@@ -238,3 +239,5 @@ class Tree {
     });
   }
 }
+
+module.exports = Tree;

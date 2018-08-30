@@ -4,12 +4,15 @@
 //    It provides methods to manipulate a Canvas with those datas
 // -----------------------------------------------------------------------------
 
+const Tree     = require('../js/obj.Tree.js');
+const PartList = require('../js/obj.PartList.js');
+
 class Stats {
 
-  constructor(item, tree, partList) {
-    this.item      = null;
-    this.tree      = new Tree();
-    this.partList  = new PartList();
+  constructor(item = null, tree = new Tree(), partList=new PartList()) {
+    this.item      = item;
+    this.tree      = tree;
+    this.partList  = partList;
     this.chartType = 'doughnut';
     this.normalize = false;
     this.charts    = {
@@ -282,6 +285,7 @@ class Stats {
     }
 
     // create an empty chart
+    const Chart = require('chart.js');
     this.charts[typmax] = new Chart($(`.canvas_${typmax}`), chartConfig);
 
 
@@ -374,3 +378,5 @@ class Stats {
     });
   }
 }
+
+module.exports = Stats;

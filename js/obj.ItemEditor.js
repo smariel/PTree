@@ -4,7 +4,7 @@
 // -----------------------------------------------------------------------------
 
 class ItemEditor {
-  
+
   constructor(item = null) {
     this.item     = item;
     this.effChart = null;
@@ -53,7 +53,7 @@ class ItemEditor {
   // update the load current helper
   updateHTML_loadType() {
     $('.loadtype').hide();
-    loadtype = $('#load_type').val();
+    let loadtype = $('#load_type').val();
     $(`.loadtype${loadtype}`).show();
   }
 
@@ -153,6 +153,7 @@ class ItemEditor {
     }
 
     // create a new Chart.js
+    const Chart = require('chart.js');
     this.effChart =  new Chart($('#effChart'), chartConfig);
   }
 
@@ -190,7 +191,7 @@ class ItemEditor {
       }
       else {
         // Somwhere in the midle of the chart
-        for(let n=1; n<eff_datas.length; n++) {
+        for(let n=1; n<eff_datas.length; n++) {
           if(new_data.i >= eff_datas[n-1].i && new_data.i < eff_datas[n].i) {
             new_index = n;
             eff_datas.splice(new_index,0,new_data);
@@ -333,3 +334,5 @@ class ItemEditor {
     });
   }
 }
+
+module.exports = ItemEditor;
