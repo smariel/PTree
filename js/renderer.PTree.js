@@ -16,16 +16,16 @@ const PTree = require('../js/obj.PTree.js');
 const initData = require('electron').ipcRenderer.sendSync('PTree-initDataReq');
 
 // init the global object that will handle this renderer
-let app = {};
+let ptree = {};
 
 // when jQuery is ready
 $(() => {
   // creation of the PTree object
-  app = new PTree('canvas');
+  ptree = new PTree('canvas');
 
   // if there is a file to open on startup
   if(null !== initData.fileToOpen) {
-    app.open(initData.fileToOpen);
+    ptree.open(initData.fileToOpen);
   }
 
   // bootstrap tooltip initialization
