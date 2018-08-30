@@ -32,13 +32,17 @@ let debug = false;
 // ignore the first argument which is the app location
 for (let i=1; i<process.argv.length; i++) {
   let arg = process.argv[i];
-  // Debug mode
-  if('--debug' == arg) {
-    debug = true;
-    break;
+
+  // if the arg is an option starting with --
+  if('--' == arg.substring(0, 2)) {
+    // Debug mode
+    if('--debug' == arg) {
+      debug = true;
+      break;
+    }
   }
   // If the arg is a valid path to a ptree project file (also Windows "open with" command)
-  else if(fs.statSync(arg).isFile() && '.ptree' == path.extname(arg)) {
+  else if(fs.existsSync(arg) && fs.statSync(arg).isFile() && '.ptree' == path.extname(arg)) {
     // add the path to the init data of the PTree renderer
     renderers.PTree.initData.fileToOpen = arg;
   }
