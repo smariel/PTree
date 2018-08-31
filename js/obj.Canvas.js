@@ -710,7 +710,7 @@ Canvas.fabric_template = {
   },
   receiver: {
     strokeWidth     : 7,
-    stroke          : 'rgba(100,100,100,1)',
+    stroke          : '#616161',
     strokeDashArray : [15, 8]
   }
 };
