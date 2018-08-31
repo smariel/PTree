@@ -565,7 +565,7 @@ class PTree {
         if (null !== dragedItem) {
           // change the receiver style if it can receive the dragged item
           if (fabric_obj.item.id !== dragedItem.id && receiverItem.isSource() && !receiverItem.isChildOf(dragedItem)) {
-            fabric_obj.rect.set(fabric_template.receiver);
+            fabric_obj.rect.set(Canvas.fabric_template.receiver);
             this.canvas.fabricCanvas.renderAll();
           }
         }
@@ -586,7 +586,7 @@ class PTree {
         if (null !== this.canvas.fabricCanvas.dragedItem) {
           // if the draged item is different than the exited item, reset the style
           if (fabric_obj.item.id !== this.canvas.fabricCanvas.dragedItem.id) {
-            fabric_obj.rect.set(fabric_template.deselected);
+            fabric_obj.rect.set(Canvas.fabric_template.deselected);
             this.canvas.fabricCanvas.renderAll();
           }
           // if the draged item IS the exited one, fadeOut the item infos

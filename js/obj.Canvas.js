@@ -5,101 +5,7 @@
 //    Events on the Fabric item are also listen in the constructor
 // -----------------------------------------------------------------------------
 
-
-// -----------------------------------------------------------------------------
-// Template definitions for canvas elements
-// -----------------------------------------------------------------------------
-
 const {fabric} = require('fabric');
-
-// Default values for canvas
-const app_template = {
-  canvas: {
-    margin_top    : 30,
-    margin_left   : 30,
-    margin_bottom : 70,
-  },
-  cell: {
-    width  : 280,
-    height : 90
-  },
-  item: {
-    width_coef  : 0.45,
-    height_coef : 0.75,
-  },
-  nodeNet: {
-    left_coef : 0.9
-  },
-  proportion : {
-    width_min : 1,
-    width_max : 10,
-    color_min : '#D0D0D0',
-    color_max : '#000000'
-  },
-  text: {
-    margin_x : 10,
-    margin_y : 3,
-    size     : 14
-  }
-};
-
-// Default values for fabric items
-const fabric_template = {
-  canvas: {
-    backgroundColor: '#FFFFFF'
-  },
-  root: {
-    width      : 0,
-    height     : 0,
-    fill       : 'rgba(0,0,0,0)',
-    selectable : false
-  },
-  source: {
-    fill       : '#FF1744', // materialze red accent-3
-    width      : app_template.cell.width * app_template.item.width_coef,
-    height     : app_template.cell.height * app_template.item.height_coef,
-    selectable : false
-  },
-  load: {
-    fill       : '#00bfa5', // materializ teal accent-4
-    width      : app_template.cell.width * app_template.item.width_coef,
-    height     : app_template.cell.height * app_template.item.height_coef,
-    rx         : 20,
-    ry         : 20,
-    selectable : false
-  },
-  group: {
-    selectable : false
-  },
-  net: {
-    stroke        : '#424242',
-    strokeWidth   : 2,
-    strokeLineCap : 'square',
-    selectable    : false
-  },
-  text: {
-    fontSize   : app_template.text.size,
-    fontFamily : 'Arial',
-    selectable : false
-  },
-  selected: {
-    strokeWidth : 5,
-    stroke      : '#616161'
-  },
-  deselected: {
-    strokeWidth : 0
-  },
-  receiver: {
-    strokeWidth     : 7,
-    stroke          : 'rgba(100,100,100,1)',
-    strokeDashArray : [15, 8]
-  }
-};
-
-
-// -----------------------------------------------------------------------------
-// Tree canvas object constructor
-// -----------------------------------------------------------------------------
 
 class Canvas {
 
@@ -117,7 +23,7 @@ class Canvas {
     this.setDefaultConfig();
 
     // Create the canvas with Fabric
-    this.fabricCanvas = new fabric.Canvas(this.html_id, fabric_template.canvas);
+    this.fabricCanvas = new fabric.Canvas(this.html_id, Canvas.fabric_template.canvas);
     this.fabricCanvas.dragedItem = null;
     this.fabricCanvas.selection = false;
   }
@@ -139,9 +45,9 @@ class Canvas {
       align_load   : false,
       proportional : false,
       zoom         : 100,
-      cell_width   : app_template.cell.width,
-      cell_height  : app_template.cell.height,
-      text_size    : app_template.text.size
+      cell_width   : Canvas.app_template.cell.width,
+      cell_height  : Canvas.app_template.cell.height,
+      text_size    : Canvas.app_template.text.size
     };
   }
 
@@ -169,18 +75,18 @@ class Canvas {
 
     let parent        = item.getParent();
 
-    let item_width    = app_template.item.width_coef   * this.config.cell_width;
-    let item_height   = app_template.item.height_coef  * this.config.cell_height;
-    let nodeNet_left  = app_template.nodeNet.left_coef * this.config.cell_width;
+    let item_width    = Canvas.app_template.item.width_coef   * this.config.cell_width;
+    let item_height   = Canvas.app_template.item.height_coef  * this.config.cell_height;
+    let nodeNet_left  = Canvas.app_template.nodeNet.left_coef * this.config.cell_width;
 
 
     // create a rectangle with the correct template
     // and add it to the canvas
-    let itemRect = new fabric.Rect(fabric_template[item.type]);
+    let itemRect = new fabric.Rect(Canvas.fabric_template[item.type]);
     let item_col = (this.config.align_load && item.isLoad()) ? this.size.col : item.col;
     itemRect.set({
-      left  : (item_col  * this.config.cell_width ) + app_template.canvas.margin_left,
-      top   : (item.line * this.config.cell_height) + app_template.canvas.margin_top ,
+      left  : (item_col  * this.config.cell_width ) + Canvas.app_template.canvas.margin_left,
+      top   : (item.line * this.config.cell_height) + Canvas.app_template.canvas.margin_top ,
       width : item_width,
       height: item_height,
       fill  : item.characs.color
@@ -200,7 +106,7 @@ class Canvas {
       text += item.characs.custom1;
     }
 
-    let itemText = new fabric.Text(text, fabric_template.text);
+    let itemText = new fabric.Text(text, Canvas.fabric_template.text);
     itemText.set({
       'originX'   : 'center',
       'originY'   : 'center',
@@ -212,7 +118,7 @@ class Canvas {
     });
 
     // group the rect and the name and add it to canvas
-    let itemGroup = new fabric.Group([itemRect, itemText], fabric_template.group);
+    let itemGroup = new fabric.Group([itemRect, itemText], Canvas.fabric_template.group);
     itemGroup.item = item;
     itemGroup.rect = itemRect;
     itemGroup.name = itemText;
@@ -230,12 +136,12 @@ class Canvas {
         if(this.config.show_vtyp)                          vtext += item.getVoltage('typ', 'out', 3, true);
         if(this.config.show_vtyp && this.config.show_vmax) vtext += ' / ';
         if(this.config.show_vmax)                          vtext += item.getVoltage('max', 'out', 3, true);
-        let itemText_vout = new fabric.Text(vtext, fabric_template.text);
+        let itemText_vout = new fabric.Text(vtext, Canvas.fabric_template.text);
         itemText_vout.set({
           'originX'  : 'left',
           'originY'  : 'bottom',
-          'top'      : itemGroup.top  + itemGroup.height / 2 - app_template.text.margin_y,
-          'left'     : itemGroup.left + itemGroup.width      + app_template.text.margin_x,
+          'top'      : itemGroup.top  + itemGroup.height / 2 - Canvas.app_template.text.margin_y,
+          'left'     : itemGroup.left + itemGroup.width      + Canvas.app_template.text.margin_x,
           'fontSize' : this.config.text_size
         });
         this.fabricCanvas.add(itemText_vout);
@@ -259,12 +165,12 @@ class Canvas {
         if(this.config.show_pmax)                          iptext += item.getPower('max', 'out', 3, true);
 
         // Print the prepared text
-        let itemText_ipout = new fabric.Text(iptext, fabric_template.text);
+        let itemText_ipout = new fabric.Text(iptext, Canvas.fabric_template.text);
         itemText_ipout.set({
           'originX' : 'left',
           'originY' : 'top',
-          'top'     : itemGroup.top  + itemGroup.height / 2 + app_template.text.margin_y,
-          'left'    : itemGroup.left + itemGroup.width      + app_template.text.margin_x,
+          'top'     : itemGroup.top  + itemGroup.height / 2 + Canvas.app_template.text.margin_y,
+          'left'    : itemGroup.left + itemGroup.width      + Canvas.app_template.text.margin_x,
           'fontSize': this.config.text_size
         });
         this.fabricCanvas.add(itemText_ipout);
@@ -285,13 +191,13 @@ class Canvas {
     // if the item is a source and has children, process the output nets
     if (item.isSource() && item.childrenID.length > 0) {
       // init the style of the net
-      let outputNetStyle = Object.assign({},fabric_template.net);
+      let outputNetStyle = Object.assign({},Canvas.fabric_template.net);
 
       // adjust the proportions of the net according to the power ratio
       if(this.config.proportional) {
         let outputNetRatio = item.getOutputPower('typ')/totalpower;
-        outputNetStyle.stroke      = pickColorHex(app_template.proportion.color_max, app_template.proportion.color_min, outputNetRatio);
-        outputNetStyle.strokeWidth = outputNetRatio * app_template.proportion.width_max + app_template.proportion.width_min;
+        outputNetStyle.stroke      = pickColorHex(Canvas.app_template.proportion.color_max, Canvas.app_template.proportion.color_min, outputNetRatio);
+        outputNetStyle.strokeWidth = outputNetRatio * Canvas.app_template.proportion.width_max + Canvas.app_template.proportion.width_min;
       }
 
       // create the fabric item
@@ -310,14 +216,14 @@ class Canvas {
     // set the parent net to canvas at the correct coords if it exist
     if (!item.isRoot() && !item.isChildOfRoot()) {
       // init the style of the net
-      let inputNetStyle = Object.assign({},fabric_template.net);
+      let inputNetStyle = Object.assign({},Canvas.fabric_template.net);
       let offset = (this.config.align_load && item.isLoad()) ? (this.size.col - parent.col -1) * this.config.cell_width : 0;
 
       // adjust the proportions of the net according to the power ratio
       if(this.config.proportional) {
         let inputNetRatio = item.getInputPower('typ')/totalpower;
-        inputNetStyle.stroke      = pickColorHex(app_template.proportion.color_max, app_template.proportion.color_min, inputNetRatio);
-        inputNetStyle.strokeWidth = inputNetRatio * app_template.proportion.width_max + app_template.proportion.width_min;
+        inputNetStyle.stroke      = pickColorHex(Canvas.app_template.proportion.color_max, Canvas.app_template.proportion.color_min, inputNetRatio);
+        inputNetStyle.strokeWidth = inputNetRatio * Canvas.app_template.proportion.width_max + Canvas.app_template.proportion.width_min;
       }
 
       // create the fabric item
@@ -336,19 +242,19 @@ class Canvas {
       // if the item is the last child of its parent, process the childNodeNet of its inputNet
       if (item.child_index == (parent.childrenID.length - 1) && parent.childrenID.length > 1) {
         // init the style of the net
-        let verticalNetStyle = Object.assign({},fabric_template.net);
+        let verticalNetStyle = Object.assign({},Canvas.fabric_template.net);
 
         // adjust the proportions of the net according to the power ratio
         if(this.config.proportional) {
           let verticalNetRatio = item.getParent().getOutputPower('typ')/totalpower;
-          verticalNetStyle.stroke      = pickColorHex(app_template.proportion.color_max, app_template.proportion.color_min, verticalNetRatio);
-          verticalNetStyle.strokeWidth = verticalNetRatio * app_template.proportion.width_max + app_template.proportion.width_min;
+          verticalNetStyle.stroke      = pickColorHex(Canvas.app_template.proportion.color_max, Canvas.app_template.proportion.color_min, verticalNetRatio);
+          verticalNetStyle.strokeWidth = verticalNetRatio * Canvas.app_template.proportion.width_max + Canvas.app_template.proportion.width_min;
         }
 
         // set the outputNet_node to canvas at the correct coords
         let verticalNet = new fabric.Line([
           inputNet.get('x2'),
-          Math.round((parent.line * this.config.cell_height) + app_template.canvas.margin_top + item_height / 2 - verticalNetStyle.strokeWidth / 2),
+          Math.round((parent.line * this.config.cell_height) + Canvas.app_template.canvas.margin_top + item_height / 2 - verticalNetStyle.strokeWidth / 2),
           inputNet.get('x2'),
           inputNet.get('y2') - verticalNetStyle.strokeWidth
         ], verticalNetStyle);
@@ -507,7 +413,7 @@ class Canvas {
 
     // compute the minimum size of the canvas according to the lines/cols
     let canvas_minwidth1  = (this.size.col +1) * this.config.cell_width  * zoom;
-    let canvas_minheight1 = (this.size.line+1) * this.config.cell_height * zoom + app_template.canvas.margin_top + app_template.canvas.margin_bottom;
+    let canvas_minheight1 = (this.size.line+1) * this.config.cell_height * zoom + Canvas.app_template.canvas.margin_top + Canvas.app_template.canvas.margin_bottom;
 
     // compute the minimum size of the canvas according to the window
     let canvas_minwidth2  = $(window).width()  - parseInt($('body').css('margin-left'));
@@ -537,7 +443,7 @@ class Canvas {
     this.unselectItem(false);
 
     // set the correct style on the fabric rect
-    fabric_obj.set(fabric_template.selected);
+    fabric_obj.set(Canvas.fabric_template.selected);
     this.fabricCanvas.renderAll();
 
     // save a ref to the precedent item
@@ -567,7 +473,7 @@ class Canvas {
   // Deselect an item..
   unselectItem(fade) {
     if (undefined !== this.selectedItem && null !== this.selectedItem) {
-      this.fabricCanvas.fabric_obj[this.selectedItem.id].rect.set(fabric_template.deselected);
+      this.fabricCanvas.fabric_obj[this.selectedItem.id].rect.set(Canvas.fabric_template.deselected);
       this.fabricCanvas.renderAll();
     }
     this.selectedItem = null;
@@ -602,8 +508,8 @@ class Canvas {
     let top         = 0;
     let fade        = 0;
     let margin      = 10;
-    let item_width  = app_template.item.width_coef * this.config.cell_width;
-    let item_height = app_template.item.height_coef * this.config.cell_height;
+    let item_width  = Canvas.app_template.item.width_coef * this.config.cell_width;
+    let item_height = Canvas.app_template.item.height_coef * this.config.cell_height;
     let zoom = this.config.zoom/100;
 
     // if the item has an input
@@ -724,5 +630,89 @@ class Canvas {
     $('#part_table').fadeOut(200);
   }
 }
+
+// Default values for canvas
+Canvas.app_template = {
+  canvas: {
+    margin_top    : 30,
+    margin_left   : 30,
+    margin_bottom : 70,
+  },
+  cell: {
+    width  : 280,
+    height : 90
+  },
+  item: {
+    width_coef  : 0.45,
+    height_coef : 0.75,
+  },
+  nodeNet: {
+    left_coef : 0.9
+  },
+  proportion : {
+    width_min : 1,
+    width_max : 10,
+    color_min : '#D0D0D0',
+    color_max : '#000000'
+  },
+  text: {
+    margin_x : 10,
+    margin_y : 3,
+    size     : 14
+  }
+};
+
+// Default values for fabric items
+Canvas.fabric_template = {
+  canvas: {
+    backgroundColor: '#FFFFFF'
+  },
+  root: {
+    width      : 0,
+    height     : 0,
+    fill       : 'rgba(0,0,0,0)',
+    selectable : false
+  },
+  source: {
+    fill       : '#FF1744', // materialze red accent-3
+    width      : Canvas.app_template.cell.width * Canvas.app_template.item.width_coef,
+    height     : Canvas.app_template.cell.height * Canvas.app_template.item.height_coef,
+    selectable : false
+  },
+  load: {
+    fill       : '#00bfa5', // materializ teal accent-4
+    width      : Canvas.app_template.cell.width * Canvas.app_template.item.width_coef,
+    height     : Canvas.app_template.cell.height * Canvas.app_template.item.height_coef,
+    rx         : 20,
+    ry         : 20,
+    selectable : false
+  },
+  group: {
+    selectable : false
+  },
+  net: {
+    stroke        : '#424242',
+    strokeWidth   : 2,
+    strokeLineCap : 'square',
+    selectable    : false
+  },
+  text: {
+    fontSize   : Canvas.app_template.text.size,
+    fontFamily : 'Arial',
+    selectable : false
+  },
+  selected: {
+    strokeWidth : 5,
+    stroke      : '#616161'
+  },
+  deselected: {
+    strokeWidth : 0
+  },
+  receiver: {
+    strokeWidth     : 7,
+    stroke          : 'rgba(100,100,100,1)',
+    strokeDashArray : [15, 8]
+  }
+};
 
 module.exports = Canvas;
