@@ -1,3 +1,7 @@
+// -----------------------------------------------------------------------------
+// Main Process
+// -----------------------------------------------------------------------------
+
 // Electron Module
 const electron = require('electron');
 // Electron module to control application life.

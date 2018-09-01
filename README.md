@@ -1,7 +1,17 @@
+Check [smariel.github.io/PTree](https://smariel.github.io/PTree) to download PTree for Windows, Linux, macOS and find more informations.
+
 **PTree** aims to help building power supplies on electronics design. A first window is dedicated to build the tree itself by connecting sources and loads. The second window lists all components with their consumption on each power supplies. The third window is a graphical summary of all consumption on the design.
 
 
-You can download PTree for Windows, Linux, macOS and find more informations on [smariel.github.io/PTree](https://smariel.github.io/PTree)
+-----------------
+# Contents
+
+ - [Install](#install)
+ - [Compile SASS to CSS](#compile-sass-to-css)
+ - [Build and deploy](#build-and-deploy)
+ - [Debugging](#debugging)
+ - [Verifications](#verifications)
+ - [PTree diagram](#ptree-diagram)
 
 
 -----------------
@@ -47,7 +57,7 @@ package.json contains multiple scripts to easily build PTree. Just run:
 
     $ npm run xxx
 
-Where "xxx" must be replaced by:
+Where `xxx` must be replaced by:
 
 | xxx       | Platform                                            |
 | --------- | --------------------------------------------------- |
@@ -60,6 +70,13 @@ Where "xxx" must be replaced by:
 | build:all | = build:mac + build:win + build:lin                 |
 | dist:all  | = dist:mac  + dist:win  + dist:lin                  |
 
+
+# Debugging
+To debug the main process, launch the with `npm start` or by adding a `--inspect` argument. Then attach a debugger to port 9229.
+
+To debug any renderer, use the DevTools. If you want to use an external debugger, launch PTree with `npm start` or by adding a `--remote-debugging-port=9228` argument. Then close the DevTools (to detach the embedded debugger) and attach an other debugger to port 9228.
+
+Example of external debugger for [Atom](https://atom.io): [atom-ide-ui](https://atom.io/packages/atom-ide-ui) + [atom-ide-debugger-node](https://atom.io/packages/atom-ide-debugger-node).
 
 # Verifications
 You can verify multiple items before deploying.

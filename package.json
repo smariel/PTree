@@ -14,7 +14,7 @@
   },
   "scripts": {
     "postinstall": "",
-    "start": "electron . --debug",
+    "start": "electron . --debug --inspect --remote-debugging-port=9228",
     "build:mac": "electron-builder --config electron-builder.json --mac   --dir",
     "build:win": "electron-builder --config electron-builder.json --win   --dir",
     "build:lin": "electron-builder --config electron-builder.json --linux --dir",
