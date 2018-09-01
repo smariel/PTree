@@ -369,25 +369,12 @@ class Canvas {
   // Refresh the total power and efficiency table
   refreshTotalPower() {
     // refresh the total power
-    const totalpower = {
-      typ: this.tree.getRoot().getOutputPower('typ'),
-      max: this.tree.getRoot().getOutputPower('max')
-    };
+    const totalpower = this.tree.getTotalPower();
     $('.totalpower.typ').text(Util.numberToSi(totalpower.typ,3));
     $('.totalpower.max').text(Util.numberToSi(totalpower.max,3));
-
-    // get the total usefull power
-    let loadpower = {typ:0, max:0};
-    this.tree.forEachLoad((load) => {
-      loadpower.typ += load.getInputPower('typ');
-      loadpower.max += load.getInputPower('max');
-    });
-
+    
     // refresh the total efficiency
-    const efficiency = {
-      typ: (0 == totalpower.typ) ? 100 : (loadpower.typ / totalpower.typ) * 100,
-      max: (0 == totalpower.max) ? 100 : (loadpower.max / totalpower.max) * 100
-    };
+    const efficiency = this.tree.getTotalEfficiency();
     $('.totaleff.typ').text(Util.numberToSi(efficiency.typ,3));
     $('.totaleff.max').text(Util.numberToSi(efficiency.max,3));
   }

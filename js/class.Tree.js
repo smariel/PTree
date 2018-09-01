@@ -155,6 +155,41 @@ class Tree {
   }
 
 
+  // return the total power of the tree
+  getTotalPower(typmax='both') {
+    const totalpower = {
+      typ: this.getRoot().getOutputPower('typ'),
+      max: this.getRoot().getOutputPower('max')
+    };
+
+    // return the typ or max or both
+    if('both' === typmax) return totalpower;
+    else return totalpower[typmax];
+  }
+
+
+  // get the total efficiency = load_power / total_power
+  getTotalEfficiency(typmax='both') {
+    // get the total usefull power
+    let loadpower = {typ:0, max:0};
+    this.forEachLoad((load) => {
+      loadpower.typ += load.getInputPower('typ');
+      loadpower.max += load.getInputPower('max');
+    });
+
+    // refresh the total efficiency
+    let totalpower = this.getTotalPower();
+    const efficiency = {
+      typ: (0 == totalpower.typ) ? 100 : (loadpower.typ / totalpower.typ) * 100,
+      max: (0 == totalpower.max) ? 100 : (loadpower.max / totalpower.max) * 100
+    };
+
+    // return the typ or max or both
+    if('both' === typmax) return efficiency;
+    else return efficiency[typmax];
+  }
+
+
   // Remove the reference to this tree from each item
   // Caution! Call .convertToCircular() before calling any other method
   convertToUncircular() {
