@@ -459,12 +459,12 @@ ipcMain.on('Popup-openReq', (evt, popupData) => {
   });
 });
 
-// IPC sync msg received from Stats : request for init data
+// IPC sync msg received from Popup : request for init data
 ipcMain.on('Popup-initDataReq', (evt) => {
   evt.returnValue = renderers.popup.initData;
 });
 
-// IPC async msg received from PartListEditor : popup data returned
+// IPC async msg received from Popup : popup data returned
 ipcMain.on('Popup-returnData', (evt, returnData) => {
   // save the returned data to be sent when window is closed
   renderers.popup.returnData = returnData;
