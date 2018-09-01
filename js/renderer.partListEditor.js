@@ -11,9 +11,9 @@ window.eval = global.eval = function () {
 window.$ = window.jQuery = require('jquery');
 require('bootstrap');
 require('mousetrap');
-const Tree           = require('../js/obj.Tree.js');
-const PartList       = require('../js/obj.PartList.js');
-const PartListEditor = require('../js/obj.PartListEditor.js');
+const Tree           = require('../js/class.Tree.js');
+const PartList       = require('../js/class.PartList.js');
+const PartListEditor = require('../js/class.PartListEditor.js');
 
 // global object that will handle this renderer
 let partListEditor = {};

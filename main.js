@@ -79,7 +79,7 @@ app.on('open-file', (evt, path) => {
 
 // Security: navigation disabled for all renderers
 app.on('web-contents-created', (event, contents) => {
-  contents.on('will-navigate', (event, navigationUrl) => {
+  contents.on('will-navigate', (event) => {
     event.preventDefault();
   });
 });
@@ -87,7 +87,7 @@ app.on('web-contents-created', (event, contents) => {
 
 // Security: disable the creation of additional windows
 app.on('web-contents-created', (event, contents) => {
-  contents.on('new-window', (event, navigationUrl) => {
+  contents.on('new-window', (event) => {
     event.preventDefault();
   });
 });

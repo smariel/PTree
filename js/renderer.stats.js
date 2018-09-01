@@ -10,7 +10,7 @@ window.eval = global.eval = function () {
 // Framworks and libraries
 window.$ = window.jQuery = require('jquery');
 require('bootstrap');
-const Stats = require('../js/obj.Stats.js');
+const Stats = require('../js/class.Stats.js');
 
 // Send an IPC sync msg to main.js: request init data
 const initData = require('electron').ipcRenderer.sendSync('Stats-initDataReq');

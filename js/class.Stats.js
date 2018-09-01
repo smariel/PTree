@@ -4,8 +4,9 @@
 //    It provides methods to manipulate a Canvas with those datas
 // -----------------------------------------------------------------------------
 
-const Tree     = require('../js/obj.Tree.js');
-const PartList = require('../js/obj.PartList.js');
+const Tree     = require('../js/class.Tree.js');
+const PartList = require('../js/class.PartList.js');
+const Util     = require('../js/class.Util.js');
 
 class Stats {
 
@@ -72,8 +73,8 @@ class Stats {
       // prepare data for the chart
       for (let childID of this.item.childrenID) {
         let child = this.tree.getItem(childID);
-        let valtyp = smartRound(child.getInputCurrent('typ'), 2);
-        let valmax = smartRound(child.getInputCurrent('max'), 2);
+        let valtyp = Util.smartRound(child.getInputCurrent('typ'), 2);
+        let valmax = Util.smartRound(child.getInputCurrent('max'), 2);
         datasets.typ.push(valtyp);
         datasets.max.push(valmax);
         labels.push(child.characs.name);
@@ -99,8 +100,8 @@ class Stats {
         this.partList.forEachPart((part) => {
           // if the part is consuming on this load, add it to the chart
           if(part.isConsuming(this.item)) {
-            let valtyp = smartRound(part.getConsumption(this.item, 'typ'),2);
-            let valmax = smartRound(part.getConsumption(this.item, 'max'),2);
+            let valtyp = Util.smartRound(part.getConsumption(this.item, 'typ'),2);
+            let valmax = Util.smartRound(part.getConsumption(this.item, 'max'),2);
             datasets.typ.push(valtyp);
             datasets.max.push(valmax);
             labels.push(part.characs.name);
@@ -294,8 +295,8 @@ class Stats {
     this.charts[typmax].data = {
       datasets: [{
         data: dataset,
-        backgroundColor: getHSLcolorset([348,100,54],dataset.length),
-        hoverBackgroundColor: getHSLcolorset([3,82,67],dataset.length),
+        backgroundColor: Util.getHSLcolorset([348,100,54],dataset.length),
+        hoverBackgroundColor: Util.getHSLcolorset([3,82,67],dataset.length),
       }],
       labels: labels
     };

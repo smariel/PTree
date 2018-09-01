@@ -6,9 +6,10 @@
 //    See synop.jpg for more informations
 // -----------------------------------------------------------------------------
 
-const Tree     = require('../js/obj.Tree.js');
-const PartList = require('../js/obj.PartList.js');
-const Canvas   = require('../js/obj.Canvas.js');
+const Tree     = require('../js/class.Tree.js');
+const PartList = require('../js/class.PartList.js');
+const Canvas   = require('../js/class.Canvas.js');
+const Util     = require('../js/class.Util.js');
 
 class PTree {
 
@@ -23,7 +24,8 @@ class PTree {
 
     this.setSheet(null);
     this.listenCanvas();
-    this.listenTreeMenu();
+    this.listenTopMenu();
+    this.listenConfigMenu();
     this.listenDOM();
     this.listenKeyboard();
     this.listenMessages();
@@ -263,13 +265,26 @@ class PTree {
   }
 
 
+  // Select a new spreadsheet to sync with
+  selectSheet(path=null) {
+    // ask the user for a sheet
+    let usersheet = Util.getSpreadsheet(path, true, 'PTree');
+    if (null === usersheet) return;
+    // save the sheet and refresh Consumptions
+    this.setSheet(usersheet);
+    this.tree.refreshConsumptions(null, this.usersheet.sheet);
+    this.canvas.refresh();
+    this.setUnsaved();
+  }
+
+
   // reload data from the spreadsheet
   reloadSheet() {
     // if the file exist
     const fs = require('fs');
     if(fs.existsSync(this.usersheet.path)) {
       // reload the Spreadsheet from the file
-      this.usersheet.sheet = getSpreadsheet(this.usersheet.path);
+      this.usersheet.sheet = Util.getSpreadsheet(this.usersheet.path);
     }
   }
 
@@ -315,12 +330,12 @@ class PTree {
         btn_ok     : 'Proceed',
         btn_cancel : 'Cancel'
       };
-      if(!popup(popupData)) return false;
+      if(!Util.popup(popupData)) return false;
     }
 
     // comapare the version of PTree with the version of the file
     let packagejson = require('../package.json');
-    let comp = compareVersions(packagejson.version, data.version);
+    let comp = Util.compareVersions(packagejson.version, data.version);
 
     // The file was made with an older PTree
     if(comp === 1) {
@@ -338,7 +353,7 @@ class PTree {
         btn_ok     : 'Proceed',
         btn_cancel : 'Cancel'
       };
-      if(!popup(popupData)) return false;
+      if(!Util.popup(popupData)) return false;
     }
     // The file was made with a newer PTree
     else if(comp === -1) {
@@ -358,7 +373,7 @@ class PTree {
         btn_cancel : 'Cancel'
       };
 
-      if(!popup(popupData)) return false;
+      if(!Util.popup(popupData)) return false;
     }
     // sould not occur
     else if(null === comp) {
@@ -386,7 +401,7 @@ class PTree {
       let this_version = packagejson.version;
 
       // if this version is older than the latest on github
-      let version_comp = compareVersions(this_version,latest_version);
+      let version_comp = Util.compareVersions(this_version,latest_version);
       if(version_comp < 0) {
         // open a popup and propose the user to download
         let popupData = {
@@ -401,7 +416,7 @@ class PTree {
           btn_cancel : 'Not now'
         };
         // if the user clicked on 'download'
-        if(popup(popupData)) {
+        if(Util.popup(popupData)) {
           // open the PTree home page in an external browser
           const {shell} = require('electron');
           shell.openExternal(packagejson.homepage);
@@ -487,7 +502,7 @@ class PTree {
   // export the canvas as a JPEG Image
   exportImg() {
     let name = ('string' === typeof this.filePath) ? require('path').parse(this.filePath).name+'.jpg' : 'ptree.jpg';
-    downloadDataURL(this.canvas.toJPEGdataURL(), name);
+    Util.downloadDataURL(this.canvas.toJPEGdataURL(), name);
   }
 
 
@@ -620,148 +635,18 @@ class PTree {
   }
 
 
-  // listen DOM events (except for the top menu)
+  // listen DOM events (except for the top and config menu)
   listenDOM() {
     // refresh the canvas when the window is resized
     // could be slow, may be recoded
     $(window).resize(() => {
       this.canvas.refresh();
     });
-
-    // refresh the config when inputs changed
-    $('.config_input').change((evt) => {
-      if ('checkbox' == $(evt.currentTarget).attr('type')) {
-        this.canvas.config[$(evt.currentTarget).data('config')] = $(evt.currentTarget).prop('checked');
-      }
-      else if ('range' == $(evt.currentTarget).attr('type')) {
-        let val = parseInt($(evt.currentTarget).val());
-        this.canvas.config[$(evt.currentTarget).data('config')] = val;
-        $(evt.currentTarget).prev('.range_val').text(val);
-      }
-      else {
-        return;
-      }
-
-      this.canvas.refresh();
-    });
-
-    // modify the range inputs on wheel up/down
-    $('.config_range').on('wheel',(evt) => {
-      // get actual values
-      let step   = parseInt($(evt.currentTarget).prop('step'));
-      let val    = parseInt($(evt.currentTarget).val());
-      let newval = val;
-
-      // wheel down, decrement
-      if(evt.originalEvent.deltaY > 0) {
-        // get the min
-        let min = parseInt($(evt.currentTarget).prop('min'));
-        // if already the min, do nothing
-        if(val == min) return;
-        // decrement from one step
-        newval = val - step;
-        // if below the min, stay to the min
-        if(newval < min) newval = min;
-      }
-      // wheel up, increment
-      else if(evt.originalEvent.deltaY < 0) {
-        // get the max
-        let max = parseInt($(evt.currentTarget).prop('max'));
-        // if already the max
-        if(val == max) return;
-        // increment from one step
-        newval = val + step;
-        // if above the max, stay to the max
-        if(newval > max) newval = max;
-      }
-
-      // update the value
-      $(evt.currentTarget).val(newval);
-      // fire the CHANGE event
-      $(evt.currentTarget).trigger('change');
-      // fade out all item infos (to avoid strange display)
-      $('.item_info').fadeOut(0);
-    });
-
-    // set the config to default
-    $('.mybtn-defaultConfig').click(() => {
-      this.canvas.setDefaultConfig();
-      this.canvas.refresh();
-    });
-
-    // select a sheet to sync with
-    $('#bt_select_sheet').click(() => {
-      // ask the user for a sheet
-      let usersheet = getSpreadsheet(null, true);
-      if (null === usersheet) return;
-      // save the sheet and refresh Consumptions
-      this.setSheet(usersheet);
-      this.tree.refreshConsumptions(null, this.usersheet.sheet);
-      this.canvas.refresh();
-      this.setUnsaved();
-    });
-
-    // refresh the sheet to sync with
-    $('#bt_refresh_sheet').click(() => {
-      this.reloadSheet();
-      this.tree.refreshConsumptions(null, this.usersheet.sheet);
-      this.canvas.refresh();
-      this.setUnsaved();
-    });
-
-    // refresh the sheet to sync with
-    $('#bt_remove_sheet').click(() => {
-      this.setSheet(null);
-      this.tree.refreshConsumptions(null, this.usersheet.sheet);
-      this.canvas.refresh();
-      this.setUnsaved();
-    });
-
-    // close the config menu when click on the cross
-    $('#bottom_close').click(() => {
-      this.toggleOptions();
-    });
-
-    // the user dropped an object anywhere on the window
-    document.addEventListener('drop', (event) => {
-      event.preventDefault();
-
-      // extract the valid paths to ptree project files
-      let ptree_files = [];
-      for(let file of event.dataTransfer.files) {
-        // check the path with Node.js Fs and Path native modules
-        if(require('fs').statSync(file.path).isFile() && '.ptree' == require('path').extname(file.path)) {
-          ptree_files.push(file);
-        }
-      }
-
-      // one object droped, open it
-      if(1 === ptree_files.length) {
-        this.open(ptree_files[0].path);
-      }
-      // multiple objects droped
-      else if(ptree_files.length > 1) {
-        // ask the user which file to use
-        let popupData = {
-          type       : 'list',
-          title      : 'Which file to open',
-          width      : 500,
-          height     : 135,
-          sender     : 'PTree',
-          content    : 'Multiple files where droped. Which PTree object should be open ?<br />Please choose one: <select id="list"></select>',
-          btn_ok     : 'Open',
-          list       : ptree_files.map((f) => {return {val:f.path, text:f.name};})
-        };
-
-        // open the selected file
-        this.open(popup(popupData));
-      }
-    });
   }
 
 
   // listen to all events on the top-menu of the Tree view
-  listenTreeMenu() {
+  listenTopMenu() {
     // open a new window to manipulate the part list
     $('#bt_partTable').click(() => {
       // Send an IPC async msg to the main.js: request to edit the part list
@@ -810,7 +695,7 @@ class PTree {
         };
 
         // Cancel was clicked
-        if(popup(popupData)) return;
+        if(Util.popup(popupData)) return;
       }
 
       this.reset();
@@ -937,6 +822,133 @@ class PTree {
     // toggle the config bar
     $('#bt_config').click(() => {
       this.toggleOptions();
+    });
+  }
+
+
+  // listen events related to the config menu
+  listenConfigMenu() {
+    // refresh the config when inputs changed
+    $('.config_input').change((evt) => {
+      if ('checkbox' == $(evt.currentTarget).attr('type')) {
+        this.canvas.config[$(evt.currentTarget).data('config')] = $(evt.currentTarget).prop('checked');
+      }
+      else if ('range' == $(evt.currentTarget).attr('type')) {
+        let val = parseInt($(evt.currentTarget).val());
+        this.canvas.config[$(evt.currentTarget).data('config')] = val;
+        $(evt.currentTarget).prev('.range_val').text(val);
+      }
+      else {
+        return;
+      }
+
+      this.canvas.refresh();
+    });
+
+    // modify the range inputs on wheel up/down
+    $('.config_range').on('wheel',(evt) => {
+      // get actual values
+      let step   = parseInt($(evt.currentTarget).prop('step'));
+      let val    = parseInt($(evt.currentTarget).val());
+      let newval = val;
+
+      // wheel down, decrement
+      if(evt.originalEvent.deltaY > 0) {
+        // get the min
+        let min = parseInt($(evt.currentTarget).prop('min'));
+        // if already the min, do nothing
+        if(val == min) return;
+        // decrement from one step
+        newval = val - step;
+        // if below the min, stay to the min
+        if(newval < min) newval = min;
+      }
+      // wheel up, increment
+      else if(evt.originalEvent.deltaY < 0) {
+        // get the max
+        let max = parseInt($(evt.currentTarget).prop('max'));
+        // if already the max
+        if(val == max) return;
+        // increment from one step
+        newval = val + step;
+        // if above the max, stay to the max
+        if(newval > max) newval = max;
+      }
+
+      // update the value
+      $(evt.currentTarget).val(newval);
+      // fire the CHANGE event
+      $(evt.currentTarget).trigger('change');
+      // fade out all item infos (to avoid strange display)
+      $('.item_info').fadeOut(0);
+    });
+
+    // set the config to default
+    $('.mybtn-defaultConfig').click(() => {
+      this.canvas.setDefaultConfig();
+      this.canvas.refresh();
+    });
+
+    // select a sheet to sync with
+    $('#bt_select_sheet').click(() => {
+      this.selectSheet();
+    });
+
+    // refresh the sheet to sync with
+    $('#bt_refresh_sheet').click(() => {
+      this.reloadSheet();
+      this.tree.refreshConsumptions(null, this.usersheet.sheet);
+      this.canvas.refresh();
+      this.setUnsaved();
+    });
+
+    // refresh the sheet to sync with
+    $('#bt_remove_sheet').click(() => {
+      this.setSheet(null);
+      this.tree.refreshConsumptions(null, this.usersheet.sheet);
+      this.canvas.refresh();
+      this.setUnsaved();
+    });
+
+    // close the config menu when click on the cross
+    $('#bottom_close').click(() => {
+      this.toggleOptions();
+    });
+
+    // the user dropped an object anywhere on the window
+    document.addEventListener('drop', (event) => {
+      event.preventDefault();
+
+      // extract the valid paths to ptree project files
+      let ptree_files = [];
+      for(let file of event.dataTransfer.files) {
+        // check the path with Node.js Fs and Path native modules
+        if(require('fs').statSync(file.path).isFile() && '.ptree' == require('path').extname(file.path)) {
+          ptree_files.push(file);
+        }
+      }
+
+      // one object droped, open it
+      if(1 === ptree_files.length) {
+        this.open(ptree_files[0].path);
+      }
+      // multiple objects droped
+      else if(ptree_files.length > 1) {
+        // ask the user which file to use
+        let popupData = {
+          type       : 'list',
+          title      : 'Which file to open',
+          width      : 500,
+          height     : 135,
+          sender     : 'PTree',
+          content    : 'Multiple files where droped. Which PTree object should be open ?<br />Please choose one: <select id="list"></select>',
+          btn_ok     : 'Open',
+          list       : ptree_files.map((f) => {return {val:f.path, text:f.name};})
+        };
+
+        // open the selected file
+        this.open(Util.popup(popupData));
+      }
     });
   }
 
@@ -1071,7 +1083,7 @@ class PTree {
           btn_ok     : 'Save and exit',
           btn_cancel : 'Exit without saving'
         };
-        let saveBeforeExit = popup(popupData);
+        let saveBeforeExit = Util.popup(popupData);
 
         // if the user want to save, save the project
         if (saveBeforeExit) {

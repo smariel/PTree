@@ -4,8 +4,9 @@
 //    It provides methods to manipulate those parts within a <table> element
 // -----------------------------------------------------------------------------
 
-const PartList = require('../js/obj.PartList.js');
-const Tree     = require('../js/obj.Tree.js');
+const PartList = require('../js/class.PartList.js');
+const Tree     = require('../js/class.Tree.js');
+const Util     = require('../js/class.Util.js');
 
 class PartListEditor {
 
@@ -59,12 +60,12 @@ class PartListEditor {
           ptyp += parseFloat(ityp) * item.getInputVoltage('typ');
           pmax += parseFloat(imax) * item.getInputVoltage('max');
           // add two table cells to the table line
-          tr += `<td class='td_current td_typ td_editable' data-typmax='typ' data-loadid='${item.id}' data-value='${ityp}'>${round(ityp,3)}</td><td class='td_current td_max td_editable' data-typmax='max' data-loadid='${item.id}' data-value='${imax}'>${round(imax,3)}</td>`;
+          tr += `<td class='td_current td_typ td_editable' data-typmax='typ' data-loadid='${item.id}' data-value='${ityp}'>${Util.round(ityp,3)}</td><td class='td_current td_max td_editable' data-typmax='max' data-loadid='${item.id}' data-value='${imax}'>${Util.round(imax,3)}</td>`;
         }
       }
 
       // Part total power consumption
-      tr += `<td class='td_power td_typ' data-value='${ptyp}'>${round(ptyp,3)}</td><td class='td_power td_max' data-value='${pmax}'>${round(pmax,3)}</td>`;
+      tr += `<td class='td_power td_typ' data-value='${ptyp}'>${Util.round(ptyp,3)}</td><td class='td_power td_max' data-value='${pmax}'>${Util.round(pmax,3)}</td>`;
 
       // Print the line
       tr += `</tr>`;
@@ -232,15 +233,15 @@ class PartListEditor {
     let value = part.getConsumption(load, typmax);
     let part$ = $('.edition').parent();
     part$.attr('data-value', value.toString());
-    part$.html(round(value,3));
+    part$.html(Util.round(value,3));
     if('typ' === typmax) {
       let maxvalue = part.getConsumption(load, 'max');
       part$.next().attr('data-value', maxvalue.toString());
-      part$.next().html(round(maxvalue,3));
+      part$.next().html(Util.round(maxvalue,3));
     }
     let power = part.getPower(this.tree);
-    let ptyp = round(power.typ,3);
-    let pmax = round(power.max,3);
+    let ptyp = Util.round(power.typ,3);
+    let pmax = Util.round(power.max,3);
     $(`tr[data-partid=${part.id}] > td.td_power.td_typ`).html(ptyp).attr('data-value', ptyp.toString());
     $(`tr[data-partid=${part.id}] > td.td_power.td_max`).html(pmax).attr('data-value', pmax.toString());
     $('.partTable').trigger('update');
@@ -369,7 +370,6 @@ class PartListEditor {
     // if there is only one part
     else {
       // loop on the user-ordered partlist
-      let partList = [];
       let state = 0;
       $('.partTable tbody tr').each((index, elt) => {
         let partId = $(elt).data('partid');
@@ -536,7 +536,7 @@ class PartListEditor {
       btn_ok     : 'Add',
       btn_cancel : 'Replace'
     };
-    if(!popup(popupData, false, 'partListEditor')) {
+    if(!Util.popup(popupData, false, 'partListEditor')) {
       this.partList.deleteAllParts();
     }
 
@@ -576,7 +576,7 @@ class PartListEditor {
   // Listen to all event on the page
   listenEvents() {
     const Mousetrap = require('mousetrap');
-    
+
     // send back data when the window is clossing
     window.onbeforeunload = () => {
       // Send an IPC async msg to main.js: return the PartList or null if not modified
@@ -615,18 +615,18 @@ class PartListEditor {
 
     // export the table to excel
     $('.exportTable').click(() => {
-      downloadTable($('.partTable'), 'ptree.xlsx');
+      Util.downloadTable($('.partTable'), 'ptree.xlsx');
     });
 
     // export an empty pre-formated excel
     $('.exportTemplate').click(() => {
-      downloadTable($('.partTable thead'),'template.xlsx');
+      Util.downloadTable($('.partTable thead'),'template.xlsx');
     });
 
     // import the data from the excel
     $('.importTable').click(() => {
       // ask the user for a sheet
-      let json_sheet = getSpreadsheet();
+      let json_sheet = Util.getSpreadsheet();
       if (null === json_sheet) return;
 
       // Import the file into the partlist

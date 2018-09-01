@@ -3,7 +3,7 @@
 //    A PartList object contains all the parts, orders and classifications
 // -----------------------------------------------------------------------------
 
-const Part = require('../js/obj.Part.js');
+const Part = require('../js/class.Part.js');
 
 class PartList {
 

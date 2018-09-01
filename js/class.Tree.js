@@ -4,7 +4,7 @@
 //    Its prototype provides methods to manipulate this list
 // -----------------------------------------------------------------------------
 
-const Item = require('../js/obj.Item.js');
+const Item = require('../js/class.Item.js');
 
 class Tree {
 

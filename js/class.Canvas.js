@@ -6,6 +6,7 @@
 // -----------------------------------------------------------------------------
 
 const {fabric} = require('fabric');
+const Util = require('../js/class.Util.js');
 
 class Canvas {
 
@@ -113,7 +114,7 @@ class Canvas {
       'textAlign' : 'center',
       'top'       : itemRect.top  + itemRect.height / 2,
       'left'      : itemRect.left + itemRect.width  / 2,
-      'fill'      : getOpositeBorW(item.characs.color),
+      'fill'      : Util.getOpositeBorW(item.characs.color),
       'fontSize'  : this.config.text_size
     });
 
@@ -196,7 +197,7 @@ class Canvas {
       // adjust the proportions of the net according to the power ratio
       if(this.config.proportional) {
         let outputNetRatio = item.getOutputPower('typ')/totalpower;
-        outputNetStyle.stroke      = pickColorHex(Canvas.app_template.proportion.color_max, Canvas.app_template.proportion.color_min, outputNetRatio);
+        outputNetStyle.stroke      = Util.pickColorHex(Canvas.app_template.proportion.color_max, Canvas.app_template.proportion.color_min, outputNetRatio);
         outputNetStyle.strokeWidth = outputNetRatio * Canvas.app_template.proportion.width_max + Canvas.app_template.proportion.width_min;
       }
 
@@ -222,7 +223,7 @@ class Canvas {
       // adjust the proportions of the net according to the power ratio
       if(this.config.proportional) {
         let inputNetRatio = item.getInputPower('typ')/totalpower;
-        inputNetStyle.stroke      = pickColorHex(Canvas.app_template.proportion.color_max, Canvas.app_template.proportion.color_min, inputNetRatio);
+        inputNetStyle.stroke      = Util.pickColorHex(Canvas.app_template.proportion.color_max, Canvas.app_template.proportion.color_min, inputNetRatio);
         inputNetStyle.strokeWidth = inputNetRatio * Canvas.app_template.proportion.width_max + Canvas.app_template.proportion.width_min;
       }
 
@@ -247,7 +248,7 @@ class Canvas {
         // adjust the proportions of the net according to the power ratio
         if(this.config.proportional) {
           let verticalNetRatio = item.getParent().getOutputPower('typ')/totalpower;
-          verticalNetStyle.stroke      = pickColorHex(Canvas.app_template.proportion.color_max, Canvas.app_template.proportion.color_min, verticalNetRatio);
+          verticalNetStyle.stroke      = Util.pickColorHex(Canvas.app_template.proportion.color_max, Canvas.app_template.proportion.color_min, verticalNetRatio);
           verticalNetStyle.strokeWidth = verticalNetRatio * Canvas.app_template.proportion.width_max + Canvas.app_template.proportion.width_min;
         }
 
@@ -372,8 +373,8 @@ class Canvas {
       typ: this.tree.getRoot().getOutputPower('typ'),
       max: this.tree.getRoot().getOutputPower('max')
     };
-    $('.totalpower.typ').text(numberToSi(totalpower.typ,3));
-    $('.totalpower.max').text(numberToSi(totalpower.max,3));
+    $('.totalpower.typ').text(Util.numberToSi(totalpower.typ,3));
+    $('.totalpower.max').text(Util.numberToSi(totalpower.max,3));
 
     // get the total usefull power
     let loadpower = {typ:0, max:0};
@@ -387,8 +388,8 @@ class Canvas {
       typ: (0 == totalpower.typ) ? 100 : (loadpower.typ / totalpower.typ) * 100,
       max: (0 == totalpower.max) ? 100 : (loadpower.max / totalpower.max) * 100
     };
-    $('.totaleff.typ').text(numberToSi(efficiency.typ,3));
-    $('.totaleff.max').text(numberToSi(efficiency.max,3));
+    $('.totaleff.typ').text(Util.numberToSi(efficiency.typ,3));
+    $('.totaleff.max').text(Util.numberToSi(efficiency.max,3));
   }
 
 

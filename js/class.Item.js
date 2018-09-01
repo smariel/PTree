@@ -7,6 +7,8 @@
 //    Check the summary of the formulas : ../docs/equations.pdf
 // -----------------------------------------------------------------------------
 
+const Util = require('../js/class.Util.js');
+
 class Item {
 
   constructor(id, parent, type, tree) {
@@ -516,7 +518,7 @@ class Item {
     else if ('out' === inout) current = this.getOutputCurrent(valType);
 
     // format value
-    if ($.isNumeric(roundToSI)) current = numberToSi(current, roundToSI);
+    if ($.isNumeric(roundToSI)) current = Util.numberToSi(current, roundToSI);
     if (show_unit) current += 'A';
 
     return current;
@@ -535,7 +537,7 @@ class Item {
     else if ('out' === inout) voltage = this.getOutputVoltage(valType);
 
     // format value
-    if ($.isNumeric(roundToSI)) voltage = numberToSi(voltage, roundToSI);
+    if ($.isNumeric(roundToSI)) voltage = Util.numberToSi(voltage, roundToSI);
     if (show_unit) voltage += 'V';
 
     return voltage;
@@ -555,7 +557,7 @@ class Item {
     else if ('loss' === inoutloss) power = this.getPowerLoss  (valType);
 
     // format value
-    if ($.isNumeric(roundToSI)) power = numberToSi(power, roundToSI);
+    if ($.isNumeric(roundToSI)) power = Util.numberToSi(power, roundToSI);
     if (show_unit) power += 'W';
 
     return power;
