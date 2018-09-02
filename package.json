@@ -1,6 +1,6 @@
 {
   "name": "PTree",
-  "version": "1.4.2",
+  "version": "1.5.0",
   "description": "Design power trees and estimate consumptions",
   "author": {
     "name": "Sylvain Mariel",
@@ -9,9 +9,6 @@
   },
   "license": "GPL-3.0",
   "main": "main.js",
-  "jshintConfig": {
-    "esversion": 6
-  },
   "scripts": {
     "postinstall": "",
     "start": "electron . --debug --inspect --remote-debugging-port=9228",
@@ -41,17 +38,17 @@
   "dependencies": {
     "bootstrap": "<4.0.0",
     "chart.js": "^2.7.2",
-    "fabric": "^2.3.4",
-    "electron": "^2.0.8",
+    "fabric": "^2.3.6",
     "font-awesome": "<5.0.0",
     "jquery": "^3.3.1",
     "mousetrap": "^1.6.2",
-    "tablesorter": "^2.30.7",
-    "xlsx": "^0.13.3"
+    "xlsx": "^0.13.5"
   },
   "devDependencies": {
-    "electron-builder": "^20.28.2"
     "ava": "^0.25.0",
+    "devtron": "^1.4.0",
+    "electron": "^2.0.8",
+    "electron-builder": "^20.28.3",
     "eslint": "^5.4.0",
     "eslint-plugin-ava": "^5.1.0",
     "spectron": "^3.8.0"
