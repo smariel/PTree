@@ -15,6 +15,7 @@
   "scripts": {
     "postinstall": "",
     "start": "electron . --debug --inspect --remote-debugging-port=9228",
+    "test": "ava",
     "build:mac": "electron-builder --config electron-builder.json --mac   --dir",
     "build:win": "electron-builder --config electron-builder.json --win   --dir",
     "build:lin": "electron-builder --config electron-builder.json --linux --dir",
@@ -50,6 +51,9 @@
   },
   "devDependencies": {
     "electron-builder": "^20.28.2"
+    "ava": "^0.25.0",
     "eslint": "^5.4.0",
+    "eslint-plugin-ava": "^5.1.0",
+    "spectron": "^3.8.0"
   }
 }
