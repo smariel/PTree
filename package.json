@@ -51,6 +51,6 @@
     "electron-builder": "^20.28.3",
     "eslint": "^5.5.0",
     "eslint-plugin-ava": "^5.1.0",
-    "spectron": "^3.8.0"
+    "spectron": "^4.0.0"
   }
 }
