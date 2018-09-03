@@ -330,9 +330,12 @@ class Stats {
 
     // click on the 'go to parent' button
     $('.goToParent').click(() => {
-      this.item = this.item.getParent();
-      this.update();
-      this.updateTreeSelection();
+      let parent = this.item.getParent();
+      if(!parent.isRoot()) {
+        this.item = parent;
+        this.update();
+        this.updateTreeSelection();
+      }
     });
 
     // click on the 'change chart type' button
