@@ -116,7 +116,7 @@ app.on('ready', () => {
   renderers.PTree.browserWindow.loadURL(`file://${__dirname}/html/PTree.html`);
 
   // Open the dev tools...
-  if (debug) renderers.PTree.browserWindow.webContents.openDevTools();
+  if (debug) renderers.PTree.browserWindow.webContents.openDevTools({mode: 'detach'});
 
   // Emitted just before closing the window
   renderers.PTree.browserWindow.on('close', (evt) => {
@@ -169,7 +169,7 @@ app.on('ready', () => {
               });
 
               // Open the dev tools...
-              if (debug) renderers.about.browserWindow.webContents.openDevTools();
+              if (debug) renderers.about.browserWindow.webContents.openDevTools({mode: 'detach'});
 
               // Load the *.html of the window.
               renderers.about.browserWindow.loadURL(`file://${__dirname}/html/about.html`);
@@ -274,7 +274,7 @@ ipcMain.on('Item-editReq', (evt, itemStr, itemType) => {
   });
 
   // Open the dev tools...
-  if (debug) renderers.itemEditor.browserWindow.webContents.openDevTools();
+  if (debug) renderers.itemEditor.browserWindow.webContents.openDevTools({mode: 'detach'});
 
   // Load the *.html of the window.
   renderers.itemEditor.browserWindow.loadURL(`file://${__dirname}/html/itemEditor.html`);
@@ -325,7 +325,7 @@ ipcMain.on('PartList-editReq', (evt, treeStr, partListStr) => {
   });
 
   // Open the dev tools...
-  if (debug) renderers.partListEditor.browserWindow.webContents.openDevTools();
+  if (debug) renderers.partListEditor.browserWindow.webContents.openDevTools({mode: 'detach'});
 
   // Load the *.html of the window.
   renderers.partListEditor.browserWindow.loadURL(`file://${__dirname}/html/partListEditor.html`);
@@ -380,7 +380,7 @@ ipcMain.on('Stats-openReq', (evt, initData) => {
   }
 
   // Open the dev tools...
-  if (debug) renderers.stats.browserWindow.webContents.openDevTools();
+  if (debug) renderers.stats.browserWindow.webContents.openDevTools({mode: 'detach'});
 
   // Load the *.html of the window.
   renderers.stats.browserWindow.loadURL(`file://${__dirname}/html/stats.html`);
@@ -443,7 +443,7 @@ ipcMain.on('Popup-openReq', (evt, popupData) => {
   });
 
   // Open the dev tools...
-  if (debug) renderers.popup.browserWindow.webContents.openDevTools();
+  if (debug) renderers.popup.browserWindow.webContents.openDevTools({mode: 'detach'});
 
   // Load the *.html of the window.
   renderers.popup.browserWindow.loadURL(`file://${__dirname}/html/popup.html`);
