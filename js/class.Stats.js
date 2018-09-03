@@ -87,8 +87,6 @@ class Stats {
         if(elements.length > 0) {
           this.item = this.tree.getItem(this.item.childrenID[elements[0]._index]);
           this.updateTreeSelection();
-          this.update();
-          // TODO : do something with the Chart.js error
         }
       };
     }
@@ -239,7 +237,7 @@ class Stats {
 
 
   // Fill a canvas with a chart and the given data
-  plotChart(typmax, dataset, labels, max, unit, clickCallback) {
+  plotChart(typmax, dataset, labels, max, unit, clickCallback=null) {
     // destroy any previous chart
     if(null !== this.charts[typmax]) {
       this.charts[typmax].destroy();
@@ -265,7 +263,7 @@ class Stats {
           display: ('doughnut' === this.chartType),
           position: 'bottom'
         },
-        onClick: (undefined !== clickCallback) ? clickCallback : null
+        onClick: clickCallback
       }
     };
 

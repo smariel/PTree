@@ -1060,6 +1060,7 @@ class PTree {
     // IPC async msg received from main.js: select the given item
     ipcRenderer.on('PTree-selectItemCmd', (event, itemID) => {
       this.canvas.selectItem(this.tree.getItem(itemID));
+      this.updateStats(itemID);
       this.updateUpDownButtons();
     });
 
