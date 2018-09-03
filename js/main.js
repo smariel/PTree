@@ -42,9 +42,9 @@ $.get('https://api.github.com/repos/smariel/ptree/releases/latest', function(git
       $('.dl-version a').append(version);
 
       // print the minimum system requirement
-      $('.dl-platform').prepend(platform_req);
+      $('.dl-platform a').prepend(platform_req);
 
       // print the correct url according to the navigator platform
-      $('.download-button > a').prop('href',download_url);
+      $('.download-button > a, .dl-platform a').prop('href',download_url);
    });
 });
