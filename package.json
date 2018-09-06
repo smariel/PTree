@@ -1,6 +1,6 @@
 {
   "name": "PTree",
-  "version": "1.5.0",
+  "version": "1.5.1",
   "description": "Design power trees and estimate consumptions",
   "author": {
     "name": "Sylvain Mariel",
@@ -17,9 +17,8 @@
     "build:win": "electron-builder --config electron-builder.json --win   --dir",
     "build:lin": "electron-builder --config electron-builder.json --linux --dir",
     "dist:mac": " electron-builder --config electron-builder.json --mac   ; cd bin ; mv PTree.dmg PTree-macos.dmg",
-    "dist:win": " electron-builder --config electron-builder.json --win   ; cd bin ; mkdir PTree ; mv PTree.exe      PTree/ ; cp ../LICENSE.md PTree/LICENSE.txt ; cp ../docs/equations.pdf PTree/ ; cp ../docs/example.ptree PTree/ ; rm -f PTree-windows.zip ; zip -r -X -y -q PTree-windows.zip PTree/ ; rm -rf PTree",
-    "dist:lin": " electron-builder --config electron-builder.json --linux ; cd bin ; mkdir PTree ; mv PTree.AppImage PTree/ ; cp ../LICENSE.md PTree/LICENSE.txt ; cp ../docs/equations.pdf PTree/ ; cp ../docs/example.ptree PTree/ ; rm -f PTree-linux.zip   ; zip -r -X -y -q PTree-linux.zip   PTree/ ; rm -rf PTree",
-    "build:all": "npm run build:mac && npm run build:win && npm run build:lin",
+    "dist:win": " electron-builder --config electron-builder.json --win   ; cd bin ; mv win-unpacked        PTree ; rm -f PTree-windows.zip ; zip -r -X -y -q PTree-windows.zip PTree/ ; rm -rf PTree",
+    "dist:lin": " electron-builder --config electron-builder.json --linux ; cd bin ; mv linux-ia32-unpacked PTree ; rm -f PTree-linux.zip   ; zip -r -X -y -q PTree-linux.zip   PTree/ ; rm -rf PTree",
     "dist:all": " npm run dist:mac  && npm run dist:win  && npm run dist:lin"
   },
   "repository": {
@@ -42,13 +41,13 @@
     "font-awesome": "<5.0.0",
     "jquery": "^3.3.1",
     "mousetrap": "^1.6.2",
-    "xlsx": "^0.13.5"
+    "xlsx": "^0.14.0"
   },
   "devDependencies": {
     "ava": "^0.25.0",
     "devtron": "^1.4.0",
     "electron": "^2.0.8",
-    "electron-builder": "^20.28.3",
+    "electron-builder": "^20.28.4",
     "eslint": "^5.5.0",
     "eslint-plugin-ava": "^5.1.0",
     "spectron": "^4.0.0"

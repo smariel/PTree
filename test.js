@@ -302,6 +302,22 @@ test.serial('TEST8: sync external spreadsheet', async t => {
   t.is(ret.value.max,34.6875);
 });
 
+test.serial.only('TEST9: ', async t => {
+  /*await t.context.app.client.click('#bt_stats');
+  await wait(1000);
+
+  //console.log(t.context.app.electron.BrowserWindow);
+
+  const windows = await t.context.app.electron.remote.BrowserWindow.getAllWindows().then((ret) => {return ret;});
+  console.log(windows);
+  windows[1].focus();
+
+  let ret = await t.context.app.client.execute(() => {
+    return stats.chartType;
+  });
+  console.log(ret.value);*/
+});
+
 
 /*
   TODO:

@@ -38,16 +38,26 @@
   },
   "win": {
     "icon"       : "icons/win/app.ico",
-    "target"     : "portable",
+    "target"     : "dir",
     "fileAssociations" : {
       "ext"         : "ptree",
       "name"        : "PTree",
       "description" : "PTree Project File",
       "icon"        : "icons/win/file.ico"
-    }
+    },
+    "extraFiles" : [
+      {"from": "docs/example.ptree", "to": "example.ptree"},
+      {"from": "docs/equations.pdf", "to": "equations.pdf"},
+      {"from": "LICENSE.md", "to": "LICENSE.txt"}
+    ]
   },
   "linux": {
     "icon"       : "icons/png/app",
-    "target"     : {"target":"AppImage", "arch": "ia32"}
+    "target"     : {"target":"dir", "arch": "ia32"},
+    "extraFiles" : [
+      {"from": "docs/example.ptree", "to": "example.ptree"},
+      {"from": "docs/equations.pdf", "to": "equations.pdf"},
+      {"from": "LICENSE.md", "to": "LICENSE.txt"}
+    ]
   }
 }
