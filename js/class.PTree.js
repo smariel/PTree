@@ -333,9 +333,9 @@ class PTree {
       if(!Util.popup(popupData)) return false;
     }
 
-    // comapare the version of PTree with the version of the file
+    // comapare the version of PTree with the version of the file (ignore 3rd digit)
     let packagejson = require('../package.json');
-    let comp = Util.compareVersions(packagejson.version, data.version);
+    let comp = Util.compareVersions(packagejson.version, data.version, 2);
 
     // The file was made with an older PTree
     if(comp === 1) {

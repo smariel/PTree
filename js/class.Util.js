@@ -226,26 +226,26 @@ class Util {
 
   // compare two versions as strings like '1.3.4'
   // return 0 if v1=v2, 1 if v1>v2, -1 if v1<v2
-  static compareVersions(v1, v2) {
+  static compareVersions(v1, v2, level=3) {
     if(v1 === v2) return 0;
 
     v1 = v1.split('.');
     v2 = v2.split('.');
 
     if(
-      (v1[0]  >  v2[0]) ||
-      (v1[0] === v2[0] && v1[1]  >  v2[1]) ||
-      (v1[0] === v2[0] && v1[1] === v2[1]  && v1[2] > v2[2])) {
+      (v1[0]  >  v2[0] && level >= 1) ||
+      (v1[0] === v2[0] && v1[1]  >  v2[1] && level >= 2) ||
+      (v1[0] === v2[0] && v1[1] === v2[1]  && v1[2] > v2[2]) && level >= 3) {
       return 1;
     }
     else if(
-      (v1[0]   <  v2[0]) ||
-      (v1[0] === v2[0] && v1[1]  <  v2[1]) ||
-      (v1[0] === v2[0] && v1[1] === v2[1]  && v1[2] < v2[2])) {
+      (v1[0]   <  v2[0] && level >= 1) ||
+      (v1[0] === v2[0] && v1[1]  <  v2[1] && level >= 2) ||
+      (v1[0] === v2[0] && v1[1] === v2[1]  && v1[2] < v2[2]) && level >= 3) {
       return -1;
     }
 
-    return null;
+    return 0;
   }
 
   // -----------------------------------------------------------------------------
