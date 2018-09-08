@@ -295,7 +295,7 @@ class ItemEditor {
 
 
     // update the item every time an input change
-    $('.form-control').change(() => {
+    $('.form-control').change((event) => {
       // update the item with the value of $(event.currentTarget)
       this.updateItemFromHTML($(event.currentTarget));
 
