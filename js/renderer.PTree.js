@@ -10,23 +10,27 @@ window.eval = global.eval = function () {
 // Framworks and libraries
 window.$ = window.jQuery = require('jquery');
 require('bootstrap');
-const PTree = require('../js/class.PTree.js');
+const PTree         = require('../js/class.PTree.js');
+const {ipcRenderer} = require('electron');
 
-// Send an IPC sync msg to main.js: request init data
-const initData = require('electron').ipcRenderer.sendSync('PTree-initDataReq');
+// global object that will handle this renderer
+let ptree;
 
-// init the global object that will handle this renderer
-let ptree = {};
-
-// when jQuery is ready
+// When jQuery is ready
 $(() => {
-  // creation of the PTree object
-  ptree = new PTree('canvas');
+  // On reception of the init data
+  ipcRenderer.on('PTree-initDataResp', (event, initData) => {
+    // creation of the PTree object
+    ptree = new PTree('canvas');
 
-  // if there is a file to open on startup
-  if(null !== initData.fileToOpen) {
-    ptree.open(initData.fileToOpen);
-  }
+    // if there is a file to open on startup
+    if(null !== initData.fileToOpen) {
+      ptree.open(initData.fileToOpen);
+    }
+  });
+
+  // Send an IPC async msg to main.js: request init data
+  ipcRenderer.send('PTree-initDataReq');
 
   // bootstrap tooltip initialization
   $('[data-toggle="tooltip"]').tooltip({

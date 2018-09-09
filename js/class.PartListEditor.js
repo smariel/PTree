@@ -500,7 +500,7 @@ class PartListEditor {
 
 
   // Import a part list from an XLSX sheet passed as JSON
-  fromSpreadsheet(sheet_json) {
+  async fromSpreadsheet(sheet_json) {
     // check if the values of the sheet are numbers
     let line_id = 0;
     for(let sheet_line of sheet_json) {
@@ -536,7 +536,8 @@ class PartListEditor {
       btn_ok     : 'Add',
       btn_cancel : 'Replace'
     };
-    if(!Util.popup(popupData, false, 'partListEditor')) {
+    let popupRet = await Util.popup(popupData, false, 'partListEditor');
+    if(!popupRet) {
       this.partList.deleteAllParts();
     }
 

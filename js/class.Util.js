@@ -259,14 +259,23 @@ class Util {
   //   undefined (optional) => OK/CANCEL                  => return BOOL => no additional data
   //   list                 => list selection + OK/CANCEL => return INT  => additional data.list (array)
   static popup(popupData) {
-    // Send an IPC sync msg to main.js: open a popup with the given data
-    return require('electron').ipcRenderer.sendSync('Popup-openReq', popupData);
+    return new Promise(resolve => {
+      const {ipcRenderer} = require('electron');
+
+      // listen to the response from main.js and resolve the promise
+      ipcRenderer.on('Popup-openResp', (event, datastr) => {
+        resolve(datastr);
+      });
+
+      // Send an IPC async msg to main.js: open a popup with the given data
+      ipcRenderer.send('Popup-openReq', popupData);
+    });
   }
 
 
   // get a sheet as JSON object from a file
   // popup the user if multiple tabs found
-  static getSpreadsheet(path=null, return_path=false, sender='PTree') {
+  static async getSpreadsheet(path=null, return_path=false, sender='PTree') {
     // of no path given, ask the user
     if (null === path) {
       // open a dialog
@@ -306,7 +315,7 @@ class Util {
         btn_ok     : 'Choose',
         list       : workbook.SheetNames.map((name) => {return {val:name, text:name};})
       };
-      sheetName  = Util.popup(popupData);
+      sheetName  = await Util.popup(popupData);
     }
     else {
       sheetName  = workbook.SheetNames[0];

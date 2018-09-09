@@ -582,27 +582,38 @@ class Item {
   // Need a partlist to update the consumptions in some cases
   // Need the sync sheet to update other consumptions
   edit(partList, sheet) {
-    // Send an IPC sync msg to main.js: request to edit this item
-    let datastr = require('electron').ipcRenderer.sendSync('Item-editReq', this.toString(), this.type);
+    // return a promise
+    return new Promise(resolve => {
+      const {ipcRenderer} = require('electron');
 
-    // import the new data
-    if(null !== datastr) this.fromString(datastr);
+      // listen to the response from main.js and resolve the promise
+      ipcRenderer.on('Item-editResp', (event, datastr) => {
+        // import the new data
+        if(null !== datastr) this.fromString(datastr);
 
-    if(this.isLoad()) {
-      // if the load is not in the part list
-      // remove all consumptions on the parts
-      if(!this.isInPartlist()) {
-        partList.forEachPart((part) => {
-          if(part.isConsuming(this)) {
-            part.setConsumption(0, this, 'typ');
-            part.setConsumption(0, this, 'max');
+        if(this.isLoad()) {
+          // if the load is not in the part list
+          // remove all consumptions on the parts
+          if(!this.isInPartlist()) {
+            partList.forEachPart((part) => {
+              if(part.isConsuming(this)) {
+                part.setConsumption(0, this, 'typ');
+                part.setConsumption(0, this, 'max');
+              }
+            });
           }
-        });
-      }
 
-      // refresh the consumption
-      this.refreshConsumption(partList, sheet);
-    }
+          // refresh the consumption
+          this.refreshConsumption(partList, sheet);
+        }
+
+        // resolve the promise
+        resolve();
+      });
+
+      // Send an IPC async msg to main.js: request to edit this item
+      ipcRenderer.send('Item-editReq', this.toString(), this.type);
+    });
   }
 
 

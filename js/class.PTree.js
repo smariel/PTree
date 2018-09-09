@@ -243,6 +243,36 @@ class PTree {
   }
 
 
+  // open the part list and return the data
+  async openPartList() {
+    // prepare the request to open the partlist
+    let requestOpenPartList = () => {
+      return new Promise(resolve => {
+        const {ipcRenderer} = require('electron');
+
+        // listen to the response from main.js and resolve the promise
+        ipcRenderer.on('PartList-editResp', (event, datastr) => {
+          resolve(datastr);
+        });
+
+        // Send an IPC async msg to the main.js: request to edit the part list
+        ipcRenderer.send('PartList-editReq', this.tree.toString(), this.partList.toString());
+      });
+    };
+
+    // open the partlist and wait for the data
+    let partListString = await requestOpenPartList();
+
+    // if the part list was edited, update
+    if(null !== partListString) {
+      this.partList.fromString(partListString);
+      this.tree.refreshConsumptions(this.partList, this.usersheet.sheet);
+      this.canvas.refresh();
+      this.setUnsaved();
+    }
+  }
+
+
   // Set the spreadsheet to sync with
   setSheet(usersheet) {
     // default value
@@ -266,9 +296,9 @@ class PTree {
 
 
   // Select a new spreadsheet to sync with
-  selectSheet(path=null) {
+  async selectSheet(path=null) {
     // ask the user for a sheet
-    let usersheet = Util.getSpreadsheet(path, true, 'PTree');
+    let usersheet = await Util.getSpreadsheet(path, true, 'PTree');
     if (null === usersheet) return;
     // save the sheet and refresh Consumptions
     this.setSheet(usersheet);
@@ -279,12 +309,12 @@ class PTree {
 
 
   // reload data from the spreadsheet
-  reloadSheet() {
+  async reloadSheet() {
     // if the file exist
     const fs = require('fs');
     if(fs.existsSync(this.usersheet.path)) {
       // reload the Spreadsheet from the file
-      this.usersheet.sheet = Util.getSpreadsheet(this.usersheet.path);
+      this.usersheet.sheet = await Util.getSpreadsheet(this.usersheet.path);
     }
   }
 
@@ -305,7 +335,7 @@ class PTree {
   }
 
 
-  fromString(datastr) {
+  async fromString(datastr) {
     // Try to parse the string
     let data = {};
     try {
@@ -330,7 +360,8 @@ class PTree {
         btn_ok     : 'Proceed',
         btn_cancel : 'Cancel'
       };
-      if(!Util.popup(popupData)) return false;
+      let popupRet = await Util.popup(popupData);
+      if(!popupRet) return false;
     }
 
     // comapare the version of PTree with the version of the file (ignore 3rd digit)
@@ -353,7 +384,8 @@ class PTree {
         btn_ok     : 'Proceed',
         btn_cancel : 'Cancel'
       };
-      if(!Util.popup(popupData)) return false;
+      let popupRet = await Util.popup(popupData);
+      if(!popupRet) return false;
     }
     // The file was made with a newer PTree
     else if(comp === -1) {
@@ -372,8 +404,8 @@ class PTree {
         btn_ok     : 'Proceed',
         btn_cancel : 'Cancel'
       };
-
-      if(!Util.popup(popupData)) return false;
+      let popupRet = await Util.popup(popupData);
+      if(!popupRet) return false;
     }
     // sould not occur
     else if(null === comp) {
@@ -392,7 +424,7 @@ class PTree {
   // Check GitHub for update
   checkUpdate() {
     // get informations about the latest release using GitHub API
-    $.get('https://api.github.com/repos/smariel/ptree/releases/latest', (github_data) => {
+    $.get('https://api.github.com/repos/smariel/ptree/releases/latest', async (github_data) => {
       // get the version of the latest release
       let latest_version = github_data.tag_name.substr(1);
 
@@ -416,7 +448,8 @@ class PTree {
           btn_cancel : 'Not now'
         };
         // if the user clicked on 'download'
-        if(Util.popup(popupData)) {
+        let popupRet = await Util.popup(popupData);
+        if(popupRet) {
           // open the PTree home page in an external browser
           const {shell} = require('electron');
           shell.openExternal(packagejson.homepage);
@@ -617,9 +650,9 @@ class PTree {
 
 
     // Edit item on double click
-    this.canvas.canvas$.parent().dblclick(() => {
+    this.canvas.canvas$.parent().dblclick(async () => {
       if(null !== this.canvas.getSelectedItem()) {
-        this.canvas.getSelectedItem().edit(this.partList, this.usersheet.sheet);
+        await this.canvas.getSelectedItem().edit(this.partList, this.usersheet.sheet);
         this.canvas.refresh();
         this.saveHistory();
       }
@@ -649,21 +682,7 @@ class PTree {
   listenTopMenu() {
     // open a new window to manipulate the part list
     $('#bt_partTable').click(() => {
-      // Send an IPC async msg to the main.js: request to edit the part list
-      let partListString = require('electron').ipcRenderer.sendSync('PartList-editReq', this.tree.toString(), this.partList.toString());
-
-      // if the part list was not edited, do nothing
-      if(null === partListString) {
-        return;
-      }
-
-      // update the partList
-      this.partList.fromString(partListString);
-
-      // update consumptions
-      this.tree.refreshConsumptions(this.partList, this.usersheet.sheet);
-      this.canvas.refresh();
-      this.setUnsaved();
+      this.openPartList();
     });
 
 
@@ -680,7 +699,7 @@ class PTree {
 
 
     // create a new project
-    $('#bt_new').click(() => {
+    $('#bt_new').click(async () => {
       // if current project is unsaved, popup
       if(this.unsaved) {
         let popupData = {
@@ -695,7 +714,8 @@ class PTree {
         };
 
         // Cancel was clicked
-        if(Util.popup(popupData)) return;
+        let popupRet = await Util.popup(popupData);
+        if(popupRet) return false;
       }
 
       this.reset();
@@ -738,8 +758,8 @@ class PTree {
 
 
     // show the correct modal for edition
-    $('#bt_edit').click(() => {
-      this.canvas.getSelectedItem().edit(this.partList, this.usersheet.sheet);
+    $('#bt_edit').click(async () => {
+      await this.canvas.getSelectedItem().edit(this.partList, this.usersheet.sheet);
       this.canvas.refresh();
       this.saveHistory();
     });
@@ -1070,7 +1090,7 @@ class PTree {
     });
 
     // IPC async msg received from main.js: prepare to close
-    ipcRenderer.on('PTree-beforeCloseCmd', () => {
+    ipcRenderer.on('PTree-beforeCloseCmd', async () => {
       // if the project is not saved
       if(this.unsaved) {
         // ask the user to save
@@ -1084,7 +1104,7 @@ class PTree {
           btn_ok     : 'Save and exit',
           btn_cancel : 'Exit without saving'
         };
-        let saveBeforeExit = Util.popup(popupData);
+        let saveBeforeExit = await Util.popup(popupData);
 
         // if the user want to save, save the project
         if (saveBeforeExit) {

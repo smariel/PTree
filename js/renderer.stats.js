@@ -10,20 +10,24 @@ window.eval = global.eval = function () {
 // Framworks and libraries
 window.$ = window.jQuery = require('jquery');
 require('bootstrap');
-const Stats = require('../js/class.Stats.js');
+const Stats         = require('../js/class.Stats.js');
+const {ipcRenderer} = require('electron');
 
-// Send an IPC sync msg to main.js: request init data
-const initData = require('electron').ipcRenderer.sendSync('Stats-initDataReq');
-
-// init the global object that will handle this renderer
-let stats = {};
+// global object that will handle this renderer
+let stats;
 
 // When jQuery is ready
 $(() => {
-  // Init the main Stats object
-  stats = new Stats();
-  stats.import(initData);
-  stats.update();
+  // On reception of the init data
+  ipcRenderer.on('Stats-initDataResp', (event, initData) => {
+    // Init the main Stats object
+    stats = new Stats();
+    stats.import(initData);
+    stats.update();
+  });
+
+  // Send an IPC async msg to main.js: request init data
+  ipcRenderer.send('Stats-initDataReq');
 
   // enable all tooltips
   $('[data-toggle="tooltip"]').tooltip({

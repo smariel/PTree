@@ -11,8 +11,18 @@ window.eval = global.eval = function () {
 window.$ = window.jQuery = require('jquery');
 const {ipcRenderer} = require('electron');
 
-// Send an IPC sync msg to main.js: request init data
-const popupData = ipcRenderer.sendSync('Popup-initDataReq');
+// ask main.js for init data
+let getInitData = () => {
+  return new Promise(resolve => {
+    // On reception of the init data
+    ipcRenderer.on('Popup-initDataResp', (event, initData) => {
+      resolve(initData);
+    });
+
+    // Send an IPC async msg to main.js: request init data
+    ipcRenderer.send('Popup-initDataReq');
+  });
+};
 
 // function to close the popup and returning the result
 let close = (returnData) => {
@@ -23,7 +33,10 @@ let close = (returnData) => {
 };
 
 // When jQuery is ready
-$(() => {
+$(async () => {
+  // Send an IPC sync msg to main.js: request init data
+  const popupData = await getInitData();
+
   // display the data
   $('.content').html(popupData.content);
 

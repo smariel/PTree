@@ -238,10 +238,10 @@ app.on('ready', () => {
   Menu.setApplicationMenu(menu);
 });
 
-// IPC sync msg received from PTree : request for init data
+// IPC async msg received from PTree : request for init data
 ipcMain.on('PTree-initDataReq', (evt) => {
   // send back the requested data
-  evt.returnValue = renderers.PTree.initData;
+  evt.sender.send('PTree-initDataResp', renderers.PTree.initData);
 });
 
 // IPC async msg received from PTree : ready to close
@@ -255,11 +255,11 @@ ipcMain.on('PTree-beforeCloseReturn', (evt, isPTreeReady) => {
 // ITEM EDITOR
 // -----------------------------------------------------------------------------
 
-// IPC sync msg received from Item : request edition
+// IPC async msg received from Item : request edition
 ipcMain.on('Item-editReq', (evt, itemStr, itemType) => {
   // save the given itemStr for future async use
   renderers.itemEditor.initData = {itemStr};
-  // save the event to respond to this sync msg later
+  // save the event to respond to this msg later
   renderers.itemEditor.reqEvent = evt;
 
   // Create the itemEditor window
@@ -282,18 +282,19 @@ ipcMain.on('Item-editReq', (evt, itemStr, itemType) => {
   // Emitted when the window is closed.
   renderers.itemEditor.browserWindow.on('closed', () => {
     // send back the new data to the Item
-    renderers.itemEditor.reqEvent.returnValue = renderers.itemEditor.returnData;
+    renderers.itemEditor.reqEvent.sender.send('Item-editResp', renderers.itemEditor.returnData);
     // Dereference the window object, initData and returnData
     renderers.itemEditor.browserWindow = null;
     renderers.itemEditor.initData      = null;
     renderers.itemEditor.returnData    = null;
+    renderers.itemEditor.reqEvent      = null;
   });
 });
 
-// IPC sync msg received from ItemEditor : request for init data
+// IPC async msg received from ItemEditor : request for init data
 ipcMain.on('ItemEditor-initDataReq', (evt) => {
   // send back the requested data
-  evt.returnValue = renderers.itemEditor.initData;
+  evt.sender.send('ItemEditor-initDataResp',renderers.itemEditor.initData);
 });
 
 // IPC async msg received from ItemEditor : edited data returned
@@ -307,11 +308,14 @@ ipcMain.on('ItemEditor-returnData', (evt, newitemStr) => {
 // PART LIST EDITOR
 // -----------------------------------------------------------------------------
 
-// IPC sync msg received from PTree : request partList edition
+// IPC async msg received from PTree : request partList edition
 ipcMain.on('PartList-editReq', (evt, treeStr, partListStr) => {
+  // macOS: PTree window is disabled (hidden) while the partlist is open
+  // windows: the partlist is modal and automatically disable the other
+  if(process.platform === 'darwin') renderers.PTree.browserWindow.hide();
   // save the given data for future async use
   renderers.partListEditor.initData = {treeStr, partListStr};
-  // save the event to respond to this sync msg later
+  // save the event to respond to this msg later
   renderers.partListEditor.reqEvent = evt;
 
   // Create the partListEditor window
@@ -332,19 +336,22 @@ ipcMain.on('PartList-editReq', (evt, treeStr, partListStr) => {
 
   // Emitted when the window is closed.
   renderers.partListEditor.browserWindow.on('closed', () => {
+    // enable PTree main window on macOS
+    if(process.platform === 'darwin') renderers.PTree.browserWindow.show();
     // send back the new data to the Item
-    renderers.partListEditor.reqEvent.returnValue = renderers.partListEditor.returnData;
+    renderers.partListEditor.reqEvent.sender.send('PartList-editResp', renderers.partListEditor.returnData);
     // Dereference the window object, initData and returnData
     renderers.partListEditor.browserWindow = null;
     renderers.partListEditor.initData      = null;
     renderers.partListEditor.returnData    = null;
+    renderers.partListEditor.reqEvent      = null;
   });
 });
 
-// IPC sync msg received from PartListEditor : request for init data
+// IPC async msg received from PartListEditor : request for init data
 ipcMain.on('PartListEditor-initDataReq', (evt) => {
   // send back the requested data
-  evt.returnValue = renderers.partListEditor.initData;
+  evt.sender.send('PartListEditor-initDataResp', renderers.partListEditor.initData);
 });
 
 // IPC async msg received from PartListEditor : edited data returned
@@ -394,10 +401,10 @@ ipcMain.on('Stats-openReq', (evt, initData) => {
   });
 });
 
-// IPC sync msg received from Stats : request for init data
+// IPC async msg received from Stats : request for init data
 ipcMain.on('Stats-initDataReq', (evt) => {
   // send back the requested data
-  evt.returnValue = renderers.stats.initData;
+  evt.sender.send('Stats-initDataResp', renderers.stats.initData);
 });
 
 // IPC async msg received from PTree : request to update the Stats with the given data
@@ -421,11 +428,12 @@ ipcMain.on('PTree-selectItemReq', (evt, data) => {
 // POPUP
 // -----------------------------------------------------------------------------
 
-// IPC sync msg received from anywhere : request to open a popup (and return state)
+// IPC async msg received from anywhere : request to open a popup (and return state)
 ipcMain.on('Popup-openReq', (evt, popupData) => {
+  if(renderers.PTree.browserWindow.isDestroyed()) return;
   // save the given data for future async use
   renderers.popup.initData = popupData;
-  // save the event to respond to this sync msg later
+  // save the event to respond to this msg later
   renderers.popup.reqEvent = evt;
 
   // Create the window
@@ -451,17 +459,18 @@ ipcMain.on('Popup-openReq', (evt, popupData) => {
   // Emitted when the window is closed.
   renderers.popup.browserWindow.on('closed', () => {
     // send back the new data
-    renderers.popup.reqEvent.returnValue = renderers.popup.returnData;
+    renderers.popup.reqEvent.sender.send('Popup-openResp', renderers.popup.returnData);
     // Dereference the window object, initData and returnData
     renderers.popup.browserWindow = null;
     renderers.popup.initData      = null;
     renderers.popup.returnData    = null;
+    renderers.popup.reqEvent      = null;
   });
 });
 
-// IPC sync msg received from Popup : request for init data
+// IPC async msg received from Popup : request for init data
 ipcMain.on('Popup-initDataReq', (evt) => {
-  evt.returnValue = renderers.popup.initData;
+  evt.sender.send('Popup-initDataResp', renderers.popup.initData);
 });
 
 // IPC async msg received from Popup : popup data returned

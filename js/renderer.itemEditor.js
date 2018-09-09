@@ -11,22 +11,26 @@ window.eval = global.eval = function () {
 window.$ = window.jQuery = require('jquery');
 require('bootstrap');
 require('chart.js');
-const Item       = require('../js/class.Item.js');
-const ItemEditor = require('../js/class.ItemEditor.js');
+const Item          = require('../js/class.Item.js');
+const ItemEditor    = require('../js/class.ItemEditor.js');
+const {ipcRenderer} = require('electron');
 
-// Send an IPC sync msg to main.js: request init data
-const initData = require('electron').ipcRenderer.sendSync('ItemEditor-initDataReq');
-
-// init the global object that will handle this renderer
+// global object that will handle this renderer
 // eslint-disable-next-line no-unused-vars
-let itemEditor = {};
-
-// reconstruct the item to work on
-let item = new Item(0,null,null,null);
-item.fromString(initData.itemStr);
+let itemEditor;
 
 // When jQuery is ready
 $(() => {
-  // init the ItemEditor
-  itemEditor = new ItemEditor(item);
+  // On reception of the init data
+  ipcRenderer.on('ItemEditor-initDataResp', (event, initData) => {
+    // reconstruct the item to work on
+    let item = new Item(0,null,null,null);
+    item.fromString(initData.itemStr);
+
+    // init the ItemEditor
+    itemEditor = new ItemEditor(item);
+  });
+
+  // Send an IPC async msg to main.js: request init data
+  ipcRenderer.send('ItemEditor-initDataReq');
 });
