@@ -155,31 +155,7 @@ app.on('ready', () => {
         {
           label: `About ${packagejson.name}`,
           click () {
-            // Create the about window if it doesn't exist
-            if(null === renderers.about.browserWindow) {
-              renderers.about.browserWindow = new BrowserWindow({
-                width           : 450,
-                height          : 420,
-                alwaysOnTop     : true,
-                resizable       : false,
-                autoHideMenuBar : true,
-                useContentSize  : true,
-                thickFrame      : true,
-                titleBarStyle   : 'hiddenInset'
-              });
-
-              // Open the dev tools...
-              if (debug) renderers.about.browserWindow.webContents.openDevTools({mode: 'detach'});
-
-              // Load the *.html of the window.
-              renderers.about.browserWindow.loadURL(`file://${__dirname}/html/about.html`);
-
-              // Emitted when the window is closed.
-              renderers.about.browserWindow.on('closed', () => {
-                // Dereference the window object
-                renderers.about.browserWindow = null;
-              });
-            }
+            openAboutWindow();
           }
         },
         {
@@ -477,4 +453,46 @@ ipcMain.on('Popup-initDataReq', (evt) => {
 ipcMain.on('Popup-returnData', (evt, returnData) => {
   // save the returned data to be sent when window is closed
   renderers.popup.returnData = returnData;
+});
+
+
+// -----------------------------------------------------------------------------
+// ABOUT
+// -----------------------------------------------------------------------------
+
+// function to open the about window
+let openAboutWindow = () => {
+  // if the window is already open, return
+  if(null !== renderers.about.browserWindow) return;
+
+  // Create the about window if it doesn't exist
+  if(null === renderers.about.browserWindow) {
+    renderers.about.browserWindow = new BrowserWindow({
+      width           : 450,
+      height          : 420,
+      alwaysOnTop     : true,
+      resizable       : false,
+      autoHideMenuBar : true,
+      useContentSize  : true,
+      thickFrame      : true,
+      titleBarStyle   : 'hiddenInset'
+    });
+
+    // Open the dev tools...
+    if (debug) renderers.about.browserWindow.webContents.openDevTools({mode: 'detach'});
+
+    // Load the *.html of the window.
+    renderers.about.browserWindow.loadURL(`file://${__dirname}/html/about.html`);
+
+    // Emitted when the window is closed.
+    renderers.about.browserWindow.on('closed', () => {
+      // Dereference the window object
+      renderers.about.browserWindow = null;
+    });
+  }
+};
+
+// IPC async msg received : open the about window
+ipcMain.on('About-openReq', () => {
+  openAboutWindow();
 });

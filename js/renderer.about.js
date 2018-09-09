@@ -15,7 +15,7 @@ $(() => {
   const packagejson = require('../package.json');
   const {shell} = require('electron');
 
-  $('.author' ).html(packagejson.name);
+  $('.name' ).html(packagejson.name);
   $('.version').html(packagejson.description);
   $('.author' ).html(packagejson.author.name);
   $('.version').html(packagejson.version);
