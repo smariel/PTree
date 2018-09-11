@@ -681,7 +681,7 @@ class PTree {
   // listen to all events on the top-menu of the Tree view
   listenTopMenu() {
     // open a new window to manipulate the part list
-    $('#bt_partTable').click(() => {
+    $('#bt_partlist').click(() => {
       this.openPartList();
     });
 

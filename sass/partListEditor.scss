@@ -12,7 +12,7 @@ body {
    user-select:    none;
 }
 
-.partTable {
+.partlist {
    min-width: 100%;
    flex-grow: 0;
 }
@@ -23,7 +23,7 @@ body {
 
 
 // -----------------------------------------------------------------------------
-// part table thead
+// part list thead
 // -----------------------------------------------------------------------------
 
 th {
@@ -79,10 +79,10 @@ $thead_colors: ( charac: $teal, current: $grey, power: $red );
 
 
 // -----------------------------------------------------------------------------
-// part table tbody
+// part list tbody
 // -----------------------------------------------------------------------------
 
-.partTable tr {
+.partlist tr {
    &:nth-child(even):not(.selected):not(:hover) {
       background-color: rgba(0,0,0,0.05);
    }
@@ -96,7 +96,7 @@ $thead_colors: ( charac: $teal, current: $grey, power: $red );
    }
 }
 
-.partTable td {
+.partlist td {
    text-align: center;
    padding:    2px;
 
@@ -105,21 +105,21 @@ $thead_colors: ( charac: $teal, current: $grey, power: $red );
    }
 }
 
-.partTable td.td_typ {
+.partlist td.td_typ {
    border-left:  1px solid rgba(0,0,0,0.2);
    border-right: 1px solid rgba(0,0,0,0.05);
 }
 
-.partTable td.td_current[data-value='0'],
-.partTable td.td_power[data-value='0'] {
+.partlist td.td_current[data-value='0'],
+.partlist td.td_power[data-value='0'] {
    color: rgba(0,0,0,0.2);
 }
 
-.partTable td.td_charac > .edition {
+.partlist td.td_charac > .edition {
    width: 100px;
 }
 
-.partTable td.td_current > .edition {
+.partlist td.td_current > .edition {
    width: 50px;
 }
 
@@ -128,15 +128,15 @@ $thead_colors: ( charac: $teal, current: $grey, power: $red );
    color: black;
 }
 
-.partTable td.td_charac:not(:first-child) {
+.partlist td.td_charac:not(:first-child) {
    text-align: left;
 }
 
-.partTable .label {
+.partlist .label {
    font-weight: normal;
 }
 
-.partTable .label-default {
+.partlist .label-default {
    background-color: darken($teal, 10);;
 }
 

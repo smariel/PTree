@@ -28,7 +28,7 @@ class PartListEditor {
   // refresh the table with new values
   refresh() {
     // empty the table content
-    $('.partTable tbody').empty();
+    $('.partlist tbody').empty();
 
     // unselect all parts
     this.unselectPart();
@@ -69,7 +69,7 @@ class PartListEditor {
 
       // Print the line
       tr += `</tr>`;
-      $('.partTable tbody').append(tr);
+      $('.partlist tbody').append(tr);
     });
 
     // sort the table
@@ -77,7 +77,7 @@ class PartListEditor {
   }
 
 
-  // sort the part table
+  // sort the part list
   sortTable(col) {
     // init sort direction
     let dir = 'asc';
@@ -112,11 +112,11 @@ class PartListEditor {
     };
 
     // Insertion sort... slightly modified
-    let tr_elts = $('.partTable > tbody > tr');
+    let tr_elts = $('.partlist > tbody > tr');
     for(let i=1; i<tr_elts.length; i++) {
       let tr_i = tr_elts[i];
       for(let j=i-1; j>=0; j--) {
-        let tr_j = $('.partTable > tbody > tr')[j];
+        let tr_j = $('.partlist > tbody > tr')[j];
         if(compareParts(tr_j,tr_i,col,dir)) {
           $(tr_i).insertAfter($(tr_j));
           break;
@@ -205,9 +205,9 @@ class PartListEditor {
       this.saveHistory();
     }
 
-    // refresh the part table
+    // refresh the part list
     $('.edition').parent().html(part.getCharac_formated(charac));
-    $('.partTable').trigger('update');
+    $('.partlist').trigger('update');
 
     this.editType = null;
   }
@@ -229,7 +229,7 @@ class PartListEditor {
       this.saveHistory();
     }
 
-    // refresh the part table
+    // refresh the part list
     let value = part.getConsumption(load, typmax);
     let part$ = $('.edition').parent();
     part$.attr('data-value', value.toString());
@@ -244,7 +244,7 @@ class PartListEditor {
     let pmax = Util.round(power.max,3);
     $(`tr[data-partid=${part.id}] > td.td_power.td_typ`).html(ptyp).attr('data-value', ptyp.toString());
     $(`tr[data-partid=${part.id}] > td.td_power.td_max`).html(pmax).attr('data-value', pmax.toString());
-    $('.partTable').trigger('update');
+    $('.partlist').trigger('update');
 
     this.editType = null;
   }
@@ -371,7 +371,7 @@ class PartListEditor {
     else {
       // loop on the user-ordered partlist
       let state = 0;
-      $('.partTable tbody tr').each((index, elt) => {
+      $('.partlist tbody tr').each((index, elt) => {
         let partId = $(elt).data('partid');
 
         // STATE 0
@@ -616,12 +616,12 @@ class PartListEditor {
 
     // export the table to excel
     $('.exportTable').click(() => {
-      Util.downloadTable($('.partTable'), 'ptree.xlsx');
+      Util.downloadTable($('.partlist'), 'ptree.xlsx');
     });
 
     // export an empty pre-formated excel
     $('.exportTemplate').click(() => {
-      Util.downloadTable($('.partTable thead'),'template.xlsx');
+      Util.downloadTable($('.partlist thead'),'template.xlsx');
     });
 
     // import the data from the excel
@@ -647,7 +647,7 @@ class PartListEditor {
     });
 
     // click on a charac
-    $('.partTable').on('click', '.td_charac', (evt) => {
+    $('.partlist').on('click', '.td_charac', (evt) => {
       let charac      = $(evt.currentTarget).data('charac');
       let partID      = $(evt.currentTarget).parent().data('partid');
       let part        = this.partList.getPart(partID);
@@ -673,7 +673,7 @@ class PartListEditor {
     });
 
     // edit a current
-    $('.partTable').on('click', '.td_current', (evt) => {
+    $('.partlist').on('click', '.td_current', (evt) => {
       let partID  = $(evt.currentTarget).parent().data('partid');
       let loadID  = $(evt.currentTarget).data('loadid');
       let typmax  = $(evt.currentTarget).data('typmax');
@@ -685,7 +685,7 @@ class PartListEditor {
 
 
     // sort the table when clicking on TH elements
-    $('.partTable').on('click','.tr_bottom > th', (evt) => {
+    $('.partlist').on('click','.tr_bottom > th', (evt) => {
       this.sortTable($(evt.currentTarget).index());
     });
 
@@ -718,8 +718,8 @@ class PartListEditor {
       }
     });
 
-    // trig KEYDOWN and KEYUP on the edition of any value in the partTable
-    $('.partTable').on('keydown', '.edition', (evt) => {
+    // trig KEYDOWN and KEYUP on the edition of any value in the partlist
+    $('.partlist').on('keydown', '.edition', (evt) => {
       // , (replace , by .) if a number is edited
       if(188 == evt.keyCode || 110 == evt.keyCode){
         if(undefined !== this.getEditedLoad()) {
