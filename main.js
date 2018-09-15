@@ -77,16 +77,14 @@ app.on('open-file', (evt, path) => {
 });
 
 
-// Security: navigation disabled for all renderers
+// check the creation of new webContents
 app.on('web-contents-created', (event, contents) => {
+  // Security: navigation disabled for all renderers
   contents.on('will-navigate', (event) => {
     event.preventDefault();
   });
-});
 
-
-// Security: disable the creation of additional windows
-app.on('web-contents-created', (event, contents) => {
+  // Security: disable the creation of additional windows
   contents.on('new-window', (event) => {
     event.preventDefault();
   });
@@ -101,7 +99,7 @@ app.on('web-contents-created', (event, contents) => {
 app.on('ready', () => {
   // Security : denies all permissions request
   const { session } = require('electron');
-  session.fromPartition('some-partition').setPermissionRequestHandler((webContents, permission, callback) => {
+  session.defaultSession.setPermissionRequestHandler((webContents, permission, callback) => {
     return callback(false);
   });
 
