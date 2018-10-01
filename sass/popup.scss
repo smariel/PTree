@@ -2,20 +2,30 @@
 @import "mybtn.scss";
 
 body {
-   margin: 20px;
+   margin: 0;
 }
 
 .content {
-   margin: 0 10px;
+   margin: 20px 10px 0;
    font-size: 12pt;
+}
+
+.overflow {
+   margin: 0 -25px;
+   padding: 0 25px;
+   height: 200px;
+   overflow-y: scroll;
 }
 
 menu {
    position: fixed;
    right: 0;
    bottom: 0;
-   margin: 20px;
+   left: 0;
+   padding: 0 20px 20px 20px;
+   margin: 0;
    text-align: right;
+   background: white;
 }
 
 .mybtn-ok {

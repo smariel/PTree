@@ -438,12 +438,15 @@ class PTree {
         // open a popup and propose the user to download
         let popupData = {
           title      : 'New version available',
-          width      : 350,
-          height     : 160,
+          width      : 600,
+          height     : 410,
           sender     : 'PTree',
-          content    : `<strong>A new version of PTree is available !</strong><br />
+          content    : `<p><strong>A new version of PTree is available !</strong><br />
                         You are using PTree v${this_version}. <br />
-                        Would you like to download v${latest_version}?`,
+                        Would you like to download v${latest_version}? <br />
+                        <br />
+                        Release notes:<br /></p>
+                        <div class="overflow">${require('marked')(github_data.body)}</div>`,
           btn_ok     : 'Yes',
           btn_cancel : 'Not now'
         };
