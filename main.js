@@ -60,18 +60,18 @@ app.on('window-all-closed', () => {
 
 
 // macOS : file open while the app is running or dropped on the app icon
-app.on('open-file', (evt, path) => {
+app.on('open-file', (evt, filepath) => {
   // test if the received path is a file
-  if(fs.statSync(path).isFile() && '.ptree' == path.extname(path)) {
+  if(fs.statSync(filepath).isFile() && '.ptree' == path.extname(filepath)) {
     // if the PTree window does not exist yet
     if(undefined === renderers.PTree.browserWindow || null === renderers.PTree.browserWindow) {
       // save the file path to be sent later
-      renderers.PTree.initData.fileToOpen = path;
+      renderers.PTree.initData.fileToOpen = filepath;
     }
     // else if the PTree window exist
     else {
       // send the file path
-      renderers.PTree.browserWindow.webContents.send('PTree-openFile', path);
+      renderers.PTree.browserWindow.webContents.send('PTree-openFile', filepath);
     }
   }
 });
