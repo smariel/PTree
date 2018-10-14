@@ -388,7 +388,7 @@ class Canvas {
     const totalpower = this.tree.getTotalPower();
     $('.totalpower.typ').text(Util.numberToSi(totalpower.typ,3));
     $('.totalpower.max').text(Util.numberToSi(totalpower.max,3));
-    
+
     // refresh the total efficiency
     const efficiency = this.tree.getTotalEfficiency();
     $('.totaleff.typ').text(Util.numberToSi(efficiency.typ,3));
@@ -594,6 +594,11 @@ class Canvas {
     let selected = this.getSelectedItem();
     this.unselectItem();
 
+    // save and reset the zoom factor
+    let zoom = this.config.zoom;
+    this.config.zoom = 100;
+    this.refresh();
+
     // get the dataURL from the Fabric object (only the usefull part of the canvas)
     let dataURL = this.fabricCanvas.toDataURL({
       format   : 'jpeg',
@@ -602,6 +607,10 @@ class Canvas {
 
     // select any previous selected item
     if (null !== selected) this.selectItem(selected);
+
+    // set back the zoom
+    this.config.zoom = zoom;
+    this.refresh();
 
     // return the dataURL to be downloaded
     return dataURL;
