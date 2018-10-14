@@ -770,19 +770,21 @@ class PTree {
 
     // Add a child source to the selected item
     $('#bt_addsource').click(() => {
-      let newItem = this.tree.addSource(this.canvas.getSelectedItem());
+      let selectedItem = this.canvas.getSelectedItem();
+      let newItem = this.tree.addSource(selectedItem);
       this.canvas.refresh();
       this.saveHistory();
-      this.canvas.selectItem(newItem);
+      if(selectedItem.isVisible()) this.canvas.selectItem(newItem);
     });
 
 
     // Add a child load to the selected item
     $('#bt_addload').click(() => {
-      let newItem = this.tree.addLoad(this.canvas.getSelectedItem());
+      let selectedItem = this.canvas.getSelectedItem();
+      let newItem = this.tree.addLoad(selectedItem);
       this.canvas.refresh();
       this.saveHistory();
-      this.canvas.selectItem(newItem);
+      if(selectedItem.isVisible()) this.canvas.selectItem(newItem);
     });
 
 
@@ -802,6 +804,14 @@ class PTree {
       item.moveDown();
       this.canvas.refresh();
       this.updateUpDownButtons();
+      this.saveHistory();
+    });
+
+
+    // hide the selected item in the canvas
+    $('#bt_hide').click(() => {
+      this.canvas.getSelectedItem().toggle();
+      this.canvas.refresh();
       this.saveHistory();
     });
 

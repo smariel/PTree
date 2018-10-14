@@ -61,7 +61,8 @@ class Item {
         iq_typ      : '0',
         iq_min      : '0',
         iq_max      : '0',
-        color       : '#FF1744'
+        color       : '#FF1744',
+        hidden      : false
       };
     }
     // Load specific datas
@@ -81,7 +82,8 @@ class Item {
           2: sync (associated with celltyp and cellmax)
         */
         celltyp    : 'A1',
-        cellmax    : 'B1'
+        cellmax    : 'B1',
+        hidden     : false
       };
     }
     // Root specific datas
@@ -110,12 +112,6 @@ class Item {
   // check if the item is a source
   isRoot() {
     return ('root' === this.type);
-  }
-
-
-  // check if the item parent is root
-  isChildOfRoot() {
-    return (0 === this.parentID);
   }
 
 
@@ -170,6 +166,19 @@ class Item {
   // Check if the item is a load with the current synced
   isSynced() {
     return this.isLoad() && ('2' == this.characs.loadtype);
+  }
+
+
+  // Check if the item has to be displayed
+  isVisible() {
+    // compatibility with < v1.6.0
+    return (undefined === this.characs.hidden) ? true : !this.characs.hidden;
+  }
+
+
+  // check if the item parent is root
+  isChildOfRoot() {
+    return (0 === this.parentID);
   }
 
 
@@ -614,6 +623,16 @@ class Item {
       // Send an IPC async msg to main.js: request to edit this item
       ipcRenderer.send('Item-editReq', this.toString(), this.type);
     });
+  }
+
+
+  // toggle thie item visibility
+  toggle() {
+    // only if it is a source or a load
+    if(this.isSource() || this.isLoad()) {
+      // compatibility with < v1.6.0: !undefined == true
+      this.characs.hidden = !this.characs.hidden;
+    }
   }
 
 

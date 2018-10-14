@@ -201,6 +201,11 @@ class Canvas {
         outputNetStyle.strokeWidth = outputNetRatio * Canvas.app_template.proportion.width_max + Canvas.app_template.proportion.width_min;
       }
 
+      // if the item is hidden, the output net is dashed
+      if(!item.isVisible()) {
+        outputNetStyle.strokeDashArray = [6, 6];
+      }
+
       // create the fabric item
       let outputNet = new fabric.Line([
         Math.round(itemGroup.get('left') + item_width   - width_error),
@@ -274,10 +279,12 @@ class Canvas {
     // add the item to the canvas
     this.addItem(item);
 
-    // recursively add all the item children to the canvas
-    for (let childID of item.childrenID) {
-      let child = item.tree.getItem(childID);
-      this.addItems(child);
+    if(item.isVisible()) {
+      // recursively add all the item children to the canvas
+      for (let childID of item.childrenID) {
+        let child = item.tree.getItem(childID);
+        this.addItems(child);
+      }
     }
   }
 
@@ -307,7 +314,16 @@ class Canvas {
       // else if it is not the first, its line is set according to the precedentChild
       else {
         let precedentChild = this.tree.getItem(parent.childrenID[item.child_index - 1]);
-        item.line = precedentChild.line + 1 + precedentChild.nextOffset;
+        // if the precedent child is visible
+        if(precedentChild.isVisible()) {
+          // the item line is next one, plus an offset depending of the precedent child descendants
+          item.line = precedentChild.line + 1 + precedentChild.nextOffset;
+        }
+        // if the precedent child is hidden
+        else {
+          // the item line is the next one, without offset
+          item.line = precedentChild.line + 1;
+        }
       }
 
       // remind if this line is the max of the canvas
@@ -451,6 +467,15 @@ class Canvas {
     }
     else {
       this.hideParts();
+    }
+
+    // upade the show/hide button
+    if(item.isSource()) {
+      $('#bt_hide').show();
+      $('#bt_hide > a').html((item.isVisible()) ? '<span class="fa fa-lg fa-eye-slash"></span> Hide' : '<span class="fa fa-lg fa-eye"></span> Show');
+    }
+    else {
+      $('#bt_hide').hide();
     }
 
     // fadeIn the menu

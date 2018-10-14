@@ -821,6 +821,10 @@ test.serial.only('TEST20: partlist', async t => {
 });
 
 
+// TODO
+// show/hide items
+
+
 // Before each TEST
 test.beforeEach(async t => {
   t.context.app = new Application({
