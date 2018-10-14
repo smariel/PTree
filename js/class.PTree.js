@@ -94,16 +94,16 @@ class PTree {
       }
       else {
         // reconstruct the tree from the data
-        this.fromString(datastr);
+        this.fromString(datastr).then(() => {
+          // update the app environement
+          this.clearHistory();
+          this.canvas.refresh();
+          this.setSaved();
+          this.updateClearButtons();
 
-        // update the app environement
-        this.clearHistory();
-        this.canvas.refresh();
-        this.setSaved();
-        this.updateClearButtons();
-
-        // update the window title
-        window.document.title = this.filePath;
+          // update the window title
+          window.document.title = this.filePath;
+        });
       }
     });
   }
