@@ -939,7 +939,7 @@ class PTree {
     });
 
     // the user dropped an object anywhere on the window
-    document.addEventListener('drop', (event) => {
+    document.addEventListener('drop', async (event) => {
       event.preventDefault();
 
       // extract the valid paths to ptree project files
@@ -962,7 +962,7 @@ class PTree {
           type       : 'list',
           title      : 'Which file to open',
           width      : 500,
-          height     : 135,
+          height     : 140,
           sender     : 'PTree',
           content    : 'Multiple files where droped. Which PTree object should be open ?<br />Please choose one: <select id="list"></select>',
           btn_ok     : 'Open',
@@ -970,7 +970,7 @@ class PTree {
         };
 
         // open the selected file
-        this.open(Util.popup(popupData));
+        this.open(await Util.popup(popupData));
       }
     });
   }
