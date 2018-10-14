@@ -146,7 +146,7 @@ class PTree {
         // write the data
         let extradata = {version: require('../package.json').version};
         let data = this.toString(extradata);
-        fs.write(fd, data);
+        fs.writeSync(fd, data);
 
         // mark the workspace as saved
         this.setSaved();

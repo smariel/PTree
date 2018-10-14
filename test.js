@@ -84,6 +84,7 @@ test.serial('TEST3: undo/redo', async t => {
 test.serial('TEST4: open file + canvas construction', async t => {
   await t.context.app.client.execute(() => {
     ptree.open(`${__dirname}/../docs/test/test.ptree`);
+    return null;
   });
 
   // take a screenshot of the project
@@ -107,6 +108,7 @@ test.serial('TEST5: save + new project', async t => {
   // save the project
   await t.context.app.client.execute(() => {
     ptree.filePath = `${__dirname}/../test_project.ptree`;
+    return null;
   });
   await t.context.app.client.click('#bt_save');
 
@@ -114,6 +116,7 @@ test.serial('TEST5: save + new project', async t => {
   await t.context.app.client.click('#bt_new');
   await t.context.app.client.execute(() => {
     ptree.open(`${__dirname}/../test_project.ptree`);
+    return null;
   });
   let ret = await t.context.app.client.execute(() => ptree.tree.toString());
   let tree = new Tree(false);
@@ -133,6 +136,7 @@ test.serial('TEST6: canvas manipulation', async t => {
   // open a reference PTree project
   await t.context.app.client.execute(() => {
     ptree.open(`${__dirname}/../docs/test/test.ptree`);
+    return null;
   });
 
   // move over a particular item to display infos and check them
@@ -206,6 +210,7 @@ test.serial('TEST7: total power', async t => {
   // open a reference PTree project
   await t.context.app.client.execute(() => {
     ptree.open(`${__dirname}/../docs/test/test.ptree`);
+    return null;
   });
 
   // move over a particular item to display infos and check them
@@ -227,6 +232,7 @@ test.serial('TEST8: options', async t => {
   // open a reference PTree project
   await t.context.app.client.execute(() => {
     ptree.open(`${__dirname}/../docs/test/test.ptree`);
+    return null;
   });
 
   // open the config, wait for the animation to end, change the config
@@ -237,6 +243,7 @@ test.serial('TEST8: options', async t => {
     $('#config_itemwidth').val(200).trigger('change');
     $('#config_itemheight').val(50).trigger('change');
     $('#config_zoom').val(150).trigger('change');
+    return null;
   });
   await t.context.app.client.click('#config_infoVtyp');
   await t.context.app.client.click('#config_infoVmax');
@@ -287,11 +294,13 @@ test.serial('TEST9: sync external spreadsheet', async t => {
   // open a reference PTree project
   await t.context.app.client.execute(() => {
     ptree.open(`${__dirname}/../docs/test/test.ptree`);
+    return null;
   });
 
   // select a sheet and test the global power values
   await t.context.app.client.execute(() => {
     ptree.selectSheet(`${__dirname}/../docs/test/test.xlsx`);
+    return null;
   });
   await wait(500);
   ret = await t.context.app.client.execute(() => ptree.tree.getTotalPower());
@@ -301,6 +310,7 @@ test.serial('TEST9: sync external spreadsheet', async t => {
   // select an other sheet and test the global power values
   await t.context.app.client.execute(() => {
     ptree.selectSheet(`${__dirname}/../docs/test/test2.xlsx`);
+    return null;
   });
   await wait(500);
   ret = await t.context.app.client.execute(() => ptree.tree.getTotalPower());
@@ -325,16 +335,18 @@ test.serial('TEST10: edit source, DC/DC fixed', async t => {
     await t.context.app.client.execute(() => {
       $('#source_color').val('#aabb11').trigger('change');
       $('#source_regtype').val('0').trigger('change');
+      $('#source_name').val('test_source_name').trigger('change');
+      $('#source_ref').val('test_source_ref').trigger('change');
+      $('#source_custom1').val('test_source_custom1').trigger('change');
+      $('#source_custom2').val('test_source_custom2').trigger('change');
+      $('#input_vout_min').val('2.49').trigger('change');
+      $('#input_vout_typ').val('2.5').trigger('change');
+      $('#input_vout_max').val('2.51').trigger('change');
+      $('#input_eff').val('75').trigger('change');
+      $('#input_eff_i').val('0').trigger('change');
+      return null;
     });
-    await t.context.app.client.setValue('#source_name',    'test_source_name');
-    await t.context.app.client.setValue('#source_ref',     'test_source_ref');
-    await t.context.app.client.setValue('#source_custom1', 'test_source_custom1');
-    await t.context.app.client.setValue('#source_custom2', 'test_source_custom2');
-    await t.context.app.client.setValue('#input_vout_min', '2.49');
-    await t.context.app.client.setValue('#input_vout_typ', '2,5');
-    await t.context.app.client.setValue('#input_vout_max', '2.51');
-    await t.context.app.client.setValue('#input_eff',      '75');
-    await t.context.app.client.setValue('#input_eff_i',    '0');
+    await wait(500);
     await t.context.app.client.click('#add_eff');
     await wait(500);
     await t.context.app.client.click('#edit_ok');
@@ -373,13 +385,15 @@ test.serial('TEST11: edit source, LDO fixed', async t => {
   await t.context.app.client.windowByIndex(1).then(async () => {
     await t.context.app.client.execute(() => {
       $('#source_regtype').val('1').trigger('change');
+      $('#input_vout_min').val('1.49').trigger('change');
+      $('#input_vout_typ').val('1.5').trigger('change');
+      $('#input_vout_max').val('1.51').trigger('change');
+      $('#input_iq_min').val('0.001').trigger('change');
+      $('#input_iq_typ').val('0.002').trigger('change');
+      $('#input_iq_max').val('0.003').trigger('change');
+      return null;
     });
-    await t.context.app.client.setValue('#input_vout_min', '1.49');
-    await t.context.app.client.setValue('#input_vout_typ', '1,5');
-    await t.context.app.client.setValue('#input_vout_max', '1.51');
-    await t.context.app.client.setValue('#input_iq_min',   '0.001');
-    await t.context.app.client.setValue('#input_iq_typ',   '0.002');
-    await t.context.app.client.setValue('#input_iq_max',   '0.003');
+
     await t.context.app.client.click('#edit_ok');
   });
 
@@ -418,6 +432,7 @@ test.serial('TEST12: edit source, DC/DC adj', async t => {
       $('#source_vref_min').val('0.59').trigger('change');
       $('#source_vref_typ').val('0.6').trigger('change');
       $('#source_vref_max').val('0.61').trigger('change');
+      return null;
     });
     await wait(500);
     await t.context.app.client.click('#edit_ok');
@@ -461,11 +476,12 @@ test.serial('TEST13: edit source, LDO adj', async t => {
       $('#source_vref_min').val('0.59').trigger('change');
       $('#source_vref_typ').val('0.6').trigger('change');
       $('#source_vref_max').val('0.61').trigger('change');
+      $('#input_iq_min').val('0.001').trigger('change');
+      $('#input_iq_typ').val('0.002').trigger('change');
+      $('#input_iq_max').val('0.003').trigger('change');
+      return null;
     });
     await wait(500);
-    await t.context.app.client.setValue('#input_iq_min', '0.001');
-    await t.context.app.client.setValue('#input_iq_typ', '0.002');
-    await t.context.app.client.setValue('#input_iq_max', '0.003');
     await t.context.app.client.click('#edit_ok');
   });
 
@@ -504,6 +520,7 @@ test.serial('TEST14: edit source, dummy', async t => {
   await t.context.app.client.windowByIndex(1).then(async () => {
     await t.context.app.client.execute(() => {
       $('#source_regtype').val('6').trigger('change');
+      return null;
     });
     await wait(500);
     await t.context.app.client.click('#edit_ok');
@@ -532,12 +549,12 @@ test.serial('TEST15: edit source, perfect', async t => {
   await t.context.app.client.windowByIndex(1).then(async () => {
     await t.context.app.client.execute(() => {
       $('#source_regtype').val('7').trigger('change');
+      $('#input_vout_min').val('1.49').trigger('change');
+      $('#input_vout_typ').val('1.5').trigger('change');
+      $('#input_vout_max').val('1.51').trigger('change');
+      return null;
     });
-
-    await t.context.app.client.setValue('#input_vout_min', '1.49');
-    await t.context.app.client.setValue('#input_vout_typ', '1.5');
-    await t.context.app.client.setValue('#input_vout_max', '1.51');
-
+    await wait(500);
     await t.context.app.client.click('#edit_ok');
   });
 
@@ -554,7 +571,7 @@ test.serial('TEST15: edit source, perfect', async t => {
   t.is(ret.value.vout_max, '1.51');
 });
 
-test.serial.only('TEST16: edit load', async t => {
+test.serial('TEST16: edit load', async t => {
   let ret;
   // add a source and a load
   await t.context.app.client.click('#bt_addrootsource');
@@ -571,12 +588,14 @@ test.serial.only('TEST16: edit load', async t => {
     await t.context.app.client.execute(() => {
       $('#load_color').val('#aabb11').trigger('change');
       $('#load_type').val('1').trigger('change');
+      $('#load_name').val('test_load_name').trigger('change');
+      $('#load_custom1').val('test_load_custom1').trigger('change');
+      $('#load_custom2').val('test_load_custom2').trigger('change');
+      $('#load_ityp').val('0.123').trigger('change');
+      $('#load_imax').val('1.234').trigger('change');
+      return null;
     });
-    await t.context.app.client.setValue('#load_name',    'test_load_name');
-    await t.context.app.client.setValue('#load_custom1', 'test_load_custom1');
-    await t.context.app.client.setValue('#load_custom2', 'test_load_custom2');
-    await t.context.app.client.setValue('#load_ityp',    '0.123');
-    await t.context.app.client.setValue('#load_imax',    '1.234');
+    await wait(500);
     await t.context.app.client.click('#edit_ok');
   });
   // focus the tree
@@ -602,6 +621,7 @@ test.serial.only('TEST16: edit load', async t => {
   await t.context.app.client.windowByIndex(1).then(async () => {
     await t.context.app.client.execute(() => {
       $('#load_type').val('0').trigger('change');
+      return null;
     });
     await t.context.app.client.click('#edit_ok');
   });
@@ -624,6 +644,7 @@ test.serial.only('TEST16: edit load', async t => {
       $('#load_type').val('2').trigger('change');
       $('#load_celltyp').val('C3').trigger('change');
       $('#load_cellmax').val('D4').trigger('change');
+      return null;
     });
     await t.context.app.client.click('#edit_ok');
   });
@@ -672,6 +693,7 @@ test.serial('TEST18: stats', async t => {
   // open a reference PTree project
   await t.context.app.client.execute(() => {
     ptree.open(`${__dirname}/../docs/test/test.ptree`);
+    return null;
   });
 
   // open the stats
@@ -808,6 +830,7 @@ test.serial('TEST19: about', async t => {
   // open the about window
   await t.context.app.client.execute(() => {
     ipcRenderer.send('About-openReq');
+    return null;
   });
   await wait(1000);
 
@@ -825,11 +848,15 @@ test.serial('TEST20: partlist', async t => {
   // open a reference PTree project
   await t.context.app.client.execute(() => {
     ptree.open(`${__dirname}/../docs/test/test.ptree`);
+    return null;
   });
 
   await t.context.app.client.click('#bt_partlist');
 
   await wait(2000);
+  await t.context.app.client.windowByIndex(1);
+
+  await wait(500);
 
   // TODO
   // ouvrir part list, compter les loads
@@ -849,6 +876,9 @@ test.serial('TEST20: partlist', async t => {
   // open table / replace
   // open table / add
 
+  // close the window
+  await t.context.app.client.close();
+  await t.context.app.client.windowByIndex(0);
 
   t.pass();
 });
@@ -906,6 +936,7 @@ test.afterEach.always(async t => {
   await t.context.app.client.execute(() => {
     ptree.setSaved();
     window.close();
+    return null;
   });
 
   await wait(200);
