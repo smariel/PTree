@@ -48,7 +48,9 @@ class Canvas {
       zoom         : 100,
       cell_width   : Canvas.app_template.cell.width,
       cell_height  : Canvas.app_template.cell.height,
-      text_size    : Canvas.app_template.text.size
+      text_size    : Canvas.app_template.text.size,
+      color_source : Canvas.fabric_template.source.fill,
+      color_load   : Canvas.fabric_template.load.fill
     };
   }
 
@@ -406,6 +408,11 @@ class Canvas {
       let val = this.config[$(elt).data('config')];
       $(elt).val(val);
       $(elt).prev('.range_val').text(val);
+    });
+
+    $('.config_color').each((index, elt) => {
+      let val = this.config[$(elt).data('config')];
+      $(elt).val(val);
     });
   }
 

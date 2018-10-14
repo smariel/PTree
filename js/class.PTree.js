@@ -741,6 +741,7 @@ class PTree {
     // add a perfet source to the root when the button is clicked
     $('#bt_addrootsource').click(() => {
       let newItem = this.tree.addSourceToRoot();
+      newItem.characs.color = this.canvas.config.color_source;
       newItem.characs.regtype = 7;
       this.canvas.refresh();
       this.updateClearButtons();
@@ -772,6 +773,7 @@ class PTree {
     $('#bt_addsource').click(() => {
       let selectedItem = this.canvas.getSelectedItem();
       let newItem = this.tree.addSource(selectedItem);
+      newItem.characs.color = this.canvas.config.color_source;
       this.canvas.refresh();
       this.saveHistory();
       if(selectedItem.isVisible()) this.canvas.selectItem(newItem);
@@ -782,6 +784,7 @@ class PTree {
     $('#bt_addload').click(() => {
       let selectedItem = this.canvas.getSelectedItem();
       let newItem = this.tree.addLoad(selectedItem);
+      newItem.characs.color = this.canvas.config.color_load;
       this.canvas.refresh();
       this.saveHistory();
       if(selectedItem.isVisible()) this.canvas.selectItem(newItem);
@@ -870,6 +873,9 @@ class PTree {
         let val = parseInt($(evt.currentTarget).val());
         this.canvas.config[$(evt.currentTarget).data('config')] = val;
         $(evt.currentTarget).prev('.range_val').text(val);
+      }
+      else if ('color' == $(evt.currentTarget).attr('type')) {
+        this.canvas.config[$(evt.currentTarget).data('config')] = $(evt.currentTarget).val();
       }
       else {
         return;
