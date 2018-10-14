@@ -294,6 +294,26 @@ class ItemEditor {
     });
 
 
+    // Replace lowercase by uppercase and ignore none alpha numeric on cell inputs
+    $('.input_cell').keypress((event) => {
+      // check the pressed key
+      let match = event.key.match(/([A-Z0-9])|([a-z])/);
+      // if the key is not a letter nor a number, ignore it
+      if(null === match) {
+        event.preventDefault();
+      }
+      // if the key is a lowercase letter, transform it to uppercase
+      else if(undefined !== match[2]) {
+        event.preventDefault();
+        $(event.currentTarget).val($(event.currentTarget).val() + match[2].toUpperCase());
+      }
+      // if the key is an uppercase letter or a numbe
+      else if(undefined !== match[1]) {
+        // do nothing
+      }
+    });
+
+
     // update the item every time an input change
     $('.form-control').change((event) => {
       // update the item with the value of $(event.currentTarget)
