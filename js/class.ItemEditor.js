@@ -305,7 +305,10 @@ class ItemEditor {
       // if the key is a lowercase letter, transform it to uppercase
       else if(undefined !== match[2]) {
         event.preventDefault();
-        $(event.currentTarget).val($(event.currentTarget).val() + match[2].toUpperCase());
+        let val = $(event.currentTarget).val();
+        let start = val.substring(0, event.currentTarget.selectionStart);
+        let end = val.substring(event.currentTarget.selectionEnd, val.length);
+        $(event.currentTarget).val(start + match[2].toUpperCase() + end);
       }
       // if the key is an uppercase letter or a numbe
       else if(undefined !== match[1]) {
