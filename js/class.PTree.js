@@ -371,7 +371,7 @@ class PTree {
     // The file was made with an older PTree
     if(comp === 1) {
       let popupData = {
-        title      : 'Incorrect file',
+        title      : 'Old file',
         width      : 520,
         height     : 225,
         sender     : 'PTree',
