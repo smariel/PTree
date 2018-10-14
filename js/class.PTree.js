@@ -370,7 +370,7 @@ class PTree {
 
     // The file was made with an older PTree
     if(comp === 1) {
-      let popupData = {
+      /*let popupData = {
         title      : 'Old file',
         width      : 520,
         height     : 225,
@@ -385,7 +385,7 @@ class PTree {
         btn_cancel : 'Cancel'
       };
       let popupRet = await Util.popup(popupData);
-      if(!popupRet) return false;
+      if(!popupRet) return false;*/
     }
     // The file was made with a newer PTree
     else if(comp === -1) {
