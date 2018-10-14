@@ -601,8 +601,9 @@ class Canvas {
 
     // get the dataURL from the Fabric object (only the usefull part of the canvas)
     let dataURL = this.fabricCanvas.toDataURL({
-      format   : 'jpeg',
-      quality  : 1,
+      format     : 'jpeg',
+      quality    : 1,
+      multiplier : 1.5
     });
 
     // select any previous selected item
