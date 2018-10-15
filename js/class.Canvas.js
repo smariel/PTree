@@ -46,6 +46,7 @@ class Canvas {
       align_load   : false,
       proportional : false,
       zoom         : 100,
+      img_resol    : 1.5,
       cell_width   : Canvas.app_template.cell.width,
       cell_height  : Canvas.app_template.cell.height,
       text_size    : Canvas.app_template.text.size,
@@ -610,7 +611,7 @@ class Canvas {
     let dataURL = this.fabricCanvas.toDataURL({
       format     : 'jpeg',
       quality    : 1,
-      multiplier : 1.5
+      multiplier : this.config.img_resol
     });
 
     // select any previous selected item

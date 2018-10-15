@@ -185,54 +185,7 @@
       <h4 id="bottom_title">Project options</h4>
       <h5 class="bottom_subtitle">Display</h5>
       <form id="config_tree" class="option_section">
-        <p class="config">
-          <label for="config_infoVtyp">
-            <input id="config_infoVtyp" data-config="show_vtyp" type="checkbox" class="config_input config_checkbox" />
-            V<sub>TYP</sub>
-          </label>
-          <br />
-          <label for="config_infoItyp">
-            <input id="config_infoItyp" data-config="show_ityp" type="checkbox" class="config_input config_checkbox" />
-            I<sub>TYP</sub>
-          </label>
-          <br />
-          <label for="config_infoPtyp">
-            <input id="config_infoPtyp" data-config="show_ptyp" type="checkbox" class="config_input config_checkbox" />
-            P<sub>TYP</sub>
-          </label>
-        </p>
-        <p class="config">
-          <label for="config_infoVmax">
-            <input id="config_infoVmax" data-config="show_vmax" type="checkbox" class="config_input config_checkbox" />
-            V<sub>MAX</sub>
-          </label>
-          <br />
-          <label for="config_infoImax">
-            <input id="config_infoImax" data-config="show_imax" type="checkbox" class="config_input config_checkbox" />
-            I<sub>MAX</sub>
-          </label>
-          <br />
-          <label for="config_infoPmax">
-            <input id="config_infoPmax" data-config="show_pmax" type="checkbox" class="config_input config_checkbox" />
-            P<sub>MAX</sub>
-          </label>
-        </p>
-        <p class="config">
-          <label for="config_name">
-            <input id="config_name" data-config="show_name" type="checkbox" class="config_input config_checkbox" />
-            Name
-          </label>
-          <br />
-          <label for="config_ref">
-            <input id="config_ref" data-config="show_ref" type="checkbox" class="config_input config_checkbox" />
-            Part Number
-          </label>
-          <br />
-          <label for="config_custom1">
-            <input id="config_custom1" data-config="show_custom1" type="checkbox" class="config_input config_checkbox" />
-            Custom Field
-          </label>
-        </p>
+        <!-- RANGES -->
         <p class="config">
           <label for="config_itemwidth">
             Item width: <span class="range_val">300</span>px
@@ -253,7 +206,64 @@
             Zoom: <span class="range_val">100</span>%
             <input id="config_zoom" data-config="zoom" class="config_input config_range" type="range" min="30" max="300" value="100" step="10" />
           </label>
+          <br />
+          <label for="config_resolution">
+            Export size: x<span class="range_val">1.5</span>
+            <input id="config_resolution" data-config="img_resol" class="config_input config_range" type="range" min="0.1" max="3" value="1.5" step="0.1" />
+          </label>
         </p>
+        <!-- show/hide TYP -->
+        <p class="config">
+          <label for="config_infoVtyp">
+            <input id="config_infoVtyp" data-config="show_vtyp" type="checkbox" class="config_input config_checkbox" />
+            V<sub>TYP</sub>
+          </label>
+          <br />
+          <label for="config_infoItyp">
+            <input id="config_infoItyp" data-config="show_ityp" type="checkbox" class="config_input config_checkbox" />
+            I<sub>TYP</sub>
+          </label>
+          <br />
+          <label for="config_infoPtyp">
+            <input id="config_infoPtyp" data-config="show_ptyp" type="checkbox" class="config_input config_checkbox" />
+            P<sub>TYP</sub>
+          </label>
+        </p>
+        <!-- show/hide MAX -->
+        <p class="config">
+          <label for="config_infoVmax">
+            <input id="config_infoVmax" data-config="show_vmax" type="checkbox" class="config_input config_checkbox" />
+            V<sub>MAX</sub>
+          </label>
+          <br />
+          <label for="config_infoImax">
+            <input id="config_infoImax" data-config="show_imax" type="checkbox" class="config_input config_checkbox" />
+            I<sub>MAX</sub>
+          </label>
+          <br />
+          <label for="config_infoPmax">
+            <input id="config_infoPmax" data-config="show_pmax" type="checkbox" class="config_input config_checkbox" />
+            P<sub>MAX</sub>
+          </label>
+        </p>
+        <!-- show/hide TEXT -->
+        <p class="config">
+          <label for="config_name">
+            <input id="config_name" data-config="show_name" type="checkbox" class="config_input config_checkbox" />
+            Name
+          </label>
+          <br />
+          <label for="config_ref">
+            <input id="config_ref" data-config="show_ref" type="checkbox" class="config_input config_checkbox" />
+            Part Number
+          </label>
+          <br />
+          <label for="config_custom1">
+            <input id="config_custom1" data-config="show_custom1" type="checkbox" class="config_input config_checkbox" />
+            Custom Field
+          </label>
+        </p>
+        <!-- Other display -->
         <p class="config">
           <label for="config_alignload">
             <input id="config_alignload" data-config="align_load" type="checkbox" class="config_input config_checkbox" />
@@ -265,6 +275,7 @@
             Proportional to power
           </label>
         </p>
+        <!-- Colors -->
         <p class="config">
           <label for="config_sourcecolor">
             <input id="config_sourcecolor" data-config="color_source" type="color" class="config_input config_color" value="#000000" />

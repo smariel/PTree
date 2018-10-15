@@ -872,7 +872,7 @@ class PTree {
         this.canvas.config[$(evt.currentTarget).data('config')] = $(evt.currentTarget).prop('checked');
       }
       else if ('range' == $(evt.currentTarget).attr('type')) {
-        let val = parseInt($(evt.currentTarget).val());
+        let val = parseFloat($(evt.currentTarget).val());
         this.canvas.config[$(evt.currentTarget).data('config')] = val;
         $(evt.currentTarget).prev('.range_val').text(val);
       }
@@ -889,14 +889,14 @@ class PTree {
     // modify the range inputs on wheel up/down
     $('.config_range').on('wheel',(evt) => {
       // get actual values
-      let step   = parseInt($(evt.currentTarget).prop('step'));
-      let val    = parseInt($(evt.currentTarget).val());
+      let step   = parseFloat($(evt.currentTarget).prop('step'));
+      let val    = parseFloat($(evt.currentTarget).val());
       let newval = val;
 
       // wheel down, decrement
       if(evt.originalEvent.deltaY > 0) {
         // get the min
-        let min = parseInt($(evt.currentTarget).prop('min'));
+        let min = parseFloat($(evt.currentTarget).prop('min'));
         // if already the min, do nothing
         if(val == min) return;
         // decrement from one step
@@ -907,7 +907,7 @@ class PTree {
       // wheel up, increment
       else if(evt.originalEvent.deltaY < 0) {
         // get the max
-        let max = parseInt($(evt.currentTarget).prop('max'));
+        let max = parseFloat($(evt.currentTarget).prop('max'));
         // if already the max
         if(val == max) return;
         // increment from one step
