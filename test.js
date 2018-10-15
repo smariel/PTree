@@ -127,7 +127,7 @@ test.serial('TEST5: save + new project', async t => {
   t.is(tree.item_list[1].type, 'source');
 
   // delete the project file
-  require('fs').unlink(`${__dirname}/test_project.ptree`);
+  require('fs').unlinkSync(`${__dirname}/test_project.ptree`);
 });
 
 test.serial('TEST6: canvas manipulation', async t => {
