@@ -228,6 +228,7 @@ class PTree {
       // load the previous tree in the history
       --this.history.index;
       this.loadHistory(this.history.index);
+      this.canvas.unselectItem(true);
     }
   }
 
@@ -239,6 +240,7 @@ class PTree {
       // load the next tree in the history
       ++this.history.index;
       this.loadHistory(this.history.index);
+      this.canvas.unselectItem(true);
     }
   }
 
