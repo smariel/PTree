@@ -228,7 +228,7 @@ test.serial('TEST7: total power', async t => {
   t.is(ret.value.totaleff_maw,  '89.8');
 });
 
-test.serial('TEST8: options', async t => {
+test.serial('TEST8: configurations', async t => {
   // open a reference PTree project
   await t.context.app.client.execute(() => {
     ptree.open(`${__dirname}/../docs/test/test.ptree`);
@@ -243,6 +243,9 @@ test.serial('TEST8: options', async t => {
     $('#config_itemwidth').val(200).trigger('change');
     $('#config_itemheight').val(50).trigger('change');
     $('#config_zoom').val(150).trigger('change');
+    $('#config_resolution').val(2.5).trigger('change');
+    $('#config_sourcecolor').val('#4444DD').trigger('change');
+    $('#config_loadcolor').val('#DDDD44').trigger('change');
     return null;
   });
   await t.context.app.client.click('#config_infoVtyp');
@@ -257,6 +260,9 @@ test.serial('TEST8: options', async t => {
   await t.context.app.client.click('#config_alignload');
   await t.context.app.client.click('#config_proportional');
   await t.context.app.client.click('#bottom_close');
+  await t.context.app.client.click('#bt_addrootsource');
+  await t.context.app.client.click('#bt_addsource');
+  await t.context.app.client.click('#bt_addload');
   await wait(500);
 
   // take a screenshot of the project
@@ -271,6 +277,14 @@ test.serial('TEST8: options', async t => {
 
 
   // open the config, wait for the animation to end, reset
+  await t.context.app.client.click('#bt_undo');
+  await t.context.app.client.click('#bt_undo');
+  await t.context.app.client.click('#bt_undo');
+  await t.context.app.client.execute(() => {
+    ptree.setSaved();
+    ptree.clearHistory();
+    return null;
+  });
   await t.context.app.client.click('#bt_config');
   await wait(500);
   await t.context.app.client.click('.mybtn-defaultConfig');
@@ -886,7 +900,6 @@ test.serial('TEST20: partlist', async t => {
 
 // TODO
 // show/hide items
-// default colors
 
 
 // Before each TEST
