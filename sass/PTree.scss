@@ -229,28 +229,30 @@ $info_border_color:     rgba(255,255,255,0.2);
 }
 
 .option_section {
+   margin-top:      10px;
    display:         flex;
-   align-items:     center;
+   //align-items:     center;
    justify-content: center;
    line-height:     1;
-
    & label {
-      font-weight:     normal;
+      font-weight: normal;
    }
 }
 
 .config {
    margin:     10px 15px;
    text-align: left;
-   &:last-child {
-      line-height: 2;
-      text-align:  center;
-   }
+}
+
+.config_reset {
+   line-height: 1.5;
+   text-align: center;
+   margin-bottom: 10px;
 }
 
 .mybtn-defaultConfig {
+   display: inline-block;
    @include square-btn($red, white);
-   margin-top: 10px;
 }
 
 #sheet_selection {
