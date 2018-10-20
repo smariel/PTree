@@ -8,8 +8,8 @@
 
 /* eslint no-console: 0 */
 /* eslint no-undef:   0 */
-const refreshScreenshots = true;
-const checkConsoleLog = false;
+const refreshScreenshots = false;
+const checkConsoleLog    = true;
 
 const test = require('ava');
 const {Application} = require('spectron');
@@ -243,7 +243,7 @@ test.serial('TEST8: configurations', async t => {
     $('#config_itemwidth').val(200).trigger('change');
     $('#config_itemheight').val(50).trigger('change');
     $('#config_zoom').val(150).trigger('change');
-    $('#config_resolution').val(2.5).trigger('change');
+    $('#config_zoomexport').val(200).trigger('change');
     $('#config_sourcecolor').val('#4444DD').trigger('change');
     $('#config_loadcolor').val('#DDDD44').trigger('change');
     return null;
