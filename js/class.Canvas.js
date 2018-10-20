@@ -46,7 +46,7 @@ class Canvas {
       align_load   : false,
       proportional : false,
       zoom         : 100,
-      img_resol    : 1.5,
+      zoom_export  : 100,
       cell_width   : Canvas.app_template.cell.width,
       cell_height  : Canvas.app_template.cell.height,
       text_size    : Canvas.app_template.text.size,
@@ -595,34 +595,35 @@ class Canvas {
     }
   }
 
-
-  // Export the canvas as a JPEG image within a dataURL object
+  // Export the canvas as a JPEG image within an ObjectURL
+  // must export to blob then convert to ObjectURL instead of DataURL
+  // because Chrome can't download a DataURL>2MB but has no limit for ObjectURL
   toJPEGdataURL() {
     // save the reference of the eventual selected item (may be null)
     let selected = this.getSelectedItem();
     this.unselectItem();
 
-    // save and reset the zoom factor
+    // save the zoom factor and apply the zoom for export
     let zoom = this.config.zoom;
-    this.config.zoom = 100;
+    this.config.zoom = this.config.zoom_export;
     this.refresh();
 
-    // get the dataURL from the Fabric object (only the usefull part of the canvas)
-    let dataURL = this.fabricCanvas.toDataURL({
-      format     : 'jpeg',
-      quality    : 1,
-      multiplier : this.config.img_resol
+    return new Promise(resolve => {
+      this.canvas$[0].toBlob((blob) => {
+        // set back the zoom
+        this.config.zoom = zoom;
+        this.refresh();
+
+        // convert the blob to ObjectURL
+        let dataURL = URL.createObjectURL(blob);
+
+        // select any previous selected item
+        if (null !== selected) this.selectItem(selected);
+
+        resolve(dataURL);
+      }, 'image/jpeg', 1);
+
     });
-
-    // select any previous selected item
-    if (null !== selected) this.selectItem(selected);
-
-    // set back the zoom
-    this.config.zoom = zoom;
-    this.refresh();
-
-    // return the dataURL to be downloaded
-    return dataURL;
   }
 
 
