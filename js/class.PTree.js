@@ -441,14 +441,13 @@ class PTree {
         let popupData = {
           title      : 'New version available',
           width      : 600,
-          height     : 410,
+          height     : 370,
           sender     : 'PTree',
           content    : `<p><strong>A new version of PTree is available !</strong><br />
                         You are using PTree v${this_version}. <br />
                         Would you like to download v${latest_version}? <br />
-                        <br />
-                        Release notes:<br /></p>
-                        <div class="overflow">${require('marked')(github_data.body)}</div>`,
+                        </p>
+                        <div class="overflow"><h4>Release notes:</h4><p>${require('marked')(github_data.body)}</p></div>`,
           btn_ok     : 'Yes',
           btn_cancel : 'Not now'
         };

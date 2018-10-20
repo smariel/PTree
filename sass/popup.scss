@@ -6,24 +6,26 @@ body {
 }
 
 .content {
-   margin: 20px 10px 0;
+   margin:    20px 10px 0;
    font-size: 12pt;
 }
 
 .overflow {
-   margin: 0 -25px;
-   padding: 0 25px;
-   height: 200px;
-   overflow-y: scroll;
+   margin:        0 -25px;
+   padding:       0 25px;
+   height:        200px;
+   overflow-y:    scroll;
+   border-top:    1px solid rgba(0,0,0,0.2);
+   border-bottom: 1px solid rgba(0,0,0,0.2);
 }
 
 menu {
-   position: fixed;
-   right: 0;
-   bottom: 0;
-   left: 0;
-   padding: 0 20px 20px 20px;
-   margin: 0;
+   position:   fixed;
+   right:      0;
+   bottom:     0;
+   left:       0;
+   padding:    0 20px 20px 20px;
+   margin:     0;
    text-align: right;
    background: white;
 }
