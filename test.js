@@ -90,7 +90,7 @@ test.serial('TEST4: open file + canvas construction', async t => {
   // take a screenshot of the project
   let screenshotBuffer = await t.context.app.client.saveScreenshot();
 
-  // uncomment the following line to generate the "reference" screenshot
+  // generate the "reference" screenshot
   if(refreshScreenshots) require('fs').writeFileSync(`${__dirname}/docs/test/test.png`,screenshotBuffer);
 
   // open a a reference screenshot
@@ -267,7 +267,7 @@ test.serial('TEST8: configurations', async t => {
 
   // take a screenshot of the project
   let screenshotBuffer = await t.context.app.client.saveScreenshot();
-  // uncomment the following line to generate the "reference" screenshot
+  // generate the "reference" screenshot
   if(refreshScreenshots) require('fs').writeFileSync(`${__dirname}/docs/test/test2.png`,screenshotBuffer);
   // open a a reference screenshot
   let refshotBuffer = require('fs').readFileSync(`${__dirname}/docs/test/test2.png`);
@@ -293,7 +293,7 @@ test.serial('TEST8: configurations', async t => {
 
   // take a screenshot of the project
   screenshotBuffer = await t.context.app.client.saveScreenshot();
-  // uncomment the following line to generate the "reference" screenshot
+  // generate the "reference" screenshot
   if(refreshScreenshots) require('fs').writeFileSync(`${__dirname}/docs/test/test.png`,screenshotBuffer);
   // open a a reference screenshot
   refshotBuffer = require('fs').readFileSync(`${__dirname}/docs/test/test.png`);
@@ -362,7 +362,7 @@ test.serial('TEST10: edit source, DC/DC fixed', async t => {
     });
     await wait(500);
     await t.context.app.client.click('#add_eff');
-    await wait(500);
+    await wait(1000);
     await t.context.app.client.click('#edit_ok');
   });
 
@@ -904,6 +904,8 @@ test.serial('TEST20: partlist', async t => {
 
 // Before each TEST
 test.beforeEach(async t => {
+  await wait(1000);
+
   t.context.app = new Application({
     path: require('electron'),
     args: [__dirname]
@@ -948,11 +950,16 @@ test.afterEach.always(async t => {
   // close the renderer window using its own js context
   await t.context.app.client.execute(() => {
     ptree.setSaved();
+  });
+
+  await wait(500);
+
+  await t.context.app.client.execute(() => {
     window.close();
     return null;
   });
 
-  await wait(200);
+  await wait(500);
 
   try {
     // check if PID is running (throw error if not)
