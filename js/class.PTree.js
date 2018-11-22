@@ -398,16 +398,19 @@ class PTree {
         sender     : 'PTree',
         content    : `<strong>This file was made with a newer version of PTree.</strong><br />
                       This could result in an unexpected behavior. <br />
-                      Do you still want to proceed ?<br />
-                      You could also download the new version of PTree.<br />
+                      Do you want to download the new version of PTree ?<br />
                       <br />
                       <em>File: ${data.version}<br />
                       PTree: ${packagejson.version}</em>`,
-        btn_ok     : 'Proceed',
-        btn_cancel : 'Cancel'
+        btn_ok     : 'Download',
+        btn_cancel : 'Continue'
       };
       let popupRet = await Util.popup(popupData);
-      if(!popupRet) return false;
+      if(popupRet) {
+        // open the PTree home page in an external browser
+        const {shell} = require('electron');
+        shell.openExternal(packagejson.homepage);
+      }
     }
     // sould not occur
     else if(null === comp) {
@@ -448,7 +451,7 @@ class PTree {
                         Would you like to download v${latest_version}? <br />
                         </p>
                         <div class="overflow"><h4>Release notes:</h4><p>${require('marked')(github_data.body)}</p></div>`,
-          btn_ok     : 'Yes',
+          btn_ok     : 'Download',
           btn_cancel : 'Not now'
         };
         // if the user clicked on 'download'
