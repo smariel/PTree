@@ -190,6 +190,38 @@ class Tree {
   }
 
 
+  // return the loss of all DCDC
+  getTotalDCDCloss(typmax='both') {
+    let totalloss = {typ:0, max:0};
+    this.forEachSource((source) => {
+      if(source.isDCDC()) {
+        totalloss.typ += source.getPowerLoss('typ');
+        totalloss.max += source.getPowerLoss('max');
+      }
+    });
+
+    // return the typ or max or both
+    if('both' === typmax) return totalloss;
+    else return totalloss[typmax];
+  }
+
+
+  // return the loss of all LDO
+  getTotalLDOloss(typmax='both') {
+    let totalloss = {typ:0, max:0};
+    this.forEachSource((source) => {
+      if(source.isLDO()) {
+        totalloss.typ += source.getPowerLoss('typ');
+        totalloss.max += source.getPowerLoss('max');
+      }
+    });
+
+    // return the typ or max or both
+    if('both' === typmax) return totalloss;
+    else return totalloss[typmax];
+  }
+
+
   // Remove the reference to this tree from each item
   // Caution! Call .convertToCircular() before calling any other method
   convertToUncircular() {
