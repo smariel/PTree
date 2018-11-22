@@ -396,6 +396,16 @@ class Canvas {
     const efficiency = this.tree.getTotalEfficiency();
     $('.totaleff.typ').text(Util.numberToSi(efficiency.typ,3));
     $('.totaleff.max').text(Util.numberToSi(efficiency.max,3));
+
+    // refresh the total losses
+    const dcdcloss = this.tree.getTotalDCDCloss();
+    $('.totaldcdcloss.typ').text(Util.numberToSi(dcdcloss.typ,3));
+    $('.totaldcdcloss.max').text(Util.numberToSi(dcdcloss.max,3));
+
+    // refresh the total losses
+    const ldoloss = this.tree.getTotalLDOloss();
+    $('.totalldoloss.typ').text(Util.numberToSi(ldoloss.typ,3));
+    $('.totalldoloss.max').text(Util.numberToSi(ldoloss.max,3));
   }
 
 
@@ -534,7 +544,7 @@ class Canvas {
     let zoom = this.config.zoom/100;
 
     // if the item has an input
-    if (0 !== item.parentID) {
+    if (!item.isChildOfRoot()) {
       // print the values
       $('#vin_typ').text(item.getVoltage('typ', 'in', 3, true));
       $('#vin_max').text(item.getVoltage('max', 'in', 3, true));
@@ -556,7 +566,7 @@ class Canvas {
     }
 
     // if the item has an output
-    if ('load' != item.type) {
+    if (!item.isLoad()) {
       $('#vout_typ').text(item.getVoltage('typ', 'out', 3, true));
       $('#vout_max').text(item.getVoltage('max', 'out', 3, true));
       $('#iout_typ').text(item.getCurrent('typ', 'out', 3, true));
@@ -576,10 +586,12 @@ class Canvas {
       $('#item_info_right').fadeIn(fade);
 
       // if the item has an input AND an output
-      if (0 !== item.parentID) {
+      if (!item.isChildOfRoot()) {
         // print the values
         $('#loss_typ').text(item.getPower('typ', 'loss', 3, true));
         $('#loss_max').text(item.getPower('max', 'loss', 3, true));
+        $('#eff_typ').text(`${Util.numberToSi(item.getEfficiency('typ')*100, 3)}%`);
+        $('#eff_max').text(`${Util.numberToSi(item.getEfficiency('max')*100, 3)}%`);
 
         // move the info div next to the item
         left = this.canvas$.offset().left + fabric_obj.get('left')*zoom + item_width *zoom / 2 - $('#item_info_center').outerWidth(true) / 2;

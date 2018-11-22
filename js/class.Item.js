@@ -431,63 +431,8 @@ class Item {
     }
     // if the item is a DC/DC
     else if (this.isDCDC()) {
-      let efficiency = 1;
-
-      // if the efficiency is an array (>= v1.1.0)
-      if(typeof this.characs.efficiency === 'object') {
-        // if no efficiency is set, consider 100%
-        if(this.characs.efficiency.length == 0) {
-          efficiency = 1;
-        }
-        // if only one efficiency is set, ignore the current
-        else if (this.characs.efficiency.length == 1) {
-          efficiency = parseFloat(this.characs.efficiency[0].eff) / 100;
-        }
-        // if there is multiple efficiency, use linear interpolation
-        else {
-          let itemCurrent = this.getOutputCurrent(valType);
-          // if the current is <= of the min efficiency, use the min
-          if(itemCurrent <= this.characs.efficiency[0].i) {
-            efficiency = parseFloat(this.characs.efficiency[0].eff) / 100;
-          }
-          // if the current is >= of the max efficiency, use the max
-          else if(itemCurrent >= this.characs.efficiency[this.characs.efficiency.length - 1].i) {
-            efficiency = parseFloat(this.characs.efficiency[this.characs.efficiency.length - 1].eff) / 100;
-          }
-          // else, find two points and compute with linear interpolation (f(x)=ax+b)
-          else {
-            for(let n=0; n < this.characs.efficiency.length - 1; n++) {
-              let eff_data      = this.characs.efficiency[n];
-              let eff_nextData  = this.characs.efficiency[n+1];
-
-              // if the current is equal to one of the point
-              if(itemCurrent == eff_data.i) {
-                efficiency = parseFloat(eff_data.eff) / 100;
-                break;
-              }
-              // else, use linear interpolation to compute the efficiency
-              else if(itemCurrent > eff_data.i && itemCurrent < eff_nextData.i) {
-                // a = (y2-y1)/(x2-x1)
-                let a = (parseFloat(eff_nextData.eff)/100 - parseFloat(eff_data.eff)/100) / (parseFloat(eff_nextData.i) - parseFloat(eff_data.i));
-
-                // b = y1 - a * x1
-                let b = parseFloat(eff_data.eff)/100 - a * parseFloat(eff_data.i);
-
-                // y = ax+b
-                efficiency = a * itemCurrent + b;
-                break;
-              }
-            }
-          }
-        }
-      }
-      // if the efficiency is a single number (compatibility, < v1.1.0)
-      else {
-        efficiency = parseFloat(this.characs.efficiency) / 100;
-      }
-
       // p_in = p_out / efficiency
-      p_in = this.getOutputPower(valType) / efficiency;
+      p_in = this.getOutputPower(valType) / this.getEfficiency(valType);
     }
 
     return p_in;
@@ -583,6 +528,73 @@ class Item {
     }
 
     return p_loss;
+  }
+
+
+  // get the efficiency of the item
+  getEfficiency(valType) {
+    let efficiency = 1;
+
+    if(this.isLDO()) {
+      // efficiency = p_out / p_in
+      efficiency = this.getOutputPower(valType) / this.getInputPower(valType);
+    }
+    else if(this.isDCDC()) {
+      // if the efficiency is an array (>= v1.1.0)
+      if(typeof this.characs.efficiency === 'object') {
+        // if no efficiency is set, consider 100%
+        if(this.characs.efficiency.length == 0) {
+          efficiency = 1;
+        }
+        // if only one efficiency is set, ignore the current
+        else if (this.characs.efficiency.length == 1) {
+          efficiency = parseFloat(this.characs.efficiency[0].eff) / 100;
+        }
+        // if there is multiple efficiency, use linear interpolation
+        else {
+          let itemCurrent = this.getOutputCurrent(valType);
+          // if the current is <= of the min efficiency, use the min
+          if(itemCurrent <= this.characs.efficiency[0].i) {
+            efficiency = parseFloat(this.characs.efficiency[0].eff) / 100;
+          }
+          // if the current is >= of the max efficiency, use the max
+          else if(itemCurrent >= this.characs.efficiency[this.characs.efficiency.length - 1].i) {
+            efficiency = parseFloat(this.characs.efficiency[this.characs.efficiency.length - 1].eff) / 100;
+          }
+          // else, find two points and compute with linear interpolation (f(x)=ax+b)
+          else {
+            for(let n=0; n < this.characs.efficiency.length - 1; n++) {
+              let eff_data      = this.characs.efficiency[n];
+              let eff_nextData  = this.characs.efficiency[n+1];
+
+              // if the current is equal to one of the point
+              if(itemCurrent == eff_data.i) {
+                efficiency = parseFloat(eff_data.eff) / 100;
+                break;
+              }
+              // else, use linear interpolation to compute the efficiency
+              else if(itemCurrent > eff_data.i && itemCurrent < eff_nextData.i) {
+                // a = (y2-y1)/(x2-x1)
+                let a = (parseFloat(eff_nextData.eff)/100 - parseFloat(eff_data.eff)/100) / (parseFloat(eff_nextData.i) - parseFloat(eff_data.i));
+
+                // b = y1 - a * x1
+                let b = parseFloat(eff_data.eff)/100 - a * parseFloat(eff_data.i);
+
+                // y = ax+b
+                efficiency = a * itemCurrent + b;
+                break;
+              }
+            }
+          }
+        }
+      }
+      // if the efficiency is a single number (compatibility, < v1.1.0)
+      else {
+        efficiency = parseFloat(this.characs.efficiency) / 100;
+      }
+    }
+
+    return efficiency;
   }
 
 

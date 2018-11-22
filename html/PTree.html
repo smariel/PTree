@@ -17,7 +17,7 @@
     <!-- Top Menu -->
     <nav id="top_menu" class="navbar">
       <ul id="windows_control" class="nav navbar-nav navbar-left">
-        <li id="bt_partlist"     ><a><span class="fa fa-lg fa-microchip"></span> Part list</a></li>
+        <li id="bt_partlist"      ><a><span class="fa fa-lg fa-microchip"></span> Part list</a></li>
         <li id="bt_stats"         ><a><span class="fa fa-lg fa-pie-chart"></span> Stats</a></li>
       </ul>
       <ul id="canvas_control" class="nav navbar-nav navbar-left">
@@ -32,7 +32,7 @@
         <li id="bt_addload"       ><a data-toggle="tooltip" data-placement="bottom" title="Add&nbsp;a&nbsp;new&nbsp;plane downstream&nbsp;the&nbsp;selected&nbsp;item"         ><span class="fa fa-lg fa-plus-circle" ></span> Load</a></li>
         <li id="bt_up"            ><a data-toggle="tooltip" data-placement="bottom" title="Move&nbsp;up the&nbsp;selected&nbsp;item"                                           ><span class="fa fa-lg fa-arrow-up"    ></span> Up</a></li>
         <li id="bt_down"          ><a data-toggle="tooltip" data-placement="bottom" title="Move&nbsp;down the&nbsp;selected&nbsp;item"                                         ><span class="fa fa-lg fa-arrow-down"  ></span> Down</a></li>
-        <li id="bt_hide"          ><a data-toggle="tooltip" data-placement="bottom" title="Toggle the&nbsp;selected&nbsp;item"                                              ><span class="fa fa-lg fa-eye-slash"   ></span> Hide</a></li>
+        <li id="bt_hide"          ><a data-toggle="tooltip" data-placement="bottom" title="Toggle the&nbsp;selected&nbsp;item"                                                 ><span class="fa fa-lg fa-eye-slash"   ></span> Hide</a></li>
       </ul>
       <ul id="global_control" class="nav navbar-nav navbar-right">
         <li id="bt_undo"          ><a data-toggle="tooltip" data-placement="bottom" title="Undo"                                                                               ><span class="fa fa-lg fa-undo"        ></span></a></li>
@@ -74,6 +74,18 @@
           <td class="totalcell totaleff typ">100</td>
           <td class="totalcell totaleff max">100</td>
           <td class="totalcell">%</td>
+        </tr>
+        <tr>
+          <td class="totalcell">DC/DC loss</td>
+          <td class="totalcell totaldcdcloss typ">0</td>
+          <td class="totalcell totaldcdcloss max">0</td>
+          <td class="totalcell">W</td>
+        </tr>
+        <tr>
+          <td class="totalcell">LDO loss</td>
+          <td class="totalcell totalldoloss typ">0</td>
+          <td class="totalcell totalldoloss max">0</td>
+          <td class="totalcell">W</td>
         </tr>
       </table>
     </section>
@@ -146,7 +158,7 @@
           <table>
             <thead>
               <tr>
-                <th colspan="3">Loss</th>
+                <th colspan="3">Loss & Eff</th>
               </tr>
               <tr>
                 <th>typ</th>
@@ -157,6 +169,10 @@
               <tr>
                 <td id="loss_typ"></td>
                 <td id="loss_max"></td>
+              </tr>
+              <tr>
+                <td id="eff_typ">100%</td>
+                <td id="eff_max">100%</td>
               </tr>
             </tbody>
           </table>
