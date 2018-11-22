@@ -596,7 +596,7 @@ class Item {
       const {ipcRenderer} = require('electron');
 
       // listen to the response from main.js and resolve the promise
-      ipcRenderer.on('Item-editResp', (event, datastr) => {
+      ipcRenderer.once('Item-editResp', (event, datastr) => {
         // import the new data
         if(null !== datastr) this.fromString(datastr);
 

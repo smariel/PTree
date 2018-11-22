@@ -15,7 +15,7 @@ const {ipcRenderer} = require('electron');
 let getInitData = () => {
   return new Promise(resolve => {
     // On reception of the init data
-    ipcRenderer.on('Popup-initDataResp', (event, initData) => {
+    ipcRenderer.once('Popup-initDataResp', (event, initData) => {
       resolve(initData);
     });
 

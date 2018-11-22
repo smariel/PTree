@@ -22,7 +22,7 @@ let itemEditor;
 // When jQuery is ready
 $(() => {
   // On reception of the init data
-  ipcRenderer.on('ItemEditor-initDataResp', (event, initData) => {
+  ipcRenderer.once('ItemEditor-initDataResp', (event, initData) => {
     // reconstruct the item to work on
     let item = new Item(0,null,null,null);
     item.fromString(initData.itemStr);

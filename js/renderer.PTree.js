@@ -19,7 +19,7 @@ let ptree;
 // When jQuery is ready
 $(() => {
   // On reception of the init data
-  ipcRenderer.on('PTree-initDataResp', (event, initData) => {
+  ipcRenderer.once('PTree-initDataResp', (event, initData) => {
     // creation of the PTree object
     ptree = new PTree('canvas');
 

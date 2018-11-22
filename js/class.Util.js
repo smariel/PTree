@@ -263,7 +263,7 @@ class Util {
       const {ipcRenderer} = require('electron');
 
       // listen to the response from main.js and resolve the promise
-      ipcRenderer.on('Popup-openResp', (event, datastr) => {
+      ipcRenderer.once('Popup-openResp', (event, datastr) => {
         resolve(datastr);
       });
 

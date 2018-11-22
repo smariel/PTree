@@ -22,7 +22,7 @@ let partListEditor;
 // When jQuery is ready
 $(() => {
   // On reception of the init data
-  ipcRenderer.on('PartListEditor-initDataResp', (event, initData) => {
+  ipcRenderer.once('PartListEditor-initDataResp', (event, initData) => {
     // Reconstruct the partList
     let partList = new PartList();
     partList.fromString(initData.partListStr);

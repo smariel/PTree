@@ -253,7 +253,7 @@ class PTree {
         const {ipcRenderer} = require('electron');
 
         // listen to the response from main.js and resolve the promise
-        ipcRenderer.on('PartList-editResp', (event, datastr) => {
+        ipcRenderer.once('PartList-editResp', (event, datastr) => {
           resolve(datastr);
         });
 

@@ -19,7 +19,7 @@ let stats;
 // When jQuery is ready
 $(() => {
   // On reception of the init data
-  ipcRenderer.on('Stats-initDataResp', (event, initData) => {
+  ipcRenderer.once('Stats-initDataResp', (event, initData) => {
     // Init the main Stats object
     stats = new Stats();
     stats.import(initData);
