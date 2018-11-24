@@ -547,6 +547,116 @@ class PTree {
   }
 
 
+  // export a full report of the tree in a XLSX file
+  exportReport() {
+    // get the XLSX file name from the PTree file name
+    let fileName = ('string' === typeof this.filePath) ? require('path').parse(this.filePath).name+'.xlsx' : 'ptree.xlsx';
+
+    // create an XLSX empty workbook
+    const XLSX = require('xlsx');
+    let XLSX_workbook = XLSX.utils.book_new();
+
+    // init an array of array for the regulator values
+    let reg_values = [];
+
+    // push the title line
+    reg_values.push([
+      'NAME',
+      'PART NUMBER',
+      'TYPE',
+      'VIN TYP (V)',
+      'VIN MAX (V)',
+      'IIN TYP (A)',
+      'IIN MAX (A)',
+      'PIN TYP (W)',
+      'PIN MAX (W)',
+      'VOUT TYP (V)',
+      'VOUT MAX (V)',
+      'IOUT TYP (A)',
+      'IOUT MAX (A)',
+      'POUT TYP (W)',
+      'POUT MAX (W)',
+      'LOSS TYP (W)',
+      'LOSS MAX (W)',
+      'EFFICIENCY TYP (%)',
+      'EFFICIENCY MAX (%)'
+    ]);
+
+    // push the data of each regulator as a new line
+    this.tree.forEachSource((source) => {
+      reg_values.push([
+        source.characs.name,
+        source.characs.ref,
+        source.getType(),
+        source.getInputVoltage('typ'),
+        source.getInputVoltage('max'),
+        source.getInputCurrent('typ'),
+        source.getInputCurrent('max'),
+        source.getInputPower('typ'),
+        source.getInputPower('max'),
+        source.getOutputVoltage('typ'),
+        source.getOutputVoltage('max'),
+        source.getOutputCurrent('typ'),
+        source.getOutputCurrent('max'),
+        source.getOutputPower('typ'),
+        source.getOutputPower('max'),
+        source.getPowerLoss('typ'),
+        source.getPowerLoss('max'),
+        source.getEfficiency('typ')*100,
+        source.getEfficiency('max')*100
+      ]);
+    });
+
+    // add the regulator array (of arrays) as a new worksheet in the work book
+    const reg_worksheet = XLSX.utils.aoa_to_sheet(reg_values);
+    XLSX.utils.book_append_sheet(XLSX_workbook, reg_worksheet, 'Regulators');
+
+
+    // init an array of array for the regulator values
+    let load_values = [];
+
+    // push the title line
+    load_values.push([
+      'NAME',
+      'TYPE',
+      'VIN TYP (V)',
+      'VIN MAX (V)',
+      'IIN TYP (A)',
+      'IIN MAX (A)',
+      'PIN TYP (W)',
+      'PIN MAX (W)'
+    ]);
+
+    // push the data of each load as a new line
+    this.tree.forEachLoad((load) => {
+      load_values.push([
+        load.characs.name,
+        load.getType(),
+        load.getInputVoltage('typ'),
+        load.getInputVoltage('max'),
+        load.getInputCurrent('typ'),
+        load.getInputCurrent('max'),
+        load.getInputPower('typ'),
+        load.getInputPower('max'),
+      ]);
+    });
+
+    // add the load array (of arrays) as a new worksheet in the work book
+    const load_worksheet = XLSX.utils.aoa_to_sheet(load_values);
+    XLSX.utils.book_append_sheet(XLSX_workbook, load_worksheet, 'Loads');
+
+
+    // download the workbook
+    let wopts = {
+      bookType: 'xlsx',
+      bookSST:  false,
+      type:     'array'
+    };
+    let wbout = XLSX.write(XLSX_workbook, wopts);
+    Util.downloadData(wbout, fileName);
+  }
+
+
   // listen to all events on canvas
   listenCanvas() {
     // click (mouse button pressed) on an object in the canvas
@@ -854,9 +964,15 @@ class PTree {
     });
 
 
-    // exportImg the canvas as an Image
+    // export the canvas as an Image
     $('#bt_export_img').click(() => {
       this.exportImg();
+    });
+
+
+    // export a report of the tree
+    $('#bt_export_report').click(() => {
+      this.exportReport();
     });
 
 

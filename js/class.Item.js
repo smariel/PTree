@@ -598,6 +598,25 @@ class Item {
   }
 
 
+  // get the reg or load type
+  getType() {
+    if(this.isSource()) {
+      if     (this.isDCDC())     return 'DC/DC';
+      else if(this.isLDO())      return 'LDO';
+      else if(this.isPerfect())  return 'Perfect';
+      else if(this.isDummy())    return 'Dummy';
+      else                       return 'Other';
+    }
+    else if(this.isLoad()) {
+      if     (this.isRaw())        return 'Raw data';
+      else if(this.isInPartlist()) return 'PTree partlist';
+      else if(this.isSynced())     return 'External spreadsheet';
+      else                         return 'Other';
+    }
+    else return '';
+  }
+
+
   // Open a new window to edit the item
   // wait for the modifications then edit the item values
   // Need a partlist to update the consumptions in some cases
