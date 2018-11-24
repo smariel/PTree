@@ -191,30 +191,22 @@ class Util {
   }
 
 
-  // Download a table in a fileName
-  // require jQuery and XLSX to be included
+  // Download a table in a spreadsheet
   static downloadTable(jQuery_table, fileName) {
-    // Create a workbook from the table passed as a jQuery element
-    // this entire code is from the XLSX documentation...
+    // Create an XLSX workbook from the HTML table
     const XLSX = require('xlsx');
     let workbook = XLSX.utils.table_to_book(jQuery_table[0]);
-    let wopts = {
+
+    // Write the XLSX file
+    let options = {
       bookType: 'xlsx',
       bookSST:  false,
-      type:     'binary'
+      type:     'array'
     };
-    let wbout = XLSX.write(workbook, wopts);
-
-    function s2ab(s) {
-      let buf  = new ArrayBuffer(s.length);
-      let view = new Uint8Array(buf);
-      for (let i = 0; i != s.length; ++i) view[i] = s.charCodeAt(i) & 0xFF;
-      return buf;
-    }
-    let data = s2ab(wbout);
+    let workbook_data = XLSX.write(workbook, options);
 
     // download the data into a file
-    Util.downloadData(data, fileName);
+    Util.downloadData(workbook_data, fileName);
   }
 
 
