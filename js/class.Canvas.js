@@ -45,6 +45,7 @@ class Canvas {
       show_custom1 : true,
       align_load   : false,
       proportional : false,
+      blackbody    : false,
       zoom         : 100,
       zoom_export  : 100,
       cell_width   : Canvas.app_template.cell.width,
@@ -86,14 +87,15 @@ class Canvas {
 
     // create a rectangle with the correct template
     // and add it to the canvas
-    let itemRect = new fabric.Rect(Canvas.fabric_template[item.type]);
-    let item_col = (this.config.align_load && item.isLoad()) ? this.size.col : item.col;
+    let itemRect   = new fabric.Rect(Canvas.fabric_template[item.type]);
+    let item_col   = (this.config.align_load && item.isLoad()) ? this.size.col : item.col;
+    let item_color = (this.config.blackbody) ? item.blackbodyColor : item.characs.color;
     itemRect.set({
       left  : (item_col  * this.config.cell_width ) + Canvas.app_template.canvas.margin_left,
       top   : (item.line * this.config.cell_height) + Canvas.app_template.canvas.margin_top ,
       width : item_width,
       height: item_height,
-      fill  : item.characs.color
+      fill  : item_color
     });
 
     // Print the name of sources and loads
@@ -117,7 +119,7 @@ class Canvas {
       'textAlign' : 'center',
       'top'       : itemRect.top  + itemRect.height / 2,
       'left'      : itemRect.left + itemRect.width  / 2,
-      'fill'      : Util.getOpositeBorW(item.characs.color),
+      'fill'      : Util.getOpositeBorW(item_color),
       'fontSize'  : this.config.text_size
     });
 
@@ -344,6 +346,35 @@ class Canvas {
   }
 
 
+  // compute the blackbody color of each items
+  // sources color according to their loss
+  // loads color set to black
+  setItemsBlackbodyColor() {
+    // get the maximum power loss
+    let max_loss = 0;
+    this.tree.forEachSource((source) => {
+      let loss = source.getPowerLoss('typ');
+      if(loss > max_loss) max_loss = loss;
+    });
+
+    // set the color to each item
+    let default_color = Util.getBlackbodyColor(0);
+    this.tree.forEachItem((item) => {
+      if(item.isSource()) {
+        if(item.isChildOfRoot()) {
+          item.blackbodyColor = '#000000';
+        }
+        else {
+          item.blackbodyColor = (0 === max_loss) ? default_color : Util.getBlackbodyColor(item.getPowerLoss('typ')/max_loss);
+        }
+      }
+      else {
+        item.blackbodyColor = '#000000';
+      }
+    });
+  }
+
+
   // clean the canvas and reprint everything
   refresh() {
     // save the scroll position
@@ -357,6 +388,9 @@ class Canvas {
     this.fabricCanvas.line = 0;
     this.fabricCanvas.col  = 0;
     this.fabricCanvas.fabric_obj = [];
+
+    // compite the item blackbody color
+    if(this.config.blackbody) this.setItemsBlackbodyColor();
 
     // compute the coords of all items
     this.setItemsCoord();
