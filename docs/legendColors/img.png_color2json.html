@@ -1,0 +1,40 @@
+<html>
+  <head>
+    <script src="https://code.jquery.com/jquery-3.3.1.min.js"></script>
+  </head>
+  <body>
+    <img id="img" src="img.png" />
+    <p id="txt">
+    </p>
+
+    <script>
+      function int2hex(int) {
+        var hex = parseInt(int).toString(16);
+        if(hex.length < 2) hex = '0' + hex;
+        return hex;
+      }
+
+      $(() => {
+        var img = document.getElementById('img');
+        var canvas = document.createElement('canvas');
+        canvas.width = img.width;
+        canvas.height = img.height;
+        canvas.getContext('2d').drawImage(img, 0, 0, img.width, img.height);
+        var color = [];
+
+
+        for(var i=0; i<500; i++) {
+          var pixelData = canvas.getContext('2d').getImageData(1, i, 1, 1).data;
+          color.push({
+            'r': pixelData[0],
+            'g': pixelData[1],
+            'b': pixelData[2],
+            'hex': `#${int2hex(pixelData[0])}${int2hex(pixelData[1])}${int2hex(pixelData[2])}`
+          });
+        }
+
+        $('#txt').text(JSON.stringify(color));
+      });
+    </script>
+  </body>
+</html>

@@ -61,12 +61,29 @@ class Util {
   }
 
   // return the blackbody color (temperature color grade)
+  // with x = 0 to 1
   // source1 : http://www.vendian.org/mncharity/dir3/blackbody/
   // source2 : https://en.wikipedia.org/wiki/Color_temperature
   static getBlackbodyColor(x) {
+    // get all colors, only once thanks to require
+    Util.blackbodyColor = require('./color.blackbody.json');
+
     // get the blackbody color from 1000K (x=0) to 12000K (x=1)
     // corresponding to the daylight color grade
     const color = this.blackbodyColor[Math.round((-x+1)*221)];
+    return color.hex;
+  }
+
+
+  // return the metal tempering color
+  // with x = 0 to 1
+  // made approximatively from https://en.wikipedia.org/wiki/Tempering_(metallurgy)
+  static getMetalColor(x) {
+    // get all colors, only once thanks to require
+    Util.metalColor = require('./color.metaltempering.json');
+
+    // get the color, excluding too black or too white colors
+    const color = this.metalColor[Math.round((-x+1)*299)];
     return color.hex;
   }
 
@@ -335,8 +352,6 @@ class Util {
   }
 
 }
-
-Util.blackbodyColor = require('./blackbodyColors.json');
 
 module.exports = Util;
 

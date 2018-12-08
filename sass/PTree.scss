@@ -168,6 +168,7 @@ $info_border_color:     rgba(255,255,255,0.2);
    bottom:     0;
    right:      0;
    background: $light-blue;
+   z-index:    2;
 }
 
 .part_data,
@@ -195,6 +196,36 @@ $info_border_color:     rgba(255,255,255,0.2);
 
 
 // -----------------------------------------------------------------------------
+//   Right section (legend)
+//
+
+$color_legend_bottom: 5px;
+
+#color_legend {
+   display:    none;
+   position:   fixed;
+   bottom:     0;
+   right:      0;
+   z-index:    1;
+
+   background-image:    url('../img/metalTemperingLegend.png');
+   background-repeat:   no-repeat;
+   background-position: right;
+}
+
+#color_legend>p{
+   height:          300px;
+   margin:          0 25px 0 0;
+   text-shadow:     #FFFFFF 0 0 10px;
+   color:           #000000;
+   display:         flex;
+   flex-direction:  column;
+   justify-content: space-between;
+   align-items:     flex-end;
+}
+
+
+// -----------------------------------------------------------------------------
 //   Bottom menu (config)
 //
 
@@ -204,13 +235,14 @@ $info_border_color:     rgba(255,255,255,0.2);
    position:   fixed;
    bottom:     0;
    background: $light-blue;
+   z-index:    3;
 }
 
 #bottom_title {
    text-align: center;
    background: rgba(0,0,0,0.05);
-   margin: 0;
-   padding: 10px 0;
+   margin:     0;
+   padding:    10px 0;
 }
 
 #bottom_close {
@@ -299,7 +331,7 @@ $border-color: rgba(white,0.3);
    background     : rgba($dark, 0.8);
    color          : white;
    letter-spacing : .1rem;
-
+   z-index        : 1;
 }
 
 #totalpower th.totalcell {

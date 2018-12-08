@@ -45,7 +45,7 @@ class Canvas {
       show_custom1 : true,
       align_load   : false,
       proportional : false,
-      blackbody    : false,
+      loss_color   : false,
       zoom         : 100,
       zoom_export  : 100,
       cell_width   : Canvas.app_template.cell.width,
@@ -89,7 +89,7 @@ class Canvas {
     // and add it to the canvas
     let itemRect   = new fabric.Rect(Canvas.fabric_template[item.type]);
     let item_col   = (this.config.align_load && item.isLoad()) ? this.size.col : item.col;
-    let item_color = (this.config.blackbody) ? item.blackbodyColor : item.characs.color;
+    let item_color = (this.config.loss_color) ? item.lossColor : item.characs.color;
     itemRect.set({
       left  : (item_col  * this.config.cell_width ) + Canvas.app_template.canvas.margin_left,
       top   : (item.line * this.config.cell_height) + Canvas.app_template.canvas.margin_top ,
@@ -346,10 +346,10 @@ class Canvas {
   }
 
 
-  // compute the blackbody color of each items
+  // compute the custom color of each items
   // sources color according to their loss
   // loads color set to black
-  setItemsBlackbodyColor() {
+  setItemsLossColor() {
     // get the maximum power loss
     let max_loss = 0;
     this.tree.forEachSource((source) => {
@@ -358,20 +358,22 @@ class Canvas {
     });
 
     // set the color to each item
-    let default_color = Util.getBlackbodyColor(0);
+    let default_color = Util.getMetalColor(0);
     this.tree.forEachItem((item) => {
       if(item.isSource()) {
         if(item.isChildOfRoot()) {
-          item.blackbodyColor = '#000000';
+          item.lossColor = '#000000';
         }
         else {
-          item.blackbodyColor = (0 === max_loss) ? default_color : Util.getBlackbodyColor(item.getPowerLoss('typ')/max_loss);
+          item.lossColor = (0 === max_loss) ? default_color : Util.getMetalColor(item.getPowerLoss('typ')/max_loss);
         }
       }
       else {
-        item.blackbodyColor = '#000000';
+        item.lossColor = '#000000';
       }
     });
+
+    $('#color_legend_max').text(`${Util.numberToSi(max_loss,3)}W`);
   }
 
 
@@ -389,8 +391,14 @@ class Canvas {
     this.fabricCanvas.col  = 0;
     this.fabricCanvas.fabric_obj = [];
 
-    // compite the item blackbody color
-    if(this.config.blackbody) this.setItemsBlackbodyColor();
+    // compite the item custom loss color
+    if(this.config.loss_color) {
+      this.setItemsLossColor();
+      $('#color_legend').show();
+    }
+    else {
+      $('#color_legend').hide();
+    }
 
     // compute the coords of all items
     this.setItemsCoord();

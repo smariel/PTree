@@ -196,6 +196,14 @@
       </table>
     </aside>
 
+    <!-- Color grade -->
+    <aside id="color_legend">
+      <p>
+        <span id="color_legend_max">1W</span>
+        <span id="color_legend_min">0</span>
+      </p>
+    </aside>
+
     <!-- Configuration menu -->
     <aside id="bottom_menu">
       <button id="bottom_close" type="button" class="close" aria-label="Close"><span aria-hidden="true">&times;</span></button>
@@ -293,8 +301,8 @@
             Proportional to power
           </label>
           <br />
-          <label for="config_blackbody">
-            <input id="config_blackbody" data-config="blackbody" type="checkbox" class="config_input config_checkbox" />
+          <label for="config_losscolor">
+            <input id="config_losscolor" data-config="loss_color" type="checkbox" class="config_input config_checkbox" />
             Power losses
           </label>
         </p>
