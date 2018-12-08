@@ -98,6 +98,7 @@ test.serial('TEST4: open file + canvas construction', async t => {
 
   // compare (in two lines to avoid displaying the buffer in the console on error)
   let screenshotsAreEquals = refshotBuffer.equals(screenshotBuffer);
+  if(!screenshotsAreEquals) require('fs').writeFileSync(`${__dirname}/docs/test/lastTestError.png`,screenshotBuffer);
   t.true(screenshotsAreEquals);
 });
 
@@ -273,6 +274,7 @@ test.serial('TEST8: configurations', async t => {
   let refshotBuffer = require('fs').readFileSync(`${__dirname}/docs/test/test2.png`);
   // compare (in two lines to avoid displaying the buffer in the console on error)
   let screenshotsAreEquals = refshotBuffer.equals(screenshotBuffer);
+  if(!screenshotsAreEquals) require('fs').writeFileSync(`${__dirname}/docs/test/lastTestError.png`,screenshotBuffer);
   t.true(screenshotsAreEquals);
 
 
@@ -299,6 +301,7 @@ test.serial('TEST8: configurations', async t => {
   refshotBuffer = require('fs').readFileSync(`${__dirname}/docs/test/test.png`);
   // compare (in two lines to avoid displaying the buffer in the console on error)
   screenshotsAreEquals = refshotBuffer.equals(screenshotBuffer);
+  if(!screenshotsAreEquals) require('fs').writeFileSync(`${__dirname}/docs/test/lastTestError.png`,screenshotBuffer);
   t.true(screenshotsAreEquals);
 });
 
@@ -732,6 +735,7 @@ test.serial('TEST18: stats', async t => {
   if(refreshScreenshots) require('fs').writeFileSync(`${__dirname}/docs/test/test_stats1.png`,screenshotBuffer);
   refshotBuffer = require('fs').readFileSync(`${__dirname}/docs/test/test_stats1.png`);
   screenshotsAreEquals = refshotBuffer.equals(screenshotBuffer);
+  if(!screenshotsAreEquals) require('fs').writeFileSync(`${__dirname}/docs/test/lastTestError.png`,screenshotBuffer);
   t.true(screenshotsAreEquals);
 
   // switch to bar graph
@@ -741,6 +745,7 @@ test.serial('TEST18: stats', async t => {
   if(refreshScreenshots) require('fs').writeFileSync(`${__dirname}/docs/test/test_stats2.png`,screenshotBuffer);
   refshotBuffer = require('fs').readFileSync(`${__dirname}/docs/test/test_stats2.png`);
   screenshotsAreEquals = refshotBuffer.equals(screenshotBuffer);
+  if(!screenshotsAreEquals) require('fs').writeFileSync(`${__dirname}/docs/test/lastTestError.png`,screenshotBuffer);
   t.true(screenshotsAreEquals);
 
   // normalize the bar graph
@@ -750,6 +755,7 @@ test.serial('TEST18: stats', async t => {
   if(refreshScreenshots) require('fs').writeFileSync(`${__dirname}/docs/test/test_stats3.png`,screenshotBuffer);
   refshotBuffer = require('fs').readFileSync(`${__dirname}/docs/test/test_stats3.png`);
   screenshotsAreEquals = refshotBuffer.equals(screenshotBuffer);
+  if(!screenshotsAreEquals) require('fs').writeFileSync(`${__dirname}/docs/test/lastTestError.png`,screenshotBuffer);
   t.true(screenshotsAreEquals);
 
   // functions
@@ -759,6 +765,7 @@ test.serial('TEST18: stats', async t => {
   if(refreshScreenshots) require('fs').writeFileSync(`${__dirname}/docs/test/test_stats4.png`,screenshotBuffer);
   refshotBuffer = require('fs').readFileSync(`${__dirname}/docs/test/test_stats4.png`);
   screenshotsAreEquals = refshotBuffer.equals(screenshotBuffer);
+  if(!screenshotsAreEquals) require('fs').writeFileSync(`${__dirname}/docs/test/lastTestError.png`,screenshotBuffer);
   t.true(screenshotsAreEquals);
 
   // tags
@@ -768,6 +775,7 @@ test.serial('TEST18: stats', async t => {
   if(refreshScreenshots) require('fs').writeFileSync(`${__dirname}/docs/test/test_stats5.png`,screenshotBuffer);
   refshotBuffer = require('fs').readFileSync(`${__dirname}/docs/test/test_stats5.png`);
   screenshotsAreEquals = refshotBuffer.equals(screenshotBuffer);
+  if(!screenshotsAreEquals) require('fs').writeFileSync(`${__dirname}/docs/test/lastTestError.png`,screenshotBuffer);
   t.true(screenshotsAreEquals);
 
   // child
@@ -798,6 +806,7 @@ test.serial('TEST18: stats', async t => {
   screenshotBuffer = await t.context.app.client.saveScreenshot();
   refshotBuffer = require('fs').readFileSync(`${__dirname}/docs/test/test_stats1.png`);
   screenshotsAreEquals = refshotBuffer.equals(screenshotBuffer);
+  if(!screenshotsAreEquals) require('fs').writeFileSync(`${__dirname}/docs/test/lastTestError.png`,screenshotBuffer);
   t.true(screenshotsAreEquals);
 
   // load in part list
@@ -809,6 +818,7 @@ test.serial('TEST18: stats', async t => {
   if(refreshScreenshots) require('fs').writeFileSync(`${__dirname}/docs/test/test_stats6.png`,screenshotBuffer);
   refshotBuffer = require('fs').readFileSync(`${__dirname}/docs/test/test_stats6.png`);
   screenshotsAreEquals = refshotBuffer.equals(screenshotBuffer);
+  if(!screenshotsAreEquals) require('fs').writeFileSync(`${__dirname}/docs/test/lastTestError.png`,screenshotBuffer);
   t.true(screenshotsAreEquals);
 
   // load RAW
@@ -820,6 +830,7 @@ test.serial('TEST18: stats', async t => {
   if(refreshScreenshots) require('fs').writeFileSync(`${__dirname}/docs/test/test_stats7.png`,screenshotBuffer);
   refshotBuffer = require('fs').readFileSync(`${__dirname}/docs/test/test_stats7.png`);
   screenshotsAreEquals = refshotBuffer.equals(screenshotBuffer);
+  if(!screenshotsAreEquals) require('fs').writeFileSync(`${__dirname}/docs/test/lastTestError.png`,screenshotBuffer);
   t.true(screenshotsAreEquals);
 
   // load sync
@@ -831,6 +842,7 @@ test.serial('TEST18: stats', async t => {
   if(refreshScreenshots) require('fs').writeFileSync(`${__dirname}/docs/test/test_stats8.png`,screenshotBuffer);
   refshotBuffer = require('fs').readFileSync(`${__dirname}/docs/test/test_stats8.png`);
   screenshotsAreEquals = refshotBuffer.equals(screenshotBuffer);
+  if(!screenshotsAreEquals) require('fs').writeFileSync(`${__dirname}/docs/test/lastTestError.png`,screenshotBuffer);
   t.true(screenshotsAreEquals);
 
   // close the stats
