@@ -48,11 +48,11 @@ class Canvas {
       loss_color   : false,
       zoom         : 100,
       zoom_export  : 100,
-      cell_width   : Canvas.app_template.cell.width,
-      cell_height  : Canvas.app_template.cell.height,
-      text_size    : Canvas.app_template.text.size,
-      color_source : Canvas.fabric_template.source.fill,
-      color_load   : Canvas.fabric_template.load.fill
+      cell_width   : 280,
+      cell_height  : 90,
+      text_size    : 14,
+      color_source : '#FF1744', // materialze red accent-3,
+      color_load   : '#00bfa5', // materializ teal accent-4
     };
   }
 
@@ -87,7 +87,8 @@ class Canvas {
 
     // create a rectangle with the correct template
     // and add it to the canvas
-    let itemRect   = new fabric.Rect(Canvas.fabric_template[item.type]);
+    let itemTemplate = item.getFabricTemplate();
+    let itemRect   = new fabric.Rect(itemTemplate);
     let item_col   = (this.config.align_load && item.isLoad()) ? this.size.col : item.col;
     let item_color = (this.config.loss_color) ? item.lossColor : item.characs.color;
     itemRect.set({
@@ -118,7 +119,7 @@ class Canvas {
       'originY'   : 'center',
       'textAlign' : 'center',
       'top'       : Math.round(itemRect.top  + itemRect.height / 2),
-      'left'      : Math.round(itemRect.left + itemRect.width  / 2),
+      'left'      : Math.round(itemRect.left + itemRect.width  / 2 + itemTemplate.text_margin_x),
       'fill'      : Util.getOpositeBorW(item_color),
       'fontSize'  : this.config.text_size
     });
@@ -146,7 +147,7 @@ class Canvas {
         itemText_vout.set({
           'originX'  : 'left',
           'originY'  : 'top',
-          'top'      : Math.round(itemGroup.top  + itemGroup.height / 2 - Canvas.app_template.text.margin_y - this.config.text_size - 2),
+          'top'      : Math.round(itemGroup.top  + itemGroup.height / 2 - Canvas.app_template.text.margin_y - this.config.text_size),
           'left'     : Math.round(itemGroup.left + itemGroup.width      + Canvas.app_template.text.margin_x),
           'fontSize' : this.config.text_size
         });
@@ -282,7 +283,7 @@ class Canvas {
   // passing a load will only add the load
   addItems(item) {
     // add the item to the canvas
-    this.addItem(item);
+    if(!item.isRoot()) this.addItem(item);
 
     if(item.isVisible()) {
       // recursively add all the item children to the canvas
@@ -724,10 +725,6 @@ Canvas.app_template = {
     margin_left   : 30,
     margin_bottom : 70,
   },
-  cell: {
-    width  : 280,
-    height : 90
-  },
   item: {
     width_coef  : 0.45,
     height_coef : 0.75,
@@ -743,8 +740,7 @@ Canvas.app_template = {
   },
   text: {
     margin_x : 10,
-    margin_y : 3,
-    size     : 14
+    margin_y : 6,
   }
 };
 
@@ -760,15 +756,9 @@ Canvas.fabric_template = {
     selectable : false
   },
   source: {
-    fill       : '#FF1744', // materialze red accent-3
-    width      : Canvas.app_template.cell.width * Canvas.app_template.item.width_coef,
-    height     : Canvas.app_template.cell.height * Canvas.app_template.item.height_coef,
-    selectable : false
+    selectable : false,
   },
   load: {
-    fill       : '#00bfa5', // materializ teal accent-4
-    width      : Canvas.app_template.cell.width * Canvas.app_template.item.width_coef,
-    height     : Canvas.app_template.cell.height * Canvas.app_template.item.height_coef,
     rx         : 20,
     ry         : 20,
     selectable : false
@@ -783,7 +773,6 @@ Canvas.fabric_template = {
     selectable    : false
   },
   text: {
-    fontSize   : Canvas.app_template.text.size,
     fontFamily : 'Arial',
     selectable : false
   },

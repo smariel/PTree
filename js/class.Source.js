@@ -31,7 +31,7 @@ class Source extends Item {
       */
       ref         : 'Part Number',
       custom1     : '',
-      custom2     : '',
+      //custom2     : '', <v1.7.0
       vout_min    : '1.78',
       vout_typ    : '1.8',
       vout_max    : '1.82',

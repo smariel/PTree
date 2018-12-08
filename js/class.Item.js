@@ -363,6 +363,42 @@ class Item {
   }
 
 
+  // get the Fabric template used to render this item
+  getFabricTemplate() {
+    // init the template
+    let template = {
+      selectable    : false,
+      fill          : this.characs.color,
+      text_margin_x : 0
+    };
+
+    // rect
+    if(0 == this.characs.shape) {
+      // nothing special but a simple rectangle
+    }
+    // rounded rect
+    else if (1 == this.characs.shape) {
+      template.rx = 20;
+      template.ry = 20;
+    }
+    // parallelogram
+    else if (2 == this.characs.shape) {
+      template.skewX = -20;
+      template.text_margin_x = 10;
+    }
+    // hexagon
+    else if (3 == this.characs.shape) {
+      // TODO
+    }
+    // octagon
+    else if (4 == this.characs.shape) {
+      // TODO
+    }
+
+    return template;
+  }
+
+
   // Open a new window to edit the item
   // wait for the modifications then edit the item values
   // Need a partlist to update the consumptions in some cases

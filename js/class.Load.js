@@ -18,7 +18,7 @@ class Load extends Item {
     this.characs = {
       name       : 'Load name',
       custom1    : '',
-      custom2    : '',
+      //custom2    : '', <v1.7.0
       ityp       : 0,
       imax       : 0,
       color      : '#00bfa5',
@@ -31,6 +31,7 @@ class Load extends Item {
       */
       celltyp    : 'A1',
       cellmax    : 'B1',
+      shape      : 1, // v1.7.0
       hidden     : false
     };
   }
