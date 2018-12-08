@@ -4,7 +4,9 @@
 //    Its prototype provides methods to manipulate this list
 // -----------------------------------------------------------------------------
 
-const Item = require('../js/class.Item.js');
+const Item   = require('../js/class.Item.js');
+const Source = require('../js/class.Source.js');
+const Load   = require('../js/class.Load.js');
 
 class Tree {
 
@@ -100,26 +102,15 @@ class Tree {
   addItem(parent, type) {
     let newItem = new Item(this.item_index, parent, type, this);
     this.setItem(this.item_index++, newItem);
-
-    // If it as a parent (if it is not the root...)
-    if (null !== parent) {
-      // add a reference to its parent
-      parent.childrenID.push(newItem.id);
-
-      // if the new source is not the first child of its parent
-      if (parent.childrenID.length > 1) {
-        // increment the offset of all parents (recursively)
-        parent.nextOffsetIncrement(1);
-      }
-    }
-
     return newItem;
   }
 
 
   // Create a source with the addItem method
   addSource(parent) {
-    return this.addItem(parent, 'source');
+    let newItem = new Source(this.item_index, parent, this);
+    this.setItem(this.item_index++, newItem);
+    return newItem;
   }
 
 
@@ -131,7 +122,9 @@ class Tree {
 
   // Create a load with the addItem method
   addLoad(parent) {
-    return this.addItem(parent, 'load');
+    let newItem = new Load(this.item_index, parent, this);
+    this.setItem(this.item_index++, newItem);
+    return newItem;
   }
 
 
@@ -265,10 +258,21 @@ class Tree {
     for (let item_str of treeProp.item_list) {
       // if there is no data, continue to the next item
       if (null === item_str) continue;
-
-      // create a new item and import the data from the string
-      let newItem = new Item(0,null,null,this);
-      newItem.fromString(item_str);
+      // get the data from the string
+      let newItem_properties = JSON.parse(item_str);
+      // create a new empty Item
+      let newItem;
+      if('source' == newItem_properties.type) {
+        newItem = new Source(0, null, this);
+      }
+      else if('load' == newItem_properties.type) {
+        newItem = new Load(0, null, this);
+      }
+      else {
+        newItem = new Item(0, null, null, this);
+      }
+      // import the item data
+      newItem.import(newItem_properties);
 
       // insert the new item in the tree
       this.setItem(newItem.id, newItem);

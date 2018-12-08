@@ -1,9 +1,12 @@
 // -----------------------------------------------------------------------------
 // Item Class
-//    An Item object contains the non-graphical data of a source, load or root
+//    An Item object contains the non-graphical data of a component of the PTree
 //    and their relations with other items
-//    Its prototype provides methods dedicated to manipulate the item
+//    This class provides generic methods dedicated to manipulate the item
 //    and compute electrical characteristics
+//
+//    This class is inherited by Load and Source
+//
 //    Check the summary of the formulas : ../docs/equations.pdf
 // -----------------------------------------------------------------------------
 
@@ -18,81 +21,28 @@ class Item {
     this.tree         = tree;  // reference to the tree (circular object, by the way)
     this.nextOffset   = 0;     // offset for the next adjacent element, init 0
     this.childrenID   = [];    // list of references of children, init empty
+    this.characs      = {};    // list of item specific characteristics
 
-    // set characs according to the type
-    this.setCharacs(type);
-    // parent unique ID in the tree
-    this.parentID     = (null !== parent) ? parent.id : null;
-    // represent the nth children of its parents
-    this.child_index  = (null !== parent) ? parent.childrenID.length : 0;
-  }
+    // if a parent is specified
+    if (null !== parent) {
+      // set parent unique ID
+      this.parentID = parent.id;
 
+      // represent the nth children of its parents
+      this.child_index = parent.childrenID.length;
 
-  setCharacs(type) {
-    // Source specific datas
-    if ('source' === type) {
-      this.characs = {
-        name        : 'Source name',
-        regtype     : 0,
-        /*
-          regtypes :
-          0: FixDCDC
-          1: FixLDO
-          2: FixOther (< v1.3.0),
-          3: AdjDCDC
-          4: AdjLDO
-          5: AdjOther (< v1.3.0),
-          6: Dummy    (>= 1.3.0)
-          7: Perfect  (>= 1.3;0)
-        */
-        ref         : 'Part Number',
-        custom1     : '',
-        custom2     : '',
-        vout_min    : '1.78',
-        vout_typ    : '1.8',
-        vout_max    : '1.82',
-        r1          : '150000',
-        r2          : '120000',
-        rtol        : '1',
-        vref_min    : '0.8',
-        vref_typ    : '0.8',
-        vref_max    : '0.8',
-        efficiency  : [{i:'1', eff:'90'}], // must be kept ordered by ascending current
-        iq_typ      : '0',
-        iq_min      : '0',
-        iq_max      : '0',
-        color       : '#FF1744',
-        hidden      : false
-      };
+      // add a reference of this item to its parent
+      parent.childrenID.push(this.id);
+
+      // if the new source is not the first child of its parent
+      if (parent.childrenID.length > 1) {
+        // increment the offset of all parents (recursively)
+        parent.nextOffsetIncrement(1);
+      }
     }
-    // Load specific datas
-    else if ('load' === type) {
-      this.characs = {
-        name       : 'Load name',
-        custom1    : '',
-        custom2    : '',
-        ityp       : 0,
-        imax       : 0,
-        color      : '#00bfa5',
-        loadtype   : 0,
-        /*
-          load types (v1.4.0) :
-          0: partlist
-          1: raw
-          2: sync (associated with celltyp and cellmax)
-        */
-        celltyp    : 'A1',
-        cellmax    : 'B1',
-        hidden     : false
-      };
-    }
-    // Root specific datas
-    else if ('root' === type) {
-      this.characs = {}; // nothing yet
-    }
-    // Default
     else {
-      this.characs = {};
+      this.parentID    = null;
+      this.child_index = 0;
     }
   }
 
@@ -112,60 +62,6 @@ class Item {
   // check if the item is a source
   isRoot() {
     return ('root' === this.type);
-  }
-
-
-  // Check if the item is a DC/DC reg
-  isDCDC() {
-    return this.isSource() && ('0' == this.characs.regtype || '3' == this.characs.regtype);
-  }
-
-
-  // Check if the item is a LDO reg
-  isLDO() {
-    return this.isSource() && ('1' == this.characs.regtype || '4' == this.characs.regtype);
-  }
-
-
-  // Check if the item is an adjustable regulator (DC/DC or LDO)
-  isAdjReg() {
-    return this.isSource() && ('3' == this.characs.regtype || '4' == this.characs.regtype);
-  }
-
-
-  // Check if the item is a fixed output regulator (DC/DC or LDO)
-  isFixedReg() {
-    return this.isSource() && ('0' == this.characs.regtype || '1' == this.characs.regtype);
-  }
-
-
-  // Check if the item is a Dummy reg
-  isDummy() {
-    return this.isSource() && ('6' == this.characs.regtype);
-  }
-
-
-  // Check if the item is a Perfect reg
-  isPerfect() {
-    return this.isSource() && ('7' == this.characs.regtype);
-  }
-
-
-  // Check if the item is a load with the current in the partlist
-  isInPartlist() {
-    return this.isLoad() && ('0' == this.characs.loadtype);
-  }
-
-
-  // Check if the item is a load with the current defined as raw data
-  isRaw() {
-    return this.isLoad() && ('1' == this.characs.loadtype);
-  }
-
-
-  // Check if the item is a load with the current synced
-  isSynced() {
-    return this.isLoad() && ('2' == this.characs.loadtype);
   }
 
 
@@ -348,47 +244,14 @@ class Item {
 
 
   // get the output voltage of an item
-  getOutputVoltage(valType) {
-    let v_out = 0.0;
-
-    // only sources have output
-    if (this.isSource()) {
-      // Dummy : v_out = v_in
-      if(this.isDummy()) {
-        v_out = this.getInputVoltage(valType);
-      }
-      // DC/DC and LDOs : v_out is set by user
-      else {
-        v_out = parseFloat(this.characs['vout_' + valType]);
-      }
-    }
-
-    return v_out;
+  getOutputVoltage() {
+    return 0.0;
   }
 
 
   // get the input current of an item
-  getInputCurrent(valType) {
-    let i_in = 0.0;
-
-    // LDO: i_in = i_out + i_q
-    if (this.isLDO()) {
-      i_in = this.getOutputCurrent(valType) + parseFloat(this.characs['iq_' + valType]);
-    }
-    // DC/DC and perfect: i_in = p_in / v_in_typ
-    else if (this.isDCDC() || this.isPerfect()) {
-      i_in = (0 == this.getInputVoltage('typ')) ? 0.0 : this.getInputPower(valType) / this.getInputVoltage('typ');
-    }
-    // Loads: i_in is set by the partList
-    else if (this.isLoad()) {
-      i_in = parseFloat(this.characs['i' + valType]);
-    }
-    // Dummy: i_in = i_out
-    else if (this.isDummy()) {
-      i_in = this.getOutputCurrent(valType);
-    }
-
-    return i_in;
+  getInputCurrent() {
+    return 0.0;
   }
 
 
@@ -396,15 +259,8 @@ class Item {
   getOutputCurrent(valType) {
     let i_out = 0.0;
 
-    // only sources have outout
-    if (this.isSource()) {
-      // i_out = sum of children i_in
-      for (let childID of this.childrenID) {
-        i_out += this.tree.getItem(childID).getInputCurrent(valType);
-      }
-    }
     // root output current represent the total currents of the project
-    else if (this.isRoot()) {
+    if (this.isRoot()) {
       // i_out = sum of children i_out
       for (let childID of this.childrenID) {
         i_out += this.tree.getItem(childID).getOutputCurrent(valType);
@@ -416,26 +272,8 @@ class Item {
 
 
   // get the input power of an item
-  getInputPower(valType) {
-    let p_in = 0.0;
-
-    // if the item is a load or a LDO or a dummy item
-    if (this.isLoad() || this.isLDO() || this.isDummy()) {
-      // p_in = v_in_typ * i_in
-      p_in = this.getInputVoltage('typ') * this.getInputCurrent(valType);
-    }
-    // if the item is perfect
-    else if (this.isPerfect()) {
-      // p_in = p_out
-      p_in = this.getOutputPower(valType);
-    }
-    // if the item is a DC/DC
-    else if (this.isDCDC()) {
-      // p_in = p_out / efficiency
-      p_in = this.getOutputPower(valType) / this.getEfficiency(valType);
-    }
-
-    return p_in;
+  getInputPower() {
+    return 0.0;
   }
 
 
@@ -443,13 +281,8 @@ class Item {
   getOutputPower(valType) {
     let p_out = 0.0;
 
-    // only sources have output
-    if (this.isSource()) {
-      // p_out = v_out_typ * i_out
-      p_out = this.getOutputVoltage('typ') * this.getOutputCurrent(valType);
-    }
     // ROOT output power represent the total power of the project
-    else if (this.isRoot()) {
+    if (this.isRoot()) {
       // p_out = sum of children p_out
       for (let childID of this.childrenID) {
         p_out += this.tree.getItem(childID).getOutputPower(valType);
@@ -519,101 +352,14 @@ class Item {
 
 
   // get the power loss in an item
-  getPowerLoss(valType) {
-    let p_loss = 0.0;
-
-    // In sources, p_loss = p_in - p_out
-    if (this.isSource() && !this.isChildOfRoot()) {
-      p_loss = this.getInputPower(valType) - this.getOutputPower(valType);
-    }
-
-    return p_loss;
-  }
-
-
-  // get the efficiency of the item
-  getEfficiency(valType) {
-    let efficiency = 1;
-
-    if(this.isLDO()) {
-      // efficiency = p_out / p_in
-      efficiency = this.getOutputPower(valType) / this.getInputPower(valType);
-    }
-    else if(this.isDCDC()) {
-      // if the efficiency is an array (>= v1.1.0)
-      if(typeof this.characs.efficiency === 'object') {
-        // if no efficiency is set, consider 100%
-        if(this.characs.efficiency.length == 0) {
-          efficiency = 1;
-        }
-        // if only one efficiency is set, ignore the current
-        else if (this.characs.efficiency.length == 1) {
-          efficiency = parseFloat(this.characs.efficiency[0].eff) / 100;
-        }
-        // if there is multiple efficiency, use linear interpolation
-        else {
-          let itemCurrent = this.getOutputCurrent(valType);
-          // if the current is <= of the min efficiency, use the min
-          if(itemCurrent <= this.characs.efficiency[0].i) {
-            efficiency = parseFloat(this.characs.efficiency[0].eff) / 100;
-          }
-          // if the current is >= of the max efficiency, use the max
-          else if(itemCurrent >= this.characs.efficiency[this.characs.efficiency.length - 1].i) {
-            efficiency = parseFloat(this.characs.efficiency[this.characs.efficiency.length - 1].eff) / 100;
-          }
-          // else, find two points and compute with linear interpolation (f(x)=ax+b)
-          else {
-            for(let n=0; n < this.characs.efficiency.length - 1; n++) {
-              let eff_data      = this.characs.efficiency[n];
-              let eff_nextData  = this.characs.efficiency[n+1];
-
-              // if the current is equal to one of the point
-              if(itemCurrent == eff_data.i) {
-                efficiency = parseFloat(eff_data.eff) / 100;
-                break;
-              }
-              // else, use linear interpolation to compute the efficiency
-              else if(itemCurrent > eff_data.i && itemCurrent < eff_nextData.i) {
-                // a = (y2-y1)/(x2-x1)
-                let a = (parseFloat(eff_nextData.eff)/100 - parseFloat(eff_data.eff)/100) / (parseFloat(eff_nextData.i) - parseFloat(eff_data.i));
-
-                // b = y1 - a * x1
-                let b = parseFloat(eff_data.eff)/100 - a * parseFloat(eff_data.i);
-
-                // y = ax+b
-                efficiency = a * itemCurrent + b;
-                break;
-              }
-            }
-          }
-        }
-      }
-      // if the efficiency is a single number (compatibility, < v1.1.0)
-      else {
-        efficiency = parseFloat(this.characs.efficiency) / 100;
-      }
-    }
-
-    return efficiency;
+  getPowerLoss() {
+    return 0.0;
   }
 
 
   // get the reg or load type
   getType() {
-    if(this.isSource()) {
-      if     (this.isDCDC())     return 'DC/DC';
-      else if(this.isLDO())      return 'LDO';
-      else if(this.isPerfect())  return 'Perfect';
-      else if(this.isDummy())    return 'Dummy';
-      else                       return 'Other';
-    }
-    else if(this.isLoad()) {
-      if     (this.isRaw())        return 'Raw data';
-      else if(this.isInPartlist()) return 'PTree partlist';
-      else if(this.isSynced())     return 'External spreadsheet';
-      else                         return 'Other';
-    }
-    else return '';
+    return '';
   }
 
 
@@ -621,7 +367,7 @@ class Item {
   // wait for the modifications then edit the item values
   // Need a partlist to update the consumptions in some cases
   // Need the sync sheet to update other consumptions
-  edit(partList, sheet) {
+  edit() {
     // return a promise
     return new Promise(resolve => {
       const {ipcRenderer} = require('electron');
@@ -629,22 +375,8 @@ class Item {
       // listen to the response from main.js and resolve the promise
       ipcRenderer.once('Item-editResp', (event, datastr) => {
         // import the new data
-        if(null !== datastr) this.fromString(datastr);
-
-        if(this.isLoad()) {
-          // if the load is not in the part list
-          // remove all consumptions on the parts
-          if(!this.isInPartlist()) {
-            partList.forEachPart((part) => {
-              if(part.isConsuming(this)) {
-                part.setConsumption(0, this, 'typ');
-                part.setConsumption(0, this, 'max');
-              }
-            });
-          }
-
-          // refresh the consumption
-          this.refreshConsumption(partList, sheet);
+        if(null !== datastr) {
+          this.import(JSON.parse(datastr));
         }
 
         // resolve the promise
@@ -657,10 +389,12 @@ class Item {
   }
 
 
-  // toggle thie item visibility
+  // toggle the item visibility
   toggle() {
-    // only if it is a source or a load
-    if(this.isSource() || this.isLoad()) {
+    if(this.isRoot()) {
+      throw 'can not toggle the Root item';
+    }
+    else {
       // compatibility with < v1.6.0: !undefined == true
       this.characs.hidden = !this.characs.hidden;
     }
@@ -681,14 +415,9 @@ class Item {
   }
 
 
-  // Import an item previously exported with .toString()
-  fromString(str) {
-    // extract the data from the string
-    let properties = JSON.parse(str);
-
-    // init the characs
-    this.setCharacs(properties.type);
-
+  // Import an item data
+  import(properties) {
+    //console.log('item');
     // for each property in this item, copy from the string
     for (let i in this) {
       // if the string and this item has the hasOwnProperty
@@ -711,79 +440,7 @@ class Item {
       }
     }
 
-    // compatibility with < v1.1.0
-    // conversions of efficiency single number to array
-    if(this.isDCDC() && !isNaN(this.characs.efficiency)) {
-      this.characs.efficiency = [{i:1, eff:this.characs.efficiency}];
-    }
-
-    // compatibility with < v1.3.0
-    // conversions of old reg types to Perfect Source
-    if(this.isSource() && (2 == this.characs.regtype || 5 == this.characs.regtype)) {
-      this.characs.regtype = 7;
-    }
-
-    // compatibility with < v1.4.0
-    // conversions of old characs.isinpartlist to new characs.valtyp
-    if(this.isLoad() && undefined === properties.characs.loadtype) {
-      this.characs.loadtype = (properties.characs.inpartlist) ? 0 : 1;
-    }
-  }
-
-
-  // Refresh the consumption whith the given partList
-  refreshConsumption(partList, sheet) {
-    if (this.isLoad()) {
-      // if the cunsumptions of this loads are in the partlist
-      // v < 1.4.0 compatibility: if the location do not exist, assume partlist
-      if(undefined === this.characs.loadtype || 0 == this.characs.loadtype) {
-        // skip if the partlist was not given
-        if(undefined !== partList && null !== partList) {
-          // reinit each current
-          this.characs.ityp = 0;
-          this.characs.imax = 0;
-
-          // parcour all part to add all currents
-          partList.forEachPart((part) => {
-            this.characs.ityp += parseFloat(part.getConsumption(this, 'typ'));
-            this.characs.imax += parseFloat(part.getConsumption(this, 'max'));
-          });
-        }
-      }
-      // if the consumptions are raw
-      else if(1 == this.characs.loadtype) {
-        // do nothing
-      }
-      // if the consumptions are in the spreadsheet
-      else if(2 == this.characs.loadtype) {
-        // if there is no sheet
-        if(undefined === sheet || null === sheet) {
-          // reinit values
-          this.characs.ityp = 0;
-          this.characs.imax = 0;
-        }
-        // if there is a sheet
-        else {
-          const XLSX = require('xlsx');
-          for(let typmax of ['typ','max']) {
-            // init current
-            let i=0;
-            // convert the cell adress to indexes, B8 -> {c:1,r:7}
-            let cell_index = XLSX.utils.decode_cell(this.characs['cell'+typmax]);
-            // if the cell exists
-            if(undefined !== sheet[cell_index.r] && undefined !== sheet[cell_index.r][cell_index.c]) {
-              // get the value from the sheet
-              i = parseFloat(sheet[cell_index.r][cell_index.c]);
-            }
-            // check if the value is a number
-            if(isNaN(i)) i = 0;
-            // save the values
-            this.characs['i'+typmax] = i;
-
-          }
-        }
-      }
-    }
+    return properties;
   }
 }
 
