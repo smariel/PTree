@@ -1043,6 +1043,9 @@ class PTree {
 
     // modify the range inputs on wheel up/down
     $('.config_range').on('wheel',(evt) => {
+      // prevent scrolling
+      evt.preventDefault();
+
       // get actual values
       let step   = parseFloat($(evt.currentTarget).prop('step'));
       let val    = parseFloat($(evt.currentTarget).val());
