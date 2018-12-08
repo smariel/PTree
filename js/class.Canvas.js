@@ -117,8 +117,8 @@ class Canvas {
       'originX'   : 'center',
       'originY'   : 'center',
       'textAlign' : 'center',
-      'top'       : itemRect.top  + itemRect.height / 2,
-      'left'      : itemRect.left + itemRect.width  / 2,
+      'top'       : Math.round(itemRect.top  + itemRect.height / 2),
+      'left'      : Math.round(itemRect.left + itemRect.width  / 2),
       'fill'      : Util.getOpositeBorW(item_color),
       'fontSize'  : this.config.text_size
     });
@@ -145,9 +145,9 @@ class Canvas {
         let itemText_vout = new fabric.Text(vtext, Canvas.fabric_template.text);
         itemText_vout.set({
           'originX'  : 'left',
-          'originY'  : 'bottom',
-          'top'      : itemGroup.top  + itemGroup.height / 2 - Canvas.app_template.text.margin_y,
-          'left'     : itemGroup.left + itemGroup.width      + Canvas.app_template.text.margin_x,
+          'originY'  : 'top',
+          'top'      : Math.round(itemGroup.top  + itemGroup.height / 2 - Canvas.app_template.text.margin_y - this.config.text_size - 2),
+          'left'     : Math.round(itemGroup.left + itemGroup.width      + Canvas.app_template.text.margin_x),
           'fontSize' : this.config.text_size
         });
         this.fabricCanvas.add(itemText_vout);
@@ -175,8 +175,8 @@ class Canvas {
         itemText_ipout.set({
           'originX' : 'left',
           'originY' : 'top',
-          'top'     : itemGroup.top  + itemGroup.height / 2 + Canvas.app_template.text.margin_y,
-          'left'    : itemGroup.left + itemGroup.width      + Canvas.app_template.text.margin_x,
+          'top'     : Math.round(itemGroup.top  + itemGroup.height / 2 + Canvas.app_template.text.margin_y),
+          'left'    : Math.round(itemGroup.left + itemGroup.width      + Canvas.app_template.text.margin_x),
           'fontSize': this.config.text_size
         });
         this.fabricCanvas.add(itemText_ipout);
@@ -203,7 +203,7 @@ class Canvas {
       if(this.config.proportional) {
         let outputNetRatio = item.getOutputPower('typ')/totalpower;
         outputNetStyle.stroke      = Util.pickColorHex(Canvas.app_template.proportion.color_max, Canvas.app_template.proportion.color_min, outputNetRatio);
-        outputNetStyle.strokeWidth = outputNetRatio * Canvas.app_template.proportion.width_max + Canvas.app_template.proportion.width_min;
+        outputNetStyle.strokeWidth = Math.round(outputNetRatio * Canvas.app_template.proportion.width_max + Canvas.app_template.proportion.width_min);
       }
 
       // if the item is hidden, the output net is dashed
@@ -232,9 +232,9 @@ class Canvas {
 
       // adjust the proportions of the net according to the power ratio
       if(this.config.proportional) {
-        let inputNetRatio = item.getInputPower('typ')/totalpower;
+        let inputNetRatio = item.getInputPower('typ') / totalpower;
         inputNetStyle.stroke      = Util.pickColorHex(Canvas.app_template.proportion.color_max, Canvas.app_template.proportion.color_min, inputNetRatio);
-        inputNetStyle.strokeWidth = inputNetRatio * Canvas.app_template.proportion.width_max + Canvas.app_template.proportion.width_min;
+        inputNetStyle.strokeWidth = Math.round(inputNetRatio * Canvas.app_template.proportion.width_max + Canvas.app_template.proportion.width_min);
       }
 
       // create the fabric item
@@ -259,7 +259,7 @@ class Canvas {
         if(this.config.proportional) {
           let verticalNetRatio = item.getParent().getOutputPower('typ')/totalpower;
           verticalNetStyle.stroke      = Util.pickColorHex(Canvas.app_template.proportion.color_max, Canvas.app_template.proportion.color_min, verticalNetRatio);
-          verticalNetStyle.strokeWidth = verticalNetRatio * Canvas.app_template.proportion.width_max + Canvas.app_template.proportion.width_min;
+          verticalNetStyle.strokeWidth = Math.round(verticalNetRatio * Canvas.app_template.proportion.width_max + Canvas.app_template.proportion.width_min);
         }
 
         // set the outputNet_node to canvas at the correct coords
