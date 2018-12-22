@@ -124,11 +124,13 @@ class ItemEditor {
       type: 'scatter',
       data: {
         datasets: [{
-          data: dataset,
-          showLine : true,
-          tension : 0,
-          pointStyle: 'circle',
-          radius: 4
+          data:             dataset,
+          showLine:         true,
+          tension:          0,
+          pointStyle:       'circle',
+          radius:           4,
+          backgroundColor:  'rgba(255,23,68,0.3)',
+          borderColor:      'rgba(255,23,68,1)'
         }]
       },
       options: {
