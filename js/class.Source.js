@@ -7,6 +7,7 @@
 // -----------------------------------------------------------------------------
 
 const Item = require('./class.Item.js');
+const Util = require('./class.Util.js');
 
 class Source extends Item {
 
@@ -41,7 +42,7 @@ class Source extends Item {
       vref_min    : '0.8',
       vref_typ    : '0.8',
       vref_max    : '0.8',
-      efficiency  : [{i:'1', eff:'90'}], // must be kept ordered by ascending current
+      efficiency  : [{i:'0.1', eff:'80'}, {i:'0.5', eff:'88'}, {i:'1', eff:'90'}, {i:'2', eff:'88'}], // must be kept ordered by ascending current
       iq_typ      : '0',
       iq_min      : '0',
       iq_max      : '0',
@@ -199,8 +200,8 @@ class Source extends Item {
   }
 
 
-  // get the efficiency of the item
-  getEfficiency(valType) {
+  // get the efficiency of the item, optionaly for the given output current
+  getEfficiency(valType, outputCurrent) {
     let efficiency = 1;
 
     if(this.isLDO()) {
@@ -220,14 +221,26 @@ class Source extends Item {
         }
         // if there is multiple efficiency, use linear interpolation
         else {
-          let itemCurrent = this.getOutputCurrent(valType);
-          // if the current is <= of the min efficiency, use the min
+          let itemCurrent = (undefined === outputCurrent) ? this.getOutputCurrent(valType) : outputCurrent;
+          // if the current is <= of the min efficiency
           if(itemCurrent <= this.characs.efficiency[0].i) {
-            efficiency = parseFloat(this.characs.efficiency[0].eff) / 100;
+            // use linear interpolation to compute the efficiency (y = ax+b)
+            // based on the two first efficiencies of the array
+            let x1 = parseFloat(this.characs.efficiency[0].i);
+            let y1 = parseFloat(this.characs.efficiency[0].eff)/100;
+            let x2 = parseFloat(this.characs.efficiency[1].i);
+            let y2 = parseFloat(this.characs.efficiency[1].eff)/100;
+            efficiency = Util.linearInterpol(x1, y1, x2, y2, itemCurrent);
           }
-          // if the current is >= of the max efficiency, use the max
+          // if the current is >= of the max efficiency
           else if(itemCurrent >= this.characs.efficiency[this.characs.efficiency.length - 1].i) {
-            efficiency = parseFloat(this.characs.efficiency[this.characs.efficiency.length - 1].eff) / 100;
+            // use linear interpolation to compute the efficiency (y = ax+b)
+            // based on the two last efficiencies of the array
+            let x1 = parseFloat(this.characs.efficiency[this.characs.efficiency.length - 2].i);
+            let y1 = parseFloat(this.characs.efficiency[this.characs.efficiency.length - 2].eff)/100;
+            let x2 = parseFloat(this.characs.efficiency[this.characs.efficiency.length - 1].i);
+            let y2 = parseFloat(this.characs.efficiency[this.characs.efficiency.length - 1].eff)/100;
+            efficiency = Util.linearInterpol(x1, y1, x2, y2, itemCurrent);
           }
           // else, find two points and compute with linear interpolation (f(x)=ax+b)
           else {
@@ -240,16 +253,13 @@ class Source extends Item {
                 efficiency = parseFloat(eff_data.eff) / 100;
                 break;
               }
-              // else, use linear interpolation to compute the efficiency
+              // else, use linear interpolation to compute the efficiency (y = ax+b)
               else if(itemCurrent > eff_data.i && itemCurrent < eff_nextData.i) {
-                // a = (y2-y1)/(x2-x1)
-                let a = (parseFloat(eff_nextData.eff)/100 - parseFloat(eff_data.eff)/100) / (parseFloat(eff_nextData.i) - parseFloat(eff_data.i));
-
-                // b = y1 - a * x1
-                let b = parseFloat(eff_data.eff)/100 - a * parseFloat(eff_data.i);
-
-                // y = ax+b
-                efficiency = a * itemCurrent + b;
+                let x1 = parseFloat(eff_data.i);
+                let y1 = parseFloat(eff_data.eff)/100;
+                let x2 = parseFloat(eff_nextData.i);
+                let y2 = parseFloat(eff_nextData.eff)/100;
+                efficiency = Util.linearInterpol(x1, y1, x2, y2, itemCurrent);
                 break;
               }
             }
@@ -263,6 +273,53 @@ class Source extends Item {
     }
 
     return efficiency;
+  }
+
+
+  // add a new efficiency
+  addEfficiency(eff, i) {
+    let new_data = {eff, i};
+
+    // get the old data
+    let eff_datas = this.characs.efficiency;
+
+    // if the new datas are numbers
+    if(!isNaN(new_data.eff) && !isNaN(new_data.i)) {
+      // add the data to the array, keeping ordered by ascending currend
+      let new_index = null;
+      if(eff_datas.length === 0)
+      {
+        // no efficiency, first point in the empty chart
+        new_index = 0;
+        eff_datas.push(new_data);
+      }
+      else if(new_data.i <= eff_datas[0].i) {
+        // lowest Amp, first point in the chart
+        new_index = 0;
+        eff_datas.splice(new_index,0,new_data);
+      }
+      else if (new_data.i >= eff_datas[eff_datas.length-1].i) {
+        // Highest Amp, last point in the chart
+        new_index = eff_datas.length - 1;
+        eff_datas.push(new_data);
+      }
+      else {
+        // Somwhere in the midle of the chart
+        for(let n=1; n<eff_datas.length; n++) {
+          if(new_data.i >= eff_datas[n-1].i && new_data.i < eff_datas[n].i) {
+            new_index = n;
+            eff_datas.splice(new_index,0,new_data);
+            break;
+          }
+        }
+      }
+
+      // convert datas to string
+      if(null !== new_index) {
+        eff_datas[new_index].i   = eff_datas[new_index].i.toString();
+        eff_datas[new_index].eff = eff_datas[new_index].eff.toString();
+      }
+    }
   }
 
 

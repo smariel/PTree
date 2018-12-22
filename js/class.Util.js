@@ -89,7 +89,7 @@ class Util {
 
 
   // -----------------------------------------------------------------------------
-  // Numbers
+  // Math & number formating
   // -----------------------------------------------------------------------------
 
   // Round a number with the specified number of decimal
@@ -187,6 +187,13 @@ class Util {
     return result + prefix[i];
   }
 
+
+  // use linear interpolation to return y=ax+b based on two points x1/y1 and x2/y2
+  static linearInterpol(x1, y1, x2, y2, x) {
+    let a = (y2 - y1) / (x2 - x1);
+    let b = y1 - a * x1;
+    return a * x + b;
+  }
 
 
   // -----------------------------------------------------------------------------

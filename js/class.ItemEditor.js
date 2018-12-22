@@ -163,58 +163,17 @@ class ItemEditor {
   // add a new point on the efficiency chartConfig
   addEfficiency() {
     // get the new data from the form
-    let new_data = {
-      eff: parseFloat($('#input_eff').val()),
-      i: parseFloat($('#input_eff_i').val())
-    };
+    let eff = parseFloat($('#input_eff').val());
+    let i   = parseFloat($('#input_eff_i').val());
 
-    // get the old data
-    let eff_datas = this.item.characs.efficiency;
+    this.item.addEfficiency(eff, i);
 
-    // if the new datas are numbers
-    if(!isNaN(new_data.eff) && !isNaN(new_data.i)) {
-      // add the data to the array, keeping ordered by ascending currend
-      let new_index = null;
-      if(eff_datas.length === 0)
-      {
-        // no efficiency, first point in the empty chart
-        new_index = 0;
-        eff_datas.push(new_data);
-      }
-      else if(new_data.i <= eff_datas[0].i) {
-        // lowest Amp, first point in the chart
-        new_index = 0;
-        eff_datas.splice(new_index,0,new_data);
-      }
-      else if (new_data.i >= eff_datas[eff_datas.length-1].i) {
-        // Highest Amp, last point in the chart
-        new_index = eff_datas.length - 1;
-        eff_datas.push(new_data);
-      }
-      else {
-        // Somwhere in the midle of the chart
-        for(let n=1; n<eff_datas.length; n++) {
-          if(new_data.i >= eff_datas[n-1].i && new_data.i < eff_datas[n].i) {
-            new_index = n;
-            eff_datas.splice(new_index,0,new_data);
-            break;
-          }
-        }
-      }
+    // remove the data from the form
+    $('#input_eff').val('');
+    $('#input_eff_i').val('');
 
-      // convert datas to string
-      if(null !== new_index) {
-        eff_datas[new_index].i   = eff_datas[new_index].i.toString();
-        eff_datas[new_index].eff = eff_datas[new_index].eff.toString();
-      }
-
-      // remove the data from the form
-      $('#input_eff').val('');
-      $('#input_eff_i').val('');
-
-      // update the chart
-      this.updateHTML_regEff();
-    }
+    // update the chart
+    this.updateHTML_regEff();
   }
 
 
