@@ -35,9 +35,6 @@ class PTree {
 
     // set the window title
     window.document.title = 'Untitled';
-
-    // check for update
-    this.checkUpdate();
   }
 
 

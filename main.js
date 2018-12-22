@@ -20,7 +20,7 @@ const packagejson = require('./package.json');
 // Keep a global reference of the renderers data
 // to avoid JS garbage collector to close them automatically
 let renderers = {
-  PTree          : { browserWindow:null, initData: {fileToOpen: null},                    },
+  PTree          : { browserWindow:null, initData: {fileToOpen: null, checkUpdate: true}  },
   itemEditor     : { browserWindow:null, initData: null, returnData: null, reqEvent: null },
   partListEditor : { browserWindow:null, initData: null, returnData: null, reqEvent: null },
   stats          : { browserWindow:null, initData: null, returnData: null,                },
@@ -40,9 +40,22 @@ for (let i=1; i<process.argv.length; i++) {
   // if the arg is an option starting with --
   if('--' == arg.substring(0, 2)) {
     // Debug mode
-    if('--debug' == arg) {
+    if('--debug' == arg || '-d' == arg) {
       debug = true;
-      break;
+    }
+    // Don't check for update
+    else if('--no-update-check' == arg || '-c' == arg) {
+      renderers.PTree.initData.checkUpdate = false;
+    }
+    // Print the help and exit
+    else if('--help' == arg || '-h' == arg) {
+      let help = `\n${packagejson.name} v${packagejson.version}\n\n`;
+      help    += 'Options:\n';
+      help    += '  -c, --no-update-check   Disables the update check at startup\n';
+      help    += '  -d, --debug             Enable the chromium debug tools\n';
+      help    += '  -h, --help              Print this help\n';
+      console.info(help); // eslint-disable-line no-console
+      process.exit();
     }
   }
   // If the arg is a valid path to a ptree project file (also Windows "open with" command)

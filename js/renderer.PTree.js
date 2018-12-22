@@ -27,6 +27,11 @@ $(() => {
     if(null !== initData.fileToOpen) {
       ptree.open(initData.fileToOpen);
     }
+
+    // check for updates, eventualy
+    if(initData.checkUpdate) {
+      ptree.checkUpdate();
+    }
   });
 
   // Send an IPC async msg to main.js: request init data
