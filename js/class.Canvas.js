@@ -43,6 +43,7 @@ class Canvas {
       show_name    : true,
       show_ref     : true,
       show_custom1 : true,
+      show_badges  : true,
       align_load   : false,
       proportional : false,
       loss_color   : false,
@@ -78,8 +79,10 @@ class Canvas {
     // Needed when exporting to jpeg (no alpha)
     this.fabricCanvas.setBackgroundColor('#FFFFFF');
 
+    // save a ref to the parent
     let parent        = item.getParent();
 
+    // compute the main dimensions
     let item_width    = Canvas.app_template.item.width_coef   * this.config.cell_width;
     let item_height   = Canvas.app_template.item.height_coef  * this.config.cell_height;
     let nodeNet_left  = Canvas.app_template.nodeNet.left_coef * this.config.cell_width;
@@ -131,6 +134,7 @@ class Canvas {
     itemGroup.name = itemText;
     this.fabricCanvas.fabric_obj[item.id] = itemGroup;
     this.fabricCanvas.add(itemGroup);
+
 
     // --------------------------------------------------------------------------
     // Add some text around the item
@@ -273,6 +277,62 @@ class Canvas {
 
         // add the net to the canvas
         this.fabricCanvas.add(verticalNet);
+      }
+    }
+
+
+    // --------------------------------------------------------------------------
+    // Print the badges
+
+    if(this.config.show_badges) {
+      // input badge
+      if(!item.isRoot() && !item.isChildOfRoot() && '' !== item.characs.badge_in) {
+        // circle
+        let badge_in = new fabric.Circle(Canvas.fabric_template.badge);
+        badge_in.set({
+          left: Math.round(itemGroup.get('left') - Canvas.fabric_template.badge.radius                   - Canvas.fabric_template.badge.strokeWidth/2),
+          top:  Math.round(itemGroup.get('top' ) - Canvas.fabric_template.badge.radius + item_height / 2 - Canvas.fabric_template.badge.strokeWidth/2),
+        });
+
+        // text
+        let badge_in_text = new fabric.Text(item.characs.badge_in, Canvas.fabric_template.text);
+        badge_in_text.set({
+          'originX'   : 'center',
+          'originY'   : 'center',
+          'textAlign' : 'center',
+          'top'       : Math.round(badge_in.get('top')  + Canvas.fabric_template.badge.radius + Canvas.fabric_template.badge.strokeWidth/2),
+          'left'      : Math.round(badge_in.get('left') + Canvas.fabric_template.badge.radius + Canvas.fabric_template.badge.strokeWidth/2),
+          'fontSize'  : 12
+        });
+
+        // group the circle and the text and add it to canvas
+        let badge_in_group = new fabric.Group([badge_in, badge_in_text], {evented: false});
+        this.fabricCanvas.add(badge_in_group);
+      }
+
+      // output badge
+      if(item.isSource() && '' !== item.characs.badge_out) {
+        // circle
+        let badge_out = new fabric.Circle(Canvas.fabric_template.badge);
+        badge_out.set({
+          left: Math.round(itemGroup.get('left') - Canvas.fabric_template.badge.radius + item_width    - Canvas.fabric_template.badge.strokeWidth/2),
+          top:  Math.round(itemGroup.get('top' ) - Canvas.fabric_template.badge.radius + item_height/2 - Canvas.fabric_template.badge.strokeWidth/2),
+        });
+
+        // text
+        let badge_out_text = new fabric.Text(item.characs.badge_out, Canvas.fabric_template.text);
+        badge_out_text.set({
+          'originX'   : 'center',
+          'originY'   : 'center',
+          'textAlign' : 'center',
+          'top'       : Math.round(badge_out.get('top')  + Canvas.fabric_template.badge.radius + Canvas.fabric_template.badge.strokeWidth/2),
+          'left'      : Math.round(badge_out.get('left') + Canvas.fabric_template.badge.radius + Canvas.fabric_template.badge.strokeWidth/2),
+          'fontSize'  : 12
+        });
+
+        // group the circle and the text and add it to canvas
+        let badge_out_group = new fabric.Group([badge_out, badge_out_text], {evented: false});
+        this.fabricCanvas.add(badge_out_group);
       }
     }
   }
@@ -749,22 +809,16 @@ Canvas.fabric_template = {
   canvas: {
     backgroundColor: '#FFFFFF'
   },
-  root: {
-    width      : 0,
-    height     : 0,
-    fill       : 'rgba(0,0,0,0)',
-    selectable : false
-  },
-  source: {
-    selectable : false,
-  },
-  load: {
-    rx         : 20,
-    ry         : 20,
-    selectable : false
-  },
   group: {
     selectable : false
+  },
+  badge: {
+    fill          : '#FFFFFF',
+    radius        : 12,
+    stroke        : '#424242',
+    strokeWidth   : 2,
+    selectable    : false,
+    evented       : false
   },
   net: {
     stroke        : '#424242',

@@ -388,11 +388,11 @@ class Item {
     }
     // hexagon
     else if (3 == this.characs.shape) {
-      // TODO
+      // TODO: hexagon
     }
     // octagon
     else if (4 == this.characs.shape) {
-      // TODO
+      // TODO: octagon
     }
 
     return template;

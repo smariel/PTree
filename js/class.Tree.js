@@ -5,8 +5,8 @@
 // -----------------------------------------------------------------------------
 
 const Item   = require('../js/class.Item.js');
-const Source = require('../js/class.Source.js');
-const Load   = require('../js/class.Load.js');
+const Source = require('../js/class.Item.Source.js');
+const Load   = require('../js/class.Item.Load.js');
 
 class Tree {
 

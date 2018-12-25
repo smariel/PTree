@@ -40,6 +40,7 @@ class ItemEditor {
     // Update the html
     if(this.item.isSource()) {
       this.updateHTML_regType();
+      $('#input_badge_in').attr('disabled', this.item.isChildOfRoot());
     }
     else if (this.item.isLoad()) {
       this.updateHTML_loadType();

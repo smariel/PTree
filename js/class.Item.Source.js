@@ -47,16 +47,10 @@ class Source extends Item {
       iq_min      : '0',
       iq_max      : '0',
       color       : '#FF1744',
-      shape       : '0',
-      /*
-        v1.7.0
-        0: rectangle
-        1: rectangle (rounded)
-        2: parallelogram
-        3: hexagon
-        4: octagon
-      */
-      hidden      : false
+      hidden      : false,
+      shape       : '0', // v1.7.0
+      badge_in    : '',  // v1.7.0
+      badge_out   : '',  // v1.7.0
     };
   }
 
