@@ -20,7 +20,7 @@ class PTree {
     this.statsAreOpen = false;
     this.filePath     = null;
     this.readOnly     = false;
-    this.unsaved      = true;
+    this.unsaved      = false;
     this.history      = {list: [], index: 0};
 
     this.setSheet(null);
@@ -33,6 +33,7 @@ class PTree {
     this.clearHistory();
     this.canvas.refresh();
     this.updateClearButtons();
+    this.setSaved();
 
     // set the window title
     window.document.title = 'Untitled';

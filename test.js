@@ -9,7 +9,7 @@
 /* eslint no-console: 0 */
 /* eslint no-undef:   0 */
 const refreshScreenshots = false;
-const checkConsoleLog    = true;
+const checkConsoleLog    = false;
 
 const test = require('ava');
 const {Application} = require('spectron');
@@ -163,9 +163,9 @@ test.serial('TEST6: canvas manipulation', async t => {
   t.is(ret.value.vin_typ,  '5V');
   t.is(ret.value.vin_max,  '5V');
   t.is(ret.value.iin_typ,  '621mA');
-  t.is(ret.value.iin_max,  '1.22A');
+  t.is(ret.value.iin_max,  '1.38A');
   t.is(ret.value.pin_typ,  '3.1W');
-  t.is(ret.value.pin_max,  '6.08W');
+  t.is(ret.value.pin_max,  '6.92W');
   t.is(ret.value.vout_typ, '1.8V');
   t.is(ret.value.vout_max, '1.82V');
   t.is(ret.value.iout_typ, '1.5A');
@@ -173,7 +173,7 @@ test.serial('TEST6: canvas manipulation', async t => {
   t.is(ret.value.pout_typ, '2.7W');
   t.is(ret.value.pout_max, '4.86W');
   t.is(ret.value.loss_typ, '403mW');
-  t.is(ret.value.loss_max, '1.21W');
+  t.is(ret.value.loss_max, '2.06W');
 
   // click item and check if it was selected
   await t.context.app.client.leftClick('body',655,250);
@@ -224,9 +224,9 @@ test.serial('TEST7: total power', async t => {
     };
   });
   t.is(ret.value.totalpower_typ,'17.9');
-  t.is(ret.value.totalpower_max,'32.1');
+  t.is(ret.value.totalpower_max,'32.9');
   t.is(ret.value.totaleff_typ,  '94');
-  t.is(ret.value.totaleff_maw,  '89.8');
+  t.is(ret.value.totaleff_maw,  '87.5');
 });
 
 test.serial('TEST8: configurations', async t => {
@@ -322,7 +322,7 @@ test.serial('TEST9: sync external spreadsheet', async t => {
   await wait(500);
   ret = await t.context.app.client.execute(() => ptree.tree.getTotalPower());
   t.is(ret.value.typ,17.870114942528737);
-  t.is(ret.value.max,32.0675);
+  t.is(ret.value.max,32.91557692307692);
 
   // select an other sheet and test the global power values
   await t.context.app.client.execute(() => {
@@ -332,7 +332,7 @@ test.serial('TEST9: sync external spreadsheet', async t => {
   await wait(500);
   ret = await t.context.app.client.execute(() => ptree.tree.getTotalPower());
   t.is(ret.value.typ,20.610114942528735);
-  t.is(ret.value.max,34.6875);
+  t.is(ret.value.max,35.535576923076924);
 });
 
 test.serial('TEST10: edit source, DC/DC fixed', async t => {
@@ -355,7 +355,6 @@ test.serial('TEST10: edit source, DC/DC fixed', async t => {
       $('#source_name').val('test_source_name').trigger('change');
       $('#source_ref').val('test_source_ref').trigger('change');
       $('#source_custom1').val('test_source_custom1').trigger('change');
-      $('#source_custom2').val('test_source_custom2').trigger('change');
       $('#input_vout_min').val('2.49').trigger('change');
       $('#input_vout_typ').val('2.5').trigger('change');
       $('#input_vout_max').val('2.51').trigger('change');
@@ -380,7 +379,6 @@ test.serial('TEST10: edit source, DC/DC fixed', async t => {
   t.is(ret.value.regtype,           '0');
   t.is(ret.value.ref,               'test_source_ref');
   t.is(ret.value.custom1,           'test_source_custom1');
-  t.is(ret.value.custom2,           'test_source_custom2');
   t.is(ret.value.vout_min,          '2.49');
   t.is(ret.value.vout_typ,          '2.5');
   t.is(ret.value.vout_max,          '2.51');
@@ -607,7 +605,6 @@ test.serial('TEST16: edit load', async t => {
       $('#load_type').val('1').trigger('change');
       $('#load_name').val('test_load_name').trigger('change');
       $('#load_custom1').val('test_load_custom1').trigger('change');
-      $('#load_custom2').val('test_load_custom2').trigger('change');
       $('#load_ityp').val('0.123').trigger('change');
       $('#load_imax').val('1.234').trigger('change');
       return null;
@@ -622,7 +619,6 @@ test.serial('TEST16: edit load', async t => {
   t.is(ret.value.name,     'test_load_name');
   t.is(ret.value.loadtype, '1');
   t.is(ret.value.custom1,  'test_load_custom1');
-  t.is(ret.value.custom2,  'test_load_custom2');
   t.is(ret.value.ityp,     '0.123');
   t.is(ret.value.imax,     '1.234');
   t.is(ret.value.color,    '#aabb11');

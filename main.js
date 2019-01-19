@@ -206,7 +206,7 @@ app.on('ready', () => {
           }
         }
       ]
-    } : {},
+    } : {label: ''},
   ];
 
   // menu add-ons for macOS
