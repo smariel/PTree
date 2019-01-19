@@ -118,9 +118,10 @@ app.on('ready', () => {
 
   // Create the browser window.
   renderers.PTree.browserWindow = new BrowserWindow({
-    width    : 1200,
-    height   : 800,
-    minWidth : 800
+    width          : 1200,
+    height         : 800,
+    minWidth       : 800,
+    webPreferences : {nodeIntegration : true}
   });
 
   // and load the index.html of the app.
@@ -257,7 +258,8 @@ ipcMain.on('Item-editReq', (evt, itemStr, itemType) => {
     modal           : true,
     resizable       : false,
     autoHideMenuBar : true,
-    useContentSize  : true
+    useContentSize  : true,
+    webPreferences  : {nodeIntegration : true}
   });
 
   // Open the dev tools...
@@ -312,7 +314,8 @@ ipcMain.on('PartList-editReq', (evt, treeStr, partListStr) => {
     parent          : renderers.PTree.browserWindow,
     modal           : process.platform !== 'darwin',
     resizable       : true,
-    useContentSize  : true
+    useContentSize  : true,
+    webPreferences  : {nodeIntegration : true}
   });
 
   // Open the dev tools...
@@ -369,7 +372,8 @@ ipcMain.on('Stats-openReq', (evt, initData) => {
       height          : 400,
       resizable       : true,
       useContentSize  : true,
-      alwaysOnTop     : true
+      alwaysOnTop     : true,
+      webPreferences  : {nodeIntegration : true}
     });
   }
 
@@ -435,6 +439,7 @@ ipcMain.on('Popup-openReq', (evt, popupData) => {
     minimizable     : false,
     maximizable     : false,
     useContentSize  : true,
+    webPreferences  : {nodeIntegration : true}
   });
 
   // Open the dev tools...
@@ -486,7 +491,8 @@ let openAboutWindow = () => {
       autoHideMenuBar : true,
       useContentSize  : true,
       thickFrame      : true,
-      titleBarStyle   : 'hiddenInset'
+      titleBarStyle   : 'hiddenInset',
+      webPreferences  : {nodeIntegration : true}
     });
 
     // Open the dev tools...
