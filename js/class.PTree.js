@@ -19,7 +19,8 @@ class PTree {
     this.canvas       = new Canvas(canvas_selector, this.tree, this.partList);
     this.statsAreOpen = false;
     this.filePath     = null;
-    this.unsaved      = false;
+    this.readOnly     = false;
+    this.unsaved      = true;
     this.history      = {list: [], index: 0};
 
     this.setSheet(null);
@@ -44,6 +45,7 @@ class PTree {
     this.tree.fromString(new Tree().toString());
     this.partList.fromString(new PartList().toString());
     this.canvas.setDefaultConfig();
+    this.unlockFile();
     this.statsAreOpen = false;
     this.filePath     = null;
     this.unsaved      = true;
@@ -63,6 +65,7 @@ class PTree {
 
   // load the app data from a file
   open(path=null) {
+    // if a path was not given, ask the user to choose a file
     if(null === path) {
       const {dialog} = require('electron').remote;
       const paths = dialog.showOpenDialog({
@@ -79,6 +82,7 @@ class PTree {
       if (undefined !== paths) { this.filePath = paths[0]; }
       else { return; }
     }
+    // else if a path was given, just use it
     else {
       this.filePath = path;
     }
@@ -92,14 +96,27 @@ class PTree {
       else {
         // reconstruct the tree from the data
         this.fromString(datastr).then(() => {
+          // update the window title
+          window.document.title = this.filePath;
+
+          // if the file is beeing edited by someone else
+          if(fs.existsSync(`${path}.lock`)) {
+            // set as readonly
+            this.readOnly = true;
+            window.document.title += ' [read only]';
+            alert('This file is beeing edited by an other user.');
+          }
+          // if the file is not edited
+          else {
+            // create a .lock file to tell other users
+            this.lockFile();
+          }
+
           // update the app environement
           this.clearHistory();
           this.canvas.refresh();
           this.setSaved();
           this.updateClearButtons();
-
-          // update the window title
-          window.document.title = this.filePath;
         });
       }
     });
@@ -108,6 +125,8 @@ class PTree {
 
   // save the app data into a file
   save(saveas = false) {
+    const fs = require('fs');
+
     // do not try a simple save if it's not needed
     if(!saveas && !this.unsaved) {
       return false;
@@ -115,15 +134,16 @@ class PTree {
 
     // if the app as no file to work on
     // or if the app data must be save as a new file
-    if (saveas || null === this.filePath) {
+    // of if the file is readOnly
+    if (saveas || null === this.filePath || this.readOnly) {
 
-      let name = ('string' === typeof this.filePath) ? require('path').parse(this.filePath).name+'_copy.ptree' : 'Untitled.ptree';
+      let defaultPath = ('string' === typeof this.filePath) ? this.filePath.substring(0, this.filePath.length-6)+'_copy.ptree' : 'Untitled.ptree';
 
       // prompt the user
       const {dialog} = require('electron').remote;
       const path = dialog.showSaveDialog({
         title: 'Save as...',
-        defaultPath: name,
+        defaultPath: defaultPath,
         filters: [
           { name: 'PTree project file', extensions: ['ptree'] },
           { name: 'JSON',               extensions: ['json']  },
@@ -131,13 +151,26 @@ class PTree {
         ]
       });
 
-      // save the new path only if its not undefined (canceled)
-      if (undefined !== path) this.filePath = path;
+      // if the dialog was not canceled
+      if (undefined !== path) {
+        // if a lock file exist for this new file
+        let lockFile = `${path}.lock`;
+        if(fs.existsSync(lockFile)) {
+          alert('Unable to create or overwrite this file beceause it is edited by an other user.');
+          return false;
+        }
+        else {
+          // unlock the precedent file
+          this.unlockFile();
+
+          // save the new path
+          this.filePath = path;
+        }
+      }
       else return false;
     }
 
     // open the file or create it if it does not exist using node.js fs module
-    const fs = require('fs');
     fs.open(this.filePath, 'w+', (err, fd) => {
       if (null === err) {
         // write the data
@@ -150,6 +183,9 @@ class PTree {
 
         // update the window title
         window.document.title = this.filePath;
+
+        // lock the file
+        this.lockFile();
       }
       else {
         alert(err);
@@ -171,6 +207,34 @@ class PTree {
   setSaved() {
     this.unsaved = false;
     $('#bt_save').addClass('disabled');
+  }
+
+
+  // lock the project file
+  lockFile() {
+    if(!this.readOnly) {
+      // create a .lock file to tell other users
+      const fs = require('fs');
+      fs.closeSync(fs.openSync(`${this.filePath}.lock`, 'w'));
+      this.readOnly = false;
+    }
+  }
+
+
+  // unlock a file
+  unlockFile() {
+    if(!this.readOnly) {
+      const fs = require('fs');
+      // if there is a ptree project file
+      if('string' === typeof this.filePath) {
+        let lockFile = `${this.filePath}.lock`;
+        // if a lock file exist for this project
+        if(fs.existsSync(lockFile)) {
+          // delete this file
+          fs.unlinkSync(lockFile);
+        }
+      }
+    }
   }
 
 
@@ -1231,6 +1295,8 @@ class PTree {
 
     // IPC async msg received from main.js: prepare to close
     ipcRenderer.on('PTree-beforeCloseCmd', async () => {
+      this.unlockFile();
+
       // if the project is not saved
       if(this.unsaved) {
         // ask the user to save
