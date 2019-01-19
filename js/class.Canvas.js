@@ -91,13 +91,14 @@ class Canvas {
     // create a rectangle with the correct template
     // and add it to the canvas
     let itemTemplate = item.getFabricTemplate();
-    let itemRect   = new fabric.Rect(itemTemplate);
-    let item_col   = (this.config.align_load && item.isLoad()) ? this.size.col : item.col;
-    let item_color = (this.config.loss_color) ? item.lossColor : item.characs.color;
+    let skew_error   = (undefined === itemTemplate.skewX) ? 0 : Math.round(item_height/Math.tan(-itemTemplate.skewX));
+    let itemRect     = new fabric.Rect(itemTemplate);
+    let item_col     = (this.config.align_load && item.isLoad()) ? this.size.col : item.col;
+    let item_color   = (this.config.loss_color) ? item.lossColor : item.characs.color;
     itemRect.set({
       left  : (item_col  * this.config.cell_width ) + Canvas.app_template.canvas.margin_left,
       top   : (item.line * this.config.cell_height) + Canvas.app_template.canvas.margin_top ,
-      width : item_width,
+      width : item_width - skew_error,
       height: item_height,
       fill  : item_color
     });
@@ -122,7 +123,7 @@ class Canvas {
       'originY'   : 'center',
       'textAlign' : 'center',
       'top'       : Math.round(itemRect.top  + itemRect.height / 2),
-      'left'      : Math.round(itemRect.left + itemRect.width  / 2 + itemTemplate.text_margin_x),
+      'left'      : Math.round(itemRect.left + itemRect.width  / 2 + skew_error/2),
       'fill'      : Util.getOpositeBorW(item_color),
       'fontSize'  : this.config.text_size
     });
@@ -193,8 +194,8 @@ class Canvas {
     // Process the nets around the source
 
     // compute errors when the group and the rect are not the same size (ex: text overflow)
-    let width_error  = (itemRect.get('width' ) - itemGroup.get('width' ) + 1) / 2;
-    let height_error = (itemRect.get('height') - itemGroup.get('height') + 1) / 2;
+    let width_error  = 0; //(itemRect.get('width' ) - itemGroup.get('width' )) / 2;
+    let height_error = (itemRect.get('height') - itemGroup.get('height')) / 2;
 
 
     let totalpower = this.tree.getRoot().getOutputPower('typ');
@@ -218,7 +219,7 @@ class Canvas {
 
       // create the fabric item
       let outputNet = new fabric.Line([
-        Math.round(itemGroup.get('left') + item_width   - width_error),
+        Math.round(itemGroup.get('left') + item_width   - width_error - skew_error),
         Math.round(itemGroup.get('top' ) + item_height / 2 - outputNetStyle.strokeWidth / 2 - height_error),
         Math.round(itemGroup.get('left') + nodeNet_left - width_error),
         Math.round(itemGroup.get('top' ) + item_height / 2 - outputNetStyle.strokeWidth / 2 - height_error)
@@ -244,9 +245,9 @@ class Canvas {
 
       // create the fabric item
       let inputNet = new fabric.Line([
-        Math.round(itemGroup.get('left') - inputNetStyle.strokeWidth - width_error),
-        Math.round(itemGroup.get('top' ) + item_height / 2 - inputNetStyle.strokeWidth / 2 - height_error),
         Math.round(itemGroup.get('left') - (this.config.cell_width - nodeNet_left) - width_error - offset),
+        Math.round(itemGroup.get('top' ) + item_height / 2 - inputNetStyle.strokeWidth / 2 - height_error),
+        Math.round(itemGroup.get('left') - inputNetStyle.strokeWidth - width_error + skew_error),
         Math.round(itemGroup.get('top' ) + item_height / 2 - inputNetStyle.strokeWidth / 2 - height_error),
       ], inputNetStyle);
 
@@ -269,9 +270,9 @@ class Canvas {
 
         // set the outputNet_node to canvas at the correct coords
         let verticalNet = new fabric.Line([
-          inputNet.get('x2'),
-          Math.round((parent.line * this.config.cell_height) + Canvas.app_template.canvas.margin_top + item_height / 2 - verticalNetStyle.strokeWidth / 2),
-          inputNet.get('x2'),
+          inputNet.get('x1'),
+          Math.round((parent.line * this.config.cell_height) + Canvas.app_template.canvas.margin_top + item_height / 2),
+          inputNet.get('x1'),
           inputNet.get('y2') - verticalNetStyle.strokeWidth
         ], verticalNetStyle);
 

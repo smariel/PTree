@@ -369,7 +369,6 @@ class Item {
     let template = {
       selectable    : false,
       fill          : this.characs.color,
-      text_margin_x : 0
     };
 
     // rect
@@ -384,7 +383,6 @@ class Item {
     // parallelogram
     else if (2 == this.characs.shape) {
       template.skewX = -20;
-      template.text_margin_x = 10;
     }
     // hexagon
     else if (3 == this.characs.shape) {
