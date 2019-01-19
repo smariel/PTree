@@ -83,9 +83,9 @@ class Canvas {
     let parent        = item.getParent();
 
     // compute the main dimensions
-    let item_width    = Canvas.app_template.item.width_coef   * this.config.cell_width;
-    let item_height   = Canvas.app_template.item.height_coef  * this.config.cell_height;
-    let nodeNet_left  = Canvas.app_template.nodeNet.left_coef * this.config.cell_width;
+    let item_width    = Math.round(Canvas.app_template.item.width_coef   * this.config.cell_width);
+    let item_height   = Math.round(Canvas.app_template.item.height_coef  * this.config.cell_height);
+    let nodeNet_left  = Math.round(Canvas.app_template.nodeNet.left_coef * this.config.cell_width);
 
 
     // create a rectangle with the correct template
@@ -180,7 +180,7 @@ class Canvas {
         itemText_ipout.set({
           'originX' : 'left',
           'originY' : 'top',
-          'top'     : Math.round(itemGroup.top  + itemGroup.height / 2 + Canvas.app_template.text.margin_y),
+          'top'     : Math.round(itemGroup.top  + itemGroup.height / 2 + Canvas.app_template.text.margin_y - 2),
           'left'    : Math.round(itemGroup.left + itemGroup.width      + Canvas.app_template.text.margin_x),
           'fontSize': this.config.text_size
         });
@@ -800,7 +800,7 @@ Canvas.app_template = {
   },
   text: {
     margin_x : 10,
-    margin_y : 6,
+    margin_y : 5,
   }
 };
 
@@ -828,7 +828,7 @@ Canvas.fabric_template = {
   },
   text: {
     fontFamily : 'Arial',
-    selectable : false
+    selectable : false,
   },
   selected: {
     strokeWidth : 5,
