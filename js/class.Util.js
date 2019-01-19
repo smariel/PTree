@@ -196,6 +196,12 @@ class Util {
   }
 
 
+  // generate a random number
+  static randomHex(depth) {
+    return Math.floor(Math.random()*Math.pow(2,depth)).toString(16);
+  }
+
+
   // -----------------------------------------------------------------------------
   // Download data
   // -----------------------------------------------------------------------------
