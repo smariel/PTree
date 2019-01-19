@@ -7,5 +7,5 @@
 # ------------------------------------------------------------------------------
 
 cd $(dirname $0)
-#sass --watch ./:../css --sourcemap=none --style compressed
-node-sass --watch ./ --output ../css --output-style compressed
+sass --watch ./:../css --style compressed --no-source-map
+#node-sass --watch ./ --output ../css --output-style compressed

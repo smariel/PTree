@@ -115,9 +115,10 @@
    align-items:      center;
 }
 
-.download-info > * {
-   margin: 0 20px;
+.dl-item {
+   margin:      0 20px;
    white-space: nowrap;
+   display:     none;
 
    &:nth-child(1) {
       text-align: right;
