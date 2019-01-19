@@ -1,6 +1,6 @@
 {
   "name": "PTree",
-  "version": "1.6.2",
+  "version": "1.7.0",
   "description": "Design power trees and estimate consumptions",
   "author": {
     "name": "Sylvain Mariel",
@@ -36,21 +36,21 @@
   },
   "homepage": "https://smariel.github.io/PTree",
   "dependencies": {
-    "bootstrap": "<4.0.0",
+    "bootstrap": "^3.4.0",
     "chart.js": "^2.7.3",
-    "fabric": "^2.4.3",
+    "fabric": "^2.6.0",
     "font-awesome": "<5.0.0",
     "jquery": "^3.3.1",
-    "marked": "^0.5.1",
+    "marked": "^0.6.0",
     "mousetrap": "^1.6.2",
     "xlsx": "^0.14.1"
   },
   "devDependencies": {
-    "ava": "^0.25.0",
+    "ava": "^1.1.0",
     "devtron": "^1.4.0",
-    "electron": "^3.0.10",
-    "electron-builder": "^20.36.2",
-    "eslint": "^5.9.0",
+    "electron": "^4.0.1",
+    "electron-builder": "^20.38.5",
+    "eslint": "^5.12.1",
     "eslint-plugin-ava": "^5.1.1",
     "spectron": "^5.0.0"
   }
