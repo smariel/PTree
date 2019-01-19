@@ -10,7 +10,6 @@ window.eval = global.eval = function () {
 // Framworks and libraries
 window.$ = window.jQuery = require('jquery');
 require('bootstrap');
-require('chart.js');
 const Source        = require('../js/class.Item.Source.js');
 const Load          = require('../js/class.Item.Load.js');
 const ItemEditor    = require('../js/class.ItemEditor.js');
