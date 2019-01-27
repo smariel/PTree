@@ -100,7 +100,10 @@ class Tree {
 
   // Create an item : root, source or load, whithout any connection with the canvas
   addItem(parent, type) {
-    let newItem = new Item(this.item_index, parent, type, this);
+    let newItem;
+    if      ('source' == type) newItem = this.addSource(parent);
+    else if ('load'   == type) newItem = this.addLoad(parent);
+    else                       return;
     this.setItem(this.item_index++, newItem);
     return newItem;
   }
