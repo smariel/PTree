@@ -281,19 +281,30 @@ class ItemEditor {
 
     // update the item every time an input change
     $('.form-control').change((event) => {
+      // save a ref to the jquery elt
+      let $elt = $(event.currentTarget);
+
+      // if the input is numeric
+      if($elt.hasClass('input_num')) {
+        // if the value of the input is not a number
+        if('' === $elt.val() || isNaN($elt.val())) {
+          $elt.val('0');
+        }
+      }
+
       // update the item with the value of $(event.currentTarget)
-      this.updateItemFromHTML($(event.currentTarget));
+      this.updateItemFromHTML($elt);
 
       // Modify the available inputs when the user change the regtype
-      if('source_regtype' === $(event.currentTarget).prop('id')){
+      if('source_regtype' === $elt.prop('id')){
         this.updateHTML_regType();
       }
       // Modify the available inputs when the user change the loadtype
-      else if('load_type' === $(event.currentTarget).prop('id')){
+      else if('load_type' === $elt.prop('id')){
         this.updateHTML_loadType();
       }
       // update vmin/vtyp/vmax if any adj property has changed
-      else if($(event.currentTarget).hasClass('source_adj')){
+      else if($elt.hasClass('source_adj')){
         this.updateHTML_regVoltage();
       }
     });
