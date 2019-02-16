@@ -960,6 +960,7 @@ class PTree {
       this.updateClearButtons();
       this.saveHistory();
       this.canvas.selectItem(newItem);
+      this.updateUpDownButtons();
     });
 
 
@@ -990,6 +991,7 @@ class PTree {
       this.canvas.refresh();
       this.saveHistory();
       if(selectedItem.isVisible()) this.canvas.selectItem(newItem);
+      this.updateUpDownButtons();
     });
 
 
@@ -1001,6 +1003,7 @@ class PTree {
       this.canvas.refresh();
       this.saveHistory();
       if(selectedItem.isVisible()) this.canvas.selectItem(newItem);
+      this.updateUpDownButtons();
     });
 
 
