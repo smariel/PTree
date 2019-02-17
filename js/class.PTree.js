@@ -22,6 +22,7 @@ class PTree {
     this.readOnly     = false;
     this.unsaved      = false;
     this.history      = {list: [], index: 0};
+    this.ctxMenu      = null;
 
     this.setSheet(null);
     this.listenCanvas();
@@ -53,7 +54,7 @@ class PTree {
     this.history      = {list: [], index: 0};
 
     // update the app environement
-    this.canvas.unselectItem(true);
+    this.unselectItem(true);
     this.clearHistory();
     this.canvas.refresh();
     this.setUnsaved();
@@ -269,7 +270,7 @@ class PTree {
   // load data from the history at the given index (to undo/redo)
   loadHistory(index) {
     // unselect any item in the canvas
-    this.canvas.unselectItem();
+    this.unselectItem();
     // if stats are open, unselect the item
     this.updateStats(null);
     // restore the tree
@@ -290,7 +291,7 @@ class PTree {
       // load the previous tree in the history
       --this.history.index;
       this.loadHistory(this.history.index);
-      this.canvas.unselectItem(true);
+      this.unselectItem(true);
     }
   }
 
@@ -302,8 +303,204 @@ class PTree {
       // load the next tree in the history
       ++this.history.index;
       this.loadHistory(this.history.index);
-      this.canvas.unselectItem(true);
+      this.unselectItem(true);
     }
+  }
+
+
+  // copy the given item
+  copyItem(item) {
+    this.canvas.copiedItem = item;
+  }
+
+
+  // paste an item into a parent (may be null to copy a source on root)
+  pasteItem(parent, itemToCopy) {
+    // if there is something to copy
+    if(null !== itemToCopy) {
+      // if the future parent is a source
+      if(null !== parent && parent.isSource()) {
+        this.tree.copyItem(parent, itemToCopy);
+      }
+      // else if the parent is null or root, and the item is a source
+      else if((null === parent || parent.isRoot()) && itemToCopy.isSource()) {
+        // copy to the root
+        this.tree.copyItem(this.tree.getRoot(), itemToCopy);
+      }
+      // else, do nothing
+      else {
+        return false;
+      }
+
+      this.canvas.refresh();
+      this.updateClearButtons();
+      this.saveHistory();
+      this.updateStats(null);
+    }
+  }
+
+
+  // create a new source
+  addSource(parent) {
+    let newItem;
+    if(undefined === parent || null === parent || parent.isRoot()) {
+      // add a perfect source to the root
+      newItem = this.tree.addSourceToRoot();
+      newItem.characs.regtype = '7';
+    }
+    else {
+      // add a DC/DC to the parent
+      newItem = this.tree.addSource(parent);
+      newItem.characs.regtype = '0';
+    }
+
+    newItem.characs.color = this.canvas.config.color_source;
+    this.canvas.refresh();
+    this.updateClearButtons();
+    this.saveHistory();
+    this.selectItem(newItem);
+  }
+
+
+  // create a new load
+  addLoad(parent) {
+    if(undefined === parent || null === parent || parent.isRoot()) {
+      return;
+    }
+
+    let newItem = this.tree.addLoad(parent);
+    newItem.characs.color = this.canvas.config.color_load;
+    this.canvas.refresh();
+    this.updateClearButtons();
+    this.saveHistory();
+    this.selectItem(newItem);
+  }
+
+
+  // select the given item
+  selectItem(item) {
+    // deselect the last item
+    this.unselectItem(false);
+
+    // select the new item in the canvas
+    this.canvas.selectItem(item);
+
+    // update menus and stats
+    this.updateUpDownButtons(item);
+    this.updateShowHideButtons(item);
+    this.updateStats(item.id);
+
+    // show/hide sub-menus depending of the item type
+    let ctrl = $('#item_control');
+    ctrl.removeClass('item_control_source item_control_load');
+    ctrl.addClass('item_control_' + item.type);
+    ctrl.css({'box-shadow': 'inset 0 -3px 0 0 ' + item.characs.color});
+
+    // if the item is a load
+    if (item.isLoad() && item.isInPartlist()) {
+      this.showParts(item);
+    }
+    else {
+      this.hideParts();
+    }
+
+    // fadeIn the menu
+    $('#item_control').fadeIn(200);
+  }
+
+
+  // unselect the given item
+  unselectItem(fade) {
+    this.canvas.unselectItem();
+    if (fade) {
+      $('#item_control').fadeOut(200);
+      $('.item_info').fadeOut(200);
+      this.hideParts();
+    }
+  }
+
+
+  // edit an item
+  async editItem(item) {
+    await item.edit(this.partList, this.usersheet.sheet);
+    this.canvas.refresh();
+    this.saveHistory();
+  }
+
+
+  // toggle item visibility
+  toggleItem(item) {
+    item.toggle();
+    this.updateShowHideButtons(item);
+    this.canvas.refresh();
+    this.saveHistory();
+  }
+
+
+  // remove the given item from the tree
+  removeItem(item) {
+    if(null !== item && (item.isSource() || item.isLoad())) {
+      item.remove();
+      this.unselectItem(true);
+      this.canvas.refresh();
+      this.updateClearButtons();
+      this.saveHistory();
+      this.updateStats(null);
+    }
+  }
+
+
+  // move up the given item
+  moveUpItem(item) {
+    item.moveUp();
+    this.canvas.refresh();
+    this.updateUpDownButtons();
+    this.saveHistory();
+  }
+
+
+  // move down the given item
+  moveDownItem(item) {
+    item.moveDown();
+    this.canvas.refresh();
+    this.updateUpDownButtons();
+    this.saveHistory();
+  }
+
+
+  // Display a tab containing all the parts consuming on the given load
+  showParts(load) {
+    $('#part_table tbody').empty();
+
+    let noparts = true;
+    this.partList.forEachPart((part) => {
+      if (part.isConsuming(load)) {
+        noparts = false;
+        $('#part_table tbody').append(
+          `<tr>
+          <td class="part_data part_name">${part.characs.name}</td>
+          <td class="part_data part_ityp part_i">${part.getConsumption(load, 'typ')}</td>
+          <td class="part_data part_imax part_i">${part.getConsumption(load, 'max')}</td>
+          </tr>`
+        );
+      }
+    });
+
+    if (noparts) {
+      $('#part_table tbody').append(
+        `<tr>
+        <td colspan="3" class="part_data part_nopart">No part found</td>
+        </tr>`
+      );
+    }
+
+    $('#part_table').fadeIn(200);
+  }
+
+
+  // Hide the tab containing the parts
+  hideParts() {
+    $('#part_table').fadeOut(200);
   }
 
 
@@ -562,8 +759,8 @@ class PTree {
 
 
   // Show/Hide up & down button depending on the position of the selected item
-  updateUpDownButtons() {
-    let item = this.canvas.getSelectedItem();
+  updateUpDownButtons(item) {
+    if(undefined === item) item = this.canvas.getSelectedItem();
 
     if (null === item || 0 === item.child_index) {
       $('#bt_up').addClass('disabled');
@@ -578,6 +775,94 @@ class PTree {
     else {
       $('#bt_down').removeClass('disabled');
     }
+  }
+
+
+  // Show or Hide the "Show/Hide" button depending of the selected item
+  updateShowHideButtons(item) {
+    if(undefined === item) item = this.canvas.getSelectedItem();
+
+    // only display the button if a source is selected
+    if(item.isSource()) {
+      $('#bt_hide').show();
+      $('#bt_hide > a').html((item.isVisible()) ? '<span class="fa fa-lg fa-eye-slash"></span> Hide' : '<span class="fa fa-lg fa-eye"></span> Show');
+      if(item.childrenID.length > 0) {
+        $('#bt_hide').removeClass('disabled');
+      }
+      else {
+        $('#bt_hide').addClass('disabled');
+      }
+    }
+    else {
+      $('#bt_hide').hide();
+    }
+  }
+
+  getCtxMenuTemplate(item) {
+    // create the default menu template
+    let ctxMenuTemplate = [
+      {label: 'Select',        click: () => {this.selectItem(this.canvas.rightClickedItem);}},
+      {label: 'Edit',          click: () => {this.editItem  (this.canvas.rightClickedItem);}},
+      {label: 'Show/Hide',     click: () => {this.toggleItem(this.canvas.rightClickedItem);}},
+      {type:  'separator'},
+      {label: 'Move up',       click: () => {this.moveUpItem  (this.canvas.rightClickedItem);}},
+      {label: 'Move Down',     click: () => {this.moveDownItem(this.canvas.rightClickedItem);}},
+      {type:  'separator'},
+      {label: 'Copy',          click: () => {this.copyItem  (this.canvas.rightClickedItem);}},
+      {label: 'Paste',         click: () => {this.pasteItem (this.canvas.rightClickedItem, this.canvas.copiedItem);}},
+      {label: 'Remove',        click: () => {this.removeItem(this.canvas.rightClickedItem);}},
+      {type:  'separator'},
+      {label: 'Append Source', click: () => {this.addSource(this.canvas.rightClickedItem);}},
+      {label: 'Append Load',   click: () => {this.addLoad(this.canvas.rightClickedItem);}},
+    ];
+
+    // ref to the menu items to be modified, for code readability
+    let menu_select     = ctxMenuTemplate[0];
+    let menu_edit       = ctxMenuTemplate[1];
+    let menu_toggle     = ctxMenuTemplate[2];
+    let menu_separator1 = ctxMenuTemplate[3];
+    let menu_moveup     = ctxMenuTemplate[4];
+    let menu_movedown   = ctxMenuTemplate[5];
+    let menu_separator2 = ctxMenuTemplate[6];
+    let menu_copy       = ctxMenuTemplate[7];
+    let menu_paste      = ctxMenuTemplate[8];
+    let menu_remove     = ctxMenuTemplate[9];
+    let menu_separator3 = ctxMenuTemplate[10];
+    let menu_addSource  = ctxMenuTemplate[11];
+    let menu_addLoad    = ctxMenuTemplate[12];
+
+    // modify menus according to the given item
+    if(item.isSource()) {
+      menu_toggle.label       = item.isVisible() ? 'Hide' : 'Show';
+      menu_toggle.enabled     = (item.childrenID.length > 0);
+      menu_moveup.enabled     = (item.child_index > 0);
+      menu_movedown.enabled   = (item.child_index < (item.getParent().childrenID.length - 1));
+    }
+    else if(item.isLoad()) {
+      menu_toggle.visible     = false;
+      menu_moveup.enabled     = (item.child_index > 0);
+      menu_movedown.enabled   = (item.child_index < (item.getParent().childrenID.length - 1));
+      menu_paste.visible      = false;
+      menu_separator3.visible = false;
+      menu_addSource.visible  = false;
+      menu_addLoad.visible    = false;
+    }
+    else if(item.isRoot()) {
+      menu_select.visible     = false;
+      menu_edit.visible       = false;
+      menu_toggle.visible     = false;
+      menu_separator1.visible = false;
+      menu_moveup.visible     = false;
+      menu_movedown.visible   = false;
+      menu_separator2.visible = false;
+      menu_copy.visible       = false;
+      menu_paste.enabled      = (null !== this.canvas.copiedItem && this.canvas.copiedItem.isSource());
+      menu_remove.visible     = false;
+      menu_addSource.label    = 'Add Source';
+      menu_addLoad.visible    = false;
+    }
+
+    return ctxMenuTemplate;
   }
 
 
@@ -724,22 +1009,45 @@ class PTree {
     // click (mouse button pressed) on an object in the canvas
     this.canvas.fabricCanvas.on('mouse:down', (evt) => {
       let fabric_obj = evt.target;
-      // if the fabric obj is an 'item', select it
-      if (null !== fabric_obj && undefined !== fabric_obj && undefined !== fabric_obj.item) {
-        // select the item
-        this.canvas.selectItem(fabric_obj.item);
-        this.updateUpDownButtons();
-        this.canvas.fabricCanvas.dragedItem = fabric_obj.item;
-        this.canvas.fabricCanvas.defaultCursor = 'move';
-        // show stats if they are already open
-        this.updateStats(fabric_obj.item.id);
-      }
-      else {
-        this.canvas.unselectItem(true);
-        this.updateStats(null);
-      }
+      // if left click
+      if(1 === evt.button) {
+        // if the fabric obj is an 'item', select it
+        if (null !== fabric_obj && undefined !== fabric_obj && undefined !== fabric_obj.item) {
+          // select the item
+          this.selectItem(fabric_obj.item);
+          // start drag
+          this.canvas.fabricCanvas.dragedItem = fabric_obj.item;
+          this.canvas.fabricCanvas.defaultCursor = 'move';
+        }
+        else {
+          this.unselectItem(true);
+          this.updateStats(null);
+        }
 
-      $('#bottom_menu').slideUp(300, 'swing');
+        $('#bottom_menu').slideUp(300, 'swing');
+      }
+      // else if right click
+      else if (3 === evt.button) {
+        // if the fabric obj is an 'item'
+        if (null !== fabric_obj && undefined !== fabric_obj && undefined !== fabric_obj.item) {
+          // save a ref to the targeted item
+          this.canvas.rightClickedItem = fabric_obj.item;
+        }
+        // if the fabric obj is NOT an item
+        else {
+          // save a ref to the root
+          this.canvas.rightClickedItem = this.tree.getRoot();
+        }
+
+        // get a ctxMenu template that fit to the clicked item
+        let ctxMenuTemplate = this.getCtxMenuTemplate(this.canvas.rightClickedItem);
+
+        // create a menu and show it
+        const { remote } = require('electron');
+        const { Menu }   = remote;
+        this.ctxMenu = Menu.buildFromTemplate(ctxMenuTemplate);
+        this.ctxMenu.popup();
+      }
     });
 
     // mouse button released (click or drop) on an object in the canvas
@@ -831,10 +1139,9 @@ class PTree {
 
     // Edit item on double click
     this.canvas.canvas$.parent().dblclick(async () => {
-      if(null !== this.canvas.getSelectedItem()) {
-        await this.canvas.getSelectedItem().edit(this.partList, this.usersheet.sheet);
-        this.canvas.refresh();
-        this.saveHistory();
+      let item = this.canvas.getSelectedItem();
+      if(null !== item) {
+        this.editItem(item);
       }
     });
 
@@ -941,7 +1248,7 @@ class PTree {
     // create a new tree within the same project
     $('#bt_clear').click((evt) => {
       if (!$(evt.currentTarget).hasClass('disabled')) {
-        this.canvas.unselectItem(true);
+        this.unselectItem(true);
         this.tree.clear();
         this.canvas.refresh();
         this.updateClearButtons();
@@ -953,85 +1260,49 @@ class PTree {
 
     // add a perfet source to the root when the button is clicked
     $('#bt_addrootsource').click(() => {
-      let newItem = this.tree.addSourceToRoot();
-      newItem.characs.color = this.canvas.config.color_source;
-      newItem.characs.regtype = 7;
-      this.canvas.refresh();
-      this.updateClearButtons();
-      this.saveHistory();
-      this.canvas.selectItem(newItem);
-      this.updateUpDownButtons();
+      this.addSource(null);
     });
 
 
     // remove the item when clicked
     $('#bt_remove').click(() => {
-      this.canvas.getSelectedItem().remove();
-      this.canvas.unselectItem(true);
-      this.canvas.refresh();
-      this.updateClearButtons();
-      this.saveHistory();
-      this.updateStats(null);
+      this.removeItem(this.canvas.getSelectedItem());
     });
 
 
     // show the correct modal for edition
-    $('#bt_edit').click(async () => {
-      await this.canvas.getSelectedItem().edit(this.partList, this.usersheet.sheet);
-      this.canvas.refresh();
-      this.saveHistory();
+    $('#bt_edit').click(() => {
+      this.editItem(this.canvas.getSelectedItem());
     });
 
 
     // Add a child source to the selected item
     $('#bt_addsource').click(() => {
-      let selectedItem = this.canvas.getSelectedItem();
-      let newItem = this.tree.addSource(selectedItem);
-      newItem.characs.color = this.canvas.config.color_source;
-      this.canvas.refresh();
-      this.saveHistory();
-      if(selectedItem.isVisible()) this.canvas.selectItem(newItem);
-      this.updateUpDownButtons();
+      this.addSource(this.canvas.getSelectedItem());
     });
 
 
     // Add a child load to the selected item
     $('#bt_addload').click(() => {
-      let selectedItem = this.canvas.getSelectedItem();
-      let newItem = this.tree.addLoad(selectedItem);
-      newItem.characs.color = this.canvas.config.color_load;
-      this.canvas.refresh();
-      this.saveHistory();
-      if(selectedItem.isVisible()) this.canvas.selectItem(newItem);
-      this.updateUpDownButtons();
+      this.addLoad(this.canvas.getSelectedItem());
     });
 
 
     // invert the item position with the previous one
     $('#bt_up').click(() => {
-      let item = this.canvas.getSelectedItem();
-      item.moveUp();
-      this.canvas.refresh();
-      this.updateUpDownButtons();
-      this.saveHistory();
+      this.moveUpItem(this.canvas.getSelectedItem());
     });
 
 
     // invert the item position with the next one
     $('#bt_down').click(() => {
-      let item = this.canvas.getSelectedItem();
-      item.moveDown();
-      this.canvas.refresh();
-      this.updateUpDownButtons();
-      this.saveHistory();
+      this.moveDownItem(this.canvas.getSelectedItem());
     });
 
 
     // hide the selected item in the canvas
     $('#bt_hide').click(() => {
-      this.canvas.getSelectedItem().toggle();
-      this.canvas.refresh();
-      this.saveHistory();
+      this.toggleItem(this.canvas.getSelectedItem());
     });
 
 
@@ -1231,50 +1502,22 @@ class PTree {
 
     // Cut / Delete
     Mousetrap.bind(['command+x', 'ctrl+x', 'backspace', 'del'], () => {
-      if(null !== this.canvas.getSelectedItem()) {
-        this.canvas.getSelectedItem().remove();
-        this.canvas.unselectItem(true);
-        this.canvas.refresh();
-        this.updateClearButtons();
-        this.saveHistory();
-        this.updateStats(null);
-      }
+      this.removeItem(this.canvas.getSelectedItem());
       return false;
     });
 
     // Copy
     Mousetrap.bind(['command+c', 'ctrl+c'], () => {
-      if(null !== this.canvas.getSelectedItem()) {
-        this.canvas.copiedItem = this.canvas.getSelectedItem();
-      }
+      let item = this.canvas.getSelectedItem();
+      if(null !== item) this.copyItem(item);
       return false;
     });
 
     // Paste
     Mousetrap.bind(['command+v', 'ctrl+v'], () => {
-      let selectedItem = this.canvas.getSelectedItem();
-      let copiedItem = this.canvas.getCopiedItem();
-
-      // if there is something to copy
-      if(null !== copiedItem) {
-        // if copy of any item into a source
-        if(null !== selectedItem && selectedItem.isSource()) {
-          this.tree.copyItem(selectedItem, copiedItem);
-        }
-        // else if copy of a source in the root
-        else if(null === selectedItem && copiedItem.isSource()) {
-          this.tree.copyItem(this.tree.getRoot(), copiedItem);
-        }
-        else {
-          return false;
-        }
-      }
-
-      this.canvas.refresh();
-      this.updateClearButtons();
-      this.saveHistory();
-      this.updateStats(null);
-
+      let parent     = this.canvas.getSelectedItem();
+      let itemToCopy = this.canvas.getCopiedItem();
+      this.pasteItem(parent, itemToCopy);
       return false;
     });
   }
@@ -1287,9 +1530,7 @@ class PTree {
 
     // IPC async msg received from main.js: select the given item
     ipcRenderer.on('PTree-selectItemCmd', (event, itemID) => {
-      this.canvas.selectItem(this.tree.getItem(itemID));
-      this.updateStats(itemID);
-      this.updateUpDownButtons();
+      this.selectItem(this.tree.getItem(itemID));
     });
 
     // IPC async msg received from main.js: open the given file

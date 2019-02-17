@@ -451,7 +451,6 @@ class Item {
 
   // Import an item data
   import(properties) {
-    //console.log('item');
     // for each property in this item, copy from the string
     for (let i in this) {
       // if the string and this item has the hasOwnProperty
