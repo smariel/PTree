@@ -595,6 +595,12 @@ class Canvas {
     if(item.isSource()) {
       $('#bt_hide').show();
       $('#bt_hide > a').html((item.isVisible()) ? '<span class="fa fa-lg fa-eye-slash"></span> Hide' : '<span class="fa fa-lg fa-eye"></span> Show');
+      if(item.childrenID.length > 0) {
+        $('#bt_hide').removeClass('disabled');
+      }
+      else {
+        $('#bt_hide').addClass('disabled');
+      }
     }
     else {
       $('#bt_hide').hide();
