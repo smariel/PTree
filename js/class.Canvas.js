@@ -11,14 +11,15 @@ const Util = require('../js/class.Util.js');
 class Canvas {
 
   constructor(html_id, tree, partList) {
-    this.tree         = tree;              // a reference to the tree
-    this.partList     = partList;          // a reference to the partlist
-    this.html_id      = html_id;           // the html ID of the canvas
-    this.canvas$      = $('#' + html_id);  // reference to the jquery object
-    this.selectedItem = null;              // by default, no selected item
-    this.copiedItem   = null;              // by default, no copied item
-    this.size         = {line:0,col:0};    // grid size, default is empty: 0,0
-    this.config       = {};                // config will be set below
+    this.tree             = tree;              // a reference to the tree
+    this.partList         = partList;          // a reference to the partlist
+    this.html_id          = html_id;           // the html ID of the canvas
+    this.canvas$          = $('#' + html_id);  // reference to the jquery object
+    this.selectedItem     = null;              // by default, no selected item
+    this.copiedItem       = null;              // by default, no copied item
+    this.rightClickedItem = null,              // by default, no clicked item
+    this.size             = {line:0,col:0};    // grid size, default is empty: 0,0
+    this.config           = {};                // config will be set below
 
     // canvas main characs that will be updated by the user
     this.setDefaultConfig();
@@ -74,33 +75,56 @@ class Canvas {
   }
 
 
+  // add the given item and all its children to the canvas
+  // passing the root will add everything
+  // passing a load will only add the load
+  addItems(item) {
+    // add the item to the canvas
+    if(!item.isRoot()) this.addItem(item);
+
+    if(item.isVisible()) {
+      // recursively add all the item children to the canvas
+      for (let childID of item.childrenID) {
+        let child = item.tree.getItem(childID);
+        this.addItems(child);
+      }
+    }
+  }
+
+
   // add any item to the canvas
   addItem(item) {
     // Needed when exporting to jpeg (no alpha)
     this.fabricCanvas.setBackgroundColor('#FFFFFF');
 
-    // save a ref to the parent
-    let parent        = item.getParent();
+    // prepare usefull values
+    let itemTemplate = item.getFabricTemplate();
+    let item_color   = (this.config.loss_color) ? item.lossColor : item.characs.color;
+    if (this.config.align_load && item.isLoad()) item.col = this.size.col;
 
     // compute the main dimensions
-    let item_width    = Math.round(Canvas.app_template.item.width_coef   * this.config.cell_width);
-    let item_height   = Math.round(Canvas.app_template.item.height_coef  * this.config.cell_height);
-    let nodeNet_left  = Math.round(Canvas.app_template.nodeNet.left_coef * this.config.cell_width);
+    let itemGeometry = {};
+    itemGeometry.height     = Math.round(Canvas.app_template.item.height_coef  * this.config.cell_height);
+    itemGeometry.skew_error = (undefined === itemTemplate.skewX) ? 0 : Math.round(itemGeometry.height/Math.tan(-itemTemplate.skewX));
+    itemGeometry.width      = Math.round(Canvas.app_template.item.width_coef   * this.config.cell_width) - itemGeometry.skew_error;
+    itemGeometry.x1         = (item.col  * this.config.cell_width ) + Canvas.app_template.canvas.margin_left;
+    itemGeometry.y1         = (item.line * this.config.cell_height) + Canvas.app_template.canvas.margin_top;
+    itemGeometry.x2         = itemGeometry.x1 + itemGeometry.width;
+    itemGeometry.y2         = itemGeometry.y1 + itemGeometry.height;
+    itemGeometry.xvnet      = itemGeometry.x1 + Math.round(this.config.cell_width * Canvas.app_template.verticalNet.left_coef);
+    itemGeometry.xhalf      = itemGeometry.x1 + Math.round(itemGeometry.width /2 + itemGeometry.skew_error/2);
+    itemGeometry.yhalf      = itemGeometry.y1 + Math.round(itemGeometry.height/2);
 
 
     // create a rectangle with the correct template
     // and add it to the canvas
-    let itemTemplate = item.getFabricTemplate();
-    let skew_error   = (undefined === itemTemplate.skewX) ? 0 : Math.round(item_height/Math.tan(-itemTemplate.skewX));
-    let itemRect     = new fabric.Rect(itemTemplate);
-    let item_col     = (this.config.align_load && item.isLoad()) ? this.size.col : item.col;
-    let item_color   = (this.config.loss_color) ? item.lossColor : item.characs.color;
+    let itemRect = new fabric.Rect(itemTemplate);
     itemRect.set({
-      left  : (item_col  * this.config.cell_width ) + Canvas.app_template.canvas.margin_left,
-      top   : (item.line * this.config.cell_height) + Canvas.app_template.canvas.margin_top ,
-      width : item_width - skew_error,
-      height: item_height,
-      fill  : item_color
+      left  : itemGeometry.x1,
+      top   : itemGeometry.y1,
+      width : itemGeometry.width,
+      height: itemGeometry.height,
+      fill  : item_color,
     });
 
     // Print the name of sources and loads
@@ -108,38 +132,48 @@ class Canvas {
     if (this.config.show_name) {
       text += item.characs.name;
     }
-    if ('source' == item.type && this.config.show_ref && undefined !== item.characs.ref && '' !== item.characs.ref) {
+    if (this.config.show_ref && item.isSource() && '' !== item.characs.ref && undefined !== item.characs.ref) {
       if ('' !== text) text += '\n';
       text += item.characs.ref;
     }
-    if (this.config.show_custom1 && undefined !== item.characs.custom1 && '' !== item.characs.custom1) {
+    if (this.config.show_custom1 && '' !== item.characs.custom1 && undefined !== item.characs.custom1) {
       if ('' !== text) text += '\n';
       text += item.characs.custom1;
     }
 
     let itemText = new fabric.Text(text, Canvas.fabric_template.text);
     itemText.set({
-      'originX'   : 'center',
-      'originY'   : 'center',
-      'textAlign' : 'center',
-      'top'       : Math.round(itemRect.top  + itemRect.height / 2),
-      'left'      : Math.round(itemRect.left + itemRect.width  / 2 + skew_error/2),
-      'fill'      : Util.getOpositeBorW(item_color),
-      'fontSize'  : this.config.text_size
+      originX   : 'center',
+      originY   : 'center',
+      textAlign : 'center',
+      top       : itemGeometry.yhalf,
+      left      : itemGeometry.xhalf,
+      fill      : Util.getOpositeBorW(item_color),
+      fontSize  : this.config.text_size
     });
 
     // group the rect and the name and add it to canvas
-    let itemGroup = new fabric.Group([itemRect, itemText], Canvas.fabric_template.group);
-    itemGroup.item = item;
-    itemGroup.rect = itemRect;
-    itemGroup.name = itemText;
+    let itemGroup      = new fabric.Group([itemRect, itemText], Canvas.fabric_template.group);
+    itemGroup.item     = item;
+    itemGroup.rect     = itemRect;
+    itemGroup.name     = itemText;
+    itemGroup.geometry = itemGeometry;
     this.fabricCanvas.fabric_obj[item.id] = itemGroup;
     this.fabricCanvas.add(itemGroup);
 
-
-    // --------------------------------------------------------------------------
     // Add some text around the item
+    this.addTexts(item, itemGeometry);
 
+    // Process the nets around the source
+    this.addNets(item, itemGeometry);
+
+    // Print the badges
+    this.addBadges(item, itemGeometry);
+  }
+
+
+  // add the texts around an item to the canvas
+  addTexts(item, itemGeometry) {
     // Process text around sources
     if ('source' == item.type) {
       if(this.config.show_vtyp || this.config.show_vmax) {
@@ -150,11 +184,11 @@ class Canvas {
         if(this.config.show_vmax)                          vtext += item.getVoltage('max', 'out', 3, true);
         let itemText_vout = new fabric.Text(vtext, Canvas.fabric_template.text);
         itemText_vout.set({
-          'originX'  : 'left',
-          'originY'  : 'top',
-          'top'      : Math.round(itemGroup.top  + itemGroup.height / 2 - Canvas.app_template.text.margin_y - this.config.text_size),
-          'left'     : Math.round(itemGroup.left + itemGroup.width      + Canvas.app_template.text.margin_x),
-          'fontSize' : this.config.text_size
+          originX  : 'left',
+          originY  : 'top',
+          top      : itemGeometry.yhalf - Canvas.app_template.text.margin_y - this.config.text_size,
+          left     : itemGeometry.x2    + Canvas.app_template.text.margin_x + itemGeometry.skew_error,
+          fontSize : this.config.text_size
         });
         this.fabricCanvas.add(itemText_vout);
 
@@ -179,131 +213,118 @@ class Canvas {
         // Print the prepared text
         let itemText_ipout = new fabric.Text(iptext, Canvas.fabric_template.text);
         itemText_ipout.set({
-          'originX' : 'left',
-          'originY' : 'top',
-          'top'     : Math.round(itemGroup.top  + itemGroup.height / 2 + Canvas.app_template.text.margin_y - 2),
-          'left'    : Math.round(itemGroup.left + itemGroup.width      + Canvas.app_template.text.margin_x),
-          'fontSize': this.config.text_size
+          originX : 'left',
+          originY : 'top',
+          top     : itemGeometry.yhalf + Canvas.app_template.text.margin_y - 2,
+          left    : itemGeometry.x2    + Canvas.app_template.text.margin_x + itemGeometry.skew_error,
+          fontSize: this.config.text_size
         });
         this.fabricCanvas.add(itemText_ipout);
       }
     }
+  }
 
 
-    // --------------------------------------------------------------------------
-    // Process the nets around the source
-
-    // compute errors when the group and the rect are not the same size (ex: text overflow)
-    let width_error  = 0; //(itemRect.get('width' ) - itemGroup.get('width' )) / 2;
-    let height_error = (itemRect.get('height') - itemGroup.get('height')) / 2;
-
-
-    let totalpower = this.tree.getRoot().getOutputPower('typ');
-
+  // add the nets of an item to the canvas
+  addNets(item, itemGeometry) {
     // if the item is a source and has children, process the output nets
     if (item.isSource() && item.childrenID.length > 0) {
-      // init the style of the net
-      let outputNetStyle = Object.assign({},Canvas.fabric_template.net);
+      let oNet = {};
+      let vNet = {};
+      oNet.style = Object.assign({},Canvas.fabric_template.net);
+      vNet.style = Object.assign({},Canvas.fabric_template.net);
 
       // adjust the proportions of the net according to the power ratio
       if(this.config.proportional) {
-        let outputNetRatio = item.getOutputPower('typ')/totalpower;
-        outputNetStyle.stroke      = Util.pickColorHex(Canvas.app_template.proportion.color_max, Canvas.app_template.proportion.color_min, outputNetRatio);
-        outputNetStyle.strokeWidth = Math.round(outputNetRatio * Canvas.app_template.proportion.width_max + Canvas.app_template.proportion.width_min);
+        let totalpower         = this.tree.getRoot().getOutputPower('typ');
+        let oNetRatio          = item.getOutputPower('typ') / totalpower;
+        oNet.style.stroke      = vNet.style.stroke      = Util.pickColorHex(Canvas.app_template.proportion.color_max, Canvas.app_template.proportion.color_min, oNetRatio);
+        oNet.style.strokeWidth = vNet.style.strokeWidth = Math.round(oNetRatio * Canvas.app_template.proportion.width_max + Canvas.app_template.proportion.width_min);
       }
 
-      // if the item is hidden, the output net is dashed
+      // if the item is hidden, the output net is dashed and the vNet is not shown
       if(!item.isVisible()) {
-        outputNetStyle.strokeDashArray = [6, 6];
+        oNet.style.strokeDashArray = [6, 6];
       }
 
-      // create the fabric item
-      let outputNet = new fabric.Line([
-        Math.round(itemGroup.get('left') + item_width   - width_error - skew_error),
-        Math.round(itemGroup.get('top' ) + item_height / 2 - outputNetStyle.strokeWidth / 2 - height_error),
-        Math.round(itemGroup.get('left') + nodeNet_left - width_error),
-        Math.round(itemGroup.get('top' ) + item_height / 2 - outputNetStyle.strokeWidth / 2 - height_error)
-      ], outputNetStyle);
+      // prepare the output net position and style
+      // outside of the condition to re-use data for the input net (may be optimized...)
+      oNet.x1 = itemGeometry.x2;
+      oNet.y1 = itemGeometry.yhalf - Math.round(oNet.style.strokeWidth/2);
+      oNet.x2 = itemGeometry.xvnet - oNet.style.strokeWidth;
+      oNet.y2 = oNet.y1;
 
-      // add the net to the canvas
-      this.fabricCanvas.add(outputNet);
-      outputNet.sendToBack();
+      // create the fabric line and add it to the canvas
+      oNet.fabricLine = new fabric.Line([oNet.x1, oNet.y1, oNet.x2, oNet.y2], oNet.style);
+      this.fabricCanvas.add(oNet.fabricLine);
+      oNet.fabricLine.sendToBack();
+
+      if(item.childrenID.length > 1) {
+        // prepare the vertical net position and style
+        let lastChild = this.tree.getItem(item.childrenID[item.childrenID.length-1]);
+        vNet.x1 = itemGeometry.xvnet - vNet.style.strokeWidth;
+        vNet.y1 = itemGeometry.yhalf;
+        vNet.x2 = vNet.x1;
+        vNet.y2 = vNet.y1 + Math.round((lastChild.line - item.line) * this.config.cell_height) - vNet.style.strokeWidth;
+
+        // create the fabric line and add it to the canvas
+        vNet.fabricLine = new fabric.Line([vNet.x1, vNet.y1, vNet.x2, vNet.y2], vNet.style);
+        this.fabricCanvas.add(vNet.fabricLine);
+        vNet.fabricLine.sendToBack();
+      }
     }
 
-    // set the parent net to canvas at the correct coords if it exist
-    if (!item.isRoot() && !item.isChildOfRoot()) {
-      // init the style of the net
-      let inputNetStyle = Object.assign({},Canvas.fabric_template.net);
-      let offset = (this.config.align_load && item.isLoad()) ? (this.size.col - parent.col -1) * this.config.cell_width : 0;
+    // if the item is a load or a source that is not child of root (= a source that has an input)
+    if(item.isLoad() || !item.isChildOfRoot()) {
+      let iNet = {};
+      iNet.style = Object.assign({},Canvas.fabric_template.net);
 
       // adjust the proportions of the net according to the power ratio
       if(this.config.proportional) {
-        let inputNetRatio = item.getInputPower('typ') / totalpower;
-        inputNetStyle.stroke      = Util.pickColorHex(Canvas.app_template.proportion.color_max, Canvas.app_template.proportion.color_min, inputNetRatio);
-        inputNetStyle.strokeWidth = Math.round(inputNetRatio * Canvas.app_template.proportion.width_max + Canvas.app_template.proportion.width_min);
+        let totalpower         = this.tree.getRoot().getOutputPower('typ');
+        let iNetRatio          = item.getInputPower('typ') / totalpower;
+        iNet.style.stroke      = Util.pickColorHex(Canvas.app_template.proportion.color_max, Canvas.app_template.proportion.color_min, iNetRatio);
+        iNet.style.strokeWidth = Math.round(iNetRatio * Canvas.app_template.proportion.width_max + Canvas.app_template.proportion.width_min);
       }
 
-      // create the fabric item
-      let inputNet = new fabric.Line([
-        Math.round(itemGroup.get('left') - (this.config.cell_width - nodeNet_left) - width_error - offset),
-        Math.round(itemGroup.get('top' ) + item_height / 2 - inputNetStyle.strokeWidth / 2 - height_error),
-        Math.round(itemGroup.get('left') - inputNetStyle.strokeWidth - width_error + skew_error),
-        Math.round(itemGroup.get('top' ) + item_height / 2 - inputNetStyle.strokeWidth / 2 - height_error),
-      ], inputNetStyle);
+      // prepare the input net position and style
+      let parent = this.tree.getItem(item.parentID);
+      iNet.x1 = itemGeometry.xvnet - iNet.style.strokeWidth - this.config.cell_width*(item.col - parent.col);
+      iNet.y1 = itemGeometry.yhalf - Math.round(iNet.style.strokeWidth/2);
+      iNet.x2 = itemGeometry.x1 - iNet.style.strokeWidth + itemGeometry.skew_error;
+      iNet.y2 = iNet.y1;
 
-      // add the net to the canvas
-      this.fabricCanvas.add(inputNet);
-      inputNet.sendToBack();
-
-
-      // if the item is the last child of its parent, process the childNodeNet of its inputNet
-      if (item.child_index == (parent.childrenID.length - 1) && parent.childrenID.length > 1) {
-        // init the style of the net
-        let verticalNetStyle = Object.assign({},Canvas.fabric_template.net);
-
-        // adjust the proportions of the net according to the power ratio
-        if(this.config.proportional) {
-          let verticalNetRatio = item.getParent().getOutputPower('typ')/totalpower;
-          verticalNetStyle.stroke      = Util.pickColorHex(Canvas.app_template.proportion.color_max, Canvas.app_template.proportion.color_min, verticalNetRatio);
-          verticalNetStyle.strokeWidth = Math.round(verticalNetRatio * Canvas.app_template.proportion.width_max + Canvas.app_template.proportion.width_min);
-        }
-
-        // set the outputNet_node to canvas at the correct coords
-        let verticalNet = new fabric.Line([
-          inputNet.get('x1'),
-          Math.round((parent.line * this.config.cell_height) + Canvas.app_template.canvas.margin_top + item_height / 2),
-          inputNet.get('x1'),
-          inputNet.get('y2') - verticalNetStyle.strokeWidth
-        ], verticalNetStyle);
-
-        // add the net to the canvas
-        this.fabricCanvas.add(verticalNet);
-      }
+      // create the fabric line and add it to the canvas
+      iNet.fabricLine = new fabric.Line([iNet.x1, iNet.y1, iNet.x2, iNet.y2], iNet.style);
+      this.fabricCanvas.add(iNet.fabricLine);
+      iNet.fabricLine.sendToBack();
     }
+  }
 
 
-    // --------------------------------------------------------------------------
-    // Print the badges
-
+  // add the badges of an item to the canvas
+  addBadges(item, itemGeometry) {
     if(this.config.show_badges) {
       // input badge
       if(!item.isRoot() && !item.isChildOfRoot() && '' !== item.characs.badge_in) {
         // circle
         let badge_in = new fabric.Circle(Canvas.fabric_template.badge);
         badge_in.set({
-          left: Math.round(itemGroup.get('left') - Canvas.fabric_template.badge.radius                   - Canvas.fabric_template.badge.strokeWidth/2),
-          top:  Math.round(itemGroup.get('top' ) - Canvas.fabric_template.badge.radius + item_height / 2 - Canvas.fabric_template.badge.strokeWidth/2),
+          originX : 'center',
+          originY : 'center',
+          left    : itemGeometry.x1,
+          top     : itemGeometry.yhalf,
         });
 
         // text
         let badge_in_text = new fabric.Text(item.characs.badge_in, Canvas.fabric_template.text);
         badge_in_text.set({
-          'originX'   : 'center',
-          'originY'   : 'center',
-          'textAlign' : 'center',
-          'top'       : Math.round(badge_in.get('top')  + Canvas.fabric_template.badge.radius + Canvas.fabric_template.badge.strokeWidth/2),
-          'left'      : Math.round(badge_in.get('left') + Canvas.fabric_template.badge.radius + Canvas.fabric_template.badge.strokeWidth/2),
-          'fontSize'  : 12
+          originX   : 'center',
+          originY   : 'center',
+          textAlign : 'center',
+          left      : itemGeometry.x1,
+          top       : itemGeometry.yhalf,
+          fontSize  : 12
         });
 
         // group the circle and the text and add it to canvas
@@ -316,41 +337,26 @@ class Canvas {
         // circle
         let badge_out = new fabric.Circle(Canvas.fabric_template.badge);
         badge_out.set({
-          left: Math.round(itemGroup.get('left') - Canvas.fabric_template.badge.radius + item_width    - Canvas.fabric_template.badge.strokeWidth/2),
-          top:  Math.round(itemGroup.get('top' ) - Canvas.fabric_template.badge.radius + item_height/2 - Canvas.fabric_template.badge.strokeWidth/2),
+          originX : 'center',
+          originY : 'center',
+          left    : itemGeometry.x2,
+          top     : itemGeometry.yhalf,
         });
 
         // text
         let badge_out_text = new fabric.Text(item.characs.badge_out, Canvas.fabric_template.text);
         badge_out_text.set({
-          'originX'   : 'center',
-          'originY'   : 'center',
-          'textAlign' : 'center',
-          'top'       : Math.round(badge_out.get('top')  + Canvas.fabric_template.badge.radius + Canvas.fabric_template.badge.strokeWidth/2),
-          'left'      : Math.round(badge_out.get('left') + Canvas.fabric_template.badge.radius + Canvas.fabric_template.badge.strokeWidth/2),
-          'fontSize'  : 12
+          originX   : 'center',
+          originY   : 'center',
+          textAlign : 'center',
+          left      : itemGeometry.x2,
+          top       : itemGeometry.yhalf,
+          fontSize  : 12
         });
 
         // group the circle and the text and add it to canvas
         let badge_out_group = new fabric.Group([badge_out, badge_out_text], {evented: false});
         this.fabricCanvas.add(badge_out_group);
-      }
-    }
-  }
-
-
-  // add the given item and all its children to the canvas
-  // passing the root will add everything
-  // passing a load will only add the load
-  addItems(item) {
-    // add the item to the canvas
-    if(!item.isRoot()) this.addItem(item);
-
-    if(item.isVisible()) {
-      // recursively add all the item children to the canvas
-      for (let childID of item.childrenID) {
-        let child = item.tree.getItem(childID);
-        this.addItems(child);
       }
     }
   }
@@ -474,7 +480,7 @@ class Canvas {
     // render the Fabric item
     this.fabricCanvas.renderAll();
 
-    // reselect the item if it has been deselected
+    // reselect the item if it has been deselected (only in canvas)
     if (null !== selected_item) this.selectItem(selected_item);
 
     // set the scroll as like it was before canvas modifications
@@ -565,65 +571,22 @@ class Canvas {
     // get the fabric obj of the selected item
     let fabric_obj = this.fabricCanvas.fabric_obj[item.id].rect;
 
-    // deselect the last item
-    this.unselectItem(false);
-
     // set the correct style on the fabric rect
     fabric_obj.set(Canvas.fabric_template.selected);
     this.fabricCanvas.renderAll();
 
     // save a ref to the precedent item
     this.selectedItem = item;
-
-    // show/hide menus depending of the item type
-    let ctrl = $('#item_control');
-    ctrl.removeClass('item_control_source item_control_load');
-    ctrl.addClass('item_control_' + item.type);
-    ctrl.css({
-      'box-shadow': 'inset 0 -3px 0 0 ' + item.characs.color
-    });
-
-    // if the item is a load
-    if (item.isLoad() && item.isInPartlist()) {
-      this.showParts(item);
-    }
-    else {
-      this.hideParts();
-    }
-
-    // upade the show/hide button
-    if(item.isSource()) {
-      $('#bt_hide').show();
-      $('#bt_hide > a').html((item.isVisible()) ? '<span class="fa fa-lg fa-eye-slash"></span> Hide' : '<span class="fa fa-lg fa-eye"></span> Show');
-      if(item.childrenID.length > 0) {
-        $('#bt_hide').removeClass('disabled');
-      }
-      else {
-        $('#bt_hide').addClass('disabled');
-      }
-    }
-    else {
-      $('#bt_hide').hide();
-    }
-
-    // fadeIn the menu
-    $('#item_control').fadeIn(200);
   }
 
 
   // Deselect an item..
-  unselectItem(fade) {
+  unselectItem() {
     if (undefined !== this.selectedItem && null !== this.selectedItem) {
       this.fabricCanvas.fabric_obj[this.selectedItem.id].rect.set(Canvas.fabric_template.deselected);
       this.fabricCanvas.renderAll();
     }
     this.selectedItem = null;
-
-    if (fade) {
-      $('#item_control').fadeOut(200);
-      $('.item_info').fadeOut(200);
-      this.hideParts();
-    }
   }
 
 
@@ -649,8 +612,6 @@ class Canvas {
     let top         = 0;
     let fade        = 0;
     let margin      = 10;
-    let item_width  = Canvas.app_template.item.width_coef * this.config.cell_width;
-    let item_height = Canvas.app_template.item.height_coef * this.config.cell_height;
     let zoom = this.config.zoom/100;
 
     // if the item has an input
@@ -664,8 +625,8 @@ class Canvas {
       $('#pin_max').text(item.getPower  ('max', 'in', 3, true));
 
       // move the info div next to the item
-      left = this.canvas$.offset().left + fabric_obj.get('left')*zoom                        - $('#item_info_left').outerWidth(true) - margin;
-      top  = this.canvas$.offset().top  + fabric_obj.get('top' )*zoom + item_height*zoom / 2 - $('#item_info_left').outerHeight() / 2;
+      left = this.canvas$.offset().left + fabric_obj.geometry.x1*zoom    - $('#item_info_left').outerWidth(true) - margin;
+      top  = this.canvas$.offset().top  + fabric_obj.geometry.yhalf*zoom - $('#item_info_left').outerHeight() / 2;
       $('#item_info_left').css({
         'left': left + 'px',
         'top' : top  + 'px'
@@ -685,8 +646,8 @@ class Canvas {
       $('#pout_max').text(item.getPower  ('max', 'out', 3, true));
 
       // move the info div next to the item
-      left = this.canvas$.offset().left + fabric_obj.get('left')*zoom + item_width*zoom + margin;
-      top  = this.canvas$.offset().top  + fabric_obj.get('top' )*zoom + item_height*zoom / 2 - $('#item_info_right').outerHeight() / 2;
+      left = this.canvas$.offset().left + fabric_obj.geometry.x2*zoom    + margin;
+      top  = this.canvas$.offset().top  + fabric_obj.geometry.yhalf*zoom - $('#item_info_left').outerHeight() / 2;
       $('#item_info_right').css({
         'left': left + 'px',
         'top' : top  + 'px'
@@ -704,8 +665,8 @@ class Canvas {
         $('#eff_max').text(`${Util.numberToSi(item.getEfficiency('max')*100, 3)}%`);
 
         // move the info div next to the item
-        left = this.canvas$.offset().left + fabric_obj.get('left')*zoom + item_width *zoom / 2 - $('#item_info_center').outerWidth(true) / 2;
-        top  = this.canvas$.offset().top  + fabric_obj.get('top') *zoom + item_height*zoom + margin;
+        left = this.canvas$.offset().left + fabric_obj.geometry.xhalf*zoom - $('#item_info_center').outerWidth(true) / 2;
+        top  = this.canvas$.offset().top  + fabric_obj.geometry.y2*zoom    + margin;
         $('#item_info_center').css({
           'left': left + 'px',
           'top' : top  + 'px'
@@ -723,7 +684,6 @@ class Canvas {
   toJPEGdataURL() {
     // save the reference of the eventual selected item (may be null)
     let selected = this.getSelectedItem();
-    this.unselectItem();
 
     // save the zoom factor and apply the zoom for export
     let zoom = this.config.zoom;
@@ -739,49 +699,13 @@ class Canvas {
         // convert the blob to ObjectURL
         let dataURL = URL.createObjectURL(blob);
 
-        // select any previous selected item
+        // select any previous selected item (only in canvas)
         if (null !== selected) this.selectItem(selected);
 
         resolve(dataURL);
       }, 'image/jpeg', 1);
 
     });
-  }
-
-
-  // Display a tab containing all the parts consuming on the given load
-  showParts(load) {
-    $('#part_table tbody').empty();
-
-    let noparts = true;
-    this.partList.forEachPart((part) => {
-      if (part.isConsuming(load)) {
-        noparts = false;
-        $('#part_table tbody').append(
-          `<tr>
-          <td class="part_data part_name">${part.characs.name}</td>
-          <td class="part_data part_ityp part_i">${part.getConsumption(load, 'typ')}</td>
-          <td class="part_data part_imax part_i">${part.getConsumption(load, 'max')}</td>
-          </tr>`
-        );
-      }
-    });
-
-    if (noparts) {
-      $('#part_table tbody').append(
-        `<tr>
-        <td colspan="3" class="part_data part_nopart">No part found</td>
-        </tr>`
-      );
-    }
-
-    $('#part_table').fadeIn(200);
-  }
-
-
-  // Hide the tab containing the parts
-  hideParts() {
-    $('#part_table').fadeOut(200);
   }
 }
 
@@ -796,7 +720,7 @@ Canvas.app_template = {
     width_coef  : 0.45,
     height_coef : 0.75,
   },
-  nodeNet: {
+  verticalNet: {
     left_coef : 0.9
   },
   proportion : {
@@ -814,7 +738,8 @@ Canvas.app_template = {
 // Default values for fabric items
 Canvas.fabric_template = {
   canvas: {
-    backgroundColor: '#FFFFFF'
+    backgroundColor: '#FFFFFF',
+    fireRightClick : true
   },
   group: {
     selectable : false
