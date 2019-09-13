@@ -104,7 +104,6 @@ class Tree {
     if      ('source' == type) newItem = this.addSource(parent);
     else if ('load'   == type) newItem = this.addLoad(parent);
     else                       return;
-    this.setItem(this.item_index++, newItem);
     return newItem;
   }
 
