@@ -12,9 +12,13 @@ body {
    user-select:    none;
 }
 
+.partlist_container {
+   flex-grow: 0;
+   overflow-y: visible;
+}
+
 .partlist {
    min-width: 100%;
-   flex-grow: 0;
 }
 
 .emptyzone {
