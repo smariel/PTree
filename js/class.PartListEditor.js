@@ -625,13 +625,13 @@ class PartListEditor {
     });
 
     // import the data from the excel
-    $('.importTable').click(() => {
+    $('.importTable').click(async () => {
       // ask the user for a sheet
-      let json_sheet = Util.getSpreadsheet();
+      let json_sheet = await Util.getSpreadsheet();
       if (null === json_sheet) return;
 
       // Import the file into the partlist
-      let noerror = this.fromSpreadsheet(json_sheet);
+      let noerror = await this.fromSpreadsheet(json_sheet);
 
       // finally, refresh the table with the new values
       if(noerror) {
