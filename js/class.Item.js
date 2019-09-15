@@ -455,13 +455,13 @@ class Item {
     for (let i in this) {
       // if the string and this item has the hasOwnProperty
       // and do not replace the tree
-      if (this.hasOwnProperty(i) && properties.hasOwnProperty(i) && i !== 'tree') {
+      if (Object.prototype.hasOwnProperty.call(this, i) && Object.prototype.hasOwnProperty.call(properties, i) && i !== 'tree') {
         // if the property is the characs, replace one by one
         if(i === 'characs') {
           // for each characs in this item, copy from the string
           for (let j in this.characs) {
             // if the charac exist in this item and in the string
-            if (this.characs.hasOwnProperty(j) && properties.characs.hasOwnProperty(j)) {
+            if (Object.prototype.hasOwnProperty.call(this.characs, j) && Object.prototype.hasOwnProperty.call(properties.characs, j)) {
               this.characs[j] = properties.characs[j];
             }
           }

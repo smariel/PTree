@@ -64,7 +64,7 @@ class Canvas {
   setConfig(new_config) {
     // get all existing configs
     for(let config_prop in this.config) {
-      if (this.config.hasOwnProperty(config_prop)) {
+      if (Object.prototype.hasOwnProperty.call(this.config, config_prop)) {
         // if there is an corresponding config in the import
         if(undefined !== new_config[config_prop]) {
           // copy the config
