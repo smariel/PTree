@@ -8,7 +8,7 @@
 
 /* eslint no-console: 0 */
 /* eslint no-undef:   0 */
-const refreshScreenshots = true;
+const refreshScreenshots = false;
 const checkConsoleLog    = false;
 
 const test = require('ava');
