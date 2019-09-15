@@ -359,6 +359,7 @@ class PTree {
     this.updateClearButtons();
     this.saveHistory();
     this.selectItem(newItem);
+    this.scrollToItem(newItem);
   }
 
 
@@ -374,6 +375,7 @@ class PTree {
     this.updateClearButtons();
     this.saveHistory();
     this.selectItem(newItem);
+    this.scrollToItem(newItem);
   }
 
 
@@ -465,6 +467,30 @@ class PTree {
     this.canvas.refresh();
     this.updateUpDownButtons();
     this.saveHistory();
+  }
+
+
+  // scroll to the given item
+  scrollToItem(item) {
+    // get the fabric object
+    let fabric_obj = this.canvas.fabricCanvas.fabric_obj[item.id];
+    // if the fabric object does not exist, exit with error
+    if(undefined == fabric_obj) {
+      console.error('The given object does not exist in the canvas');
+      return false;
+    }
+
+    // compute the real coordinate of the item
+    let zoom = this.canvas.config.zoom/100;
+    let itemCoord = {
+      x: Math.round(this.canvas.canvas$.offset().left + fabric_obj.geometry.xhalf*zoom),
+      y: Math.round(this.canvas.canvas$.offset().top  + fabric_obj.geometry.yhalf*zoom)
+    };
+
+    // change the scroll to set the item on the center of the window
+    window.scrollTo(itemCoord.x - window.innerWidth/2, itemCoord.y - window.innerHeight/2);
+
+    return true;
   }
 
 
