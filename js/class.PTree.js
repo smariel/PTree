@@ -89,8 +89,48 @@ class PTree {
       this.filePath = path;
     }
 
-    // read the content of the file using node.js fs module
     const fs = require('fs');
+
+    // check if a backcup of the file exist
+    let backupFile = `${this.filePath}.backup`;
+    if(fs.existsSync(backupFile)) {
+      // ask user what to do
+      let popupData = {
+        title      : 'Bacup found',
+        width      : 500,
+        height     : 135,
+        sender     : 'PTree',
+        content    : `<strong>A backup if this file was found.</strong><br />
+                      Do you want to open the backup of the selected file ?<br />`,
+        btn_ok     : 'Open backup',
+        btn_cancel : 'Open selected file'
+      };
+      let popupRet = await Util.popup(popupData);
+
+      // if the user want to open the backup
+      if(popupRet) {
+        // find a name for the backup
+        const path = require('path');
+        for(let i=1; i<=50; i++) {
+          let copy = (1==i)? '' : i;
+          let newFile = `${path.dirname(this.filePath)}/${path.parse(this.filePath).name}_copy${copy}.ptree`;
+          if(!fs.existsSync(newFile)) {
+            this.filePath = newFile;
+            break;
+          }
+          else if (50 == i) {
+            alert('error');
+            console.error('Cant find a name for the file');
+            return;
+          }
+        }
+
+        // rename the backup
+        fs.renameSync(backupFile, this.filePath);
+      }
+    }
+
+    // read the content of the file using node.js fs module
     fs.readFile(this.filePath, 'utf8', (err, datastr) => {
       if (null !== err) {
         alert(err);
@@ -102,11 +142,11 @@ class PTree {
           window.document.title = this.filePath;
 
           // if the file is beeing edited by someone else
-          if(fs.existsSync(`${path}.lock`)) {
+          if(fs.existsSync(`${this.filePath}.lock`)) {
             // set as readonly
             this.readOnly = true;
             window.document.title += ' [read only]';
-            alert('This file is beeing edited by an other user.');
+            alert('This file is beeing edited by an other user. \n\nThis may also be due to a crash. If you think so, you can delete the ".lock" file next to the project file');
           }
           // if the file is not edited
           else {
@@ -240,6 +280,30 @@ class PTree {
   }
 
 
+  // create a backup file of the current context
+  backup() {
+    const fs = require('fs');
+
+    // if there is a ptree project file
+    if('string' === typeof this.filePath) {
+      // set the path of the backup file
+      let backupFile = `${this.filePath}.backup`;
+      // open the file or create it if it does not exist using node.js fs module
+      fs.open(backupFile, 'w+', (err, fd) => {
+        if (null === err) {
+          // write the data
+          let extradata = {version: require('../package.json').version};
+          let data = this.toString(extradata);
+          fs.writeSync(fd, data);
+        }
+        else {
+          console.error('Error while trying to backup:'+err);
+        }
+      });
+    }
+  }
+
+
   // empty the history and add only one data
   clearHistory() {
     // save the actual tree into the history
@@ -264,6 +328,8 @@ class PTree {
     this.setUnsaved();
     // update the UI
     this.updateUndoRedoButtons();
+    // create a backup
+    this.backup();
   }
 
 
@@ -1566,8 +1632,6 @@ class PTree {
 
     // IPC async msg received from main.js: prepare to close
     ipcRenderer.on('PTree-beforeCloseCmd', async () => {
-      this.unlockFile();
-
       // if the project is not saved
       if(this.unsaved) {
         // ask the user to save
@@ -1591,6 +1655,18 @@ class PTree {
             return;
           }
         }
+      }
+
+      // remove the lock file
+      this.unlockFile();
+
+      // remove the backup file
+      const fs = require('fs');
+      let backupFile = `${this.filePath}.backup`;
+      // if a lock file exist for this project
+      if(fs.existsSync(backupFile)) {
+        // delete this file
+        fs.unlinkSync(backupFile);
       }
 
       // Send an IPC async msg to the main.js: ready to close
