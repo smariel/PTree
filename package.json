@@ -1,6 +1,6 @@
 {
   "name": "PTree",
-  "version": "1.7.1",
+  "version": "1.7.2",
   "description": "Design power trees and estimate consumptions",
   "author": {
     "name": "Sylvain Mariel",
@@ -11,7 +11,7 @@
   "main": "main.js",
   "scripts": {
     "postinstall": "",
-    "start": "electron . --debug --inspect --remote-debugging-port=9228",
+    "start": "electron . --debug --no-update-check --inspect --remote-debugging-port=9228",
     "nodebug": "electron .",
     "test": "ava --fail-fast",
     "build:mac": "electron-builder --config electron-builder.json --mac   --dir",
@@ -36,22 +36,23 @@
   },
   "homepage": "https://smariel.github.io/PTree",
   "dependencies": {
-    "bootstrap": "^3.4.0",
-    "chart.js": "^2.7.3",
-    "fabric": "^2.6.0",
+    "bootstrap": "^3.4.1",
+    "chart.js": "^2.8.0",
+    "fabric": "^3.4.0",
     "font-awesome": "<5.0.0",
-    "jquery": "^3.3.1",
-    "marked": "^0.6.0",
-    "mousetrap": "^1.6.2",
-    "xlsx": "^0.14.1"
+    "jquery": "^3.4.1",
+    "marked": "^0.7.0",
+    "mousetrap": "^1.6.3",
+    "sass": "^1.22.12",
+    "xlsx": "^0.15.1"
   },
   "devDependencies": {
-    "ava": "^1.1.0",
+    "ava": "^2.3.0",
     "devtron": "^1.4.0",
-    "electron": "^4.0.2",
-    "electron-builder": "^20.38.5",
-    "eslint": "^5.12.1",
-    "eslint-plugin-ava": "^5.1.1",
-    "spectron": "^5.0.0"
+    "electron": "^6.0.9",
+    "electron-builder": "^21.2.0",
+    "eslint": "^6.4.0",
+    "eslint-plugin-ava": "^8.0.0",
+    "spectron": "^8.0.0"
   }
 }
