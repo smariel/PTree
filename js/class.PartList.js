@@ -108,7 +108,7 @@ class PartList {
 
       // for each property of the part
       for (let i in newPart) {
-        if (newPart.hasOwnProperty(i)) {
+        if (Object.prototype.hasOwnProperty.call(newPart, i)) {
           // copy the property
           newPart[i] = partProp[i];
         }
