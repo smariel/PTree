@@ -66,11 +66,11 @@ class PTree {
 
 
   // load the app data from a file
-  open(path=null) {
+  async open(path=null) {
     // if a path was not given, ask the user to choose a file
     if(null === path) {
       const {dialog} = require('electron').remote;
-      const paths = dialog.showOpenDialog({
+      const paths = await dialog.showOpenDialog({
         title: 'Open...',
         properties: ['openFile'],
         filters: [
@@ -126,7 +126,7 @@ class PTree {
 
 
   // save the app data into a file
-  save(saveas = false) {
+  async save(saveas = false) {
     const fs = require('fs');
 
     // do not try a simple save if it's not needed
@@ -143,7 +143,7 @@ class PTree {
 
       // prompt the user
       const {dialog} = require('electron').remote;
-      const path = dialog.showSaveDialog({
+      const path = await dialog.showSaveDialog({
         title: 'Save as...',
         defaultPath: defaultPath,
         filters: [

@@ -311,7 +311,7 @@ class Util {
     if (null === path) {
       // open a dialog
       const {dialog} = require('electron').remote;
-      let paths = dialog.showOpenDialog({
+      let paths = await dialog.showOpenDialog({
         title: 'Select a spreadsheet',
         filters: [
           {name: 'Spreadsheet', extensions: ['xls','xlsx','csv']},
