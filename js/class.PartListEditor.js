@@ -588,9 +588,11 @@ class PartListEditor {
     // add a new empty part to the PartList
     $('.addPart').click(() => {
       this.unselectPart();
-      this.partList.addPart();
+      let part = this.partList.addPart();
       this.refresh();
       this.saveHistory();
+      window.scrollTo(window.scrollX, window.innerHeight);
+      this.selectPart(part);
     });
 
     // remove parts from the PartList
