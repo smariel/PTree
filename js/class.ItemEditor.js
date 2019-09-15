@@ -23,7 +23,7 @@ class ItemEditor {
 
     // get the value of all characteristics of the item
     for (let charac in this.item.characs) {
-      if (Object.prototype.hasOwnProperty.call(this, charac)) {
+      if (this.item.characs.hasOwnProperty(charac)) {
         // get the jquery element corresponding to the charac
         let input = $('#' + this.item.type + '_control *[data-itemdata=' + charac + ']');
         // if the element is a checkbox
