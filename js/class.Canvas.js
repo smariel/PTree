@@ -175,7 +175,7 @@ class Canvas {
   // add the texts around an item to the canvas
   addTexts(item, itemGeometry) {
     // Process text around sources
-    if ('source' == item.type) {
+    if (item.isSource()) {
       if(this.config.show_vtyp || this.config.show_vmax) {
         // Print the Vout of sources
         let vtext = '';
