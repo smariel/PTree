@@ -155,8 +155,9 @@ class ItemEditor {
       this.effChart = {};
     }
 
-    // create a new Chart.js
+    // load chart.js safely and create a new Chart.js
     const Chart = require('chart.js');
+    Chart.platform.disableCSSInjection = true;
     this.effChart =  new Chart($('#effChart'), chartConfig);
   }
 

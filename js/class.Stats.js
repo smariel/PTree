@@ -283,8 +283,9 @@ class Stats {
       }
     }
 
-    // create an empty chart
+    // load chart.js safely and create an empty chart
     const Chart = require('chart.js');
+    Chart.platform.disableCSSInjection = true;
     this.charts[typmax] = new Chart($(`.canvas_${typmax}`), chartConfig);
 
 
