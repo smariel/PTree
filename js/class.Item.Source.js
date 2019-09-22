@@ -266,6 +266,14 @@ class Source extends Item {
       }
     }
 
+    // prevent incoherant values outside 0 to 1
+    if (efficiency < 0) {
+      efficiency = 0;
+    }
+    else if (efficiency > 1) {
+      efficiency = 1;
+    }
+
     return efficiency;
   }
 
@@ -279,6 +287,14 @@ class Source extends Item {
 
     // if the new datas are numbers
     if(!isNaN(new_data.eff) && !isNaN(new_data.i)) {
+      // keep the efficiency value between 0 and 100%
+      if(new_data.eff > 100) {
+        new_data.eff = 100;
+      }
+      else if(new_data.eff < 0) {
+        new_data.eff = 0;
+      }
+
       // add the data to the array, keeping ordered by ascending currend
       let new_index = null;
       if(eff_datas.length === 0)

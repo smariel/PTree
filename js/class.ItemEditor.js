@@ -168,6 +168,7 @@ class ItemEditor {
     let eff = parseFloat($('#input_eff').val());
     let i   = parseFloat($('#input_eff_i').val());
 
+    // add the efficiency to the item
     this.item.addEfficiency(eff, i);
 
     // remove the data from the form
