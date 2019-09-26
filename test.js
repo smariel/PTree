@@ -935,6 +935,8 @@ test.afterEach.always(async t => {
         else if(/Port not available/.test(log)) continue;
         // ignore DevTools messages
         else if(/DevTools listening/.test(log)) continue;
+        // ignore ChromeDriver messages
+        else if(/Please protect ports used by ChromeDriver/.test(log)) continue;
         // ignore empty messages
         else if('' == log) continue;
 
