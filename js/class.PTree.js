@@ -70,7 +70,7 @@ class PTree {
     // if a path was not given, ask the user to choose a file
     if(null === path) {
       const {dialog} = require('electron').remote;
-      const paths = await dialog.showOpenDialog({
+      const paths = dialog.showOpenDialogSync({
         title: 'Open...',
         properties: ['openFile'],
         filters: [
@@ -183,7 +183,7 @@ class PTree {
 
       // prompt the user
       const {dialog} = require('electron').remote;
-      const path = await dialog.showSaveDialog({
+      const path = dialog.showSaveDialogSync({
         title: 'Save as...',
         defaultPath: defaultPath,
         filters: [
