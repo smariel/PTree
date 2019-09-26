@@ -114,11 +114,12 @@ class Load extends Item {
   // Open a new window to edit the item
   // see the main method in class.Item.js
   // Need a partlist to update the consumptions in some cases
-  edit(partList, sheet) {
+  async edit(partList, sheet) {
+    // edit the item with the parent method
+    await super.edit();
+
     // return a promise
-    return new Promise(async resolve => {
-      // edit the item with the parent method
-      await super.edit();
+    return new Promise(resolve => {
 
       // if the load is not in the part list
       // remove all consumptions on the parts
