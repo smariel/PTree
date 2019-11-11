@@ -59,10 +59,35 @@ class PartList {
     return part;
   }
 
+  
+  // move a part before an other one in the list
+  movePartBefore(partToMove, partTargeted) {
+    // remove the part to move frome the list
+    this.part_list.splice(partToMove.id, 1);
+
+    // guess the new ID
+    let newID = (partToMove.id < partTargeted.id) ? partTargeted.id - 1 : partTargeted.id;
+
+    // re introduce the part
+    this.part_list.splice(newID, 0, partToMove);
+
+    // re set the id of all parts
+    let id = 0;
+    this.forEachPart((part) => {
+      part.id = id++;
+    });
+  }
+
 
   // remove a part from the BOM
   deletePart(part) {
-    delete this.part_list[part.id];
+    for(let i=part.id+1; i<this.part_list.length; i++) {
+      this.part_list[i].id -= 1;
+    }
+
+    //delete this.part_list[part.id];
+    this.part_list.splice(part.id, 1);
+
   }
 
 
@@ -92,10 +117,10 @@ class PartList {
     let partListProp = JSON.parse(str);
 
     // reinit the partlist data
-    this.part_index = partListProp.part_index;
     this.part_list  = [];
 
     // for each part in the list
+    let new_id = 0;
     for (let part_str of partListProp.part_list) {
       if (null === part_str) continue;
 
@@ -103,13 +128,14 @@ class PartList {
       let partProp = JSON.parse(part_str);
 
       // create a new empty part (without giving a ref to partList yet)
-      let newPart = new Part(partProp.id, null);
-      this.setPart(partProp.id, newPart);
+      let newPart = new Part(new_id, null);
+      this.setPart(new_id, newPart);
+      new_id++;
 
       // for each property of the part
       for (let i in newPart) {
-        if (Object.prototype.hasOwnProperty.call(newPart, i)) {
-          // copy the property
+        if (Object.prototype.hasOwnProperty.call(newPart, i) && 'id' !== i) {
+          // copy the property, except the id
           newPart[i] = partProp[i];
         }
       }
@@ -117,6 +143,8 @@ class PartList {
       // copy a reference of this PartList in the part
       newPart.partList = this;
     }
+
+    this.part_index = new_id;
   }
 
 

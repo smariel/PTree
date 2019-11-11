@@ -19,6 +19,7 @@ class PartListEditor {
       list: [],
       index: 0
     };
+    this.ctxMenu       = null;
 
     this.listenEvents();
     this.clearHistory();
@@ -34,7 +35,6 @@ class PartListEditor {
     this.unselectPart();
 
     // loop on each part
-    let niceid = 0;
     this.partList.forEachPart((part) => {
       // Init the total power
       let ptyp = 0;
@@ -42,7 +42,7 @@ class PartListEditor {
 
       // Part characteristics
       let tr = `<tr data-partid="${part.id}">
-                  <td class="td_charac"             data-charac="id"       data-value="${part.id}"                            >${niceid++}</td>
+                  <td class="td_charac" data-charac="id"                   data-value="${part.id}"                            >${part.id}</td>
                   <td class="td_charac td_editable" data-charac="name"     data-value="${part.getCharac_formated('name')}"    >${part.getCharac_formated('name')}</td>
                   <td class="td_charac td_editable" data-charac="ref"      data-value="${part.getCharac_formated('ref')}"     >${part.getCharac_formated('ref')}</td>
                   <td class="td_charac td_editable" data-charac="function" data-value="${part.getCharac_formated('function')}">${part.getCharac_formated('function')}</td>
@@ -88,14 +88,14 @@ class PartListEditor {
       toggle = false;
     }
 
-    // if th clicked th is already sorted
+    // if the th clicked is already sorted
     let th_elt = $(`thead > .tr_bottom > th:nth-child(${col+1})`);
     if(toggle && th_elt.hasClass('sort')) {
       // toggle direction
       th_elt.toggleClass('sortAsc sortDesc');
       if(th_elt.hasClass('sortDesc')) dir = 'desc';
     }
-    // if th clicked is not sorted
+    // if the th clicked is not sorted
     else {
       // remove sorting to the precedent th
       $('.sort').removeClass('sort sortAsc sortDesc');
@@ -418,6 +418,22 @@ class PartListEditor {
   }
 
 
+  // remove one or more parts
+  removeParts(parts) {
+    // if only one part given, make an array
+    if(! Array.isArray(parts)) {
+      parts = [parts];
+    }
+
+    this.unselectPart(true);
+    for(let part of parts) {
+      this.partList.deletePart(part);
+    }
+    this.refresh();
+    this.saveHistory();
+  }
+
+
   // empty the history and add only one data
   clearHistory() {
     // save the actual tree into the history
@@ -598,12 +614,7 @@ class PartListEditor {
     // remove parts from the PartList
     $('.removePart').click(() => {
       let partsToDelete = this.selectedParts.slice();
-      this.unselectPart(true);
-      for(let part of partsToDelete) {
-        this.partList.deletePart(part);
-      }
-      this.refresh();
-      this.saveHistory();
+      this.removeParts(partsToDelete);
     });
 
     // export the table to excel
@@ -650,9 +661,10 @@ class PartListEditor {
 
     // click on a charac
     $('.partlist').on('click', '.td_charac', (evt) => {
-      let charac      = $(evt.currentTarget).data('charac');
-      let partID      = $(evt.currentTarget).parent().data('partid');
-      let part        = this.partList.getPart(partID);
+      let $td    = $(evt.currentTarget);
+      let charac = $td.data('charac');
+      let partID = $td.parent().data('partid');
+      let part   = this.partList.getPart(partID);
 
       // click on the ID
       if('id' === charac) {
@@ -689,6 +701,41 @@ class PartListEditor {
     // sort the table when clicking on TH elements
     $('.partlist').on('click','.tr_bottom > th', (evt) => {
       this.sortTable($(evt.currentTarget).index());
+    });
+
+    // any click on the first column (ID)
+    $('.partlist').on('mousedown', 'td', (evt) => {
+      let partID       = $(evt.currentTarget).parent().data('partid');
+      let part_clicked = this.partList.getPart(partID);
+
+      // right clock
+      if(3 == evt.which && null !== part_clicked) {
+        // creation of the partList submenu
+        let partlist_submenu = [];
+        this.partList.forEachPart((part) => {
+          partlist_submenu.push({
+            label  : `${part.id} - ${part.getCharac_formated('name')}`,
+            enabled: (part_clicked.id != part.id),
+            click  : () => {
+              this.partList.movePartBefore(part_clicked, part);
+              this.refresh();
+              this.saveHistory();
+            }
+          });
+        });
+
+        // creation of the contextual menu
+        let ctxMenuTemplate = [
+          {label: 'Move before', submenu: partlist_submenu},
+          {label: 'Remove',      click: () => {this.removeParts(part_clicked);}}
+        ];
+
+        // display the menu
+        const { remote } = require('electron');
+        const { Menu }   = remote;
+        this.ctxMenu = Menu.buildFromTemplate(ctxMenuTemplate);
+        this.ctxMenu.popup();
+      }
     });
 
     // Undo
