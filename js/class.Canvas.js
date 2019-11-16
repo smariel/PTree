@@ -94,9 +94,6 @@ class Canvas {
 
   // add any item to the canvas
   addItem(item) {
-    // Needed when exporting to jpeg (no alpha)
-    this.fabricCanvas.setBackgroundColor('#FFFFFF');
-
     // prepare usefull values
     let itemTemplate = item.getFabricTemplate();
     let item_color   = (this.config.loss_color) ? item.lossColor : item.characs.color;
@@ -690,9 +687,12 @@ class Canvas {
     this.config.zoom = this.config.zoom_export;
     this.refresh();
 
+    // set a white background to avoid Alpha
+    this.fabricCanvas.setBackgroundColor('#FFFFFF', this.fabricCanvas.renderAll.bind(this.fabricCanvas));
+
     return new Promise(resolve => {
       this.canvas$[0].toBlob((blob) => {
-        // set back the zoom
+        // set back the zoom and the background
         this.config.zoom = zoom;
         this.refresh();
 
