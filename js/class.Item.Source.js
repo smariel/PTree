@@ -168,7 +168,8 @@ class Source extends Item {
     // if the item is a DC/DC
     else if (this.isDCDC()) {
       // p_in = p_out / efficiency
-      p_in = this.getOutputPower(valType) / this.getEfficiency(valType);
+      let efficiency = this.getEfficiency(valType);
+      p_in = (0 == efficiency) ? Infinity : this.getOutputPower(valType) / efficiency;
     }
 
     return p_in;
@@ -200,7 +201,8 @@ class Source extends Item {
 
     if(this.isLDO()) {
       // efficiency = p_out / p_in
-      efficiency = this.getOutputPower(valType) / this.getInputPower(valType);
+      let inputPower = this.getInputPower(valType);
+      efficiency = (0 == inputPower) ? 0 : this.getOutputPower(valType) / inputPower;
     }
     else if(this.isDCDC()) {
       // if the efficiency is an array (>= v1.1.0)
