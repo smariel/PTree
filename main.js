@@ -31,6 +31,9 @@ let renderers = {
 // debug global var
 let debug = false;
 
+console.info(`\n------------`); // eslint-disable-line no-console
+console.info(`${packagejson.name} v${packagejson.version}`); // eslint-disable-line no-console
+console.info(`------------\n\nOptions:`); // eslint-disable-line no-console
 
 // parsing arguments using node.js process module
 // ignore the first argument which is the app location
@@ -42,20 +45,25 @@ for (let i=1; i<process.argv.length; i++) {
     // Debug mode
     if('--debug' == arg || '-d' == arg) {
       debug = true;
+      console.info(`--debug`); // eslint-disable-line no-console
     }
     // Don't check for update
     else if('--no-update-check' == arg || '-c' == arg) {
       renderers.PTree.initData.checkUpdate = false;
+      console.info(`--no-update-check`); // eslint-disable-line no-console
     }
     // Print the help and exit
     else if('--help' == arg || '-h' == arg) {
-      let help = `\n${packagejson.name} v${packagejson.version}\n\n`;
-      help    += 'Options:\n';
+      let help = `--help\n`;
+      help    += 'Available options are:\n';
       help    += '  -c, --no-update-check   Disables the update check at startup\n';
       help    += '  -d, --debug             Enable the chromium debug tools\n';
       help    += '  -h, --help              Print this help\n';
       console.info(help); // eslint-disable-line no-console
       process.exit();
+    }
+    else {
+      console.info(`${arg} (unrecognized option, ignored)`); // eslint-disable-line no-console
     }
   }
   // If the arg is a valid path to a ptree project file (also Windows "open with" command)
