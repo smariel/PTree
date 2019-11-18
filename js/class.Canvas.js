@@ -644,7 +644,7 @@ class Canvas {
 
       // move the info div next to the item
       left = this.canvas$.offset().left + fabric_obj.geometry.x2*zoom    + margin;
-      top  = this.canvas$.offset().top  + fabric_obj.geometry.yhalf*zoom - $('#item_info_left').outerHeight() / 2;
+      top  = this.canvas$.offset().top  + fabric_obj.geometry.yhalf*zoom - $('#item_info_right').outerHeight() / 2;
       $('#item_info_right').css({
         'left': left + 'px',
         'top' : top  + 'px'
