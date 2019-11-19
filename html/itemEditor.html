@@ -25,6 +25,8 @@
     -->
 
     <form id="source_control" class="form">
+      <!-- ________________________ -->
+      <!-- 1st column : DESCRIPTION -->
       <div id="source_description" class="container">
         <h3>Description</h3>
         <div class="form-group row">
@@ -68,53 +70,74 @@
           </div>
         </div>
       </div>
+      <!-- ____________________________ -->
+      <!-- 2nd column : CHARACTERISTICS -->
       <div id="source_electrical" class="container">
         <h3>Characteristics</h3>
         <div class="form-group row">
+          <!-- REGULATOR TYPE -->
           <div class="col-xs-12">
-            <label for="source_regtype">Type</label>
+            <label for="source_regtype">Regulator type</label>
           </div>
           <div class="col-xs-12">
             <select id="source_regtype" data-itemdata="regtype" class="form-control item-control" data-toggle="tooltip" data-placement="bottom" title="Regulator type">
               <optgroup label="Fixed output">
-                <option value="0">DC/DC</option>
-                <option value="1">LDO</option>
+                <option value="0">DC/DC switching regulator</option>
+                <option value="1">Linear regulator (LDO)</option>
                 <!--<option value="2">Other</option>-->
               </optgroup>
               <optgroup label="Adjustable output">
-                <option value="3">DC/DC</option>
-                <option value="4">LDO</option>
+                <option value="3">DC/DC switching regulator</option>
+                <option value="4">Linear regulator (LDO)</option>
                 <!--<option value="5">Other</option>-->
               </optgroup>
               <optgroup label="Other">
-                <option value="6">Dummy</option>
-                <option value="7">Perfect</option>
+                <option value="6">Dummy (wire)</option>
+                <option value="7">Perfect (no loss)</option>
               </optgroup>
             </select>
           </div>
         </div>
+
+        <!-- OUTPUT VALUE -->
         <div class="form-group row" id="form-group-vout">
           <div class="col-xs-4 mintypmax"><label for="input_vout_min">V<sub>OUT MIN</sub></label><input id="input_vout_min" type="text" data-itemdata="vout_min" class="form-control input_vout input_num item-control" placeholder="min (V)" data-toggle="tooltip" data-placement="bottom" title="Minimum output voltage (V)" /></div>
           <div class="col-xs-4 mintypmax"><label for="input_vout_typ">V<sub>OUT TYP</sub></label><input id="input_vout_typ" type="text" data-itemdata="vout_typ" class="form-control input_vout input_num item-control" placeholder="typ (V)" data-toggle="tooltip" data-placement="bottom" title="Typical output voltage (V)" /></div>
           <div class="col-xs-4 mintypmax"><label for="input_vout_max">V<sub>OUT MAX</sub></label><input id="input_vout_max" type="text" data-itemdata="vout_max" class="form-control input_vout input_num item-control" placeholder="max (V)" data-toggle="tooltip" data-placement="bottom" title="Maximum output voltage (V)" /></div>
         </div>
 
+        <!-- DC/DC EFFICIENCY -->
         <div class="form-group source_dcdc">
-          <label>Efficiency</label>
+          <label>Efficiency vs output current</label>
           <div class="row">
-            <div class="col-xs-5 efficiency"><input id="input_eff_i" type="text" class="form-control input_num" placeholder="xx A" data-toggle="tooltip" data-placement="bottom" title="Current (A)" /></div>
+            <div class="col-xs-5 efficiency"><input id="input_eff_i" type="text" class="form-control input_num" placeholder="xx A" data-toggle="tooltip" data-placement="bottom" title="Output current (A)" /></div>
             <div class="col-xs-5 efficiency"><input id="input_eff"   type="text" class="form-control input_num" placeholder="xx %" data-toggle="tooltip" data-placement="bottom" title="Efficiency (%)" /></div>
             <div class="col-xs-2 efficiency"><a id="add_eff" class="btn btn-default"><span class="fa fa-plus"></span></a></div>
           </div>
           <canvas id="effChart" width="200" height="108"></canvas>
         </div>
 
+        <!-- LDO QUIESCENT -->
         <div class="form-group row source_ldo" id="form-group-iq">
-          <div class="col-xs-4 mintypmax"><label>I<sub>Q MIN</sub></label><input id="input_iq_min" type="text" data-itemdata="iq_min" class="form-control input_iq input_num item-control" placeholder="min (V)" data-toggle="tooltip" data-placement="bottom" title="Min. quiescent current (A)" /></div>
+          <div class="col-xs-4 mintypmax"><label>I<sub>Q MIN</sub></label><input id="input_iq_min" type="text" data-itemdata="iq_min" class="form-control input_iq input_num item-control" placeholder="min (V)" data-toggle="tooltip" data-placement="bottom" title="Minium quiescent current (A)" /></div>
           <div class="col-xs-4 mintypmax"><label>I<sub>Q TYP</sub></label><input id="input_iq_typ" type="text" data-itemdata="iq_typ" class="form-control input_iq input_num item-control" placeholder="typ (V)" data-toggle="tooltip" data-placement="bottom" title="Typical quiescent current (A)" /></div>
-          <div class="col-xs-4 mintypmax"><label>I<sub>Q MAX</sub></label><input id="input_iq_max" type="text" data-itemdata="iq_max" class="form-control input_iq input_num item-control" placeholder="max (V)" data-toggle="tooltip" data-placement="bottom" title="Max. quiescent current (A)" /></div>
+          <div class="col-xs-4 mintypmax"><label>I<sub>Q MAX</sub></label><input id="input_iq_max" type="text" data-itemdata="iq_max" class="form-control input_iq input_num item-control" placeholder="max (V)" data-toggle="tooltip" data-placement="bottom" title="Maximum quiescent current (A)" /></div>
+        </div>
+
+        <!-- LDO DROPOUT -->
+        <div class="form-group source_ldo">
+          <label>Dropout voltage vs output current</label>
+          <div class="row">
+            <div class="col-xs-5 dropout"><input id="input_drop_i" type="text" class="form-control input_num" placeholder="xx A" data-toggle="tooltip" data-placement="bottom" title="Output current (A)" /></div>
+            <div class="col-xs-5 dropout"><input id="input_drop_v" type="text" class="form-control input_num" placeholder="xx V" data-toggle="tooltip" data-placement="bottom" title="Dropout voltage (V)" /></div>
+            <div class="col-xs-2 dropout"><a id="add_drop" class="btn btn-default"><span class="fa fa-plus"></span></a></div>
+          </div>
+          <canvas id="dropChart" width="200" height="108"></canvas>
         </div>
       </div>
+
+      <!-- _____________________ -->
+      <!-- 3rd column : FEEDBACK -->
       <div id="source_adjustable" class="container">
         <h3>Feadback</h3>
         <div class="form-group row source_adj_group">

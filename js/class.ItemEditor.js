@@ -6,8 +6,9 @@
 class ItemEditor {
 
   constructor(item = null) {
-    this.item     = item;
-    this.effChart = null;
+    this.item      = item;
+    this.effChart  = null;
+    this.dropChart = null;
 
     this.listenEvents();
 
@@ -100,15 +101,16 @@ class ItemEditor {
     // Show corresponding inputs if the reg is a LDO
     else if (this.item.isLDO()) {
       $('.source_ldo').show();
+      this.updateHTML_regDrop();
     }
   }
 
 
   // update regualor adjustable voltage
   updateHTML_regVoltage() {
-    $('#input_vout_min').val(this.item.getVoltage('min', 'out', 3, false));
-    $('#input_vout_typ').val(this.item.getVoltage('typ', 'out', 3, false));
-    $('#input_vout_max').val(this.item.getVoltage('max', 'out', 3, false));
+    $('#input_vout_min').val(this.item.getVoltage('min', 'out', 3, false, true));
+    $('#input_vout_typ').val(this.item.getVoltage('typ', 'out', 3, false, true));
+    $('#input_vout_max').val(this.item.getVoltage('max', 'out', 3, false, true));
   }
 
 
@@ -180,6 +182,74 @@ class ItemEditor {
   }
 
 
+  // update the LDO dropout chart
+  updateHTML_regDrop() {
+    // create a chart dataset from the item datas
+    let dataset = [];
+    for(let data of this.item.characs.dropout) {
+      dataset.push({x:data.i, y:data.drop});
+    }
+
+    // prepare the configuration of the chart
+    let chartConfig = {
+      type: 'scatter',
+      data: {
+        datasets: [{
+          data:             dataset,
+          showLine:         true,
+          tension:          0,
+          pointStyle:       'circle',
+          radius:           4,
+          backgroundColor:  'rgba(255,23,68,0.3)',
+          borderColor:      'rgba(255,23,68,1)'
+        }]
+      },
+      options: {
+        legend: {
+          display: false
+        },
+        // Client event
+        onClick: (event, elements) => {
+          // if click on a point, delete it and redraw the chart
+          if(elements.length > 0) {
+            this.item.characs.dropout.splice(elements[0]._index,1);
+            this.updateHTML_regDrop();
+          }
+        }
+      },
+    };
+
+    // erase the old chart
+    if(null !== this.dropChart) {
+      this.dropChart.destroy();
+      this.dropChart = {};
+    }
+
+    // load chart.js safely and create a new Chart.js
+    const Chart = require('chart.js');
+    Chart.platform.disableCSSInjection = true;
+    this.dropChart =  new Chart($('#dropChart'), chartConfig);
+  }
+
+
+  // add a new point on the dropout chartConfig
+  addDropout() {
+    // get the new data from the form
+    let drop = parseFloat($('#input_drop_v').val());
+    let i    = parseFloat($('#input_drop_i').val());
+
+    // add the dropout to the item
+    this.item.addDropout(drop, i);
+
+    // remove the data from the form
+    $('#input_drop_v').val('');
+    $('#input_drop_i').val('');
+
+    // update the chart
+    this.updateHTML_regDrop();
+  }
+
+
   // Update the item from the given jquery element
   updateItemFromHTML($elt) {
     // if the given elt has a charac name
@@ -246,6 +316,13 @@ class ItemEditor {
     $('#add_eff').click(() => {
       // add the new efficiency to the chart
       this.addEfficiency();
+    });
+
+
+    // BT + (dropout) clicked
+    $('#add_drop').click(() => {
+      // add the new dropout to the chart
+      this.addDropout();
     });
 
 
@@ -323,6 +400,10 @@ class ItemEditor {
         // editing efficiency, add it
         if(event.target.id === 'input_eff' || event.target.id === 'input_eff_i') {
           this.addEfficiency();
+        }
+        // editing dropout, add it
+        if(event.target.id === 'input_drop_v' || event.target.id === 'input_drop_i') {
+          this.addDropout();
         }
         // else, validate the editon
         else {

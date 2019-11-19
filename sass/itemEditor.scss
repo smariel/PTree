@@ -62,7 +62,7 @@ h3 {
    }
 }
 
-.mintypmax, .efficiency {
+.mintypmax, .efficiency, .dropout {
    &:nth-child(1) {
       padding-left:  15px;
       padding-right: 1px;
@@ -77,11 +77,11 @@ h3 {
    }
 }
 
-#effChart {
+#effChart, #dropChart {
    margin-top: 10px;
 }
 
-#add_eff {
+#add_eff, #addDrop {
    padding-left: 0;
    padding-right: 0;
    width: 100%;

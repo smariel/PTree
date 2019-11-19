@@ -46,6 +46,7 @@ class Source extends Item {
       iq_typ      : '0',
       iq_min      : '0',
       iq_max      : '0',
+      dropout     : [{i:'0', drop:'0'}, {i:'0.01', drop:'0.1'}, {i:'0.05', drop:'0.2'}, {i:'0.2', drop:'0.3'}], // must be kept ordered by ascending current
       color       : '#FF1744',
       hidden      : false,
       shape       : '0', // v1.7.0
@@ -101,7 +102,7 @@ class Source extends Item {
 
 
   // get the output voltage of an item
-  getOutputVoltage(valType) {
+  getOutputVoltage(valType, ignoreDropout=false) {
     let v_out = 0.0;
 
     // Dummy : v_out = v_in
@@ -111,6 +112,14 @@ class Source extends Item {
     // DC/DC and LDOs : v_out is set by user
     else {
       v_out = parseFloat(this.characs['vout_' + valType]);
+
+      // LDO: v_out < v_in - v_drop
+      if(this.isLDO() && !ignoreDropout) {
+        let v_out_max = this.getInputVoltage(valType) - this.getDroupout(valType);
+        if(v_out > v_out_max) {
+          v_out = v_out_max;
+        }
+      }
     }
 
     return v_out;
@@ -280,12 +289,127 @@ class Source extends Item {
   }
 
 
+  // get the dropout voltage of a LDO, optionaly for the given output current
+  getDroupout(valType, outputCurrent) {
+    let dropout = 0;
+
+    // if not LDO: error
+    if(!this.isLDO()) {
+      console.error('This type of regulator does not have dropout');
+    }
+    // if no dropout, may be an old project
+    else if(undefined == this.characs.dropout) {
+      dropout = 0;
+    }
+    // if no dropout is set, consider 0
+    else if(this.characs.dropout.length == 0) {
+      dropout = 0;
+    }
+    else {
+      // if only one dropout is set, ignore the current
+      if (this.characs.dropout.length == 1) {
+        dropout = parseFloat(this.characs.dropout[0].drop);
+      }
+      // if there is multiple dropout, use linear interpolation
+      else {
+        let itemCurrent = (undefined === outputCurrent) ? this.getOutputCurrent(valType) : outputCurrent;
+        // if the current is <= of the min dropout
+        if(itemCurrent <= this.characs.dropout[0].i) {
+          // use linear interpolation to compute the dropout (y = ax+b)
+          // based on the two first dropouts of the array
+          let x1 = parseFloat(this.characs.dropout[0].i);
+          let y1 = parseFloat(this.characs.dropout[0].drop);
+          let x2 = parseFloat(this.characs.dropout[1].i);
+          let y2 = parseFloat(this.characs.dropout[1].drop);
+          dropout = Util.linearInterpol(x1, y1, x2, y2, itemCurrent);
+        }
+        // if the current is >= of the max dropout
+        else if(itemCurrent >= this.characs.dropout[this.characs.dropout.length - 1].i) {
+          // use linear interpolation to compute the dropout (y = ax+b)
+          // based on the two last dropouts of the array
+          let x1 = parseFloat(this.characs.dropout[this.characs.dropout.length - 2].i);
+          let y1 = parseFloat(this.characs.dropout[this.characs.dropout.length - 2].drop);
+          let x2 = parseFloat(this.characs.dropout[this.characs.dropout.length - 1].i);
+          let y2 = parseFloat(this.characs.dropout[this.characs.dropout.length - 1].drop);
+          dropout = Util.linearInterpol(x1, y1, x2, y2, itemCurrent);
+        }
+        // else, find two points and compute with linear interpolation (f(x)=ax+b)
+        else {
+          for(let n=0; n < this.characs.dropout.length - 1; n++) {
+            let drop_data      = this.characs.dropout[n];
+            let drop_nextData  = this.characs.dropout[n+1];
+
+            // if the current is equal to one of the point
+            if(itemCurrent == drop_data.i) {
+              dropout = parseFloat(drop_data.drop) / 100;
+              break;
+            }
+            // else, use linear interpolation to compute the dropout (y = ax+b)
+            else if(itemCurrent > drop_data.i && itemCurrent < drop_nextData.i) {
+              let x1 = parseFloat(drop_data.i);
+              let y1 = parseFloat(drop_data.dropout)/100;
+              let x2 = parseFloat(drop_nextData.i);
+              let y2 = parseFloat(drop_nextData.dropout)/100;
+              dropout = Util.linearInterpol(x1, y1, x2, y2, itemCurrent);
+              break;
+            }
+          }
+        }
+      }
+
+      // prevent incoherant values below 0
+      if (dropout < 0) {
+        dropout = 0;
+      }
+    }
+
+    return dropout;
+  }
+
+
+  // add a new data to chart_type (efficiency or dropout)
+  addToChart(chart_datas, new_data) {
+    // add the data to the array, keeping ordered by ascending currend
+    let new_index = null;
+    if(chart_datas.length === 0)
+    {
+      // no efficiency, first point in the empty chart
+      new_index = 0;
+      chart_datas.push(new_data);
+    }
+    else if(new_data.i <= chart_datas[0].i) {
+      // lowest Amp, first point in the chart
+      new_index = 0;
+      chart_datas.splice(new_index,0,new_data);
+    }
+    else if (new_data.i >= chart_datas[chart_datas.length-1].i) {
+      // Highest Amp, last point in the chart
+      new_index = chart_datas.length - 1;
+      chart_datas.push(new_data);
+    }
+    else {
+      // Somwhere in the midle of the chart
+      for(let n=1; n<chart_datas.length; n++) {
+        if(new_data.i >= chart_datas[n-1].i && new_data.i < chart_datas[n].i) {
+          new_index = n;
+          chart_datas.splice(new_index,0,new_data);
+          break;
+        }
+      }
+    }
+
+    // convert datas to string
+    if(null !== new_index) {
+      for(let prop in chart_datas[new_index]) {
+        chart_datas[new_index][prop] = chart_datas[new_index][prop].toString();
+      }
+    }
+  }
+
+
   // add a new efficiency
   addEfficiency(eff, i) {
     let new_data = {eff, i};
-
-    // get the old data
-    let eff_datas = this.characs.efficiency;
 
     // if the new datas are numbers
     if(!isNaN(new_data.eff) && !isNaN(new_data.i)) {
@@ -297,40 +421,23 @@ class Source extends Item {
         new_data.eff = 0;
       }
 
-      // add the data to the array, keeping ordered by ascending currend
-      let new_index = null;
-      if(eff_datas.length === 0)
-      {
-        // no efficiency, first point in the empty chart
-        new_index = 0;
-        eff_datas.push(new_data);
-      }
-      else if(new_data.i <= eff_datas[0].i) {
-        // lowest Amp, first point in the chart
-        new_index = 0;
-        eff_datas.splice(new_index,0,new_data);
-      }
-      else if (new_data.i >= eff_datas[eff_datas.length-1].i) {
-        // Highest Amp, last point in the chart
-        new_index = eff_datas.length - 1;
-        eff_datas.push(new_data);
-      }
-      else {
-        // Somwhere in the midle of the chart
-        for(let n=1; n<eff_datas.length; n++) {
-          if(new_data.i >= eff_datas[n-1].i && new_data.i < eff_datas[n].i) {
-            new_index = n;
-            eff_datas.splice(new_index,0,new_data);
-            break;
-          }
-        }
+      this.addToChart(this.characs.efficiency, new_data);
+    }
+  }
+
+
+  // add a new dropout
+  addDropout(drop, i) {
+    let new_data = {drop, i};
+
+    // if the new datas are numbers
+    if(!isNaN(new_data.drop) && !isNaN(new_data.i)) {
+      // keep the dropout value above 0
+      if(new_data.eff < 0) {
+        new_data.eff = 0;
       }
 
-      // convert datas to string
-      if(null !== new_index) {
-        eff_datas[new_index].i   = eff_datas[new_index].i.toString();
-        eff_datas[new_index].eff = eff_datas[new_index].eff.toString();
-      }
+      this.addToChart(this.characs.dropout, new_data);
     }
   }
 
@@ -342,6 +449,24 @@ class Source extends Item {
     else if(this.isPerfect())  return 'Perfect';
     else if(this.isDummy())    return 'Dummy';
     else                       return 'Other';
+  }
+
+
+  // get all the alerts
+  getAlerts() {
+    let alerts = [];
+
+    if(this.isLDO()) {
+      for(let valType of ['typ', 'max']) {
+        let v_out = parseFloat(this.characs['vout_' + valType]);
+        let v_out_max = this.getInputVoltage(valType) - this.getDroupout(valType);
+        if(v_out > v_out_max) {
+          alerts.push(`Vout ${valType} limited because of Dropout`);
+        }
+      }
+    }
+
+    return alerts;
   }
 
 
@@ -360,6 +485,12 @@ class Source extends Item {
     // conversions of old reg types to Perfect Source
     if(2 == this.characs.regtype || 5 == this.characs.regtype) {
       this.characs.regtype = 7;
+    }
+
+    // compatibility with < v1.8.0
+    // init LDO dropout to 0 to avoid unwanted modifications
+    if(this.isLDO() && undefined == properties.characs.dropout) {
+      this.characs.dropout = [{i:'0', drop:'0'}, {i:'1', drop:'0'}];
     }
 
     return properties;

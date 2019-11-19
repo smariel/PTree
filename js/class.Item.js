@@ -313,7 +313,7 @@ class Item {
 
 
   // get the input or output voltage, eventualy formated
-  getVoltage(valType, inout, roundToSI, show_unit) {
+  getVoltage(valType, inout, roundToSI, show_unit, ignoreDrop=false) {
     // init options
     if (undefined === roundToSI) roundToSI = false;
     if (undefined === show_unit) show_unit = false;
@@ -321,7 +321,7 @@ class Item {
     // get voltage value
     let voltage = 0.0;
     if      ('in'  === inout) voltage = this.getInputVoltage (valType);
-    else if ('out' === inout) voltage = this.getOutputVoltage(valType);
+    else if ('out' === inout) voltage = this.getOutputVoltage(valType, ignoreDrop);
 
     // format value
     if ($.isNumeric(roundToSI)) voltage = Util.numberToSi(voltage, roundToSI);
