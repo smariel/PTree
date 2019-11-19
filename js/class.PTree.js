@@ -23,6 +23,8 @@ class PTree {
     this.unsaved      = false;
     this.history      = {list: [], index: 0};
     this.ctxMenu      = null;
+    this.enableLock   = true;
+    this.enableBackup = true;
 
     this.setSheet(null);
     this.listenCanvas();
@@ -254,7 +256,7 @@ class PTree {
 
   // lock the project file
   lockFile() {
-    if(!this.readOnly) {
+    if(this.enableLock && !this.readOnly) {
       // create a .lock file to tell other users
       const fs = require('fs');
       fs.closeSync(fs.openSync(`${this.filePath}.lock`, 'w'));
@@ -282,7 +284,8 @@ class PTree {
 
   // create a backup file of the current context
   backup() {
-    const fs = require('fs');
+    if(this.enableBackup) {
+      const fs = require('fs');
 
     // if there is a ptree project file
     if('string' === typeof this.filePath) {

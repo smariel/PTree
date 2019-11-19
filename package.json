@@ -11,7 +11,7 @@
   "main": "main.js",
   "scripts": {
     "postinstall": "",
-    "start": "electron . --debug --no-update-check --inspect --remote-debugging-port=9228",
+    "start": "electron . --debug --no-update-check --no-backup --no-lock --inspect --remote-debugging-port=9228",
     "nodebug": "electron .",
     "test": "ava --fail-fast",
     "build:mac": "electron-builder --config electron-builder.json --mac   --dir",

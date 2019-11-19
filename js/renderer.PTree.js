@@ -23,6 +23,10 @@ $(() => {
     // creation of the PTree object
     ptree = new PTree('canvas');
 
+    // set lock and backup options
+    ptree.enableLock   = initData.enableLock;
+    ptree.enableBackup = initData.enableBackup;
+
     // if there is a file to open on startup
     if(null !== initData.fileToOpen) {
       ptree.open(initData.fileToOpen);

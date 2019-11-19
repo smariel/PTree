@@ -20,7 +20,7 @@ const packagejson = require('./package.json');
 // Keep a global reference of the renderers data
 // to avoid JS garbage collector to close them automatically
 let renderers = {
-  PTree          : { browserWindow:null, initData: {fileToOpen: null, checkUpdate: true}  },
+  PTree          : { browserWindow:null, initData: {fileToOpen: null, checkUpdate: true, enableLock: true, enableBackup: true}  },
   itemEditor     : { browserWindow:null, initData: null, returnData: null, reqEvent: null },
   partListEditor : { browserWindow:null, initData: null, returnData: null, reqEvent: null },
   stats          : { browserWindow:null, initData: null, returnData: null,                },
@@ -52,6 +52,16 @@ for (let i=1; i<process.argv.length; i++) {
       renderers.PTree.initData.checkUpdate = false;
       console.info(`--no-update-check`); // eslint-disable-line no-console
     }
+    // Don't create a backup of the edited file
+    else if('--no-backup' == arg || '-b' == arg) {
+      renderers.PTree.initData.enableBackup = false;
+      console.info(`--no-backup`); // eslint-disable-line no-console
+    }
+    // Don't lock the edited file
+    else if('--no-lock' == arg || '-k' == arg) {
+      renderers.PTree.initData.enableLock = false;
+      console.info(`--no-lock`); // eslint-disable-line no-console
+    }
     // Print the help and exit
     else if('--help' == arg || '-h' == arg) {
       let help = `--help\n`;
@@ -59,6 +69,8 @@ for (let i=1; i<process.argv.length; i++) {
       help    += '  -c, --no-update-check   Disables the update check at startup\n';
       help    += '  -d, --debug             Enable the chromium debug tools\n';
       help    += '  -h, --help              Print this help\n';
+      help    += '  -b, --no-backup         Disable the automatic backup of the file being edited\n';
+      help    += '  -k, --no-lock           Disable the lock of the file being edited\n';
       console.info(help); // eslint-disable-line no-console
       process.exit();
     }
