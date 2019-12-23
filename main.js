@@ -272,8 +272,8 @@ ipcMain.on('Item-editReq', (evt, itemStr, itemType) => {
 
   // Create the itemEditor window
   renderers.itemEditor.browserWindow = new BrowserWindow({
-    width           : ('source' == itemType) ? 900 : 650,
-    height          : ('source' == itemType) ? 620 : 485,
+    width           : ('source' == itemType) ? 950 : 650,
+    height          : ('source' == itemType) ? 625 : 485,
     parent          : renderers.PTree.browserWindow,
     modal           : true,
     resizable       : false,

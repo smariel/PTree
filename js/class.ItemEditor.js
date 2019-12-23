@@ -140,6 +140,20 @@ class ItemEditor {
         legend: {
           display: false
         },
+        scales: {
+          xAxes: [{
+            scaleLabel: {
+              display: true,
+              labelString: 'Output current (A)'
+            }
+          }],
+          yAxes: [{
+            scaleLabel: {
+              display: true,
+              labelString: 'Efficiency (%)'
+            }
+          }]
+        },
         // Client event
         onClick: (event, elements) => {
           // if click on a point, delete it and redraw the chart
@@ -207,6 +221,20 @@ class ItemEditor {
       options: {
         legend: {
           display: false
+        },
+        scales: {
+          xAxes: [{
+            scaleLabel: {
+              display: true,
+              labelString: 'Output current (A)'
+            }
+          }],
+          yAxes: [{
+            scaleLabel: {
+              display: true,
+              labelString: 'Dropout Voltage (V)'
+            }
+          }]
         },
         // Client event
         onClick: (event, elements) => {
