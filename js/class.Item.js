@@ -397,6 +397,12 @@ class Item {
   }
 
 
+  // get all the alerts
+  getAlerts() {
+    return [];
+  }
+  
+
   // Open a new window to edit the item
   // wait for the modifications then edit the item values
   // Need a partlist to update the consumptions in some cases

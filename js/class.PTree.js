@@ -287,22 +287,23 @@ class PTree {
     if(this.enableBackup) {
       const fs = require('fs');
 
-    // if there is a ptree project file
-    if('string' === typeof this.filePath) {
-      // set the path of the backup file
-      let backupFile = `${this.filePath}.backup`;
-      // open the file or create it if it does not exist using node.js fs module
-      fs.open(backupFile, 'w+', (err, fd) => {
-        if (null === err) {
-          // write the data
-          let extradata = {version: require('../package.json').version};
-          let data = this.toString(extradata);
-          fs.writeSync(fd, data);
-        }
-        else {
-          console.error('Error while trying to backup:'+err);
-        }
-      });
+      // if there is a ptree project file
+      if('string' === typeof this.filePath) {
+        // set the path of the backup file
+        let backupFile = `${this.filePath}.backup`;
+        // open the file or create it if it does not exist using node.js fs module
+        fs.open(backupFile, 'w+', (err, fd) => {
+          if (null === err) {
+            // write the data
+            let extradata = {version: require('../package.json').version};
+            let data = this.toString(extradata);
+            fs.writeSync(fd, data);
+          }
+          else {
+            console.error('Error while trying to backup:'+err);
+          }
+        });
+      }
     }
   }
 
@@ -1107,11 +1108,11 @@ class PTree {
       // if left click
       if(1 === evt.button) {
         // if the fabric obj is an 'item', select it
-        if (null !== fabric_obj && undefined !== fabric_obj && undefined !== fabric_obj.item) {
+        if (null !== fabric_obj && undefined !== fabric_obj && undefined !== fabric_obj.ptree_item) {
           // select the item
-          this.selectItem(fabric_obj.item);
+          this.selectItem(fabric_obj.ptree_item);
           // start drag
-          this.canvas.fabricCanvas.dragedItem = fabric_obj.item;
+          this.canvas.fabricCanvas.dragedItem = fabric_obj.ptree_item;
           this.canvas.fabricCanvas.defaultCursor = 'move';
         }
         else {
@@ -1124,9 +1125,9 @@ class PTree {
       // else if right click
       else if (3 === evt.button) {
         // if the fabric obj is an 'item'
-        if (null !== fabric_obj && undefined !== fabric_obj && undefined !== fabric_obj.item) {
+        if (null !== fabric_obj && undefined !== fabric_obj && undefined !== fabric_obj.ptree_item) {
           // save a ref to the targeted item
-          this.canvas.rightClickedItem = fabric_obj.item;
+          this.canvas.rightClickedItem = fabric_obj.ptree_item;
         }
         // if the fabric obj is NOT an item
         else {
@@ -1151,8 +1152,8 @@ class PTree {
       let dragedItem = this.canvas.fabricCanvas.dragedItem;
 
       // if the event occured on a fabric obj (on an 'item')
-      if (null !== fabric_obj && undefined !== fabric_obj && undefined !== fabric_obj.item && null !== dragedItem) {
-        let receiverItem = fabric_obj.item;
+      if (null !== fabric_obj && undefined !== fabric_obj && undefined !== fabric_obj.ptree_item && null !== dragedItem) {
+        let receiverItem = fabric_obj.ptree_item;
         // if the receiver item is different than the dragged item
         if (receiverItem.id !== dragedItem.id) {
           // if the receiver item is a source
@@ -1188,21 +1189,29 @@ class PTree {
     // mouse enter in an object on the canvas
     this.canvas.fabricCanvas.on('mouse:over', (evt) => {
       let fabric_obj = evt.target;
-      // if the fabric obj is an 'item'
-      if (null !== fabric_obj && undefined !== fabric_obj && undefined !== fabric_obj.item) {
-        let receiverItem = fabric_obj.item;
-        let dragedItem = this.canvas.fabricCanvas.dragedItem;
-        // if an item is being draged
-        if (null !== dragedItem) {
-          // change the receiver style if it can receive the dragged item
-          if (fabric_obj.item.id !== dragedItem.id && receiverItem.isSource() && !receiverItem.isChildOf(dragedItem)) {
-            fabric_obj.rect.set(Canvas.fabric_template.receiver);
-            this.canvas.fabricCanvas.renderAll();
+      // if there is a fabric object
+      if (null !== fabric_obj && undefined !== fabric_obj && undefined !== fabric_obj.objType) {
+        let receiverItem = fabric_obj.ptree_item;
+
+        // if the fabric obj is an 'item'
+        if('item' == fabric_obj.objType) {
+          let dragedItem = this.canvas.fabricCanvas.dragedItem;
+          // if an item is being draged
+          if (null !== dragedItem) {
+            // change the receiver style if it can receive the dragged item
+            if (fabric_obj.ptree_item.id !== dragedItem.id && receiverItem.isSource() && !receiverItem.isChildOf(dragedItem)) {
+              fabric_obj.rect.set(Canvas.fabric_template.receiver);
+              this.canvas.fabricCanvas.renderAll();
+            }
+          }
+          // if no item is dragged, show the item infos
+          else {
+            this.canvas.displayInfo(receiverItem);
           }
         }
-        // if no item is dragged, show the item infos
-        else {
-          this.canvas.displayInfo(receiverItem);
+        // if the fabric obj is an 'alert'
+        else if('alert' == fabric_obj.objType) {
+          this.canvas.displayAlert(receiverItem);
         }
       }
     });
@@ -1211,22 +1220,31 @@ class PTree {
     // mouse exit from an object on the canvas
     this.canvas.fabricCanvas.on('mouse:out', (evt) => {
       let fabric_obj = evt.target;
-      // if the fabric obj is an 'item'
-      if (null !== fabric_obj && undefined !== fabric_obj && undefined !== fabric_obj.item) {
-        // if an item is being dragged
-        if (null !== this.canvas.fabricCanvas.dragedItem) {
-          // if the draged item is different than the exited item, reset the style
-          if (fabric_obj.item.id !== this.canvas.fabricCanvas.dragedItem.id) {
-            fabric_obj.rect.set(Canvas.fabric_template.deselected);
-            this.canvas.fabricCanvas.renderAll();
+
+
+      // if there is a fabric object
+      if (null !== fabric_obj && undefined !== fabric_obj && undefined !== fabric_obj.objType) {
+        // if the fabric obj is an 'item'
+        if('item' == fabric_obj.objType) {
+          // if an item is being dragged
+          if (null !== this.canvas.fabricCanvas.dragedItem) {
+            // if the draged item is different than the exited item, reset the style
+            if (fabric_obj.ptree_item.id !== this.canvas.fabricCanvas.dragedItem.id) {
+              fabric_obj.rect.set(Canvas.fabric_template.deselected);
+              this.canvas.fabricCanvas.renderAll();
+            }
+            // if the draged item IS the exited one, fadeOut the item infos
+            else {
+              $('.item_info').fadeOut(0);
+            }
           }
-          // if the draged item IS the exited one, fadeOut the item infos
           else {
             $('.item_info').fadeOut(0);
           }
         }
-        else {
-          $('.item_info').fadeOut(0);
+        // if the fabric obj is an 'alert'
+        else if('alert' == fabric_obj.objType) {
+          $('#item_alert').hide();
         }
       }
     });

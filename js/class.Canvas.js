@@ -150,11 +150,12 @@ class Canvas {
     });
 
     // group the rect and the name and add it to canvas
-    let itemGroup      = new fabric.Group([itemRect, itemText], Canvas.fabric_template.group);
-    itemGroup.item     = item;
-    itemGroup.rect     = itemRect;
-    itemGroup.name     = itemText;
-    itemGroup.geometry = itemGeometry;
+    let itemGroup        = new fabric.Group([itemRect, itemText], Canvas.fabric_template.group);
+    itemGroup.objType    = 'item';
+    itemGroup.ptree_item = item;
+    itemGroup.rect       = itemRect;
+    itemGroup.name       = itemText;
+    itemGroup.geometry   = itemGeometry;
     this.fabricCanvas.fabric_obj[item.id] = itemGroup;
     this.fabricCanvas.add(itemGroup);
 
@@ -166,6 +167,9 @@ class Canvas {
 
     // Print the badges
     this.addBadges(item, itemGeometry);
+
+    // Print the alert
+    this.addAlerts(item, itemGeometry);
   }
 
 
@@ -355,6 +359,41 @@ class Canvas {
         let badge_out_group = new fabric.Group([badge_out, badge_out_text], {evented: false});
         this.fabricCanvas.add(badge_out_group);
       }
+    }
+  }
+
+
+  addAlerts(item, itemGeometry) {
+    if(item.isRoot()) return;
+    let alerts = item.getAlerts();
+    if(alerts.length > 0)
+    {
+      // circle
+      let alert = new fabric.Triangle(Canvas.fabric_template.alert);
+      alert.set({
+        originX : 'center',
+        originY : 'center',
+        left    : itemGeometry.x2,
+        top     : itemGeometry.y1,
+      });
+
+      // text
+      let alert_text = new fabric.Text('!', Canvas.fabric_template.text);
+      alert_text.set({
+        originX   : 'center',
+        originY   : 'center',
+        textAlign : 'center',
+        left      : itemGeometry.x2,
+        top       : itemGeometry.y1+2,
+        fontSize  : 18,
+        fill      : Canvas.fabric_template.alert.stroke
+      });
+
+      // group the circle and the text and add it to canvas
+      let alert_group = new fabric.Group([alert, alert_text], {evented: true, selectable: false});
+      alert_group.objType    = 'alert';
+      alert_group.ptree_item = item;
+      this.fabricCanvas.add(alert_group);
     }
   }
 
@@ -675,6 +714,36 @@ class Canvas {
     }
   }
 
+
+  // Display the alerts of the given item
+  displayAlert(item) {
+    // Get all the alerts of the given item
+    let alerts = item.getAlerts();
+    if(alerts.length <= 0) return;
+
+    // fill the alerts
+    let alert_content_element = $('#item_alert>.item_info_data');
+    alert_content_element.html('Alerts:<br />');
+    for(let alert of alerts) {
+      alert_content_element.append(`- ${alert}<br />`);
+    }
+
+    // move the alert div next to alert icon
+    let fabric_obj = this.fabricCanvas.fabric_obj[item.id];
+    let zoom       = this.config.zoom/100;
+    let margin     = 5;
+    let left       = this.canvas$.offset().left + fabric_obj.geometry.x2*zoom + Canvas.fabric_template.alert.width*zoom/2 + margin;
+    let top        = this.canvas$.offset().top  + fabric_obj.geometry.y1*zoom;
+    $('#item_alert').css({
+      'left': left + 'px',
+      'top' : top  + 'px'
+    });
+
+    // show the alert div
+    $('#item_alert').show();
+  }
+
+
   // Export the canvas as a JPEG image within an ObjectURL
   // must export to blob then convert to ObjectURL instead of DataURL
   // because Chrome can't download a DataURL>2MB but has no limit for ObjectURL
@@ -751,6 +820,14 @@ Canvas.fabric_template = {
     strokeWidth   : 2,
     selectable    : false,
     evented       : false
+  },
+  alert: {
+    fill          : '#FFFF00',
+    height        : 24,
+    width         : 24,
+    stroke        : '#424242',
+    strokeWidth   : 2,
+    selectable    : false,
   },
   net: {
     stroke        : '#424242',
