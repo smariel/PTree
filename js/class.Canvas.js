@@ -45,6 +45,7 @@ class Canvas {
       show_ref     : true,
       show_custom1 : true,
       show_badges  : true,
+      show_type    : false,
       align_load   : false,
       proportional : false,
       loss_color   : false,
@@ -137,13 +138,17 @@ class Canvas {
       if ('' !== text) text += '\n';
       text += item.characs.custom1;
     }
+    if (this.config.show_type) {
+      if ('' !== text) text += '\n';
+      text += item.getType();
+    }
 
     let itemText = new fabric.Text(text, Canvas.fabric_template.text);
     itemText.set({
       originX   : 'center',
       originY   : 'center',
       textAlign : 'center',
-      top       : itemGeometry.yhalf,
+      top       : itemGeometry.yhalf+1,
       left      : itemGeometry.xhalf,
       fill      : Util.getOpositeBorW(item_color),
       fontSize  : this.config.text_size
