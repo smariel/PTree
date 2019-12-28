@@ -118,9 +118,15 @@ class Util {
   //    numberToSi(0.00123456789, 4) = 1.234m
   //    numberToSi(0.00000012, 10) = 120n
   static numberToSi(number, digits) {
-    if (!$.isNumeric(number)) {
+    if (isNaN(number)) {
       console.warn(`numberToSi: ${number} is not a number`);
       return 0;
+    }
+    else if (Infinity == number || number >= Number.MAX_SAFE_INTEGER) {
+      return '∞';
+    }
+    else if (-Infinity == number || number <= -Number.MAX_SAFE_INTEGER) {
+      return '-∞';
     }
 
     if (undefined === digits) digits = 3;

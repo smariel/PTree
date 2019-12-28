@@ -141,6 +141,22 @@ class Load extends Item {
   }
 
 
+  // get all the alerts
+  getAlerts() {
+    let alerts = [];
+
+    // Check negative input power (sourcing instead of sinking)
+    for(let valType of ['typ', 'max']) {
+      let pin = this.getInputPower(valType);
+      if(pin < 0) {
+        alerts.push(`P<sub>IN ${valType.toUpperCase()}</sub> is negative (${pin}W): the load is sourcing instead of sinking.`);
+      }
+    }
+
+    return alerts;
+  }
+
+
   // Import an item data
   import(properties) {
     // natively importy the item with the parent method

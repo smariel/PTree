@@ -458,8 +458,17 @@ class Source extends Item {
 
     // Check negative output power (sinking instead of sourcing)
     for(let valType of ['typ', 'max']) {
-      if(this.getOutputPower(valType) < 0) {
-        alerts.push(`P<sub>OUT ${valType.toUpperCase()}</sub> is negative : the regulator is sinking instead of sourcing.`);
+      let pout = this.getOutputPower(valType);
+      if(pout < 0) {
+        alerts.push(`P<sub>OUT ${valType.toUpperCase()}</sub> is negative (${pout}W): the regulator is sinking instead of sourcing.`);
+      }
+    }
+
+    // Check 0% efficiency
+    for(let valType of ['typ', 'max']) {
+      let eff = this.getEfficiency(valType);
+      if(0 == eff) {
+        alerts.push(`The efficiency for I<sub>OUT ${valType.toUpperCase()}</sub>=${this.getOutputPower(valType)}A is 0%.`);
       }
     }
     // Check LDO dropout

@@ -458,6 +458,7 @@ class Canvas {
     let max_loss = 0;
     this.tree.forEachSource((source) => {
       let loss = source.getPowerLoss('typ');
+      if(Infinity == loss) loss = Number.MAX_SAFE_INTEGER;
       if(loss > max_loss) max_loss = loss;
     });
 
@@ -469,7 +470,9 @@ class Canvas {
           item.lossColor = '#000000';
         }
         else {
-          item.lossColor = (0 === max_loss) ? default_color : Util.getMetalColor(item.getPowerLoss('typ')/max_loss);
+          let item_loss = item.getPowerLoss('typ');
+          if(Infinity == item_loss) item_loss = Number.MAX_SAFE_INTEGER;
+          item.lossColor = (0 === max_loss) ? default_color : Util.getMetalColor(item_loss/max_loss);
         }
       }
       else {
