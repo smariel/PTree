@@ -40,4 +40,7 @@ $(() => {
 
   // Send an IPC async msg to main.js: request init data
   ipcRenderer.send('ItemEditor-initDataReq');
+
+  // enable tooltips
+  $('[data-toggle="tooltip"]').tooltip();
 });
