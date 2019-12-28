@@ -456,12 +456,19 @@ class Source extends Item {
   getAlerts() {
     let alerts = [];
 
+    // Check negative output power (sinking instead of sourcing)
+    for(let valType of ['typ', 'max']) {
+      if(this.getOutputPower(valType) < 0) {
+        alerts.push(`P<sub>OUT ${valType.toUpperCase()}</sub> is negative : the regulator is sinking instead of sourcing.`);
+      }
+    }
+    // Check LDO dropout
     if(this.isLDO()) {
       for(let valType of ['typ', 'max']) {
         let v_out = parseFloat(this.characs['vout_' + valType]);
         let v_out_max = this.getInputVoltage(valType) - this.getDroupout(valType);
         if(v_out > v_out_max) {
-          alerts.push(`Vout ${valType} limited because of Dropout`);
+          alerts.push(`V<sub>OUT ${valType.toUpperCase()}</sub> limited because of Dropout.`);
         }
       }
     }
@@ -488,7 +495,7 @@ class Source extends Item {
     }
 
     // compatibility with < v1.8.0
-    // init LDO dropout to 0 to avoid unwanted modifications
+    // init LDO dropout to 0 to avoid unwanted modifications, regardless of the application default dropout
     if(this.isLDO() && undefined == properties.characs.dropout) {
       this.characs.dropout = [{i:'0', drop:'0'}, {i:'1', drop:'0'}];
     }
