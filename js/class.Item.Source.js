@@ -30,23 +30,26 @@ class Source extends Item {
         6: Dummy    (>= 1.3.0)
         7: Perfect  (>= 1.3;0)
       */
-      ref         : 'Part Number',
+      ref         : '',
       custom1     : '',
       //custom2     : '', <v1.7.0
       vout_min    : '1.78',
       vout_typ    : '1.8',
       vout_max    : '1.82',
+      iout_limit  : '0', // v1.8.0, 0=no limit
       r1          : '150000',
       r2          : '120000',
       rtol        : '1',
       vref_min    : '0.8',
       vref_typ    : '0.8',
       vref_max    : '0.8',
-      efficiency  : [{i:'0.1', eff:'80'}, {i:'0.5', eff:'88'}, {i:'1', eff:'90'}, {i:'2', eff:'88'}], // must be kept ordered by ascending current
+      efficiency  : [{i:'1', eff:'90'}, {i:'2', eff:'90'}], // must be kept ordered by ascending current
+      // TODO : efficiency enable
       iq_typ      : '0',
       iq_min      : '0',
       iq_max      : '0',
-      dropout     : [{i:'0', drop:'0'}, {i:'0.01', drop:'0.1'}, {i:'0.05', drop:'0.2'}, {i:'0.2', drop:'0.3'}], // must be kept ordered by ascending current
+      dropout     : [{i:'1', drop:'0'}, {i:'1', drop:'0'}], // must be kept ordered by ascending current
+      // TODO : dropout enable
       color       : '#FF1744',
       hidden      : false,
       shape       : '0', // v1.7.0
@@ -471,6 +474,18 @@ class Source extends Item {
         alerts.push(`The efficiency for I<sub>OUT ${valType.toUpperCase()}</sub>=${this.getOutputPower(valType)}A is 0%.`);
       }
     }
+
+    // Check if Iout < iout_limit
+    let ilimit = parseFloat(this.characs.iout_limit);
+    if(ilimit !== 0) {
+      for(let valType of ['typ', 'max']) {
+        let iout = this.getOutputCurrent(valType);
+        if(Math.abs(iout) > Math.abs(ilimit)) {
+          alerts.push(`I<sub>OUT ${valType.toUpperCase()}</sub> is higher than the output current limit (|${iout}| > |${ilimit}|).`);
+        }
+      }
+    }
+
     // Check LDO dropout
     if(this.isLDO()) {
       for(let valType of ['typ', 'max']) {
