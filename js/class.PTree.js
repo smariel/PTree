@@ -414,14 +414,18 @@ class PTree {
   addSource(parent) {
     let newItem;
     if(undefined === parent || null === parent || parent.isRoot()) {
-      // add a perfect source to the root
+      // add a perfect source to the root with default values
       newItem = this.tree.addSourceToRoot();
       newItem.characs.regtype = '7';
+      newItem.characs.vout_typ = '5';
+      newItem.characs.vout_max = '5.5';
+      newItem.characs.name  = `Source #${newItem.id}`;
     }
     else {
       // add a DC/DC to the parent
       newItem = this.tree.addSource(parent);
       newItem.characs.regtype = '0';
+      newItem.characs.name  = `Reg #${newItem.id}`;
     }
 
     newItem.characs.color = this.canvas.config.color_source;
@@ -440,6 +444,7 @@ class PTree {
     }
 
     let newItem = this.tree.addLoad(parent);
+    newItem.characs.name  = `Load #${newItem.id}`;
     newItem.characs.color = this.canvas.config.color_load;
     this.canvas.refresh();
     this.updateClearButtons();
