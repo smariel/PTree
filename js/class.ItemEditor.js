@@ -354,16 +354,34 @@ class ItemEditor {
     });
 
 
-    // Replace ',' by '.' on numeric inputs
+    // check numeric inputs
     $('.input_num').keypress((event) => {
-      if (44 == event.keyCode) {
+      let selStart = event.currentTarget.selectionStart;
+      let selEnd   = event.currentTarget.selectionEnd;
+
+      // if the key is not part of a number
+      if(!(/[0-9.,]/.test(event.key) || (0 == selStart && /[+-]/.test(event.key)))) {
         event.preventDefault();
-        $(event.currentTarget).val($(event.currentTarget).val() + '.');
+      }
+
+      // if '.' or ','
+      if (46 == event.keyCode || 44 == event.keyCode) {
+        let input_val = $(event.currentTarget).val();
+        // if there is already a '.', ignore
+        if (input_val.indexOf('.') > -1) {
+          event.preventDefault();
+        }
+        // else, if ',' pressed, replace by '.'
+        else if (44 == event.keyCode) {
+          event.preventDefault();
+          $(event.currentTarget).val(input_val.substring(0,selStart) + '.' + input_val.substring(selEnd));
+          event.currentTarget.setSelectionRange(selStart+1,selStart+1);
+        }
       }
     });
 
 
-    // Replace lowercase by uppercase and ignore none alpha numeric on cell inputs
+    // Replace lowercase by uppercase and ignore none alpha numeric on cell inputs (excel)
     $('.input_cell').keypress((event) => {
       // check the pressed key
       let match = event.key.match(/([A-Z0-9])|([a-z])/);
