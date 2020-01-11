@@ -11,11 +11,14 @@
     "!sass/*",
     "!test/*"
   ],
+  "npmRebuild" : false,
   "mac": {
     "category"   : "public.app-category.developer-tools",
     "icon"       : "icons/mac/app.icns",
     "target"     : "dmg",
-    "extraFiles" : [],
+    "identity"  : "P23QV2X53J",
+    "type"      : "distribution",
+    "extraFiles" : ["docs/equations.pdf"],
     "fileAssociations": {
       "ext"       : "ptree",
       "name"      : "PTree",
