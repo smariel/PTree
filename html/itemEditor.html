@@ -106,14 +106,6 @@
           <div class="col-xs-4 mintypmax"><label for="input_vout_max">V<sub>OUT MAX</sub></label><input id="input_vout_max" type="text" data-itemdata="vout_max" class="form-control input_vout input_num item-control" placeholder="max (V)" data-toggle="tooltip" data-placement="bottom" title="Maximum output voltage (V)" /></div>
         </div>
 
-        <!-- OUTOUT CURRENT LIMIT -->
-        <div class="form-group row">
-          <div class="col-xs-12">
-            <label for="source_ilimit">Output current limit (absolute value)</label>
-            <input id="source_ilimit" type="text" data-itemdata="iout_limit" class="form-control input_num" placeholder="xx A (0 = no limit)" data-toggle="tooltip" data-placement="bottom" title="Output current limit (0 = no limit)"/>
-          </div>
-        </div>
-
         <!-- DC/DC EFFICIENCY -->
         <div class="form-group source_dcdc">
           <label>Efficiency</label>
@@ -130,17 +122,6 @@
           <div class="col-xs-4 mintypmax"><label>I<sub>Q MIN</sub></label><input id="input_iq_min" type="text" data-itemdata="iq_min" class="form-control input_iq input_num item-control" placeholder="min (V)" data-toggle="tooltip" data-placement="bottom" title="Minium quiescent current (A)" /></div>
           <div class="col-xs-4 mintypmax"><label>I<sub>Q TYP</sub></label><input id="input_iq_typ" type="text" data-itemdata="iq_typ" class="form-control input_iq input_num item-control" placeholder="typ (V)" data-toggle="tooltip" data-placement="bottom" title="Typical quiescent current (A)" /></div>
           <div class="col-xs-4 mintypmax"><label>I<sub>Q MAX</sub></label><input id="input_iq_max" type="text" data-itemdata="iq_max" class="form-control input_iq input_num item-control" placeholder="max (V)" data-toggle="tooltip" data-placement="bottom" title="Maximum quiescent current (A)" /></div>
-        </div>
-
-        <!-- LDO DROPOUT -->
-        <div class="form-group source_ldo">
-          <label>Dropout voltage</label>
-          <div class="row">
-            <div class="col-xs-5 dropout"><input id="input_drop_i" type="text" class="form-control input_num" placeholder="xx A" data-toggle="tooltip" data-placement="bottom" title="Output current (A)" /></div>
-            <div class="col-xs-5 dropout"><input id="input_drop_v" type="text" class="form-control input_num" placeholder="xx V" data-toggle="tooltip" data-placement="bottom" title="Dropout voltage (V)" /></div>
-            <div class="col-xs-2 dropout"><a id="add_drop" class="btn btn-default"><span class="fa fa-plus"></span></a></div>
-          </div>
-          <canvas id="dropChart" width="200" height="108"></canvas>
         </div>
       </div>
 
@@ -170,6 +151,39 @@
           <div class="col-xs-4 mintypmax"><label>V<sub>REF MIN</sub></label><input id="source_vref_min" type="text" data-itemdata="vref_min" class="form-control input_num source_adj item-control" placeholder="typ (V)" data-toggle="tooltip" data-placement="bottom" title="Minium regulator Vref (V)" /></div>
           <div class="col-xs-4 mintypmax"><label>V<sub>REF TYP</sub></label><input id="source_vref_typ" type="text" data-itemdata="vref_typ" class="form-control input_num source_adj item-control" placeholder="typ (V)" data-toggle="tooltip" data-placement="bottom" title="Typical regulator Vref (V)" /></div>
           <div class="col-xs-4 mintypmax"><label>V<sub>REF MAX</sub></label><input id="source_vref_max" type="text" data-itemdata="vref_max" class="form-control input_num source_adj item-control" placeholder="typ (V)" data-toggle="tooltip" data-placement="bottom" title="Maximul regulator Vref (V)" /></div>
+        </div>
+      </div>
+
+
+      <!-- LIMITS -->
+      <div class="container">
+        <h3>Limits</h3>
+
+        <!-- INPUT VOLTAGE LIMIT -->
+        <div class="form-group row">
+          <div class="col-xs-12">
+            <label for="source_vinlim">V<sub>IN</sub> limit</label>
+            <input id="source_vinlim" type="text" data-itemdata="vin_limit" class="form-control input_num" placeholder="xx V (0 = no limit)" data-toggle="tooltip" data-placement="bottom" title="Maximum recommended input voltage (0 = no limit)"/>
+          </div>
+        </div>
+
+        <!-- OUTPUT CURRENT LIMIT -->
+        <div class="form-group row">
+          <div class="col-xs-12">
+            <label for="source_ilimit">I<sub>OUT</sub> limit</label>
+            <input id="source_ilimit" type="text" data-itemdata="iout_limit" class="form-control input_num" placeholder="xx A (0 = no limit)" data-toggle="tooltip" data-placement="bottom" title="Maximum recommended output current (0 = no limit)"/>
+          </div>
+        </div>
+
+        <!-- LDO DROPOUT -->
+        <div class="form-group source_ldo">
+          <label>Dropout voltage</label>
+          <div class="row">
+            <div class="col-xs-5 dropout"><input id="input_drop_i" type="text" class="form-control input_num" placeholder="xx A" data-toggle="tooltip" data-placement="bottom" title="Output current (A)" /></div>
+            <div class="col-xs-5 dropout"><input id="input_drop_v" type="text" class="form-control input_num" placeholder="xx V" data-toggle="tooltip" data-placement="bottom" title="Dropout voltage (V)" /></div>
+            <div class="col-xs-2 dropout"><a id="add_drop" class="btn btn-default"><span class="fa fa-plus"></span></a></div>
+          </div>
+          <canvas id="dropChart" width="200" height="108"></canvas>
         </div>
       </div>
     </form>

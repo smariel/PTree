@@ -36,6 +36,7 @@ class Source extends Item {
       vout_min    : '1.78',
       vout_typ    : '1.8',
       vout_max    : '1.82',
+      vin_limit   : '0', // v1.8.0, 0=no limit
       iout_limit  : '0', // v1.8.0, 0=no limit
       r1          : '150000',
       r2          : '120000',
@@ -475,13 +476,24 @@ class Source extends Item {
       }
     }
 
+    // Check if Vin < vin_limit
+    let vin_limit = parseFloat(this.characs.vin_limit);
+    if(vin_limit !== 0) {
+      for(let valType of ['typ', 'max']) {
+        let vin = this.getInputVoltage(valType);
+        if((vin > 0 && vin > vin_limit) || (vin < 0 && vin < vin_limit)) {
+          alerts.push(`V<sub>IN ${valType.toUpperCase()}</sub> (${vin}V) exceeds the input voltage limit (${vin_limit}V).`);
+        }
+      }
+    }
+
     // Check if Iout < iout_limit
-    let ilimit = parseFloat(this.characs.iout_limit);
-    if(ilimit !== 0) {
+    let iout_limit = parseFloat(this.characs.iout_limit);
+    if(iout_limit !== 0) {
       for(let valType of ['typ', 'max']) {
         let iout = this.getOutputCurrent(valType);
-        if(Math.abs(iout) > Math.abs(ilimit)) {
-          alerts.push(`I<sub>OUT ${valType.toUpperCase()}</sub> is higher than the output current limit (|${iout}| > |${ilimit}|).`);
+        if((iout > 0 && iout > iout_limit) || (iout < 0 && iout < iout_limit)) {
+          alerts.push(`I<sub>OUT ${valType.toUpperCase()}</sub> (${iout}A) exceeds the output current limit (${iout_limit}A).`);
         }
       }
     }

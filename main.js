@@ -10,6 +10,7 @@ const app = electron.app;
 const BrowserWindow = electron.BrowserWindow;
 // Electron module to send/receive message with all renderers
 const ipcMain = electron.ipcMain;
+
 // Node.js module to access File System
 const fs = require('fs');
 // Node.js module to work with  paths
@@ -270,10 +271,14 @@ ipcMain.on('Item-editReq', (evt, itemStr, itemType) => {
   // save the event to respond to this msg later
   renderers.itemEditor.reqEvent = evt;
 
+  // Electron module to get screen informations
+  const screen = electron.screen;
+  const maxWidth = screen.getPrimaryDisplay().workAreaSize.width;
+
   // Create the itemEditor window
   renderers.itemEditor.browserWindow = new BrowserWindow({
-    width           : ('source' == itemType) ? 1000 : 650,
-    height          : ('source' == itemType) ? 720 : 485,
+    width           : ('source' == itemType) ? (1300>maxWidth)?maxWidth:1300 : 650,
+    height          : ('source' == itemType) ? 540 : 485,
     parent          : renderers.PTree.browserWindow,
     modal           : true,
     resizable       : false,
