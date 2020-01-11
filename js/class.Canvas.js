@@ -311,6 +311,9 @@ class Canvas {
   // add the badges of an item to the canvas
   addBadges(item, itemGeometry) {
     if(this.config.show_badges) {
+      // x-offset depending on the shape of the item
+      let offset = Math.round(itemGeometry.skew_error/2);
+
       // input badge
       if(!item.isRoot() && !item.isChildOfRoot() && '' !== item.characs.badge_in) {
         // circle
@@ -318,7 +321,7 @@ class Canvas {
         badge_in.set({
           originX : 'center',
           originY : 'center',
-          left    : itemGeometry.x1,
+          left    : itemGeometry.x1+offset,
           top     : itemGeometry.yhalf,
         });
 
@@ -328,7 +331,7 @@ class Canvas {
           originX   : 'center',
           originY   : 'center',
           textAlign : 'center',
-          left      : itemGeometry.x1,
+          left      : itemGeometry.x1+offset,
           top       : itemGeometry.yhalf,
           fontSize  : 12
         });
@@ -345,7 +348,7 @@ class Canvas {
         badge_out.set({
           originX : 'center',
           originY : 'center',
-          left    : itemGeometry.x2,
+          left    : itemGeometry.x2+offset,
           top     : itemGeometry.yhalf,
         });
 
@@ -355,7 +358,7 @@ class Canvas {
           originX   : 'center',
           originY   : 'center',
           textAlign : 'center',
-          left      : itemGeometry.x2,
+          left      : itemGeometry.x2+offset,
           top       : itemGeometry.yhalf,
           fontSize  : 12
         });
