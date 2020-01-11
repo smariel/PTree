@@ -201,14 +201,19 @@ app.on('ready', () => {
         // because __dirname point to the archive that can not be treated as a real folder by shell.openItem
         // ASAR is prefered than this menu, even if ASAR may be disabled
         // TODO: equation summary menu
-        /*
+
         {
-        label: 'Equation Summary',
-        click () {
-        require('electron').shell.openItem(`${__dirname}/docs/equations.pdf`);
-      }
-    },
-    */
+          label: 'Equation Summary',
+          click () {
+            if ('darwin' === process.platform) {
+              require('electron').shell.openItem(`${/(.*\/)Resources\/app.asar\/html$/.exec(__dirname)[1]}/docs/equations.pdf`);
+            }
+            else {
+              require('electron').shell.openItem('equations.pdf');
+            }
+          }
+        },
+
       ]
     },
     (debug) ? {
