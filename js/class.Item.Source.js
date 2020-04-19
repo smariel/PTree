@@ -184,7 +184,6 @@ class Source extends Item {
     else if (this.isDCDC()) {
       // p_in = p_out / efficiency
       let efficiency = this.getEfficiency(valType);
-      // TODO add DCR loss
       p_in = (0 == efficiency) ? Infinity : this.getOutputPower(valType) / efficiency;
     }
 
