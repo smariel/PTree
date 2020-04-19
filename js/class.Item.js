@@ -384,6 +384,14 @@ class Item {
     else if (2 == this.characs.shape) {
       template.skewX = -20;
     }
+    // hexagon
+    else if (3 == this.characs.shape) {
+      // TODO: hexagon
+    }
+    // octagon
+    else if (4 == this.characs.shape) {
+      // TODO: octagon
+    }
 
     return template;
   }
@@ -393,7 +401,7 @@ class Item {
   getAlerts() {
     return [];
   }
-
+  
 
   // Open a new window to edit the item
   // wait for the modifications then edit the item values

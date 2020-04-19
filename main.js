@@ -197,6 +197,11 @@ app.on('ready', () => {
             require('electron').shell.openExternal('https://github.com/smariel/PTree/issues');
           }
         },
+        // not compatible withe ASAR archive made when packaging with Electron Builder
+        // because __dirname point to the archive that can not be treated as a real folder by shell.openItem
+        // ASAR is prefered than this menu, even if ASAR may be disabled
+        // TODO: equation summary menu
+
         {
           label: 'Equation Summary',
           click () {
