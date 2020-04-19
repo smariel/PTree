@@ -50,8 +50,6 @@ class Source extends Item {
       iq_min      : '0',
       iq_max      : '0',
       dropout     : [{i:'1', drop:'0'}, {i:'1', drop:'0'}], // must be kept ordered by ascending current
-      dcr_typ     : '0', // v1.8.0
-      dcr_max     : '0', // v1.8.0
       // TODO : dropout enable
       color       : '#FF1744',
       hidden      : false,
@@ -184,7 +182,6 @@ class Source extends Item {
     else if (this.isDCDC()) {
       // p_in = p_out / efficiency
       let efficiency = this.getEfficiency(valType);
-      // TODO add DCR loss
       p_in = (0 == efficiency) ? Infinity : this.getOutputPower(valType) / efficiency;
     }
 
@@ -371,21 +368,6 @@ class Source extends Item {
     }
 
     return dropout;
-  }
-
-
-  // get the Inductor DC Resistance of a DCDC
-  getDCR(valType) {
-    if(this.isDCDC()) {
-      if('typ' == valType) {
-        return this.characs.dcr_typ;
-      }
-      else if('max' == valType) {
-        return this.characs.dcr_max;
-      }
-    }
-
-    return 0;
   }
 
 
