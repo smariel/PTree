@@ -265,7 +265,7 @@ class Canvas {
       this.fabricCanvas.add(oNet.fabricLine);
       oNet.fabricLine.sendToBack();
 
-      if(item.childrenID.length > 1) {
+      if(item.isVisible() && item.childrenID.length > 1) {
         // prepare the vertical net position and style
         let lastChild = this.tree.getItem(item.childrenID[item.childrenID.length-1]);
         vNet.x1 = itemGeometry.xvnet - vNet.style.strokeWidth;
