@@ -82,15 +82,14 @@ Example of external debugger for [Atom](https://atom.io): [atom-ide-ui](https://
 You can verify multiple items before deploying.
 
 ## Local dependencies
-Maintain the dependencies up to date:
+Maintain the dependencies up to date. ncu will check package.json:
 
-    $ npm outdated
-    $ Package            Current  Wanted  Latest  Location
-    $ bootstrap            3.4.1   3.4.1   4.4.1  PTree
-    $ electron             6.1.7  6.1.10   8.2.3  PTree
-    $ electron-builder    22.2.0  22.5.1  22.5.1  PTree
+    $ npm install -g ncu
+    $ ncu
+    $   bootstrap  <4.0.0  →  ^4.1.2
+    $   fabric     <2.0.0  →  ^2.3.3
 
-Bootstrap is deliberately keeped bellow a certain version.
+Bootstrap and fabric are deliberately keeped bellow a certain version.
 
 To update a package:
 
@@ -104,9 +103,10 @@ Maintain other programs, not listed in package.json, up to date :
  - electron-packager
  - ...
 
-npm can check those global packages:
+ncu can check those global packages:
 
-     $ npm outdated -g
+     $ ncu -g
+     $    All global packages are up-to-date :)
 
 To update a global package:
 
