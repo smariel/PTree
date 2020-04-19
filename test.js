@@ -8,7 +8,7 @@
 
 /* eslint no-console: 0 */
 /* eslint no-undef:   0 */
-const refreshScreenshots = false;
+const refreshScreenshots = false; // needed after electron/chrome update
 const checkConsoleLog    = false;
 
 const test = require('ava');
@@ -87,19 +87,7 @@ test.serial('TEST4: open file + canvas construction', async t => {
     return null;
   });
 
-  // take a screenshot of the project
-  let screenshotBuffer = await t.context.app.client.saveScreenshot();
-
-  // generate the "reference" screenshot
-  if(refreshScreenshots) require('fs').writeFileSync(`${__dirname}/docs/test/test.png`,screenshotBuffer);
-
-  // open a a reference screenshot
-  let refshotBuffer = require('fs').readFileSync(`${__dirname}/docs/test/test.png`);
-
-  // compare (in two lines to avoid displaying the buffer in the console on error)
-  let screenshotsAreEquals = refshotBuffer.equals(screenshotBuffer);
-  if(!screenshotsAreEquals) require('fs').writeFileSync(`${__dirname}/docs/test/lastTestError.png`,screenshotBuffer);
-  t.true(screenshotsAreEquals);
+  t.true(await testScreenshot(t,'test4'));
 });
 
 test.serial('TEST5: save + new project', async t => {
@@ -132,10 +120,11 @@ test.serial('TEST5: save + new project', async t => {
 });
 
 test.serial('TEST6: canvas manipulation', async t => {
+  const app = t.context.app;
   let ret;
 
   // open a reference PTree project
-  await t.context.app.client.execute(() => {
+  await app.client.execute(() => {
     ptree.open(`${__dirname}/../docs/test/test.ptree`);
     return null;
   });
@@ -160,6 +149,7 @@ test.serial('TEST6: canvas manipulation', async t => {
       loss_max: $('#loss_max').text(),
     };
   });
+
   t.is(ret.value.vin_typ,  '5V');
   t.is(ret.value.vin_max,  '5V');
   t.is(ret.value.iin_typ,  '621mA');
@@ -266,16 +256,7 @@ test.serial('TEST8: configurations', async t => {
   await t.context.app.client.click('#bt_addload');
   await wait(500);
 
-  // take a screenshot of the project
-  let screenshotBuffer = await t.context.app.client.saveScreenshot();
-  // generate the "reference" screenshot
-  if(refreshScreenshots) require('fs').writeFileSync(`${__dirname}/docs/test/test2.png`,screenshotBuffer);
-  // open a a reference screenshot
-  let refshotBuffer = require('fs').readFileSync(`${__dirname}/docs/test/test2.png`);
-  // compare (in two lines to avoid displaying the buffer in the console on error)
-  let screenshotsAreEquals = refshotBuffer.equals(screenshotBuffer);
-  if(!screenshotsAreEquals) require('fs').writeFileSync(`${__dirname}/docs/test/lastTestError.png`,screenshotBuffer);
-  t.true(screenshotsAreEquals);
+  t.true(await testScreenshot(t,'test8-1'));
 
 
   // open the config, wait for the animation to end, reset
@@ -293,16 +274,7 @@ test.serial('TEST8: configurations', async t => {
   await t.context.app.client.click('#bottom_close');
   await wait(500);
 
-  // take a screenshot of the project
-  screenshotBuffer = await t.context.app.client.saveScreenshot();
-  // generate the "reference" screenshot
-  if(refreshScreenshots) require('fs').writeFileSync(`${__dirname}/docs/test/test.png`,screenshotBuffer);
-  // open a a reference screenshot
-  refshotBuffer = require('fs').readFileSync(`${__dirname}/docs/test/test.png`);
-  // compare (in two lines to avoid displaying the buffer in the console on error)
-  screenshotsAreEquals = refshotBuffer.equals(screenshotBuffer);
-  if(!screenshotsAreEquals) require('fs').writeFileSync(`${__dirname}/docs/test/lastTestError.png`,screenshotBuffer);
-  t.true(screenshotsAreEquals);
+  t.true(await testScreenshot(t,'test8-2'));
 });
 
 test.serial('TEST9: sync external spreadsheet', async t => {
@@ -316,7 +288,7 @@ test.serial('TEST9: sync external spreadsheet', async t => {
 
   // select a sheet and test the global power values
   await t.context.app.client.execute(() => {
-    ptree.selectSheet(`${__dirname}/../docs/test/test.xlsx`);
+    ptree.selectSheet(`${__dirname}/../docs/test/test9-1.xlsx`);
     return null;
   });
   await wait(500);
@@ -326,7 +298,7 @@ test.serial('TEST9: sync external spreadsheet', async t => {
 
   // select an other sheet and test the global power values
   await t.context.app.client.execute(() => {
-    ptree.selectSheet(`${__dirname}/../docs/test/test2.xlsx`);
+    ptree.selectSheet(`${__dirname}/../docs/test/test9-2.xlsx`);
     return null;
   });
   await wait(500);
@@ -701,7 +673,7 @@ test.serial('TEST17: popup', async t => {
 });
 
 test.serial('TEST18: stats', async t => {
-  let ret, screenshotBuffer, refshotBuffer, screenshotsAreEquals;
+  let ret;
 
   // open a reference PTree project
   await t.context.app.client.execute(() => {
@@ -727,52 +699,27 @@ test.serial('TEST18: stats', async t => {
   await t.context.app.client.windowByIndex(1);
   await t.context.app.client.moveToObject('.chartType > button');
   await wait(1000);
-  screenshotBuffer = await t.context.app.client.saveScreenshot();
-  if(refreshScreenshots) require('fs').writeFileSync(`${__dirname}/docs/test/test_stats1.png`,screenshotBuffer);
-  refshotBuffer = require('fs').readFileSync(`${__dirname}/docs/test/test_stats1.png`);
-  screenshotsAreEquals = refshotBuffer.equals(screenshotBuffer);
-  if(!screenshotsAreEquals) require('fs').writeFileSync(`${__dirname}/docs/test/lastTestError.png`,screenshotBuffer);
-  t.true(screenshotsAreEquals);
+  t.true(await testScreenshot(t,'test18-1'));
 
   // switch to bar graph
   await t.context.app.client.click('.chartType > button');
   await wait(1000);
-  screenshotBuffer = await t.context.app.client.saveScreenshot();
-  if(refreshScreenshots) require('fs').writeFileSync(`${__dirname}/docs/test/test_stats2.png`,screenshotBuffer);
-  refshotBuffer = require('fs').readFileSync(`${__dirname}/docs/test/test_stats2.png`);
-  screenshotsAreEquals = refshotBuffer.equals(screenshotBuffer);
-  if(!screenshotsAreEquals) require('fs').writeFileSync(`${__dirname}/docs/test/lastTestError.png`,screenshotBuffer);
-  t.true(screenshotsAreEquals);
+  t.true(await testScreenshot(t,'test18-2'));
 
   // normalize the bar graph
   await t.context.app.client.click('.normalize > button');
   await wait(1000);
-  screenshotBuffer = await t.context.app.client.saveScreenshot();
-  if(refreshScreenshots) require('fs').writeFileSync(`${__dirname}/docs/test/test_stats3.png`,screenshotBuffer);
-  refshotBuffer = require('fs').readFileSync(`${__dirname}/docs/test/test_stats3.png`);
-  screenshotsAreEquals = refshotBuffer.equals(screenshotBuffer);
-  if(!screenshotsAreEquals) require('fs').writeFileSync(`${__dirname}/docs/test/lastTestError.png`,screenshotBuffer);
-  t.true(screenshotsAreEquals);
+  t.true(await testScreenshot(t,'test18-3'));
 
   // functions
   await t.context.app.client.click('.topmenu a:nth-child(2)');
   await wait(1000);
-  screenshotBuffer = await t.context.app.client.saveScreenshot();
-  if(refreshScreenshots) require('fs').writeFileSync(`${__dirname}/docs/test/test_stats4.png`,screenshotBuffer);
-  refshotBuffer = require('fs').readFileSync(`${__dirname}/docs/test/test_stats4.png`);
-  screenshotsAreEquals = refshotBuffer.equals(screenshotBuffer);
-  if(!screenshotsAreEquals) require('fs').writeFileSync(`${__dirname}/docs/test/lastTestError.png`,screenshotBuffer);
-  t.true(screenshotsAreEquals);
+  t.true(await testScreenshot(t,'test18-4'));
 
   // tags
   await t.context.app.client.click('.topmenu a:nth-child(3)');
   await wait(1000);
-  screenshotBuffer = await t.context.app.client.saveScreenshot();
-  if(refreshScreenshots) require('fs').writeFileSync(`${__dirname}/docs/test/test_stats5.png`,screenshotBuffer);
-  refshotBuffer = require('fs').readFileSync(`${__dirname}/docs/test/test_stats5.png`);
-  screenshotsAreEquals = refshotBuffer.equals(screenshotBuffer);
-  if(!screenshotsAreEquals) require('fs').writeFileSync(`${__dirname}/docs/test/lastTestError.png`,screenshotBuffer);
-  t.true(screenshotsAreEquals);
+  t.true(await testScreenshot(t,'test18-5'));
 
   // child
   await t.context.app.client.click('.topmenu a:nth-child(1)');
@@ -799,47 +746,28 @@ test.serial('TEST18: stats', async t => {
   await t.context.app.client.windowByIndex(1);
   await t.context.app.client.click('.chartType > button');
   await wait(1000);
-  screenshotBuffer = await t.context.app.client.saveScreenshot();
-  refshotBuffer = require('fs').readFileSync(`${__dirname}/docs/test/test_stats1.png`);
-  screenshotsAreEquals = refshotBuffer.equals(screenshotBuffer);
-  if(!screenshotsAreEquals) require('fs').writeFileSync(`${__dirname}/docs/test/lastTestError.png`,screenshotBuffer);
-  t.true(screenshotsAreEquals);
+  t.true(await testScreenshot(t,'test18-6'));
 
   // load in part list
   await t.context.app.client.windowByIndex(0);
   await t.context.app.client.leftClick('body',660,65);
   await t.context.app.client.windowByIndex(1);
   await wait (1000);
-  screenshotBuffer = await t.context.app.client.saveScreenshot();
-  if(refreshScreenshots) require('fs').writeFileSync(`${__dirname}/docs/test/test_stats6.png`,screenshotBuffer);
-  refshotBuffer = require('fs').readFileSync(`${__dirname}/docs/test/test_stats6.png`);
-  screenshotsAreEquals = refshotBuffer.equals(screenshotBuffer);
-  if(!screenshotsAreEquals) require('fs').writeFileSync(`${__dirname}/docs/test/lastTestError.png`,screenshotBuffer);
-  t.true(screenshotsAreEquals);
+  t.true(await testScreenshot(t,'test18-7'));
 
   // load RAW
   await t.context.app.client.windowByIndex(0);
   await t.context.app.client.leftClick('body',660,155);
   await t.context.app.client.windowByIndex(1);
   await wait (1000);
-  screenshotBuffer = await t.context.app.client.saveScreenshot();
-  if(refreshScreenshots) require('fs').writeFileSync(`${__dirname}/docs/test/test_stats7.png`,screenshotBuffer);
-  refshotBuffer = require('fs').readFileSync(`${__dirname}/docs/test/test_stats7.png`);
-  screenshotsAreEquals = refshotBuffer.equals(screenshotBuffer);
-  if(!screenshotsAreEquals) require('fs').writeFileSync(`${__dirname}/docs/test/lastTestError.png`,screenshotBuffer);
-  t.true(screenshotsAreEquals);
+  t.true(await testScreenshot(t,'test18-8'));
 
   // load sync
   await t.context.app.client.windowByIndex(0);
   await t.context.app.client.leftClick('body',660,245);
   await t.context.app.client.windowByIndex(1);
   await wait (1000);
-  screenshotBuffer = await t.context.app.client.saveScreenshot();
-  if(refreshScreenshots) require('fs').writeFileSync(`${__dirname}/docs/test/test_stats8.png`,screenshotBuffer);
-  refshotBuffer = require('fs').readFileSync(`${__dirname}/docs/test/test_stats8.png`);
-  screenshotsAreEquals = refshotBuffer.equals(screenshotBuffer);
-  if(!screenshotsAreEquals) require('fs').writeFileSync(`${__dirname}/docs/test/lastTestError.png`,screenshotBuffer);
-  t.true(screenshotsAreEquals);
+  t.true(await testScreenshot(t,'test18-9'));
 
   // close the stats
   await t.context.app.client.windowByIndex(1).then(async () => {
@@ -916,7 +844,11 @@ test.beforeEach(async t => {
 
   t.context.app = new Application({
     path: require('electron'),
-    args: [__dirname]
+    args: [__dirname],
+    webdriverOptions: {
+      // TODO: remove this when spectron will update WebdriverIO
+      'deprecationWarnings': false
+    }
   });
 
   await t.context.app.start();
@@ -992,4 +924,19 @@ function wait(millisec) {
       resolve('resolved');
     }, millisec);
   });
+}
+
+
+async function testScreenshot(t, name) {
+  // take a screenshot of the project
+  let screenshotBuffer = await t.context.app.client.saveScreenshot();
+  // generate the "reference" screenshot if needed
+  if(refreshScreenshots) require('fs').writeFileSync(`${__dirname}/docs/test/${name}.png`,screenshotBuffer);
+  // open the reference screenshot
+  let refshotBuffer = require('fs').readFileSync(`${__dirname}/docs/test/${name}.png`);
+  // compare (in two lines to avoid displaying the buffer in the console on error)
+  let screenshotsAreEquals = refshotBuffer.equals(screenshotBuffer);
+  if(!screenshotsAreEquals) require('fs').writeFileSync(`${__dirname}/docs/test/${name}-error.png`,screenshotBuffer);
+  // return the result
+  return screenshotsAreEquals;
 }
