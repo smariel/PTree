@@ -45,12 +45,10 @@ class Source extends Item {
       vref_typ    : '0.8',
       vref_max    : '0.8',
       efficiency  : [{i:'1', eff:'90'}, {i:'2', eff:'90'}], // must be kept ordered by ascending current
-      // TODO : efficiency enable
       iq_typ      : '0',
       iq_min      : '0',
       iq_max      : '0',
-      dropout     : [{i:'1', drop:'0'}, {i:'1', drop:'0'}], // must be kept ordered by ascending current
-      // TODO : dropout enable
+      dropout     : [{i:'1', drop:'0'}, {i:'2', drop:'0'}], // must be kept ordered by ascending current
       color       : '#FF1744',
       hidden      : false,
       shape       : '0', // v1.7.0

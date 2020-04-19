@@ -48,8 +48,8 @@
           </div>
         </div>
         <div class="form-group row">
-          <div class="col-xs-6"><label for="badge_in" >Input badge </label><input id="input_badge_in"  type="text" data-itemdata="badge_in"  class="form-control item-control" placeholder="..." data-toggle="tooltip" data-placement="bottom" title="Text of the badge" /></div>
-          <div class="col-xs-6"><label for="badge_out">Output badge</label><input id="input_badge_out" type="text" data-itemdata="badge_out" class="form-control item-control" placeholder="..." data-toggle="tooltip" data-placement="bottom" title="Text of the badge" /></div>
+          <div class="col-xs-6"><label for="badge_in" >Input badge </label><input id="input_badge_in"  type="text" data-itemdata="badge_in"  class="form-control item-control" placeholder="..." /></div>
+          <div class="col-xs-6"><label for="badge_out">Output badge</label><input id="input_badge_out" type="text" data-itemdata="badge_out" class="form-control item-control" placeholder="..." /></div>
         </div>
         <div class="form-group row">
           <div class="col-xs-12">
@@ -80,7 +80,7 @@
             <label for="source_regtype">Regulator type</label>
           </div>
           <div class="col-xs-12">
-            <select id="source_regtype" data-itemdata="regtype" class="form-control item-control" data-toggle="tooltip" data-placement="bottom" title="Regulator type">
+            <select id="source_regtype" data-itemdata="regtype" class="form-control item-control" data-toggle="tooltip">
               <optgroup label="Fixed output">
                 <option value="0">DC/DC switching regulator</option>
                 <option value="1">Linear regulator (LDO)</option>
@@ -111,7 +111,7 @@
           <label>Efficiency</label>
           <div class="row">
             <div class="col-xs-5 efficiency"><input id="input_eff_i" type="text" class="form-control input_num" placeholder="xx A" data-toggle="tooltip" data-placement="bottom" title="Output current (A)" /></div>
-            <div class="col-xs-5 efficiency"><input id="input_eff"   type="text" class="form-control input_num" placeholder="xx %" data-toggle="tooltip" data-placement="bottom" title="Efficiency (%)" /></div>
+            <div class="col-xs-5 efficiency"><input id="input_eff"   type="text" class="form-control input_num" placeholder="xx %" data-toggle="tooltip" data-placement="bottom" title="Efficiency at given current (%)" /></div>
             <div class="col-xs-2 efficiency"><a id="add_eff" class="btn btn-default"><span class="fa fa-plus"></span></a></div>
           </div>
           <canvas id="effChart" width="200" height="108"></canvas>
@@ -144,7 +144,7 @@
         <div class="form-group row source_adj_group">
           <div class="col-xs-12">
             <label for="source_rtol">R tolerance (%)</label>
-            <input id="source_rtol" data-itemdata="rtol" type="text" class="form-control input_num source_adj item-control" placeholder="Resistor tolerance (%)" data-toggle="tooltip" data-placement="bottom" title="Resistor tolerance (%)" />
+            <input id="source_rtol" data-itemdata="rtol" type="text" class="form-control input_num source_adj item-control" placeholder="Resistor typical tolerance (%)" data-toggle="tooltip" data-placement="bottom" title="Resistor tolerance (%)" />
           </div>
         </div>
         <div class="form-group row source_adj_group">
@@ -180,7 +180,7 @@
           <label>Dropout voltage</label>
           <div class="row">
             <div class="col-xs-5 dropout"><input id="input_drop_i" type="text" class="form-control input_num" placeholder="xx A" data-toggle="tooltip" data-placement="bottom" title="Output current (A)" /></div>
-            <div class="col-xs-5 dropout"><input id="input_drop_v" type="text" class="form-control input_num" placeholder="xx V" data-toggle="tooltip" data-placement="bottom" title="Dropout voltage (V)" /></div>
+            <div class="col-xs-5 dropout"><input id="input_drop_v" type="text" class="form-control input_num" placeholder="xx V" data-toggle="tooltip" data-placement="bottom" title="Dropout voltage at given current (V)" /></div>
             <div class="col-xs-2 dropout"><a id="add_drop" class="btn btn-default"><span class="fa fa-plus"></span></a></div>
           </div>
           <canvas id="dropChart" width="200" height="108"></canvas>
