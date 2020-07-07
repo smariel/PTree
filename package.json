@@ -48,7 +48,7 @@
   "devDependencies": {
     "ava": "^2.4.0",
     "devtron": "^1.4.0",
-    "electron": "^6.1.7",
+    "electron": "^7.2.4",
     "electron-builder": "^22.2.0",
     "eslint": "^6.8.0",
     "eslint-plugin-ava": "^9.0.0",
