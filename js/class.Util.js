@@ -293,8 +293,8 @@ class Util {
   // ask main.js to open a popup (OK/CANCEL by default)
   // data = {type (string), title (string), width (int), height (int), sender (string), content (string), btn_ok (string), btn_cancel (string)}
   // where data.type must be :
-  //   undefined (optional) => OK/CANCEL                  => return BOOL => no additional data
-  //   list                 => list selection + OK/CANCEL => return INT  => additional data.list (array)
+  //   undefined (optional) => OK/CANCEL           => return BOOL => no additional data
+  //   list                 => list selection + OK => return TXT  => additional data.list (array [{val:xxx, text:xxx}, {}...])
   static popup(popupData) {
     return new Promise(resolve => {
       const {ipcRenderer} = require('electron');

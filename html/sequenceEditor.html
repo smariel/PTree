@@ -1,0 +1,54 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="UTF-8">
+    <meta http-equiv="Content-Security-Policy" content="default-src 'self'">
+    <title>Sequence Editor</title>
+
+    <!-- CSS -->
+    <link rel="stylesheet" href="../node_modules/bootstrap/dist/css/bootstrap.min.css">
+    <link rel="stylesheet" href="../node_modules/font-awesome/css/font-awesome.min.css">
+    <link rel="stylesheet" href="../css/sequenceEditor.css">
+
+    <!-- JS -->
+    <script async src="../js/renderer.sequenceEditor.js"></script>
+  </head>
+
+  <body>
+    <nav id="sequence_selection">
+      <ul>
+        <li><a id="sequence_add"         data-toggle="tooltip" data-placement="bottom" title="New&nbsp;empty sequence"                       ><span class="fa fa-lg fa-plus"        ></span> New</a></li>
+        <li><a id="sequence_add_default" data-toggle="tooltip" data-placement="bottom" title="Generate&nbsp;sequence from&nbsp;the&nbsp;tree"><span class="fa fa-lg fa-magic"       ></span> Generate</a></li>
+      </ul>
+      <select id="sequence_select"></select>
+      <span id="sequence_edit"></span>
+      <ul id="sequence_control">
+        <li><a id="sequence_rename"      data-toggle="tooltip" data-placement="bottom" title="Rename the&nbsp;sequence"                      ><span class="fa fa-lg fa-pencil"      ></span> Rename</a></li>
+        <li><a id="sequence_export_img"  data-toggle="tooltip" data-placement="bottom" title="Export&nbsp;image"                             ><span class="fa fa-lg fa-file-image-o"></span> Export</a></li>
+        <li><a id="sequence_clone"       data-toggle="tooltip" data-placement="bottom" title="Create a copie"                                ><span class="fa fa-lg fa-clone"       ></span> Clone</a></li>
+        <li><a id="sequence_remove"      data-toggle="tooltip" data-placement="bottom" title="Delete&nbsp;the selected&nbsp;sequence"        ><span class="fa fa-lg fa-close"       ></span> Remove</a></li>
+      </ul>
+    </nav>
+    <section id="sequence_edition">
+      <table id="step_table" class="table ">
+        <thead>
+          <tr>
+            <th>#</th>
+            <th>Step Name</th>
+            <th>Asserted Signal</th>
+            <th>Awaited Signal</th>
+            <th></th>
+          </tr>
+        </thead>
+        <tbody></tbody>
+      </table>
+    </section>
+    <section id="sequence_display">
+      <canvas id="sequence" width="800" height="400"></canvas>
+      <label for="diagramScale" id="diagramScale_label">
+        Diagram Scale
+        <input id="diagramScale" type="range" min="1" max="10" value="2" step="1" />
+      </label>
+    </section>
+  </body>
+</html>

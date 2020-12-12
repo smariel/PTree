@@ -38,20 +38,21 @@
   "dependencies": {
     "bootstrap": "^3.4.1",
     "chart.js": "^2.9.3",
-    "fabric": "^3.6.0",
+    "fabric": "^3.6.3",
     "font-awesome": "^4.7.0",
     "jquery": "^3.4.1",
-    "marked": "^0.8.0",
-    "mousetrap": "^1.6.3",
-    "xlsx": "^0.15.4"
+    "marked": "^0.8.2",
+    "mousetrap": "^1.6.5",
+    "wavedrom": "^2.4.2",
+    "xlsx": "^0.15.6"
   },
   "devDependencies": {
-    "ava": "^2.4.0",
+    "ava": "^3.7.0",
     "devtron": "^1.4.0",
-    "electron": "^6.1.7",
-    "electron-builder": "^22.2.0",
+    "electron": "^8.2.3",
+    "electron-builder": "^22.5.1",
     "eslint": "^6.8.0",
-    "eslint-plugin-ava": "^9.0.0",
-    "spectron": "^8.0.0"
+    "eslint-plugin-ava": "^10.2.0",
+    "spectron": "^10.0.1"
   }
 }

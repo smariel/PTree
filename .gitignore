@@ -38,10 +38,10 @@ Thumbs.db
 
 # Other files
 #------------
-docs/equations.pages
-docs/*.graffle
 icons/original/*
 test/*
-docs/legendColors/colors.sketch
 docs/test/lastTestError.png
 docs/test/*error.png
+*.pages
+*.graffle
+*.sketch

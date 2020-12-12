@@ -2,7 +2,6 @@
 <html>
   <head>
     <meta charset="UTF-8">
-    <!-- Content Security Policy : unsafe inline styles because of Chart.js -->
     <meta http-equiv="Content-Security-Policy" content="default-src 'self'">
     <title>Item edition</title>
 
@@ -122,6 +121,31 @@
           <div class="col-xs-4 mintypmax"><label>I<sub>Q MIN</sub></label><input id="input_iq_min" type="text" data-itemdata="iq_min" class="form-control input_iq input_num item-control" placeholder="min (V)" data-toggle="tooltip" data-placement="bottom" title="Minium quiescent current (A)" /></div>
           <div class="col-xs-4 mintypmax"><label>I<sub>Q TYP</sub></label><input id="input_iq_typ" type="text" data-itemdata="iq_typ" class="form-control input_iq input_num item-control" placeholder="typ (V)" data-toggle="tooltip" data-placement="bottom" title="Typical quiescent current (A)" /></div>
           <div class="col-xs-4 mintypmax"><label>I<sub>Q MAX</sub></label><input id="input_iq_max" type="text" data-itemdata="iq_max" class="form-control input_iq input_num item-control" placeholder="max (V)" data-toggle="tooltip" data-placement="bottom" title="Maximum quiescent current (A)" /></div>
+        </div>
+
+        <!-- CONTROL SIGNALS -->
+        <div class="form-group">
+          <label>Control signals</label>
+          <div class="row" id="enableSig">
+            <div class="col-xs-3 signal"><label><input id="input_enableSig_exist" data-itemdata="sequence.enable.exist" type="checkbox" class="form-control signal-control" /> ENABLE</label></div>
+            <div class="col-xs-5 signal"><input id="input_enableSig_name" data-itemdata="sequence.enable.sigName" type="text" class="form-control item-control signal-control" placeholder="Signal Name" data-toggle="tooltip" data-placement="bottom" title="Signal name" /></div>
+            <div class="col-xs-4 signal">
+              <select id="input_enableSig_activeLevel" data-itemdata="sequence.enable.activeLevel" class="form-control item-control signal-control" data-toggle="tooltip" data-placement="bottom" title="Active level">
+                <option value="1">Active High</option>
+                <option value="0">Active Low</option>
+              </select>
+            </div>
+          </div>
+          <div class="row" id="pgoodSig">
+            <div class="col-xs-3 signal"><label><input id="input_pgoodSig_exist" data-itemdata="sequence.pgood.exist" type="checkbox" class="form-control signal-control" /> PGOOD</label></div>
+            <div class="col-xs-5 signal"><input id="input_pgoodSig_name" data-itemdata="sequence.pgood.sigName" type="text" class="form-control item-control signal-control" placeholder="Signal Name" data-toggle="tooltip" data-placement="bottom" title="Signal name" /></div>
+            <div class="col-xs-4 signal">
+              <select id="input_pgoodSig_activeLevel" data-itemdata="sequence.pgood.activeLevel" class="form-control item-control signal-control" data-toggle="tooltip" data-placement="bottom" title="Active level">
+                <option value="1">Active High</option>
+                <option value="0">Active Low</option>
+              </select>
+            </div>
+          </div>
         </div>
       </div>
 

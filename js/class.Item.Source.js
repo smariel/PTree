@@ -16,8 +16,9 @@ class Source extends Item {
     super(id, parent, 'source', tree);
 
     // set the specific characs of a source
+    const defaultName = `REG${id}`;
     this.characs = {
-      name        : 'Source name',
+      name        : defaultName,
       regtype     : '0',
       /*
         regtypes :
@@ -54,6 +55,18 @@ class Source extends Item {
       shape       : '0', // v1.7.0
       badge_in    : '',  // v1.7.0
       badge_out   : '',  // v1.7.0
+      sequence    : { // v1.9.0
+        enable: {
+          exist:       true,
+          sigName:     `EN_${defaultName}`,
+          activeLevel: 1,
+        },
+        pgood: {
+          exist:       true,
+          sigName:     `PGOOD_${defaultName}`,
+          activeLevel: 1,
+        }
+      },
     };
   }
 
@@ -532,6 +545,22 @@ class Source extends Item {
     // init LDO dropout to 0 to avoid unwanted modifications, regardless of the application default dropout
     if(this.isLDO() && undefined == properties.characs.dropout) {
       this.characs.dropout = [{i:'0', drop:'0'}, {i:'1', drop:'0'}];
+    }
+
+    // compatibility with < v1.9.0
+    if(undefined == properties.characs.sequence) {
+      this.characs.sequence = {
+        enable: {
+          exist:       true,
+          sigName:     `EN_${this.characs.name.replace(/\s/g,'_').toUpperCase()}`,
+          activeLevel: 1,
+        },
+        pgood: {
+          exist:       true,
+          sigName:     `PGOOD_${this.characs.name.replace(/\s/g,'_').toUpperCase()}`,
+          activeLevel: 1,
+        }
+      };
     }
 
     return properties;

@@ -825,6 +825,7 @@ test.serial('TEST20: partlist', async t => {
   // open table / cancel
   // open table / replace
   // open table / add
+  // sequences
 
   // close the window
   await t.context.app.client.close();

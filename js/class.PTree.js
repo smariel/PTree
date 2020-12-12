@@ -6,10 +6,11 @@
 //    See synop.jpg for more informations
 // -----------------------------------------------------------------------------
 
-const Tree     = require('../js/class.Tree.js');
-const PartList = require('../js/class.PartList.js');
-const Canvas   = require('../js/class.Canvas.js');
-const Util     = require('../js/class.Util.js');
+const Tree           = require('../js/class.Tree.js');
+const PartList       = require('../js/class.PartList.js');
+const Canvas         = require('../js/class.Canvas.js');
+const Util           = require('../js/class.Util.js');
+const {SequenceList} = require('../js/class.Sequence.js');
 
 class PTree {
 
@@ -17,6 +18,7 @@ class PTree {
     this.tree         = new Tree();
     this.partList     = new PartList();
     this.canvas       = new Canvas(canvas_selector, this.tree, this.partList);
+    this.sequenceList = new SequenceList();
     this.statsAreOpen = false;
     this.filePath     = null;
     this.readOnly     = false;
@@ -500,6 +502,11 @@ class PTree {
   // edit an item
   async editItem(item) {
     await item.edit(this.partList, this.usersheet.sheet);
+    this.sequenceList.forEachSequence((sequence) => {
+      sequence.forEachStep((step) => {
+        step.refreshSignals(item);
+      });
+    });
     this.canvas.refresh();
     this.saveHistory();
   }
@@ -635,6 +642,34 @@ class PTree {
   }
 
 
+  // open the sequence editor and return the data
+  async openSequenceEditor() {
+    // prepare the request to open the sequence editor
+    let requestOpenSeqEditor = () => {
+      return new Promise(resolve => {
+        const {ipcRenderer} = require('electron');
+
+        // listen to the response from main.js and resolve the promise
+        ipcRenderer.once('Sequence-editResp', (event, datastr) => {
+          resolve(datastr);
+        });
+
+        // Send an IPC async msg to the main.js: request to edit the part list
+        ipcRenderer.send('Sequence-editReq', this.tree.toString(), this.sequenceList.toString());
+      });
+    };
+
+    // open the sequence editor and wait for the data
+    let sequenceList = await requestOpenSeqEditor();
+
+    // if a sequence list is returned
+    if(null !== sequenceList) {
+      this.sequenceList = SequenceList.fromString(sequenceList);
+      this.setUnsaved();
+    }
+  }
+
+
   // Set the spreadsheet to sync with
   setSheet(usersheet) {
     // default value
@@ -685,10 +720,11 @@ class PTree {
   // add extra properties to the string if needed
   toString(extra={}) {
     let data = {
-      tree     : this.tree.toString(),
-      partList : this.partList.toString(),
-      usersheet: this.usersheet,
-      config   : this.canvas.config
+      tree         : this.tree.toString(),
+      partList     : this.partList.toString(),
+      sequenceList : this.sequenceList.toString(),
+      usersheet    : this.usersheet,
+      config       : this.canvas.config
     };
 
     Object.assign(data, extra);
@@ -781,6 +817,7 @@ class PTree {
     // copy the new data in this tree
     this.tree.fromString(data.tree);
     this.partList.fromString(data.partList);
+    this.sequenceList = SequenceList.fromString(data.sequenceList);
     this.setSheet(data.usersheet);
     this.canvas.setConfig(data.config);
   }
@@ -1336,6 +1373,12 @@ class PTree {
         partListData: this.partList.toString()
       });
       this.statsAreOpen = true;
+    });
+
+
+    // open a new window to see the sequence
+    $('#bt_sequence').click(() => {
+      this.openSequenceEditor();
     });
 
 

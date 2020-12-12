@@ -77,6 +77,25 @@ h3 {
    }
 }
 
+.signal {
+   margin-bottom: 8px;
+   padding: 0;
+
+   &:nth-child(1) {
+      padding-top:   6px;
+      padding-left:  15px;
+      padding-right: 1px;
+   }
+   &:nth-child(2) {
+      padding-left:  8px;
+      padding-right: 8px;
+   }
+   &:nth-child(3) {
+      padding-left:  1px;
+      padding-right: 15px;
+   }
+}
+
 #effChart, #dropChart {
    margin-top: 10px;
 }
@@ -85,4 +104,14 @@ h3 {
    padding-left: 0;
    padding-right: 0;
    width: 100%;
+}
+
+label {
+   white-space: nowrap;
+}
+
+.signal .form-control[type=checkbox] {
+   display: inline-block;
+   height: inherit;
+   width: inherit;
 }

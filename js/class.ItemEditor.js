@@ -103,6 +103,9 @@ class ItemEditor {
       $('.source_ldo').show();
       this.updateHTML_regDrop();
     }
+
+    // Update the signals
+    this.updateHTML_regSignals();
   }
 
 
@@ -113,6 +116,18 @@ class ItemEditor {
     $('#input_vout_max').val(this.item.getVoltage('max', 'out', 3, false, true));
   }
 
+  // update regulator signals
+  updateHTML_regSignals() {
+    $('#input_enableSig_exist').prop('checked', this.item.characs.sequence.enable.exist);
+    $('#input_pgoodSig_exist' ).prop('checked', this.item.characs.sequence.pgood.exist);
+    $('#input_enableSig_name').val(this.item.characs.sequence.enable.sigName);
+    $('#input_pgoodSig_name' ).val(this.item.characs.sequence.pgood.sigName);
+    $(`#input_enableSig_activeLevel option[value=${this.item.characs.sequence.enable.activeLevel}]`).prop('selected', true);
+    $(`#input_pgoodSig_activeLevel  option[value=${this.item.characs.sequence.pgood.activeLevel }]`).prop('selected', true);
+
+    $('#input_enableSig_name, #input_enableSig_activeLevel').attr('disabled', !this.item.characs.sequence.enable.exist);
+    $('#input_pgoodSig_name,  #input_pgoodSig_activeLevel' ).attr('disabled', !this.item.characs.sequence.pgood.exist);
+  }
 
   // update the DC/DC efficiency chart
   updateHTML_regEff() {
@@ -283,6 +298,17 @@ class ItemEditor {
     // if the given elt has a charac name
     let charac = $elt.data('itemdata');
     if(undefined !== charac) {
+      if('sequence' === charac.substring(0,8)) {
+        let subcharac = charac.match(/sequence\.([a-z]+)\.([a-z]+)/i);
+        if('exist' === subcharac[2]) {
+          this.item.characs.sequence[subcharac[1]][subcharac[2]] = $elt.prop('checked');
+        }
+        else {
+          this.item.characs.sequence[subcharac[1]][subcharac[2]] = $elt.val();
+        }
+        return;
+      }
+
       // update the charac with the value of the element
       this.item.characs[charac] = $elt.val();
 
@@ -431,6 +457,10 @@ class ItemEditor {
       // update vmin/vtyp/vmax if any adj property has changed
       else if($elt.hasClass('source_adj')){
         this.updateHTML_regVoltage();
+      }
+      // update the signals if the checkbox state has changed
+      else if($elt.hasClass('signal-control') && 'checkbox' === $elt.prop('type')) {
+        this.updateHTML_regSignals();
       }
     });
 

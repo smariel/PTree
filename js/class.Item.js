@@ -22,6 +22,8 @@ class Item {
     this.nextOffset   = 0;     // offset for the next adjacent element, init 0
     this.childrenID   = [];    // list of references of children, init empty
     this.characs      = {};    // list of item specific characteristics
+    // this.parentID;    --> init below
+    // this.child_index; --> init below
 
     // if a parent is specified
     if (null !== parent) {
@@ -435,6 +437,7 @@ class Item {
 
   // Export the item as a string
   toString() {
+    // keep a reference to the tree
     let tree  = this.tree;
     // remove the ref to the tree to avoid circular object
     this.tree = null;

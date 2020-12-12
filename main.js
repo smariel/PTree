@@ -24,7 +24,8 @@ let renderers = {
   PTree          : { browserWindow:null, initData: {fileToOpen: null, checkUpdate: true, enableLock: true, enableBackup: true}  },
   itemEditor     : { browserWindow:null, initData: null, returnData: null, reqEvent: null },
   partListEditor : { browserWindow:null, initData: null, returnData: null, reqEvent: null },
-  stats          : { browserWindow:null, initData: null, returnData: null,                },
+  stats          : { browserWindow:null, initData: null                                   },
+  sequenceEditor : { browserWindow:null, initData: null                                   },
   popup          : { browserWindow:null, initData: null, returnData: null, reqEvent: null },
   about          : { browserWindow:null,                                                  },
 };
@@ -137,6 +138,10 @@ app.on('ready', () => {
     return callback(false);
   });
 
+  // TODO: remove with electron v9
+  app.allowRendererProcessReuse = true;
+
+
   // Create the browser window.
   renderers.PTree.browserWindow = new BrowserWindow({
     width          : 1200,
@@ -235,7 +240,7 @@ app.on('ready', () => {
   // menu add-ons for macOS
   if (process.platform === 'darwin') {
     template.unshift({
-      label: app.getName(),
+      label: app.name,
       submenu: [
         {role: 'hide'},
         {role: 'quit'}
@@ -279,7 +284,7 @@ ipcMain.on('Item-editReq', (evt, itemStr, itemType) => {
   // Create the itemEditor window
   renderers.itemEditor.browserWindow = new BrowserWindow({
     width           : ('source' == itemType) ? (1300>maxWidth)?maxWidth:1300 : 650,
-    height          : ('source' == itemType) ? 540 : 485,
+    height          : ('source' == itemType) ? 660 : 485,
     parent          : renderers.PTree.browserWindow,
     modal           : true,
     resizable       : false,
@@ -413,7 +418,6 @@ ipcMain.on('Stats-openReq', (evt, initData) => {
   renderers.stats.browserWindow.on('closed', () => {
     // Dereference the window object, initData and returnData
     renderers.stats.browserWindow = null;
-    renderers.stats.browserWindow = null;
     renderers.stats.initData      = null;
   });
 });
@@ -439,6 +443,63 @@ ipcMain.on('PTree-selectItemReq', (evt, data) => {
   renderers.PTree.browserWindow.webContents.send('PTree-selectItemCmd',data);
 });
 
+
+// -----------------------------------------------------------------------------
+// SEQUENCE EDITOR
+// -----------------------------------------------------------------------------
+
+// IPC async msg received from PTree : request Sequence edition
+ipcMain.on('Sequence-editReq', (evt, treeStr, seqListStr) => {
+  // macOS: PTree window is disabled (hidden) while the partlist is open
+  // windows: the partlist is modal and automatically disable the other
+  if(process.platform === 'darwin') renderers.PTree.browserWindow.hide();
+  // save the given data for future async use
+  renderers.sequenceEditor.initData = {treeStr, seqListStr};
+  // save the event to respond to this msg later
+  renderers.sequenceEditor.reqEvent = evt;
+
+  // Create the sequenceEditor window
+  renderers.sequenceEditor.browserWindow = new BrowserWindow({
+    width           : 1024,
+    height          : 768,
+    parent          : renderers.PTree.browserWindow,
+    modal           : process.platform !== 'darwin',
+    resizable       : true,
+    useContentSize  : true,
+    webPreferences  : {nodeIntegration : true}
+  });
+
+  // Open the dev tools...
+  if (debug) renderers.sequenceEditor.browserWindow.webContents.openDevTools({mode: 'detach'});
+
+  // Load the *.html of the window.
+  renderers.sequenceEditor.browserWindow.loadURL(`file://${__dirname}/html/sequenceEditor.html`);
+
+  // Emitted when the window is closed.
+  renderers.sequenceEditor.browserWindow.on('closed', () => {
+    // enable PTree main window on macOS
+    if(process.platform === 'darwin') renderers.PTree.browserWindow.show();
+    // send back the new data to the Tree
+    renderers.sequenceEditor.reqEvent.sender.send('Sequence-editResp', renderers.sequenceEditor.returnData);
+    // Dereference the window object, initData and returnData
+    renderers.sequenceEditor.browserWindow = null;
+    renderers.sequenceEditor.initData      = null;
+    renderers.sequenceEditor.returnData    = null;
+    renderers.sequenceEditor.reqEvent      = null;
+  });
+});
+
+// IPC async msg received from SequenceEditor: request for init data
+ipcMain.on('SequenceEditor-initDataReq', (evt) => {
+  // send back the requested data
+  evt.sender.send('SequenceEditor-initDataResp', renderers.sequenceEditor.initData);
+});
+
+// IPC async msg received from SequenceEditor: edited data returned
+ipcMain.on('SequenceEditor-returnData', (evt, newSequenceListStr) => {
+  // save the returned data to be sent when window is closed
+  renderers.sequenceEditor.returnData = newSequenceListStr;
+});
 
 
 // -----------------------------------------------------------------------------
