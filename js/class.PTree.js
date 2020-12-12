@@ -1534,7 +1534,7 @@ class PTree {
         this.canvas.config[$(evt.currentTarget).data('config')] = val;
         $(evt.currentTarget).prev('.range_val').text(val);
       }
-      else if ('color' == $(evt.currentTarget).attr('type')) {
+      else if ('color' == $(evt.currentTarget).attr('type') || 'SELECT' == evt.currentTarget.nodeName) {
         this.canvas.config[$(evt.currentTarget).data('config')] = $(evt.currentTarget).val();
       }
       else {

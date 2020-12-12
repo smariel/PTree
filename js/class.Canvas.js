@@ -35,27 +35,28 @@ class Canvas {
   // update v1.2.0: add show_V, I & P
   setDefaultConfig() {
     this.config = {
-      show_vtyp    : true,
-      show_ityp    : true,
-      show_ptyp    : true,
-      show_vmax    : true,
-      show_imax    : true,
-      show_pmax    : true,
-      show_name    : true,
-      show_ref     : true,
-      show_custom1 : true,
-      show_badges  : true,
-      show_type    : false,
-      align_load   : false,
-      proportional : false,
-      loss_color   : false,
-      zoom         : 100,
-      zoom_export  : 100,
-      cell_width   : 280,
-      cell_height  : 90,
-      text_size    : 14,
-      color_source : '#FF1744', // materialze red accent-3,
-      color_load   : '#00bfa5', // materializ teal accent-4
+      show_vtyp     : true,
+      show_ityp     : true,
+      show_ptyp     : true,
+      show_vmax     : true,
+      show_imax     : true,
+      show_pmax     : true,
+      show_name     : true,
+      show_ref      : true,
+      show_custom1  : true,
+      show_badges   : true,
+      show_type     : false,
+      align_load    : false,
+      proportional  : false,
+      loss_color    : false,
+      zoom          : 100,
+      zoom_export   : 100,
+      cell_width    : 280,
+      cell_height   : 90,
+      text_size     : 14,
+      color_source  : '#FF1744', // materialze red accent-3,
+      color_load    : '#00bfa5', // materializ teal accent-4
+      display_typmax: 'max',
     };
   }
 
@@ -242,8 +243,8 @@ class Canvas {
 
       // adjust the proportions of the net according to the power ratio
       if(this.config.proportional) {
-        let totalpower         = this.tree.getRoot().getOutputPower('typ');
-        let oNetRatio          = item.getOutputPower('typ') / totalpower;
+        let totalpower         = this.tree.getRoot().getOutputPower(this.config.display_typmax);
+        let oNetRatio          = item.getOutputPower(this.config.display_typmax) / totalpower;
         oNet.style.stroke      = vNet.style.stroke      = Util.pickColorHex(Canvas.app_template.proportion.color_max, Canvas.app_template.proportion.color_min, oNetRatio);
         oNet.style.strokeWidth = vNet.style.strokeWidth = Math.round(oNetRatio * Canvas.app_template.proportion.width_max + Canvas.app_template.proportion.width_min);
       }
@@ -287,8 +288,8 @@ class Canvas {
 
       // adjust the proportions of the net according to the power ratio
       if(this.config.proportional) {
-        let totalpower         = this.tree.getRoot().getOutputPower('typ');
-        let iNetRatio          = item.getInputPower('typ') / totalpower;
+        let totalpower         = this.tree.getRoot().getOutputPower(this.config.display_typmax);
+        let iNetRatio          = item.getInputPower(this.config.display_typmax) / totalpower;
         iNet.style.stroke      = Util.pickColorHex(Canvas.app_template.proportion.color_max, Canvas.app_template.proportion.color_min, iNetRatio);
         iNet.style.strokeWidth = Math.round(iNetRatio * Canvas.app_template.proportion.width_max + Canvas.app_template.proportion.width_min);
       }
@@ -465,7 +466,7 @@ class Canvas {
     // get the maximum power loss
     let max_loss = 0;
     this.tree.forEachSource((source) => {
-      let loss = source.getPowerLoss('typ');
+      let loss = source.getPowerLoss(this.config.display_typmax);
       if(Infinity == loss) loss = Number.MAX_SAFE_INTEGER;
       if(loss > max_loss) max_loss = loss;
     });
@@ -478,7 +479,7 @@ class Canvas {
           item.lossColor = '#000000';
         }
         else {
-          let item_loss = item.getPowerLoss('typ');
+          let item_loss = item.getPowerLoss(this.config.display_typmax);
           if(Infinity == item_loss) item_loss = Number.MAX_SAFE_INTEGER;
           item.lossColor = (0 === max_loss) ? default_color : Util.getMetalColor(item_loss/max_loss);
         }
@@ -582,6 +583,8 @@ class Canvas {
       let val = this.config[$(elt).data('config')];
       $(elt).val(val);
     });
+
+    $('#config_displayTypMax').val(this.config.display_typmax);
   }
 
 
