@@ -818,7 +818,12 @@ class PTree {
     // copy the new data in this tree
     this.tree.fromString(data.tree);
     this.partList.fromString(data.partList);
-    this.sequenceList = SequenceList.fromString(data.sequenceList);
+    if(undefined !== data.sequenceList) {
+      this.sequenceList = SequenceList.fromString(data.sequenceList);
+    }
+    else {
+      this.sequenceList = new SequenceList();
+    }
     this.setSheet(data.usersheet);
     this.canvas.setConfig(data.config);
   }
