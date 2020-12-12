@@ -40,7 +40,7 @@
     "chart.js": "^2.9.3",
     "fabric": "^3.6.3",
     "font-awesome": "^4.7.0",
-    "jquery": "^3.4.1",
+    "jquery": "^3.5.0",
     "marked": "^0.8.2",
     "mousetrap": "^1.6.5",
     "wavedrom": "^2.4.2",
