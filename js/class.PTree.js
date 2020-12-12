@@ -419,6 +419,7 @@ class PTree {
       // add a perfect source to the root with default values
       newItem = this.tree.addSourceToRoot();
       newItem.characs.regtype = '7';
+      newItem.characs.vout_min = '4.5';
       newItem.characs.vout_typ = '5';
       newItem.characs.vout_max = '5.5';
       newItem.characs.name  = `Source #${newItem.id}`;
