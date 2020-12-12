@@ -44,8 +44,9 @@ class Canvas {
       show_name     : true,
       show_ref      : true,
       show_custom1  : true,
-      show_badges   : true,
       show_type     : false,
+      show_badges   : true,
+      show_alert    : true,
       align_load    : false,
       proportional  : false,
       loss_color    : false,
@@ -372,37 +373,40 @@ class Canvas {
   }
 
 
+  // add the alert warning sigb on an item on the canvas
   addAlerts(item, itemGeometry) {
-    if(item.isRoot()) return;
-    let alerts = item.getAlerts();
-    if(alerts.length > 0)
-    {
-      // circle
-      let alert = new fabric.Triangle(Canvas.fabric_template.alert);
-      alert.set({
-        originX : 'center',
-        originY : 'center',
-        left    : itemGeometry.x2,
-        top     : itemGeometry.y1,
-      });
+    if(this.config.show_badges) {
+      if(item.isRoot()) return;
+      let alerts = item.getAlerts();
+      if(alerts.length > 0)
+      {
+        // circle
+        let alert = new fabric.Triangle(Canvas.fabric_template.alert);
+        alert.set({
+          originX : 'center',
+          originY : 'center',
+          left    : itemGeometry.x2,
+          top     : itemGeometry.y1,
+        });
 
-      // text
-      let alert_text = new fabric.Text('!', Canvas.fabric_template.text);
-      alert_text.set({
-        originX   : 'center',
-        originY   : 'center',
-        textAlign : 'center',
-        left      : itemGeometry.x2,
-        top       : itemGeometry.y1+2,
-        fontSize  : 18,
-        fill      : Canvas.fabric_template.alert.stroke
-      });
+        // text
+        let alert_text = new fabric.Text('!', Canvas.fabric_template.text);
+        alert_text.set({
+          originX   : 'center',
+          originY   : 'center',
+          textAlign : 'center',
+          left      : itemGeometry.x2,
+          top       : itemGeometry.y1+2,
+          fontSize  : 18,
+          fill      : Canvas.fabric_template.alert.stroke
+        });
 
-      // group the circle and the text and add it to canvas
-      let alert_group = new fabric.Group([alert, alert_text], {evented: true, selectable: false});
-      alert_group.objType    = 'alert';
-      alert_group.ptree_item = item;
-      this.fabricCanvas.add(alert_group);
+        // group the circle and the text and add it to canvas
+        let alert_group = new fabric.Group([alert, alert_text], {evented: true, selectable: false});
+        alert_group.objType    = 'alert';
+        alert_group.ptree_item = item;
+        this.fabricCanvas.add(alert_group);
+      }
     }
   }
 
