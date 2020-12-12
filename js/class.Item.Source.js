@@ -55,7 +55,7 @@ class Source extends Item {
       shape       : '0', // v1.7.0
       badge_in    : '',  // v1.7.0
       badge_out   : '',  // v1.7.0
-      sequence    : { // v1.9.0
+      sequence    : {    // v2.0.0
         enable: {
           exist:       true,
           sigName:     `EN_${defaultName}`,
