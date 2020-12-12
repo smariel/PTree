@@ -1597,8 +1597,8 @@ class PTree {
     });
 
     // refresh the sheet to sync with
-    $('#bt_refresh_sheet').click(() => {
-      this.reloadSheet();
+    $('#bt_refresh_sheet').click(async () => {
+      await this.reloadSheet();
       this.tree.refreshConsumptions(null, this.usersheet.sheet);
       this.canvas.refresh();
       this.setUnsaved();
