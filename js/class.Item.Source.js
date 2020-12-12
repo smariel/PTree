@@ -479,10 +479,12 @@ class Source extends Item {
       }
     }
 
-    // Check 0% efficiency
+    // Check 0% efficiency (only if Iout > 0)
     for(let valType of ['typ', 'max']) {
       let eff = this.getEfficiency(valType);
-      if(0 == eff) {
+      let outputCurrent = this.getOutputCurrent(valType);
+
+      if(0 == eff && outputCurrent > 0) {
         alerts.push(`The efficiency for I<sub>OUT ${valType.toUpperCase()}</sub>=${this.getOutputPower(valType)}A is 0%.`);
       }
     }
