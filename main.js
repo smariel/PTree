@@ -146,7 +146,7 @@ app.on('ready', () => {
   renderers.PTree.browserWindow = new BrowserWindow({
     width          : 1200,
     height         : 800,
-    minWidth       : 800,
+    minWidth       : 1050,
     webPreferences : {nodeIntegration : true}
   });
 
