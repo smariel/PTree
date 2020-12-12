@@ -54,6 +54,8 @@ class Canvas {
       zoom_export   : 100,
       cell_width    : 280,
       cell_height   : 90,
+      width_coef    : Canvas.app_template.item.width_coef,
+      height_coef   : Canvas.app_template.item.height_coef,
       text_size     : 14,
       color_source  : '#FF1744', // materialze red accent-3,
       color_load    : '#00bfa5', // materializ teal accent-4
@@ -104,9 +106,9 @@ class Canvas {
 
     // compute the main dimensions
     let itemGeometry = {};
-    itemGeometry.height     = Math.round(Canvas.app_template.item.height_coef  * this.config.cell_height);
+    itemGeometry.height     = Math.round(this.config.height_coef/100  * this.config.cell_height);
     itemGeometry.skew_error = (undefined === itemTemplate.skewX) ? 0 : Math.round(itemGeometry.height/Math.tan(-itemTemplate.skewX));
-    itemGeometry.width      = Math.round(Canvas.app_template.item.width_coef   * this.config.cell_width) - itemGeometry.skew_error;
+    itemGeometry.width      = Math.round(this.config.width_coef/100   * this.config.cell_width) - itemGeometry.skew_error;
     itemGeometry.x1         = (item.col  * this.config.cell_width ) + Canvas.app_template.canvas.margin_left;
     itemGeometry.y1         = (item.line * this.config.cell_height) + Canvas.app_template.canvas.margin_top;
     itemGeometry.x2         = itemGeometry.x1 + itemGeometry.width;
@@ -804,8 +806,8 @@ Canvas.app_template = {
     margin_bottom : 70,
   },
   item: {
-    width_coef  : 0.45,
-    height_coef : 0.75,
+    width_coef  : 45,
+    height_coef : 75,
   },
   verticalNet: {
     left_coef : 0.9
