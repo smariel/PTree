@@ -32,6 +32,7 @@ body {
    height:      $topmenu_height;
    display:     flex;
    align-items: center;
+   z-index:     999;
 }
 
 #sequence_select {
