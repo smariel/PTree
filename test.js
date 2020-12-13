@@ -848,7 +848,7 @@ test.beforeEach(async t => {
     args: [__dirname],
     webdriverOptions: {
       // TODO: remove this when spectron will update WebdriverIO
-      'deprecationWarnings': false
+      //'deprecationWarnings': false
     }
   });
 
