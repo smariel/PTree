@@ -477,7 +477,7 @@ class PTree {
     ctrl.css({'box-shadow': 'inset 0 -3px 0 0 ' + item.characs.color});
 
     // if the item is a load
-    if (item.isLoad() && item.isInPartlist()) {
+    if (item.isLoad() && item.isInPartlist() && this.canvas.config.show_loadpart) {
       this.showParts(item);
     }
     else {

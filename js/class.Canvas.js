@@ -47,6 +47,7 @@ class Canvas {
       show_type     : false,
       show_badges   : true,
       show_alert    : true,
+      show_loadpart : false,
       align_load    : false,
       proportional  : false,
       loss_color    : false,
