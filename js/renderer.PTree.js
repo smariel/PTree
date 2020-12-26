@@ -24,9 +24,7 @@ $(() => {
     ptree = new PTree('canvas');
 
     // set lock and backup options
-    // TODO: lock file is a good idea on paper but a pain in reality, espcialy on network.
-    // Disabled untill better idea
-    //ptree.enableLock   = initData.enableLock;
+    ptree.enableLock   = initData.enableLock;
     ptree.enableLock   = false;
     ptree.enableBackup = initData.enableBackup;
 

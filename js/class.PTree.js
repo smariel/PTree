@@ -25,7 +25,7 @@ class PTree {
     this.unsaved      = false;
     this.history      = {list: [], index: 0};
     this.ctxMenu      = null;
-    this.enableLock   = true;
+    this.enableLock   = false;
     this.enableBackup = true;
 
     this.setSheet(null);
