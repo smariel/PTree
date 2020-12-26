@@ -1,9 +1,14 @@
 {
   "appId"        : "fr.sylvain-mariel.PTree",
   "artifactName" : "${productName}.${ext}",
-  "directories"  : {"output" : "bin"},
+  "directories"  : {
+    "output" : "bin",
+    "buildResources" : "resources"
+  },
   "asar"         : true,
   "files": [
+    "**/*",
+    "resources/*",
     "!bin/*",
     "!icons/pngToIcons.sh",
     "!icons/original/*",
@@ -14,15 +19,15 @@
   "npmRebuild" : false,
   "mac": {
     "category"   : "public.app-category.developer-tools",
-    "icon"       : "icons/mac/app.icns",
+    "icon"       : "resources/app.icns",
     "target"     : "dmg",
     "identity"  : "P23QV2X53J",
     "type"      : "distribution",
-    "extraFiles" : ["docs/equations.pdf"],
+    "extraFiles" : ["resources/equations.pdf"],
     "fileAssociations": {
       "ext"       : "ptree",
       "name"      : "PTree",
-      "icon"      : "icons/mac/file.icns",
+      "icon"      : "resources/file.icns",
       "role"      : "Editor",
       "isPackage" : false
     }
@@ -34,32 +39,32 @@
     "contents" : [
       { "x": 130, "y": 170, "type" : "file" },
       { "x": 410, "y": 170, "type" : "link", "path" : "/Applications" },
-      { "x": 130, "y": 0,   "type" : "file", "path" : "docs/example.ptree" },
-      { "x": 270, "y": 0,   "type" : "file", "path" : "docs/equations.pdf" },
+      { "x": 130, "y": 0,   "type" : "file", "path" : "resources/example.ptree" },
+      { "x": 270, "y": 0,   "type" : "file", "path" : "resources/equations.pdf" },
       { "x": 410, "y": 0,   "type" : "file", "path" : "LICENSE.md" }
     ]
   },
   "win": {
-    "icon"       : "icons/win/app.ico",
+    "icon"       : "resources/app.ico",
     "target"     : "dir",
     "fileAssociations" : {
       "ext"         : "ptree",
       "name"        : "PTree",
       "description" : "PTree Project File",
-      "icon"        : "icons/win/file.ico"
+      "icon"        : "resources/file.ico"
     },
     "extraFiles" : [
-      {"from": "docs/example.ptree", "to": "example.ptree"},
-      {"from": "docs/equations.pdf", "to": "equations.pdf"},
+      {"from": "resources/example.ptree", "to": "example.ptree"},
+      {"from": "resources/equations.pdf", "to": "equations.pdf"},
       {"from": "LICENSE.md", "to": "LICENSE.txt"}
     ]
   },
   "linux": {
-    "icon"       : "icons/png/app",
+    "icon"       : "resources/png/app",
     "target"     : {"target":"dir", "arch": "ia32"},
     "extraFiles" : [
-      {"from": "docs/example.ptree", "to": "example.ptree"},
-      {"from": "docs/equations.pdf", "to": "equations.pdf"},
+      {"from": "resources/example.ptree", "to": "example.ptree"},
+      {"from": "resources/equations.pdf", "to": "equations.pdf"},
       {"from": "LICENSE.md", "to": "LICENSE.txt"}
     ]
   }

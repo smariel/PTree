@@ -17,6 +17,7 @@ cp png/app/512x512.png   app.iconset/icon_512x512.png
 cp png/app/1024x1024.png app.iconset/icon_512x512@2x.png
 iconutil -c icns -o mac/app.icns app.iconset
 rm -R app.iconset
+cp mac/app.icns ../resources/app.icns
 
 
 # PTree File Icon for Mac
@@ -33,6 +34,8 @@ cp png/file_mac/512x512.png   file.iconset/icon_512x512.png
 cp png/file_mac/1024x1024.png file.iconset/icon_512x512@2x.png
 iconutil -c icns -o mac/file.icns file.iconset
 rm -R file.iconset
+cp mac/file.icns ../resources/file.icns
+
 
 
 # PTree App Icon for Windows
@@ -44,6 +47,7 @@ convert  png/app/16x16.png \
          png/app/128x128.png \
          png/app/256x256.png \
          win/app.ico
+cp win/app.ico ../resources/app.ico
 
 
 # PTree File Windows
@@ -52,3 +56,8 @@ convert  png/file_win/16x16.png \
          png/file_win/48x48.png \
          png/file_win/256x256.png \
          win/file.ico
+cp win/file.ico ../resources/file.ico
+
+
+# PTree App Icon for Linux
+cp -R png ../resources/app_png
