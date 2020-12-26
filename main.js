@@ -138,16 +138,15 @@ app.on('ready', () => {
     return callback(false);
   });
 
-  // TODO: remove with electron v9
-  app.allowRendererProcessReuse = true;
-
-
   // Create the browser window.
   renderers.PTree.browserWindow = new BrowserWindow({
     width          : 1200,
     height         : 800,
     minWidth       : 1050,
-    webPreferences : {nodeIntegration : true}
+    webPreferences : {
+      nodeIntegration    : true,
+      enableRemoteModule : true,
+    }
   });
 
   // and load the index.html of the app.

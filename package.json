@@ -37,22 +37,22 @@
   "homepage": "https://smariel.github.io/PTree",
   "dependencies": {
     "bootstrap": "^3.4.1",
-    "chart.js": "^2.9.3",
-    "fabric": "^3.6.3",
+    "chart.js": "^2.9.4",
+    "fabric": "^4.2.0",
     "font-awesome": "^4.7.0",
-    "jquery": "^3.4.1",
-    "marked": "^0.8.2",
+    "jquery": "^3.5.1",
+    "marked": "^1.2.6",
     "mousetrap": "^1.6.5",
-    "wavedrom": "^2.4.2",
-    "xlsx": "^0.15.6"
+    "wavedrom": "^2.6.8",
+    "xlsx": "^0.16.9"
   },
   "devDependencies": {
     "ava": "^3.14.0",
     "devtron": "^1.4.0",
-    "electron": "^8.2.3",
-    "electron-builder": "^22.5.1",
-    "eslint": "^6.8.0",
-    "eslint-plugin-ava": "^10.2.0",
+    "electron": "^11.1.0",
+    "electron-builder": "^22.9.1",
+    "eslint": "^7.15.0",
+    "eslint-plugin-ava": "^11.0.0",
     "spectron": "^13.0.0"
   }
 }
