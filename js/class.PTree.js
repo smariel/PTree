@@ -51,11 +51,14 @@ class PTree {
     this.tree.fromString(new Tree().toString());
     this.partList.fromString(new PartList().toString());
     this.canvas.setDefaultConfig();
+    this.sequenceList = new SequenceList();
     this.unlockFile();
     this.statsAreOpen = false;
     this.filePath     = null;
     this.unsaved      = true;
     this.history      = {list: [], index: 0};
+    this.readOnly     = false;
+    this.ctxMenu      = null;
 
     // update the app environement
     this.unselectItem(true);
