@@ -143,6 +143,10 @@ body {
    }
 }
 
+.signal-custom {
+   font-style: italic;
+}
+
 .signal-remove {
    @include square-btn(white, $red);
 

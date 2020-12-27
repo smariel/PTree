@@ -68,7 +68,7 @@ class SequenceEditor {
       <td><ul>`;
       step.forEachAsserted((signal) => {
         stepHTML += `<li data-signalid="${signal.id}">
-          <span class="signal">${signal.name}</span>
+          <span class="signal ${'custom'==signal.itemID ? 'signal-custom':''}">${signal.name}</span>
           <button type="button" class="signal-up"    ><span class="fa fa-arrow-up"   aria-hidden="true"></span></button>
           <button type="button" class="signal-down"  ><span class="fa fa-arrow-down" aria-hidden="true"></span></button>
           <button type="button" class="signal-remove"><span class="fa fa-times"      aria-hidden="true"></span></button>
@@ -77,7 +77,7 @@ class SequenceEditor {
       stepHTML += `</ul><button type="button" class="asserted-add"><span class="fa fa-plus" aria-hidden="true"></span></button></td><td><ul>`;
       step.forEachAwaited((signal) => {
         stepHTML += `<li - data-signalid="${signal.id}">
-          <span class="signal">${signal.name}</span>
+          <span class="signal ${'custom'==signal.itemID ? 'signal-custom':''}">${signal.name}</span>
           <button type="button" class="signal-up"    ><span class="fa fa-arrow-up"   aria-hidden="true"></span></button>
           <button type="button" class="signal-down"  ><span class="fa fa-arrow-down" aria-hidden="true"></span></button>
           <button type="button" class="signal-remove"><span class="fa fa-times"      aria-hidden="true"></span></button>
