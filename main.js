@@ -205,10 +205,10 @@ app.on('ready', () => {
           label: 'Equation Summary',
           click () {
             if ('darwin' === process.platform) {
-              require('electron').shell.openItem(`${/(.*\/)Resources\/app.asar\/html$/.exec(__dirname)[1]}/docs/equations.pdf`);
+              require('electron').shell.openPath(`${/(.*\/Resources\/)/.exec(__dirname)[1]}equations.pdf`);
             }
             else {
-              require('electron').shell.openItem('equations.pdf');
+              require('electron').shell.openPath('equations.pdf');
             }
           }
         },
