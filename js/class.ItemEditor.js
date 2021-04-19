@@ -469,10 +469,12 @@ class ItemEditor {
     $(document).keydown((event) => {
       // ESCAPE
       if (27 == event.keyCode) {
+        event.preventDefault();
         this.closeCancel();
       }
       // ENTER
       else if (13 == event.keyCode) {
+        event.preventDefault();
         // editing efficiency, add it
         if(event.target.id === 'input_eff' || event.target.id === 'input_eff_i') {
           this.addEfficiency();
