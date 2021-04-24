@@ -765,10 +765,10 @@ class Canvas {
   }
 
 
-  // Export the canvas as a JPEG image within an ObjectURL
+  // Export the canvas as a PNG image within an ObjectURL
   // must export to blob then convert to ObjectURL instead of DataURL
   // because Chrome can't download a DataURL>2MB but has no limit for ObjectURL
-  toJPEGdataURL() {
+  toPNGdataURL() {
     // save the reference of the eventual selected item (may be null)
     let selected = this.getSelectedItem();
 
@@ -793,7 +793,7 @@ class Canvas {
         if (null !== selected) this.selectItem(selected);
 
         resolve(dataURL);
-      }, 'image/jpeg', 1);
+      }, 'image/png');
 
     });
   }

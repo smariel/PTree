@@ -262,14 +262,14 @@ class SequenceEditor {
     // set the canvas background color
     this.fabricCanvas.setBackgroundColor('#FFFFFF', this.fabricCanvas.renderAll.bind(this.fabricCanvas));
     // set the file name
-    let name = `${this.selectedSequence.name}.jpg`;
+    let name = `${this.selectedSequence.name}.png`;
     // export the HTML canvas to blob
     $('#sequence')[0].toBlob((blob) => {
       // convert the blob to ObjectURL
       let dataURL = URL.createObjectURL(blob);
       // download the objectURL in a file
       Util.downloadDataURL(dataURL, name);
-    }, 'image/jpeg', 1);
+    }, 'image/png', 1);
   }
 
 

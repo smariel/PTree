@@ -1033,10 +1033,10 @@ class PTree {
   }
 
 
-  // export the canvas as a JPEG Image
+  // export the canvas as a PNG Image
   async exportImg() {
-    let name = ('string' === typeof this.filePath) ? require('path').parse(this.filePath).name+'.jpg' : 'ptree.jpg';
-    let objectURL = await this.canvas.toJPEGdataURL();
+    let name = ('string' === typeof this.filePath) ? require('path').parse(this.filePath).name+'.png' : 'ptree.png';
+    let objectURL = await this.canvas.toPNGdataURL();
     Util.downloadDataURL(objectURL, name);
   }
 
