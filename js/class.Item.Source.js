@@ -130,7 +130,8 @@ class Source extends Item {
 
       // LDO: v_out < v_in - v_drop
       if(this.isLDO() && !ignoreDropout) {
-        let v_out_max = this.getInputVoltage(valType) - this.getDroupout(valType);
+        // can't use dropout, to avoid infinite loop
+        let v_out_max = this.getInputVoltage(valType)/* - this.getDropout(valType)*/;
         if(v_out > v_out_max) {
           v_out = v_out_max;
         }
@@ -305,7 +306,7 @@ class Source extends Item {
 
 
   // get the dropout voltage of a LDO, optionaly for the given output current
-  getDroupout(valType, outputCurrent) {
+  getDropout(valType, outputCurrent) {
     let dropout = 0;
 
     // if not LDO: error
@@ -515,7 +516,7 @@ class Source extends Item {
     if(this.isLDO()) {
       for(let valType of ['typ', 'max']) {
         let v_out = parseFloat(this.characs['vout_' + valType]);
-        let v_out_max = this.getInputVoltage(valType) - this.getDroupout(valType);
+        let v_out_max = this.getInputVoltage(valType) - this.getDropout(valType);
         if(v_out > v_out_max) {
           alerts.push(`V<sub>OUT ${valType.toUpperCase()}</sub> limited because of Dropout.`);
         }
