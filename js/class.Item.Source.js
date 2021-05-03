@@ -363,9 +363,9 @@ class Source extends Item {
             // else, use linear interpolation to compute the dropout (y = ax+b)
             else if(itemCurrent > drop_data.i && itemCurrent < drop_nextData.i) {
               let x1 = parseFloat(drop_data.i);
-              let y1 = parseFloat(drop_data.dropout)/100;
+              let y1 = parseFloat(drop_data.drop)/100;
               let x2 = parseFloat(drop_nextData.i);
-              let y2 = parseFloat(drop_nextData.dropout)/100;
+              let y2 = parseFloat(drop_nextData.drop)/100;
               dropout = Util.linearInterpol(x1, y1, x2, y2, itemCurrent);
               break;
             }
@@ -515,10 +515,11 @@ class Source extends Item {
     // Check LDO dropout
     if(this.isLDO()) {
       for(let valType of ['typ', 'max']) {
-        let v_out = parseFloat(this.characs['vout_' + valType]);
-        let v_out_max = this.getInputVoltage(valType) - this.getDropout(valType);
+        let v_out     = parseFloat(this.characs['vout_' + valType]);
+        let dropout   = this.getDropout(valType);
+        let v_out_max = this.getInputVoltage(valType) - dropout;
         if(v_out > v_out_max) {
-          alerts.push(`V<sub>OUT ${valType.toUpperCase()}</sub> limited because of Dropout.`);
+          alerts.push(`V<sub>OUT ${valType.toUpperCase()}</sub> limited to ${Util.numberToSi(v_out_max, 2)}V because of ${Util.numberToSi(dropout,2)}V dropout.`);
         }
       }
     }
