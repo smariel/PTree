@@ -93,6 +93,7 @@
               <optgroup label="Other">
                 <option value="6">Dummy (wire)</option>
                 <option value="7">Perfect (no loss)</option>
+                <option value="8">Resistive Element</option>
               </optgroup>
             </select>
           </div>
@@ -123,8 +124,16 @@
           <div class="col-xs-4 mintypmax"><label>I<sub>Q MAX</sub></label><input id="input_iq_max" type="text" data-itemdata="iq_max" class="form-control input_iq input_num item-control" placeholder="max (V)" data-toggle="tooltip" data-placement="bottom" title="Maximum quiescent current (A)" /></div>
         </div>
 
+        <!-- RESITIVE ELEMENT -->
+        <div class="form-group" id="form-group-resistor">
+          <label>R</label>
+          <div class="row">
+            <div class="col-xs-12"><input id="input_resistor" type="text" data-itemdata="resistor" class="form-control input_num" placeholder="xx Ω" data-toggle="tooltip" data-placement="bottom" title="Resistor value (Ω)" /></div>
+          </div>
+        </div>
+
         <!-- CONTROL SIGNALS -->
-        <div class="form-group">
+        <div class="form-group" id="form-group-signals">
           <label>Control signals</label>
           <div class="row" id="enableSig">
             <div class="col-xs-3 signal"><label><input id="input_enableSig_exist" data-itemdata="sequence.enable.exist" type="checkbox" class="form-control signal-control" /> ENABLE</label></div>

@@ -66,6 +66,7 @@ class ItemEditor {
     // default display
     $('#source_adjustable').hide();
     $('#form-group-vout').show();
+    $('#form-group-resistor').hide();
 
     // If the reg vout is fixed
     if (this.item.isFixedReg()) {
@@ -87,6 +88,11 @@ class ItemEditor {
     // if the reg is perfect
     else if (this.item.isPerfect()) {
       $('.input_vout').attr('disabled', false);
+    }
+    // if the reg is a resistive element
+    else if (this.item.isResistive()) {
+      $('#form-group-vout').hide();
+      $('#form-group-resistor').show();
     }
 
     // hide DC/DC and LDO inputs

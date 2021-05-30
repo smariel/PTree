@@ -24,12 +24,13 @@ class Source extends Item {
         regtypes :
         0: FixDCDC
         1: FixLDO
-        2: FixOther (< v1.3.0),
+        2: FixOther (< v1.3.0)
         3: AdjDCDC
         4: AdjLDO
-        5: AdjOther (< v1.3.0),
+        5: AdjOther (< v1.3.0)
         6: Dummy    (>= 1.3.0)
-        7: Perfect  (>= 1.3;0)
+        7: Perfect  (>= 1.3.0)
+        8: Resistor (>= 2.1.0)
       */
       ref         : '',
       custom1     : '',
@@ -55,6 +56,7 @@ class Source extends Item {
       shape       : '0', // v1.7.0
       badge_in    : '',  // v1.7.0
       badge_out   : '',  // v1.7.0
+      resistor    : '0',
       sequence    : {    // v2.0.0
         enable: {
           exist:       true,
@@ -113,6 +115,12 @@ class Source extends Item {
   }
 
 
+  // Check if the item is Resistive Element
+  isResistive() {
+    return ('8' == this.characs.regtype);
+  }
+
+
   // getInputVoltage() from the parent class
 
 
@@ -123,6 +131,10 @@ class Source extends Item {
     // Dummy : v_out = v_in
     if(this.isDummy()) {
       v_out = this.getInputVoltage(valType);
+    }
+    // Resistive Element : v_out = v_in - r * i_out
+    else if(this.isResistive()) {
+      v_out = this.getInputVoltage(valType) - this.getOutputCurrent(valType) * parseFloat(this.characs.resistor);
     }
     // DC/DC and LDOs : v_out is set by user
     else {
@@ -154,8 +166,8 @@ class Source extends Item {
     else if (this.isDCDC() || this.isPerfect()) {
       i_in = (0 == this.getInputVoltage('typ')) ? 0.0 : this.getInputPower(valType) / this.getInputVoltage('typ');
     }
-    // Dummy: i_in = i_out
-    else if (this.isDummy()) {
+    // Dummy or Resistive Element : i_in = i_out
+    else if (this.isDummy() || this.isResistive()) {
       i_in = this.getOutputCurrent(valType);
     }
 
@@ -180,8 +192,8 @@ class Source extends Item {
   getInputPower(valType) {
     let p_in = 0.0;
 
-    // if the item is a LDO or a dummy item
-    if (this.isLDO() || this.isDummy()) {
+    // if the item is a LDO or a dummy item or a resistive element
+    if (this.isLDO() || this.isDummy() || this.isResistive()) {
       // p_in = v_in_typ * i_in
       p_in = this.getInputVoltage('typ') * this.getInputCurrent(valType);
     }
@@ -210,13 +222,18 @@ class Source extends Item {
 
   // get the power loss in an item
   getPowerLoss(valType) {
+    let p_loss = 0.0;
+
+    // Resistive Element : p_loss = r * i_out^2
+    if (this.isResistive()) {
+      p_loss = parseFloat(this.characs.resistor) * Math.pow(this.getOutputCurrent(valType), 2);
+    }
     // In sources, p_loss = p_in - p_out
-    if (!this.isChildOfRoot()) {
-      return this.getInputPower(valType) - this.getOutputPower(valType);
+    else if (!this.isChildOfRoot() && !this.isDummy() && !this.isPerfect()) {
+      p_loss = this.getInputPower(valType) - this.getOutputPower(valType);
     }
-    else {
-      return 0;
-    }
+
+    return p_loss;
   }
 
 
