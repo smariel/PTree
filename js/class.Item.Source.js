@@ -40,6 +40,7 @@ class Source extends Item {
       vout_max    : '1.82',
       vin_limit   : '0', // v1.8.0, 0=no limit
       iout_limit  : '0', // v1.8.0, 0=no limit
+      ploss_limit : '0', // v2.1.0, 0=no limit
       r1          : '150000',
       r2          : '120000',
       rtol        : '1',
@@ -56,7 +57,7 @@ class Source extends Item {
       shape       : '0', // v1.7.0
       badge_in    : '',  // v1.7.0
       badge_out   : '',  // v1.7.0
-      resistor    : '0',
+      resistor    : '0', // v2.1.0
       sequence    : {    // v2.0.0
         enable: {
           exist:       true,
@@ -537,6 +538,17 @@ class Source extends Item {
         let v_out_max = this.getInputVoltage(valType) - dropout;
         if(v_out > v_out_max) {
           alerts.push(`V<sub>OUT ${valType.toUpperCase()}</sub> limited to ${Util.numberToSi(v_out_max, 2)}V because of ${Util.numberToSi(dropout,2)}V dropout.`);
+        }
+      }
+    }
+
+    // Check if Iout < iout_limit
+    let ploss_limit = parseFloat(this.characs.ploss_limit);
+    if(ploss_limit !== 0) {
+      for(let valType of ['typ', 'max']) {
+        let ploss = this.getPowerLoss(valType);
+        if(ploss > 0 && ploss > ploss_limit) {
+          alerts.push(`P<sub>LOSS ${valType.toUpperCase()}</sub> (${ploss}A) exceeds the power dissipation limit (${ploss_limit}W).`);
         }
       }
     }
