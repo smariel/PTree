@@ -128,7 +128,7 @@ class Part {
   // return true if the current on the given load is not zero
   isConsuming(load) {
     let consumptions = this.characs.consumptions[load.id];
-    return (null !== consumptions && undefined !== consumptions && (consumptions.typ != 0 || consumptions.max != 0));
+    return (consumptions && (consumptions.typ != 0 || consumptions.max != 0));
   }
 
 

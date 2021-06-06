@@ -30,7 +30,7 @@ class PartList {
   getNextPart(part) {
     for (let id = part.id + 1; id < this.part_list.length; id++) {
       let nextPart = this.getPart(id);
-      if (null !== nextPart && undefined !== nextPart) {
+      if (nextPart) {
         return nextPart;
       }
     }
@@ -43,7 +43,7 @@ class PartList {
   getPreviousPart(part) {
     for (let id = part.id - 1; id >= 0; id--) {
       let previousPart = this.getPart(id);
-      if (null !== previousPart && undefined !== previousPart) {
+      if (previousPart) {
         return previousPart;
       }
     }

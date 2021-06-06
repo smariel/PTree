@@ -677,7 +677,7 @@ class PTree {
   // Set the spreadsheet to sync with
   setSheet(usersheet) {
     // default value
-    if(undefined === usersheet || null === usersheet) {
+    if(!usersheet) {
       usersheet = {sheet:null, path:null};
     }
     // set the usersheet given as {path, json_sheet}
@@ -1159,7 +1159,7 @@ class PTree {
       // if left click
       if(1 === evt.button) {
         // if the fabric obj is an 'item', select it
-        if (null !== fabric_obj && undefined !== fabric_obj && undefined !== fabric_obj.ptree_item) {
+        if (fabric_obj && undefined !== fabric_obj.ptree_item) {
           // select the item
           this.selectItem(fabric_obj.ptree_item);
           // start drag
@@ -1176,7 +1176,7 @@ class PTree {
       // else if right click
       else if (3 === evt.button) {
         // if the fabric obj is an 'item'
-        if (null !== fabric_obj && undefined !== fabric_obj && undefined !== fabric_obj.ptree_item) {
+        if (fabric_obj && undefined !== fabric_obj.ptree_item) {
           // save a ref to the targeted item
           this.canvas.rightClickedItem = fabric_obj.ptree_item;
         }
@@ -1203,7 +1203,7 @@ class PTree {
       let dragedItem = this.canvas.fabricCanvas.dragedItem;
 
       // if the event occured on a fabric obj (on an 'item')
-      if (null !== fabric_obj && undefined !== fabric_obj && undefined !== fabric_obj.ptree_item && null !== dragedItem) {
+      if (fabric_obj && undefined !== fabric_obj.ptree_item && null !== dragedItem) {
         let receiverItem = fabric_obj.ptree_item;
         // if the receiver item is different than the dragged item
         if (receiverItem.id !== dragedItem.id) {
@@ -1241,7 +1241,7 @@ class PTree {
     this.canvas.fabricCanvas.on('mouse:over', (evt) => {
       let fabric_obj = evt.target;
       // if there is a fabric object
-      if (null !== fabric_obj && undefined !== fabric_obj && undefined !== fabric_obj.objType) {
+      if (fabric_obj && undefined !== fabric_obj.objType) {
         let receiverItem = fabric_obj.ptree_item;
 
         // if the fabric obj is an 'item'
@@ -1274,7 +1274,7 @@ class PTree {
 
 
       // if there is a fabric object
-      if (null !== fabric_obj && undefined !== fabric_obj && undefined !== fabric_obj.objType) {
+      if (fabric_obj && undefined !== fabric_obj.objType) {
         // if the fabric obj is an 'item'
         if('item' == fabric_obj.objType) {
           // if an item is being dragged

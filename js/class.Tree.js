@@ -54,7 +54,7 @@ class Tree {
   getNextLoad(load) {
     for (let id = load.id + 1; id < this.item_list.length; id++) {
       let nextItem = this.getItem(id);
-      if (null !== nextItem && undefined !== nextItem && nextItem.isLoad()) {
+      if (nextItem && nextItem.isLoad()) {
         return nextItem;
       }
     }
@@ -67,7 +67,7 @@ class Tree {
   getPreviousLoad(load) {
     for (let id = load.id - 1; id >= 0; id--) {
       let previousItem = this.getItem(id);
-      if (null !== previousItem && undefined !== previousItem && previousItem.isLoad()) {
+      if (previousItem && previousItem.isLoad()) {
         return previousItem;
       }
     }
