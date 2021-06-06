@@ -25,10 +25,10 @@ $(() => {
   ipcRenderer.once('PartListEditor-initDataResp', (event, initData) => {
     // Reconstruct the partList
     let partList = new PartList();
-    partList.fromString(initData.partListStr);
+    partList.import(initData.partList);
     // Reconstruct the tree
     let tree = new Tree();
-    tree.fromString(initData.treeStr);
+    tree.import(initData.tree);
     // init the PartListEditor
     partListEditor = new PartListEditor(partList, tree);
 

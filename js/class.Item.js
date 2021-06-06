@@ -407,10 +407,10 @@ class Item {
       const {ipcRenderer} = require('electron');
 
       // listen to the response from main.js and resolve the promise
-      ipcRenderer.once('Item-editResp', (event, datastr) => {
+      ipcRenderer.once('Item-editResp', (event, data) => {
         // import the new data
-        if(null !== datastr) {
-          this.import(JSON.parse(datastr));
+        if(null !== data) {
+          this.import(data);
         }
 
         // resolve the promise
@@ -418,7 +418,7 @@ class Item {
       });
 
       // Send an IPC async msg to main.js: request to edit this item
-      ipcRenderer.send('Item-editReq', this.toString(), this.type);
+      ipcRenderer.send('Item-editReq', this.export(), this.type);
     });
   }
 
@@ -434,47 +434,42 @@ class Item {
     }
   }
 
-
-  // Export the item as a string
-  toString() {
-    // keep a reference to the tree
-    let tree  = this.tree;
-    // remove the ref to the tree to avoid circular object
-    this.tree = null;
-    // stringify
-    let str   = JSON.stringify(this);
-    // set back the ref to the tree
-    this.tree = tree;
-    // return the string
-    return str;
+  // return item data
+  export() {
+    let item = new Item(0, null, null, null);
+    Object.assign(item, this);
+    item.tree = null;
+    return item;
   }
 
-
-  // Import an item data
-  import(properties) {
-    // for each property in this item, copy from the string
+  // Import item data
+  import(data) {
+    // compatibility with < v2.1.0
+    if('string' === typeof data) {
+      data = JSON.parse(data);
+    }
+    // for each property in this item, copy from provided data
     for (let i in this) {
-      // if the string and this item has the hasOwnProperty
-      // and do not replace the tree
-      if (Object.prototype.hasOwnProperty.call(this, i) && Object.prototype.hasOwnProperty.call(properties, i) && i !== 'tree') {
-        // if the property is the characs, replace one by one
+      // if both provided data and this item have the property
+      if (Object.prototype.hasOwnProperty.call(this, i) && Object.prototype.hasOwnProperty.call(data, i)) {
+        // if the property is characs, replace one by one
         if(i === 'characs') {
-          // for each characs in this item, copy from the string
+          // for each characs in this item, copy from provided data
           for (let j in this.characs) {
-            // if the charac exist in this item and in the string
-            if (Object.prototype.hasOwnProperty.call(this.characs, j) && Object.prototype.hasOwnProperty.call(properties.characs, j)) {
-              this.characs[j] = properties.characs[j];
+            // if the charac exist in both this item and provided data
+            if (Object.prototype.hasOwnProperty.call(this.characs, j) && Object.prototype.hasOwnProperty.call(data.characs, j)) {
+              this.characs[j] = data.characs[j];
             }
           }
         }
-        // replace all the other properties
-        else {
-          this[i] = properties[i];
+        // replace all the other properties (except the tree)
+        else if (i !== 'tree') {
+          this[i] = data[i];
         }
       }
     }
 
-    return properties;
+    return data;
   }
 }
 

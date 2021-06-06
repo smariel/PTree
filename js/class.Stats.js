@@ -307,8 +307,8 @@ class Stats {
 
   // update the Stats data from raw data
   import(data) {
-    this.tree.fromString(data.treeData);
-    this.partList.fromString(data.partListData);
+    this.tree.import(data.treeData);
+    this.partList.import(data.partListData);
     this.item = this.tree.getItem(data.itemID);
   }
 
