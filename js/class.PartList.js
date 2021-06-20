@@ -30,7 +30,7 @@ class PartList {
   getNextPart(part) {
     for (let id = part.id + 1; id < this.part_list.length; id++) {
       let nextPart = this.getPart(id);
-      if (null !== nextPart && undefined !== nextPart) {
+      if (nextPart) {
         return nextPart;
       }
     }
@@ -43,7 +43,7 @@ class PartList {
   getPreviousPart(part) {
     for (let id = part.id - 1; id >= 0; id--) {
       let previousPart = this.getPart(id);
-      if (null !== previousPart && undefined !== previousPart) {
+      if (previousPart) {
         return previousPart;
       }
     }
@@ -97,35 +97,37 @@ class PartList {
     this.part_index = 0;
   }
 
-
-  // Export the partlist content as a string by deletin all reference to itself
-  toString() {
+  // return partlist data (all self-references are removed)
+  export() {
     let partList = new PartList();
     partList.part_index = this.part_index;
 
     this.forEachPart((part) => {
-      partList.part_list[part.id] = part.toString();
+      partList.part_list[part.id] = part.export();
     });
 
-    return JSON.stringify(partList);
+    return partList;
   }
 
-
-  // Import a partlist from a string and reconstruct all references
-  fromString(str) {
-    // get all properties from the stringified object where parts are strings
-    let partListProp = JSON.parse(str);
+  // Load partlist data
+  import(data) {
+    // compatibility with < v2.1.0
+    if('string' === typeof data) {
+      data = JSON.parse(data);
+    }
 
     // reinit the partlist data
     this.part_list  = [];
 
     // for each part in the list
     let new_id = 0;
-    for (let part_str of partListProp.part_list) {
-      if (null === part_str) continue;
-
-      // get the properties of the part
-      let partProp = JSON.parse(part_str);
+    for (let partProp of data.part_list) {
+      // compatibility with < v2.1.0 (again)
+      if('string' === typeof partProp) {
+        partProp = JSON.parse(partProp);
+      }
+      
+      if (!partProp) continue;
 
       // create a new empty part (without giving a ref to partList yet)
       let newPart = new Part(new_id, null);
@@ -146,7 +148,6 @@ class PartList {
 
     this.part_index = new_id;
   }
-
 
   // loop on each part and process a given function
   forEachPart(theFunction) {

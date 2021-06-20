@@ -64,23 +64,26 @@ class SequenceList {
     return (0 === this.length);
   }
 
-  // return this object as a string
-  toString() {
-    let json = {
+  // return sequence list data
+  export() {
+    let data = {
       sequences: [],
     };
     this.forEachSequence((sequence) => {
-      json.sequences.push(sequence.toString());
+      data.sequences.push(sequence.export());
     });
-    return JSON.stringify(json);
+    return data;
   }
 
-  // return a SequenceList object from a string created with .toString()
-  static fromString(str) {
-    let json = JSON.parse(str);
+  // return a new SequenceList object from data
+  static import(data) {
+    // compatibility with < v2.1.0
+    if('string' === typeof data) {
+      data = JSON.parse(data);
+    }
     let list = new SequenceList();
-    for(let sequenceStr of json.sequences) {
-      let sequence = Sequence.fromString(sequenceStr);
+    for(let sequenceData of data.sequences) {
+      let sequence = Sequence.import(sequenceData)
       sequence.id = list.sequences.length;
       list.sequences.push(sequence);
     }
@@ -206,34 +209,36 @@ class Sequence {
 
   // clone this sequence and return it
   clone() {
-    let clone = Sequence.fromString(this.toString());
+    let clone = Sequence.import(this.export());
     clone.name = this.name + ' copy';
     return clone;
   }
 
-  // return this object as a string
-  toString() {
-    let json = {
+  // return sequence data
+  export() {
+    let data = {
       name:  this.name,
       steps: [],
     };
     this.forEachStep((step) => {
-      json.steps.push(step.toString());
+      data.steps.push(step.export());
     });
-    return JSON.stringify(json);
+    return data;
   }
 
-  // return a Sequence object from a string created with .toString()
-  static fromString(seqstr) {
-    let json = JSON.parse(seqstr);
+  // return a new Sequence object from data
+  static import(data) {
+    // compatibility with < v2.1.0
+    if('string' === typeof data) {
+      data = JSON.parse(data);
+    }
     let sequence = new Sequence();
-    sequence.name = json.name;
-    for(let step of json.steps) {
-      sequence.steps.push(SequenceStep.fromString(step));
+    sequence.name = data.name;
+    for(let step of data.steps) {
+      sequence.steps.push(SequenceStep.import(step));
     }
     return sequence;
   }
-
 
   // create a default sequence from a tree
   static fromTree(tree, name='default') {
@@ -339,7 +344,6 @@ class SequenceStep {
 
     return hasSignal;
   }
-
 
   // refresh the signal name / active Level / existence from the given item
   refreshSignals(item) {
@@ -479,22 +483,26 @@ class SequenceStep {
     return signals;
   }
 
-  // return this object as a string
-  toString() {
-    let json = {
+  // return sequence step data
+  export() {
+    return {
       id:       this.id,
       name:     this.name,
       timeout:  this.timeout,
       signals:  this.signals
     };
-    return JSON.stringify(json);
   }
 
-  // return a SequenceStep object from a string created with .toString()
-  static fromString(stepstr) {
-    let json = JSON.parse(stepstr);
-    let step = new SequenceStep(json.id, json.name, json.timeout);
-    step.signals = json.signals;
+  // return a new SequenceStep object from data
+  static import(data) {
+    // compatibility with < v2.1.0
+    if('string' === typeof data) {
+      data = JSON.parse(data);
+    }
+    let step = new SequenceStep(data.id, data.name, data.timeout);
+    if(data.signals) {
+      step.signals = data.signals;
+    }
     return step;
   }
 }

@@ -296,7 +296,7 @@ class SequenceEditor {
     // send back data when the window is clossing
     window.onbeforeunload = () => {
       // Send an IPC async msg to main.js: return the PartList or null if not modified
-      let returnData = this.sequenceList.toString();
+      let returnData = this.sequenceList.export();
       require('electron').ipcRenderer.send('SequenceEditor-returnData', returnData);
     };
 

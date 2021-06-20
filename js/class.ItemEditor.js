@@ -343,7 +343,7 @@ class ItemEditor {
     // update the focused item (because it may not have trig 'change')
     this.updateItemFromHTML($(document.activeElement));
     // Send an IPC async msg to main.js: return the edited item
-    require('electron').ipcRenderer.send('ItemEditor-returnData', this.item.toString());
+    require('electron').ipcRenderer.send('ItemEditor-returnData', this.item.export());
     // close the window
     window.close();
   }

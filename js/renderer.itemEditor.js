@@ -24,15 +24,14 @@ $(() => {
   // On reception of the init data
   ipcRenderer.once('ItemEditor-initDataResp', (event, initData) => {
     // reconstruct the item to work on
-    let item_properties = JSON.parse(initData.itemStr);
     let item;
-    if('source' == item_properties.type) {
+    if('source' == initData.item.type) {
       item = new Source(0, null, null);
     }
-    else if('load' == item_properties.type) {
+    else if('load' == initData.item.type) {
       item = new Load(0, null, null);
     }
-    item.import(item_properties);
+    item.import(initData.item);
 
     // init the ItemEditor
     itemEditor = new ItemEditor(item);

@@ -30,8 +30,8 @@ test.serial('TEST2: item creation', async t => {
   await browser.clickElt('#bt_addrootsource');
   await browser.clickElt('#bt_addsource');
   await browser.clickElt('#bt_addload');
-  ret = await browser.execute(() => ptree.tree.toString());
-  tree.fromString(ret);
+  ret = await browser.execute(() => ptree.tree.export());
+  tree.import(ret);
   t.is(tree.item_list.length, 4);
   t.is(tree.item_index, 4);
   t.is(tree.item_list[0].type, 'root');
@@ -42,16 +42,16 @@ test.serial('TEST2: item creation', async t => {
 
   // remove the loads
   await browser.clickElt('#bt_remove');
-  ret = await browser.execute(() => ptree.tree.toString());
-  tree.fromString(ret);
+  ret = await browser.execute(() => ptree.tree.export());
+  tree.import(ret);
   t.is(tree.item_list.length, 3);
   t.is(tree.item_index, 4);
   t.is(tree.item_list[3], undefined);
 
   // remove every thing
   await browser.clickElt('#bt_clear');
-  ret = await browser.execute(() => ptree.tree.toString());
-  tree.fromString(ret);
+  ret = await browser.execute(() => ptree.tree.export());
+  tree.import(ret);
   t.is(tree.item_list.length, 1);
   t.is(tree.item_index, 1);
   t.is(tree.item_list[1], undefined);
@@ -66,20 +66,20 @@ test.serial('TEST3: undo/redo', async t => {
 
   // create an item
   await browser.clickElt('#bt_addrootsource');
-  ret = await browser.execute(() => ptree.tree.toString());
-  tree.fromString(ret);
+  ret = await browser.execute(() => ptree.tree.export());
+  tree.import(ret);
   t.is(tree.item_list[1].type, 'source');
 
   // undo
   await browser.clickElt('#bt_undo');
-  ret = await browser.execute(() => ptree.tree.toString());
-  tree.fromString(ret);
+  ret = await browser.execute(() => ptree.tree.export());
+  tree.import(ret);
   t.is(tree.item_list[1], undefined);
 
   // redo
   await browser.clickElt('#bt_redo');
-  ret = await browser.execute(() => ptree.tree.toString());
-  tree.fromString(ret);
+  ret = await browser.execute(() => ptree.tree.export());
+  tree.import(ret);
   t.is(tree.item_list[1].type, 'source');
 });
 
@@ -113,9 +113,9 @@ test.serial('TEST5: save + new project', async t => {
     ptree.open(`${__dirname}/../test_project.ptree`);
     return null;
   });
-  let ret = await browser.execute(() => ptree.tree.toString());
+  let ret = await browser.execute(() => ptree.tree.export());
   let tree = new Tree(false);
-  tree.fromString(ret);
+  tree.import(ret);
 
   // check the tree
   t.is(tree.item_list.length, 2);
