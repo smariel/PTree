@@ -216,8 +216,12 @@ class Source extends Item {
 
   // get the output power of an item
   getOutputPower(valType) {
+    let p_out = 0.0;
+
     // p_out = v_out_typ * i_out
-    return this.getOutputVoltage('typ') * this.getOutputCurrent(valType);
+    p_out = this.getOutputVoltage('typ') * this.getOutputCurrent(valType);
+
+    return p_out;
   }
 
 
@@ -242,7 +246,7 @@ class Source extends Item {
   getEfficiency(valType, outputCurrent) {
     let efficiency = 1;
 
-    if(this.isLDO()) {
+    if(this.isLDO() || this.isResistive()) {
       // efficiency = p_out / p_in
       let inputPower = this.getInputPower(valType);
       efficiency = (0 == inputPower) ? 0 : this.getOutputPower(valType) / inputPower;
