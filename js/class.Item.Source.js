@@ -163,9 +163,9 @@ class Source extends Item {
     if (this.isLDO()) {
       i_in = this.getOutputCurrent(valType) + parseFloat(this.characs['iq_' + valType]);
     }
-    // DC/DC and perfect: i_in = p_in / v_in_typ
+    // DC/DC and perfect: i_in = p_in / v_in
     else if (this.isDCDC() || this.isPerfect()) {
-      i_in = (0 == this.getInputVoltage('typ')) ? 0.0 : this.getInputPower(valType) / this.getInputVoltage('typ');
+      i_in = (0 == this.getInputVoltage(valType)) ? 0.0 : this.getInputPower(valType) / this.getInputVoltage(valType);
     }
     // Dummy or Resistive Element : i_in = i_out
     else if (this.isDummy() || this.isResistive()) {
@@ -196,7 +196,7 @@ class Source extends Item {
     // if the item is a LDO or a dummy item or a resistive element
     if (this.isLDO() || this.isDummy() || this.isResistive()) {
       // p_in = v_in_typ * i_in
-      p_in = this.getInputVoltage('typ') * this.getInputCurrent(valType);
+      p_in = this.getInputVoltage(valType) * this.getInputCurrent(valType);
     }
     // if the item is perfect
     else if (this.isPerfect()) {
@@ -219,7 +219,7 @@ class Source extends Item {
     let p_out = 0.0;
 
     // p_out = v_out_typ * i_out
-    p_out = this.getOutputVoltage('typ') * this.getOutputCurrent(valType);
+    p_out = this.getOutputVoltage(valType) * this.getOutputCurrent(valType);
 
     return p_out;
   }
