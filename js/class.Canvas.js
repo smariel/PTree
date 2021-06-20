@@ -35,32 +35,33 @@ class Canvas {
   // update v1.2.0: add show_V, I & P
   setDefaultConfig() {
     this.config = {
-      show_vtyp     : true,
-      show_ityp     : true,
-      show_ptyp     : true,
-      show_vmax     : true,
-      show_imax     : true,
-      show_pmax     : true,
-      show_name     : true,
-      show_ref      : true,
-      show_custom1  : true,
-      show_type     : false,
-      show_badges   : true,
-      show_alert    : true,
-      show_loadpart : false,
-      align_load    : false,
-      proportional  : false,
-      loss_color    : false,
-      zoom          : 100,
-      zoom_export   : 100,
-      cell_width    : 280,
-      cell_height   : 90,
-      width_coef    : Canvas.app_template.item.width_coef,
-      height_coef   : Canvas.app_template.item.height_coef,
-      text_size     : 14,
-      color_source  : '#FF1744', // materialze red accent-3,
-      color_load    : '#00bfa5', // materializ teal accent-4
-      display_typmax: 'max',
+      show_vtyp       : true,
+      show_ityp       : true,
+      show_ptyp       : true,
+      show_vmax       : true,
+      show_imax       : true,
+      show_pmax       : true,
+      show_name       : true,
+      show_ref        : true,
+      show_custom1    : true,
+      show_type       : false,
+      show_badges     : true,
+      show_alert      : true,
+      show_loadpart   : false,
+      show_totalpower : true,
+      align_load      : false,
+      proportional    : false,
+      loss_color      : false,
+      zoom            : 100,
+      zoom_export     : 100,
+      cell_width      : 280,
+      cell_height     : 90,
+      width_coef      : Canvas.app_template.item.width_coef,
+      height_coef     : Canvas.app_template.item.height_coef,
+      text_size       : 14,
+      color_source    : '#FF1744', // materialze red accent-3,
+      color_load      : '#00bfa5', // materializ teal accent-4
+      display_typmax  : 'max',
     };
   }
 
@@ -552,6 +553,14 @@ class Canvas {
 
   // Refresh the total power and efficiency table
   refreshTotalPower() {
+    if(this.config.show_totalpower) {
+      $('#totalpower').show();
+    }
+    else {
+      $('#totalpower').hide();
+      return;
+    }
+
     // refresh the total power
     const totalpower = this.tree.getTotalPower();
     $('.totalpower.typ').text(Util.numberToSi(totalpower.typ,3));
