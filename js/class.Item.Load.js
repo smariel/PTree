@@ -158,9 +158,9 @@ class Load extends Item {
 
 
   // Import an item data
-  import(data) {
-    // natively import the item with the parent method
-    data = super.import(data);
+  import(properties) {
+    // natively importy the item with the parent method
+    properties = super.import(properties);
 
     // compatibility with < v1.4.0
     // conversions of old characs.isinpartlist to new characs.valtyp
@@ -168,22 +168,22 @@ class Load extends Item {
       this.characs.loadtype = (properties.characs.inpartlist) ? 0 : 1;
     }
 
-    return data;
+    return properties;
   }
 
 
-  // Refresh the consumption with the given partList
+  // Refresh the consumption whith the given partList
   refreshConsumption(partList, sheet) {
-    // if the consumptions of this load are in the partlist
+    // if the cunsumptions of this loads are in the partlist
     // v < 1.4.0 compatibility: if the location do not exist, assume partlist
     if(undefined === this.characs.loadtype || 0 == this.characs.loadtype) {
       // skip if the partlist was not given
-      if(partList) {
+      if(undefined !== partList && null !== partList) {
         // reinit each current
         this.characs.ityp = 0;
         this.characs.imax = 0;
 
-        // iterate over all parts to add all currents
+        // parcour all part to add all currents
         partList.forEachPart((part) => {
           this.characs.ityp += parseFloat(part.getConsumption(this, 'typ'));
           this.characs.imax += parseFloat(part.getConsumption(this, 'max'));
