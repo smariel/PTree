@@ -55,7 +55,7 @@
 
 
     <!-- Section2 : Total power -->
-    <section id="totalpower">
+    <section id="totalpower" class="pos-bottom-left">
       <table>
         <thead>
           <tr>
@@ -368,6 +368,17 @@
             <input id="config_loadcolor" data-config="color_load" type="color" class="config_input config_color" value="#000000" />
             Default load color
           </label>
+          <br />
+          <label for="config_totalPowerLoc">
+            Total power localisation
+            <select id="config_totalPowerLoc" data-config="totalpower_loc" class="config_input">
+              <option value="top-left">top left</option>
+              <option value="top-right">top right</option>
+              <option value="bottom-left">bottom left</option>
+              <option value="bottom-right">bottom right</option>
+            </select>
+          </label>
+          <br />
         </p>
       </form>
       <p class="config_reset">

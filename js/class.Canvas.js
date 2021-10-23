@@ -62,6 +62,7 @@ class Canvas {
       color_source    : '#FF1744', // materialze red accent-3,
       color_load      : '#00bfa5', // materializ teal accent-4
       display_typmax  : 'max',
+      totalpower_loc  : 'bottom-left'
     };
   }
 
@@ -554,6 +555,7 @@ class Canvas {
   // Refresh the total power and efficiency table
   refreshTotalPower() {
     if(this.config.show_totalpower) {
+      $('#totalpower').attr('class', `pos-${this.config.totalpower_loc}`);
       $('#totalpower').show();
     }
     else {
@@ -601,6 +603,8 @@ class Canvas {
     });
 
     $('#config_displayTypMax').val(this.config.display_typmax);
+
+    $('#config_totalPowerLoc').val(this.config.totalpower_loc);
   }
 
 

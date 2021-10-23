@@ -330,13 +330,35 @@ $border-color: rgba(white,0.3);
 
 #totalpower {
    position       : fixed;
-   bottom         : 0;
    padding        : 7px 7px;
-   border-radius  : 0 5px 0 0;
    background     : rgba($dark, 0.8);
    color          : white;
    letter-spacing : .1rem;
    z-index        : 1;
+
+   &.pos-top-left {
+      top            : $topmenu_height;
+      left           : 0;
+      border-radius  : 0 0 5px 0;
+   }
+
+   &.pos-top-right {
+      top            : $topmenu_height;
+      right          : 0;
+      border-radius  : 0 0 0 5px;
+   }
+
+   &.pos-bottom-right {
+      bottom         : 0;
+      right          : 0;
+      border-radius  : 5px 0 0 0;
+   }
+
+   &.pos-bottom-left {
+      bottom         : 0;
+      left           : 0;
+      border-radius  : 0 5px 0 0;
+   }
 }
 
 #totalpower th.totalcell {
