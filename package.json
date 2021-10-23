@@ -44,7 +44,7 @@
     "marked": "^1.2.7",
     "mousetrap": "^1.6.5",
     "wavedrom": "^2.6.8",
-    "xlsx": "^0.16.9"
+    "xlsx": "^0.17.0"
   },
   "devDependencies": {
     "ava": "^3.14.0",
