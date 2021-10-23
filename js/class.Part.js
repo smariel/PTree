@@ -128,22 +128,15 @@ class Part {
   // return true if the current on the given load is not zero
   isConsuming(load) {
     let consumptions = this.characs.consumptions[load.id];
-    return (null !== consumptions && undefined !== consumptions && (consumptions.typ != 0 || consumptions.max != 0));
+    return (consumptions && (consumptions.typ != 0 || consumptions.max != 0));
   }
 
-
-  // Export the part as a string
-  toString() {
-    // save a ref to the partList
-    let partList  = this.partList;
-    // remove the ref to the tree to avoid circular object
-    this.partList = null;
-    // stringify
-    let str       = JSON.stringify(this);
-    // set back the ref to the tree
-    this.partList = partList;
-    // return the string
-    return str;
+  // export part data
+  export() {
+    let part = new Part(0, null);
+    Object.assign(part, this);
+    part.partList = null;
+    return part;
   }
 }
 

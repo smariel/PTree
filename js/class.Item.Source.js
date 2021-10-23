@@ -561,10 +561,10 @@ class Source extends Item {
   }
 
 
-  // Import an item previously exported with .toString()
-  import(properties) {
-    // natively importy the item with the parent method
-    properties = super.import(properties);
+  // Import an item previously exported with .export()
+  import(data) {
+    // natively import the item with the parent method
+    data = super.import(data);
 
     // compatibility with < v1.1.0
     // conversions of efficiency single number to array
@@ -580,12 +580,12 @@ class Source extends Item {
 
     // compatibility with < v1.8.0
     // init LDO dropout to 0 to avoid unwanted modifications, regardless of the application default dropout
-    if(this.isLDO() && undefined == properties.characs.dropout) {
+    if(this.isLDO() && undefined == data.characs.dropout) {
       this.characs.dropout = [{i:'0', drop:'0'}, {i:'1', drop:'0'}];
     }
 
     // compatibility with < v1.9.0
-    if(undefined == properties.characs.sequence) {
+    if(undefined == data.characs.sequence) {
       this.characs.sequence = {
         enable: {
           exist:       true,
@@ -600,7 +600,7 @@ class Source extends Item {
       };
     }
 
-    return properties;
+    return data;
   }
 }
 

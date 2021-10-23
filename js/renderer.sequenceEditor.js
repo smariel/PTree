@@ -25,10 +25,10 @@ $(() => {
   ipcRenderer.once('SequenceEditor-initDataResp', (event, initData) => {
     // reconstruct the tree
     let tree = new Tree(false);
-    tree.fromString(initData.treeStr);
+    tree.import(initData.tree);
 
     // reconstruct the sequence list
-    let seqList = SequenceList.fromString(initData.seqListStr);
+    let seqList = SequenceList.import(initData.seqList);
 
     // create the sequence editor
     seqEditor = new SequenceEditor('sequence', tree, seqList);

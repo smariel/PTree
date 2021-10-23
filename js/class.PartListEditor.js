@@ -437,7 +437,7 @@ class PartListEditor {
   // empty the history and add only one data
   clearHistory() {
     // save the actual tree into the history
-    let data = this.partList.toString();
+    let data = this.partList.export();
     this.history.list  = [data];
     this.history.index = 0;
     this.updateUndoRedoButtons();
@@ -447,7 +447,7 @@ class PartListEditor {
   // save the app data into the history
   saveHistory() {
     // save the actual partList into the history
-    let data = this.partList.toString();
+    let data = this.partList.export();
     // if the index is not the last element, remove everything over index
     this.history.list.splice(this.history.index + 1, this.history.list.length - (this.history.index + 1));
     // save the element in the history at the last position
@@ -464,7 +464,7 @@ class PartListEditor {
     // unselect all part
     this.unselectPart();
     // restore the the part list from the history
-    this.partList.fromString(this.history.list[index]);
+    this.partList.import(this.history.list[index]);
     // update the UI
     this.refresh();
     this.updateUndoRedoButtons();
@@ -597,7 +597,7 @@ class PartListEditor {
     // send back data when the window is clossing
     window.onbeforeunload = () => {
       // Send an IPC async msg to main.js: return the PartList or null if not modified
-      let returnData = (0 === this.history.index) ? null : this.partList.toString();
+      let returnData = (0 === this.history.index) ? null : this.partList.export();
       require('electron').ipcRenderer.send('PartListEditor-returnData', returnData);
     };
 
