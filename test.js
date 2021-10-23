@@ -160,17 +160,17 @@ test.serial('TEST6: canvas manipulation', async t => {
   t.is(ret.vin_typ,  '5V');
   t.is(ret.vin_max,  '5V');
   t.is(ret.iin_typ,  '621mA');
-  t.is(ret.iin_max,  '1.38A');
+  t.is(ret.iin_max,  '1.4A');
   t.is(ret.pin_typ,  '3.1W');
-  t.is(ret.pin_max,  '6.92W');
+  t.is(ret.pin_max,  '7W');
   t.is(ret.vout_typ, '1.8V');
   t.is(ret.vout_max, '1.82V');
   t.is(ret.iout_typ, '1.5A');
   t.is(ret.iout_max, '2.7A');
   t.is(ret.pout_typ, '2.7W');
-  t.is(ret.pout_max, '4.86W');
+  t.is(ret.pout_max, '4.91W');
   t.is(ret.loss_typ, '403mW');
-  t.is(ret.loss_max, '2.06W');
+  t.is(ret.loss_max, '2.09W');
 
   // click LOAD3 and check if it was selected
   await browser.clickAt(660, 275);
@@ -222,9 +222,9 @@ test.serial('TEST7: total power', async t => {
     };
   });
   t.is(ret.totalpower_typ,'17.9');
-  t.is(ret.totalpower_max,'32.9');
+  t.is(ret.totalpower_max,'33');
   t.is(ret.totaleff_typ,  '94');
-  t.is(ret.totaleff_maw,  '87.5');
+  t.is(ret.totaleff_maw,  '87.2');
 });
 
 test.serial('TEST8: configurations', async t => {
@@ -306,7 +306,7 @@ test.serial('TEST9: sync external spreadsheet', async t => {
   await wait(500);
   ret = await browser.execute(() => ptree.tree.getTotalPower());
   t.is(ret.typ,17.870114942528737);
-  t.is(ret.max,32.91557692307692);
+  t.is(ret.max,33.00501251251251);
 
   // select an other sheet and test the global power values
   await browser.execute(() => {
@@ -316,7 +316,7 @@ test.serial('TEST9: sync external spreadsheet', async t => {
   await wait(500);
   ret = await browser.execute(() => ptree.tree.getTotalPower());
   t.is(ret.typ,20.610114942528735);
-  t.is(ret.max,35.535576923076924);
+  t.is(ret.max,35.62501251251251);
 });
 
 test.serial('TEST10: edit source, DC/DC fixed', async t => {
