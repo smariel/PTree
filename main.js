@@ -270,9 +270,9 @@ ipcMain.on('PTree-beforeCloseReturn', (evt, isPTreeReady) => {
 // -----------------------------------------------------------------------------
 
 // IPC async msg received from Item : request edition
-ipcMain.on('Item-editReq', (evt, item, itemType) => {
-  // save the given item for future async use
-  renderers.itemEditor.initData = {item};
+ipcMain.on('Item-editReq', (evt, itemStr, itemType) => {
+  // save the given itemStr for future async use
+  renderers.itemEditor.initData = {itemStr};
   // save the event to respond to this msg later
   renderers.itemEditor.reqEvent = evt;
 
@@ -317,9 +317,9 @@ ipcMain.on('ItemEditor-initDataReq', (evt) => {
 });
 
 // IPC async msg received from ItemEditor : edited data returned
-ipcMain.on('ItemEditor-returnData', (evt, newitem) => {
+ipcMain.on('ItemEditor-returnData', (evt, newitemStr) => {
   // save the returned data to be sent when window is closed
-  renderers.itemEditor.returnData = newitem;
+  renderers.itemEditor.returnData = newitemStr;
 });
 
 
@@ -328,12 +328,12 @@ ipcMain.on('ItemEditor-returnData', (evt, newitem) => {
 // -----------------------------------------------------------------------------
 
 // IPC async msg received from PTree : request partList edition
-ipcMain.on('PartList-editReq', (evt, tree, partList) => {
+ipcMain.on('PartList-editReq', (evt, treeStr, partListStr) => {
   // macOS: PTree window is disabled (hidden) while the partlist is open
   // windows: the partlist is modal and automatically disable the other
   if(process.platform === 'darwin') renderers.PTree.browserWindow.hide();
   // save the given data for future async use
-  renderers.partListEditor.initData = {tree, partList};
+  renderers.partListEditor.initData = {treeStr, partListStr};
   // save the event to respond to this msg later
   renderers.partListEditor.reqEvent = evt;
 
@@ -375,9 +375,9 @@ ipcMain.on('PartListEditor-initDataReq', (evt) => {
 });
 
 // IPC async msg received from PartListEditor : edited data returned
-ipcMain.on('PartListEditor-returnData', (evt, newPartList) => {
+ipcMain.on('PartListEditor-returnData', (evt, newPartListStr) => {
   // save the returned data to be sent when window is closed
-  renderers.partListEditor.returnData = newPartList;
+  renderers.partListEditor.returnData = newPartListStr;
 });
 
 
@@ -448,12 +448,12 @@ ipcMain.on('PTree-selectItemReq', (evt, data) => {
 // -----------------------------------------------------------------------------
 
 // IPC async msg received from PTree : request Sequence edition
-ipcMain.on('Sequence-editReq', (evt, tree, seqList) => {
+ipcMain.on('Sequence-editReq', (evt, treeStr, seqListStr) => {
   // macOS: PTree window is disabled (hidden) while the partlist is open
   // windows: the partlist is modal and automatically disable the other
   if(process.platform === 'darwin') renderers.PTree.browserWindow.hide();
   // save the given data for future async use
-  renderers.sequenceEditor.initData = {tree, seqList};
+  renderers.sequenceEditor.initData = {treeStr, seqListStr};
   // save the event to respond to this msg later
   renderers.sequenceEditor.reqEvent = evt;
 
@@ -495,9 +495,9 @@ ipcMain.on('SequenceEditor-initDataReq', (evt) => {
 });
 
 // IPC async msg received from SequenceEditor: edited data returned
-ipcMain.on('SequenceEditor-returnData', (evt, newSequenceList) => {
+ipcMain.on('SequenceEditor-returnData', (evt, newSequenceListStr) => {
   // save the returned data to be sent when window is closed
-  renderers.sequenceEditor.returnData = newSequenceList;
+  renderers.sequenceEditor.returnData = newSequenceListStr;
 });
 
 

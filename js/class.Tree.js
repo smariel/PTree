@@ -54,7 +54,7 @@ class Tree {
   getNextLoad(load) {
     for (let id = load.id + 1; id < this.item_list.length; id++) {
       let nextItem = this.getItem(id);
-      if (nextItem && nextItem.isLoad()) {
+      if (null !== nextItem && undefined !== nextItem && nextItem.isLoad()) {
         return nextItem;
       }
     }
@@ -67,7 +67,7 @@ class Tree {
   getPreviousLoad(load) {
     for (let id = load.id - 1; id >= 0; id--) {
       let previousItem = this.getItem(id);
-      if (previousItem && previousItem.isLoad()) {
+      if (null !== previousItem && undefined !== previousItem && previousItem.isLoad()) {
         return previousItem;
       }
     }
@@ -233,39 +233,35 @@ class Tree {
     });
   }
 
-  // return tree data
-  export() {
+
+  // Convert this tree to a string
+  toString() {
     let tree = new Tree(false);
     tree.item_index = this.item_index;
 
     this.forEachItem((item) => {
-      tree.setItem(item.id, item.export());
+      tree.setItem(item.id, item.toString());
     });
-    return tree;
+
+    return JSON.stringify(tree);
   }
 
-  // import tree data
-  import(data) {
-    // compatibility with < v2.1.0
-    if('string' === typeof data) {
-      data = JSON.parse(data);
-    }
+
+  // Import a tree exported with .toString()
+  fromString(str) {
+    // get all properties from the stringified object with items as strings
+    let treeProp = JSON.parse(str);
+
     // reinit the tree with new values
     this.item_list  = [];
-    this.item_index = data.item_index;
-    // compatibility with < v2.1.0 (again)
-    let item_list = data.item_list;
-    if('string' === typeof item_list) {
-      item_list = JSON.parse(item_list);
-    }
+    this.item_index = treeProp.item_index;
+
     // for each item in the list
-    for (let newItem_properties of item_list) {
-      // compatibility with < v2.1.0 (yet again)
-        if('string' === typeof newItem_properties) {
-          newItem_properties = JSON.parse(newItem_properties);
-        }
+    for (let item_str of treeProp.item_list) {
       // if there is no data, continue to the next item
-      if (!newItem_properties) continue;
+      if (null === item_str) continue;
+      // get the data from the string
+      let newItem_properties = JSON.parse(item_str);
       // create a new empty Item
       let newItem;
       if('source' == newItem_properties.type) {
@@ -284,6 +280,7 @@ class Tree {
       this.setItem(newItem.id, newItem);
     }
   }
+
 
   // loop on each item and process a given function
   forEachItem(theFunction) {

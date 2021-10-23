@@ -48,8 +48,8 @@ class PTree {
   // Reset the PTree object
   reset() {
     // create new data
-    this.tree.import(new Tree().export());
-    this.partList.import(new PartList().export());
+    this.tree.fromString(new Tree().toString());
+    this.partList.fromString(new PartList().toString());
     this.canvas.setDefaultConfig();
     this.sequenceList = new SequenceList();
     this.unlockFile();
@@ -316,7 +316,7 @@ class PTree {
   // empty the history and add only one data
   clearHistory() {
     // save the actual tree into the history
-    const data = this.tree.export();
+    const data = this.tree.toString();
     this.history.list  = [data];
     this.history.index = 0;
     this.updateUndoRedoButtons();
@@ -326,7 +326,7 @@ class PTree {
   // save the app data into the history
   saveHistory() {
     // save the actual tree into the history
-    const data = this.tree.export();
+    const data = this.tree.toString();
     // if the index is not the last element, remove everything over index
     this.history.list.splice(this.history.index + 1, this.history.list.length - (this.history.index + 1));
     // save the element in the history at the last position
@@ -349,7 +349,7 @@ class PTree {
     // if stats are open, unselect the item
     this.updateStats(null);
     // restore the tree
-    this.tree.import(this.history.list[index]);
+    this.tree.fromString(this.history.list[index]);
     this.canvas.refresh();
     // mark the workspace as unsaved
     this.setUnsaved();
@@ -624,21 +624,21 @@ class PTree {
         const {ipcRenderer} = require('electron');
 
         // listen to the response from main.js and resolve the promise
-        ipcRenderer.once('PartList-editResp', (event, data) => {
-          resolve(data);
+        ipcRenderer.once('PartList-editResp', (event, datastr) => {
+          resolve(datastr);
         });
 
         // Send an IPC async msg to the main.js: request to edit the part list
-        ipcRenderer.send('PartList-editReq', this.tree.export(), this.partList.export());
+        ipcRenderer.send('PartList-editReq', this.tree.toString(), this.partList.toString());
       });
     };
 
     // open the partlist and wait for the data
-    let partListing = await requestOpenPartList();
+    let partListString = await requestOpenPartList();
 
     // if the part list was edited, update
-    if(partListing) {
-      this.partList.import(partListing);
+    if(null !== partListString) {
+      this.partList.fromString(partListString);
       this.tree.refreshConsumptions(this.partList, this.usersheet.sheet);
       this.canvas.refresh();
       this.setUnsaved();
@@ -654,12 +654,12 @@ class PTree {
         const {ipcRenderer} = require('electron');
 
         // listen to the response from main.js and resolve the promise
-        ipcRenderer.once('Sequence-editResp', (event, data) => {
-          resolve(data);
+        ipcRenderer.once('Sequence-editResp', (event, datastr) => {
+          resolve(datastr);
         });
 
         // Send an IPC async msg to the main.js: request to edit the part list
-        ipcRenderer.send('Sequence-editReq', this.tree.export(), this.sequenceList.export());
+        ipcRenderer.send('Sequence-editReq', this.tree.toString(), this.sequenceList.toString());
       });
     };
 
@@ -667,8 +667,8 @@ class PTree {
     let sequenceList = await requestOpenSeqEditor();
 
     // if a sequence list is returned
-    if(sequenceList) {
-      this.sequenceList = SequenceList.import(sequenceList);
+    if(null !== sequenceList) {
+      this.sequenceList = SequenceList.fromString(sequenceList);
       this.setUnsaved();
     }
   }
@@ -677,7 +677,7 @@ class PTree {
   // Set the spreadsheet to sync with
   setSheet(usersheet) {
     // default value
-    if(!usersheet) {
+    if(undefined === usersheet || null === usersheet) {
       usersheet = {sheet:null, path:null};
     }
     // set the usersheet given as {path, json_sheet}
@@ -724,9 +724,9 @@ class PTree {
   // add extra properties to the string if needed
   toString(extra={}) {
     let data = {
-      tree         : this.tree.export(),
-      partList     : this.partList.export(),
-      sequenceList : this.sequenceList.export(),
+      tree         : this.tree.toString(),
+      partList     : this.partList.toString(),
+      sequenceList : this.sequenceList.toString(),
       usersheet    : this.usersheet,
       config       : this.canvas.config
     };
@@ -812,17 +812,17 @@ class PTree {
         shell.openExternal(packagejson.homepage);
       }
     }
-    // should not occur
+    // sould not occur
     else if(null === comp) {
       alert('Unexpected error');
       return false;
     }
 
     // copy the new data in this tree
-    this.tree.import(data.tree);
-    this.partList.import(data.partList);
+    this.tree.fromString(data.tree);
+    this.partList.fromString(data.partList);
     if(undefined !== data.sequenceList) {
-      this.sequenceList = SequenceList.import(data.sequenceList);
+      this.sequenceList = SequenceList.fromString(data.sequenceList);
     }
     else {
       this.sequenceList = new SequenceList();
@@ -1019,8 +1019,8 @@ class PTree {
       // Send an IPC async msg to main.js: request to update the item in Stats
       require('electron').ipcRenderer.send('Stats-updateItemReq', {
         itemID:       itemID,
-        treeData:     this.tree.export(),
-        partListData: this.partList.export()
+        treeData:     this.tree.toString(),
+        partListData: this.partList.toString()
       });
     }
   }
@@ -1159,7 +1159,7 @@ class PTree {
       // if left click
       if(1 === evt.button) {
         // if the fabric obj is an 'item', select it
-        if (fabric_obj && undefined !== fabric_obj.ptree_item) {
+        if (null !== fabric_obj && undefined !== fabric_obj && undefined !== fabric_obj.ptree_item) {
           // select the item
           this.selectItem(fabric_obj.ptree_item);
           // start drag
@@ -1176,7 +1176,7 @@ class PTree {
       // else if right click
       else if (3 === evt.button) {
         // if the fabric obj is an 'item'
-        if (fabric_obj && undefined !== fabric_obj.ptree_item) {
+        if (null !== fabric_obj && undefined !== fabric_obj && undefined !== fabric_obj.ptree_item) {
           // save a ref to the targeted item
           this.canvas.rightClickedItem = fabric_obj.ptree_item;
         }
@@ -1203,7 +1203,7 @@ class PTree {
       let dragedItem = this.canvas.fabricCanvas.dragedItem;
 
       // if the event occured on a fabric obj (on an 'item')
-      if (fabric_obj && undefined !== fabric_obj.ptree_item && null !== dragedItem) {
+      if (null !== fabric_obj && undefined !== fabric_obj && undefined !== fabric_obj.ptree_item && null !== dragedItem) {
         let receiverItem = fabric_obj.ptree_item;
         // if the receiver item is different than the dragged item
         if (receiverItem.id !== dragedItem.id) {
@@ -1241,7 +1241,7 @@ class PTree {
     this.canvas.fabricCanvas.on('mouse:over', (evt) => {
       let fabric_obj = evt.target;
       // if there is a fabric object
-      if (fabric_obj && undefined !== fabric_obj.objType) {
+      if (null !== fabric_obj && undefined !== fabric_obj && undefined !== fabric_obj.objType) {
         let receiverItem = fabric_obj.ptree_item;
 
         // if the fabric obj is an 'item'
@@ -1274,7 +1274,7 @@ class PTree {
 
 
       // if there is a fabric object
-      if (fabric_obj && undefined !== fabric_obj.objType) {
+      if (null !== fabric_obj && undefined !== fabric_obj && undefined !== fabric_obj.objType) {
         // if the fabric obj is an 'item'
         if('item' == fabric_obj.objType) {
           // if an item is being dragged
@@ -1378,8 +1378,8 @@ class PTree {
       // Send an IPC async msg to the main.js: request to open the stats window
       require('electron').ipcRenderer.send('Stats-openReq', {
         itemID:       (null === this.canvas.getSelectedItem()) ? null : this.canvas.getSelectedItem().id,
-        treeData:     this.tree.export(),
-        partListData: this.partList.export()
+        treeData:     this.tree.toString(),
+        partListData: this.partList.toString()
       });
       this.statsAreOpen = true;
     });
