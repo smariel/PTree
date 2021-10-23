@@ -145,7 +145,7 @@ class Source extends Item {
       if(this.isLDO() && !ignoreDropout) {
         // can't use dropout, to avoid infinite loop
         let v_out_max = this.getInputVoltage(valType)/* - this.getDropout(valType)*/;
-        if(v_out > v_out_max) {
+        if((v_out > 0 && v_out > v_out_max) || (v_out < 0 && v_out < v_out_max)) {
           v_out = v_out_max;
         }
       }
@@ -539,8 +539,8 @@ class Source extends Item {
       for(let valType of ['typ', 'max']) {
         let v_out     = parseFloat(this.characs['vout_' + valType]);
         let dropout   = this.getDropout(valType);
-        let v_out_max = this.getInputVoltage(valType) - dropout;
-        if(v_out > v_out_max) {
+        let v_out_max = (v_out >= 0) ? this.getInputVoltage(valType) - dropout : this.getInputVoltage(valType) + dropout;
+        if((v_out > 0 && v_out > v_out_max) || (v_out < 0 && v_out < v_out_max)) {
           alerts.push(`V<sub>OUT ${valType.toUpperCase()}</sub> limited to ${Util.numberToSi(v_out_max, 2)}V because of ${Util.numberToSi(dropout,2)}V dropout.`);
         }
       }
