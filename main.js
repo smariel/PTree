@@ -345,7 +345,10 @@ ipcMain.on('PartList-editReq', (evt, treeStr, partListStr) => {
     modal           : process.platform !== 'darwin',
     resizable       : true,
     useContentSize  : true,
-    webPreferences  : {nodeIntegration : true}
+    webPreferences  : {
+      nodeIntegration : true,
+      enableRemoteModule : true
+    }
   });
 
   // Open the dev tools...
