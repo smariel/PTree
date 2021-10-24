@@ -113,7 +113,7 @@ class Load extends Item {
     }
     // for all other loads, p_in = v_in * i_in
     else {
-      p_in = this.getInputVoltage('typ') * this.getInputCurrent(valType);
+      p_in = this.getInputVoltage(valType) * this.getInputCurrent(valType);
     }
 
     return p_in;
