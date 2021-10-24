@@ -30,7 +30,7 @@ class Source extends Item {
         5: AdjOther (< v1.3.0)
         6: Dummy    (>= 1.3.0)
         7: Perfect  (>= 1.3.0)
-        8: Resistor (>= 2.1.0)
+        8: Resistor (>= 2.0.2)
       */
       ref         : '',
       custom1     : '',
@@ -40,7 +40,7 @@ class Source extends Item {
       vout_max    : '1.82',
       vin_limit   : '0', // v1.8.0, 0=no limit
       iout_limit  : '0', // v1.8.0, 0=no limit
-      ploss_limit : '0', // v2.1.0, 0=no limit
+      ploss_limit : '0', // v2.0.2, 0=no limit
       r1          : '150000',
       r2          : '120000',
       rtol        : '1',
@@ -57,7 +57,7 @@ class Source extends Item {
       shape       : '0', // v1.7.0
       badge_in    : '',  // v1.7.0
       badge_out   : '',  // v1.7.0
-      resistor    : '0', // v2.1.0
+      resistor    : '0', // v2.0.2
       sequence    : {    // v2.0.0
         enable: {
           exist:       true,

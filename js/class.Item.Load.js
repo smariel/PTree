@@ -35,8 +35,8 @@ class Load extends Item {
       hidden     : false,
       shape      : 1,  // v1.7.0
       badge_in   : '', // v1.7.0
-      ptyp       : 0, // v2.1.0
-      pmax       : 0, // v2.1.0
+      ptyp       : 0,  // v2.1.0
+      pmax       : 0,  // v2.1.0
     };
   }
 
