@@ -282,11 +282,13 @@
           <div class="col-xs-12">
             <label for="load_type">Load current</label>
             <select id="load_type" data-itemdata="loadtype" class="form-control item-control" data-toggle="tooltip" data-placement="bottom" title="Current definition">
-              <option value="1">Raw</option>
+              <option value="1">Raw current</option>
+              <option value="3">Raw power</option>
               <option value="0">In PTree partlist</option>
               <option value="2">In external spreadsheet</option>
             </select>
             <p class="loadtype loadtype1">The current is defined here. Enter raw values in Amperes.</p>
+            <p class="loadtype loadtype3">The power is defined here. Enter raw values in Watts.</p>
             <p class="loadtype loadtype0">The current is determined by the components of the part list. Nothing to do here. Open the part list.</p>
             <p class="loadtype loadtype2">The current is defined in the synchronized spreadsheet. Enter the coordinates of the cells.</p>
           </div>
@@ -298,6 +300,10 @@
         <div class="form-group row loadtype loadtype2">
           <div class="col-xs-6"><label for="load_celltyp">I<sub>TYP</sub> (cell)</label><br /><input id="load_celltyp" data-itemdata="celltyp" class="col-xs-6 form-control input_cell" type="text" placeholder="A1" /></div>
           <div class="col-xs-6"><label for="load_cellmax">I<sub>MAX</sub> (cell)</label><br /><input id="load_cellmax" data-itemdata="cellmax" class="col-xs-6 form-control input_cell" type="text" placeholder="B1" /></div>
+        </div>
+        <div class="form-group row loadtype loadtype3">
+          <div class="col-xs-6"><label for="load_ptyp">P<sub>TYP</sub> (W)</label><br /><input id="load_ptyp" data-itemdata="ptyp" class="col-xs-6 form-control input_num" type="text" /></div>
+          <div class="col-xs-6"><label for="load_pmax">P<sub>MAX</sub> (W)</label><br /><input id="load_pmax" data-itemdata="pmax" class="col-xs-6 form-control input_num" type="text" /></div>
         </div>
       </div>
     </form>

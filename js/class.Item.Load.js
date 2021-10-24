@@ -28,12 +28,15 @@ class Load extends Item {
         0: partlist
         1: raw
         2: sync (associated with celltyp and cellmax)
+        3: raw power (v2.1.0)
       */
       celltyp    : 'A1',
       cellmax    : 'B1',
       hidden     : false,
       shape      : 1,  // v1.7.0
       badge_in   : '', // v1.7.0
+      ptyp       : 0, // v2.1.0
+      pmax       : 0, // v2.1.0
     };
   }
 
@@ -62,6 +65,12 @@ class Load extends Item {
   }
 
 
+  // Check if the item is a load with the power defined as raw data
+  isRawPower() {
+    return ('3' == this.characs.loadtype);
+  }
+
+
   // getInputVoltage() from the parent class
 
 
@@ -73,7 +82,18 @@ class Load extends Item {
 
   // get the input current of an item
   getInputCurrent(valType) {
-    return parseFloat(this.characs['i' + valType]);
+    let i_in = 0;
+
+    // if the load is a raw power value, i_in = p / v_in
+    if(this.isRawPower()) {
+      i_in = this.getInputPower(valType) / this.getInputVoltage(valType);
+    }
+    // for all other loads, return the user value
+    else {
+      i_in = parseFloat(this.characs['i' + valType]);
+    }
+
+    return i_in;
   }
 
 
@@ -85,8 +105,18 @@ class Load extends Item {
 
   // get the input power of an item
   getInputPower(valType) {
-    // p_in = v_in_typ * i_in
-    return this.getInputVoltage('typ') * this.getInputCurrent(valType);
+    let p_in = 0;
+
+    // if the load is a raw power value, return the user value
+    if(this.isRawPower()) {
+      p_in = parseFloat(this.characs['p' + valType]);
+    }
+    // for all other loads, p_in = v_in * i_in
+    else {
+      p_in = this.getInputVoltage('typ') * this.getInputCurrent(valType);
+    }
+
+    return p_in;
   }
 
 
@@ -104,9 +134,10 @@ class Load extends Item {
 
   // get the reg or load type
   getType() {
-    if     (this.isRaw())        return 'Raw data';
+    if     (this.isRaw())        return 'Raw current';
     else if(this.isInPartlist()) return 'PTree partlist';
     else if(this.isSynced())     return 'External spreadsheet';
+    else if(this.isRawPower())   return 'Raw power';
     else                         return 'Other';
   }
 
