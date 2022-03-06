@@ -224,7 +224,7 @@ test.serial('TEST7: total power', async t => {
   t.is(ret.totalpower_typ,'17.9');
   t.is(ret.totalpower_max,'33');
   t.is(ret.totaleff_typ,  '94');
-  t.is(ret.totaleff_maw,  '87.2');
+  t.is(ret.totaleff_maw,  '87.4');
 });
 
 test.serial('TEST8: configurations', async t => {
