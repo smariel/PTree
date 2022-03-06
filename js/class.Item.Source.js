@@ -106,7 +106,7 @@ class Source extends Item {
 
   // Check if the item is a Dummy reg
   isDummy() {
-    return ('6' == this.characs.regtype);
+    return ('6' == this.characs.regtype || '8' == this.characs.regtype);
   }
 
 
@@ -118,7 +118,7 @@ class Source extends Item {
 
   // Check if the item is Resistive Element
   isResistive() {
-    return ('8' == this.characs.regtype);
+    return false;
   }
 
 
@@ -598,6 +598,12 @@ class Source extends Item {
           activeLevel: 1,
         }
       };
+    }
+
+    // compatibility with < v2.1.0
+    // conversions of (deleted) resistor to dummy
+    if(8 == this.characs.regtype) {
+      this.characs.regtype = 6;
     }
 
     return properties;
