@@ -64,7 +64,7 @@ class SequenceEditor {
     this.selectedSequence.forEachStep((step) => {
       stepHTML += `<tr data-stepid="${step.id}">
       <td>${id}</td>
-      <td class="stepname">${step.name}</td>
+      <td class="stepname stepdata" data-stepdata="name">${step.name}</td>
       <td><ul>`;
       step.forEachAsserted((signal) => {
         stepHTML += `<li data-signalid="${signal.id}">
@@ -84,6 +84,8 @@ class SequenceEditor {
         </li>`;
       });
       stepHTML += `</ul><button type="button" class="awaited-add"><span class="fa fa-plus" aria-hidden="true"></span></button></td>
+        <td class="steptmin stepdata" data-stepdata="tmin">${step.tmin}</td>
+        <td class="steptmax stepdata" data-stepdata="tmax">${step.tmax}</td>
         <td>
           <button type="button" class="step-up  "  ><span class="fa fa-arrow-up"   aria-hidden="true"></span></button>
           <button type="button" class="step-down"  ><span class="fa fa-arrow-down" aria-hidden="true"></span></button>
@@ -91,25 +93,27 @@ class SequenceEditor {
         </td>`;
       id++;
     });
-    stepHTML += '<tr><td colspan="5"><button type="button" class="step-add"><span class="fa fa-plus" aria-hidden="true"></span> add step</button></td></tr>';
+    stepHTML += '<tr><td colspan="7"><button type="button" class="step-add"><span class="fa fa-plus" aria-hidden="true"></span> add step</button></td></tr>';
     $('#step_table>tbody').html(stepHTML);
   }
 
 
   // cancel any edition of the step name
-  cancelStepNameEdition() {
-    if($('.stepname-edited').length <= 0) return;
-    let step = $('.stepname-edited').data('step');
-    $('.stepname-edited').removeClass('stepname-edited').html(step.name);
+  cancelStepDataEdition() {
+    if($('.stepdata-edited').length <= 0) return;
+    let step = $('.stepdata-edited').data('step');
+    let stepdata   = $('.stepdata-edited').data('stepdata');
+    $('.stepdata-edited').removeClass('stepdata-edited').html(step[stepdata]);
   }
 
 
   // validate the current edition of the step name and redraw
-  validateStepNameEdition() {
-    if($('.stepname-edited').length <= 0) return;
-    let step  = $('.stepname-edited').data('step');
-    step.name = $('.stepname-edited input').val();
-    this.cancelStepNameEdition();
+  validateStepDataEdition() {
+    if($('.stepdata-edited').length <= 0) return;
+    let step       = $('.stepdata-edited').data('step');
+    let stepdata   = $('.stepdata-edited').data('stepdata');
+    step[stepdata] = $('.stepdata-edited input').val();
+    this.cancelStepDataEdition();
     this.drawWavedromDiagram();
   }
 
@@ -272,6 +276,45 @@ class SequenceEditor {
     }, 'image/png', 1);
   }
 
+  // export the selected sequence to a JSON file (async function)
+  exportWavedromToJSON() {
+    if(null === this.selectedSequence) return;
+
+    // init the sequence data to be reformated for export
+    let exportedSequence = [];
+
+    // for each step of the sequence
+    this.selectedSequence.forEachStep((step) => {
+      // reformat the step data to be exported
+      let exportedStep = {
+        name:     step.name,
+        signals:  [],
+        tmin:     step.tmin,
+        tmax:     step.tmax
+      };
+
+      // for each signal of this step
+      step.forEachSignal((signal) => {
+        // reformat the signal data to be exported and push them to reformated step
+        exportedStep.signals.push({
+          name:   signal.name,
+          active: signal.active,
+          dir:    signal.type == 'asserted' ? 'out' : 'in'
+        });
+      });
+
+      // push the reformated step to the reformated sequence
+      exportedSequence.push(exportedStep);
+    });
+
+    // download the Sequence to a JSON file
+    let file_content = JSON.stringify(exportedSequence, null, 4);
+    let file_name = `${this.selectedSequence.name}.json`;
+    let blob = new Blob([file_content]);
+    let dataURL = URL.createObjectURL(blob);
+    Util.downloadDataURL(dataURL, file_name);
+  }
+
 
   // select the given sequence in the form
   selectSequence(sequence) {
@@ -366,28 +409,29 @@ class SequenceEditor {
     });
 
     // edit the name of a step (only if not already edited) and cancel other edition
-    $('#step_table').on('click', '.stepname:not(.stepname-edited)', (event) => {
+    $('#step_table').on('click', '.stepdata:not(.stepdata-edited)', (event) => {
       let stepid   = $(event.target).parents('tr').data('stepid');
+      let stepdata = $(event.target).data('stepdata');
       let step     = this.selectedSequence.getStep(stepid);
-      $(event.target).addClass('stepname-edited').data('step',step).html(`<input type="text" value="${step.name}" />`).children('input').focus().select();
+      $(event.target).addClass('stepdata-edited').data('step',step).html(`<input type="text" value="${step[stepdata]}" />`).children('input').focus().select();
     });
 
     // cancel or validate the edition of the step name depending on the pressed key
-    $('#step_table').on('keypress', '.stepname-edited input', (event) => {
+    $('#step_table').on('keypress', '.stepdata-edited input', (event) => {
       // ESCAPE
       if (27 == event.keyCode) {
-        this.cancelStepNameEdition();
+        this.cancelStepDataEdition();
         // TODO: Escape not working ???
       }
       // ENTER
       else if (13 == event.keyCode) {
-        this.validateStepNameEdition();
+        this.validateStepDataEdition();
       }
     });
 
     // end the edition of the step name when exiting the input
-    $('#step_table').on('focusout', '.stepname-edited input', () => {
-      this.validateStepNameEdition();
+    $('#step_table').on('focusout', '.stepdata-edited input', () => {
+      this.validateStepDataEdition();
     });
 
     // edit the name of a custom signal
@@ -511,6 +555,11 @@ class SequenceEditor {
     // export the diagram to jpg
     $('#sequence_export_img').click(() => {
       this.exportWavedromToJpg();
+    });
+
+    // export the diagram to jpg
+    $('#sequence_export_json').click(() => {
+      this.exportWavedromToJSON();
     });
 
     // change the diagram scale

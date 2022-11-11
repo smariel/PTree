@@ -281,11 +281,12 @@ class Sequence {
 // -----------------------------------------------------------------------------
 
 class SequenceStep {
-  constructor(id, name=`STEP ${id}`, timeout=0) {
-    this.id         = id;
-    this.name       = name;
-    this.timeout    = timeout;
-    this.signals    = [];
+  constructor(id, name=`STEP ${id}`, tmin=0, tmax=0) {
+    this.id      = id;
+    this.name    = name;
+    this.tmin    = tmin;
+    this.tmax    = tmax;
+    this.signals = [];
 
     Object.defineProperties(this, {
       length: {
@@ -294,11 +295,6 @@ class SequenceStep {
         },
       }
     });
-  }
-
-  // set the step timeout
-  setTimeout(timeout) {
-    this.timeout = timeout;
   }
 
   // add a signal to the step
@@ -482,10 +478,11 @@ class SequenceStep {
   // return this object as a string
   toString() {
     let json = {
-      id:       this.id,
-      name:     this.name,
-      timeout:  this.timeout,
-      signals:  this.signals
+      id:      this.id,
+      name:    this.name,
+      tmin:    this.tmin,
+      tmax:    this.tmax,
+      signals: this.signals
     };
     return JSON.stringify(json);
   }
@@ -493,7 +490,7 @@ class SequenceStep {
   // return a SequenceStep object from a string created with .toString()
   static fromString(stepstr) {
     let json = JSON.parse(stepstr);
-    let step = new SequenceStep(json.id, json.name, json.timeout);
+    let step = new SequenceStep(json.id, json.name, json.tmin, json.tmax);
     step.signals = json.signals;
     return step;
   }
