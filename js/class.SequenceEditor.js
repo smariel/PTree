@@ -287,20 +287,27 @@ class SequenceEditor {
     this.selectedSequence.forEachStep((step) => {
       // reformat the step data to be exported
       let exportedStep = {
-        name:     step.name,
-        signals:  [],
-        tmin:     step.tmin,
-        tmax:     step.tmax
+        gpio:         step.name,
+        signals_in:   [],
+        signals_out:  [],
+        tmin:         isNaN(step.tmin) ? step.tmin : parseInt(step.tmin),
+        tmax:         isNaN(step.tmax) ? step.tmax : parseInt(step.tmax)
       };
 
       // for each signal of this step
       step.forEachSignal((signal) => {
         // reformat the signal data to be exported and push them to reformated step
-        exportedStep.signals.push({
+        let formatedSignal = {
           name:   signal.name,
           active: signal.active,
-          dir:    signal.type == 'asserted' ? 'out' : 'in'
-        });
+        };
+
+        if(signal.type == 'asserted') {
+          exportedStep.signals_out.push(formatedSignal);
+        }
+        else if(signal.type == 'awaited') {
+          exportedStep.signals_in.push(formatedSignal);
+        }
       });
 
       // push the reformated step to the reformated sequence
