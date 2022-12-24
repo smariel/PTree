@@ -281,13 +281,17 @@ class SequenceEditor {
     if(null === this.selectedSequence) return;
 
     // init the sequence data to be reformated for export
-    let exportedSequence = [];
+    let exportedSequence = {
+      seq:    this.selectedSequence.name,
+      onoff:  this.onoff,
+      steps:  []
+    };
 
     // for each step of the sequence
     this.selectedSequence.forEachStep((step) => {
       // reformat the step data to be exported
       let exportedStep = {
-        gpio:         step.name,
+        step:         step.name,
         signals_in:   [],
         signals_out:  [],
         tmin:         isNaN(step.tmin) ? step.tmin : parseInt(step.tmin),
@@ -298,7 +302,7 @@ class SequenceEditor {
       step.forEachSignal((signal) => {
         // reformat the signal data to be exported and push them to reformated step
         let formatedSignal = {
-          name:   signal.name,
+          signal: signal.name,
           active: signal.active,
         };
 
@@ -311,7 +315,7 @@ class SequenceEditor {
       });
 
       // push the reformated step to the reformated sequence
-      exportedSequence.push(exportedStep);
+      exportedSequence.steps.push(exportedStep);
     });
 
     // download the Sequence to a JSON file
