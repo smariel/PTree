@@ -41,10 +41,10 @@ class SequenceEditor {
 
     if(this.selectedSequence !== null) {
       $(`#sequence_select option[value=${this.selectedSequence.id}]`).prop('selected', true);
-      $('#sequence_control').show();
+      $('.sequence_control').show();
     }
     else {
-      $('#sequence_control').hide();
+      $('.sequence_control').hide();
     }
   }
 
@@ -329,7 +329,8 @@ class SequenceEditor {
     if(null == sequence) return;
     $('#sequence_name').text(sequence.name);
     $(`#sequence_select option[value=${sequence.id}]`).prop('selected', true);
-    $('#sequence_control').show();
+    $('.sequence_control').show();
+    $('#sequence_onoff').val(this.selectedSequence.onoff);
     this.refreshStepTable();
     this.drawWavedromDiagram();
   }
@@ -537,7 +538,7 @@ class SequenceEditor {
       }
       else {
         $('#sequence_edition, #sequence_display').hide();
-        $('#sequence_control').hide();
+        $('.sequence_control').hide();
       }
     });
 
@@ -572,6 +573,12 @@ class SequenceEditor {
     // change the diagram scale
     $('#diagramScale').change((event) => {
       this.diagramScale = (parseInt($(event.target).val()));
+      this.drawWavedromDiagram();
+    });
+
+    // change the type of sequence (ON or OFF)
+    $('#sequence_onoff').change((event) => {
+      this.selectedSequence.onoff = parseInt($(event.target).val());
       this.drawWavedromDiagram();
     });
   }

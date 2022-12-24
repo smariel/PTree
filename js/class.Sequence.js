@@ -101,6 +101,7 @@ class Sequence {
     this.id    = id;
     this.name  = name;
     this.steps = [];
+    this.onoff = 1; // 1 = ON, 0 = 0FF
     Object.defineProperties(this, {
       length: {
         get: function() {
@@ -184,7 +185,7 @@ class Sequence {
     // get the wavedrom representation of each step of the sequenceEditor
     // and add it to the wavedrom object (+empty line)
     this.forEachStep((step) => {
-      let signals = step.toWavedromSignal(this.length+1);
+      let signals = step.toWavedromSignal(this.length+1, this.onoff);
       wavedromObj.signal = wavedromObj.signal.concat(signals);
       wavedromObj.signal.push({});
     });
@@ -215,6 +216,7 @@ class Sequence {
   toString() {
     let json = {
       name:  this.name,
+      onoff: this.onoff,
       steps: [],
     };
     this.forEachStep((step) => {
@@ -228,6 +230,9 @@ class Sequence {
     let json = JSON.parse(seqstr);
     let sequence = new Sequence();
     sequence.name = json.name;
+    if(undefined !== json.onoff && null !== json.onoff) {
+      sequence.onoff = parseInt(json.onoff);
+    }
     for(let step of json.steps) {
       sequence.steps.push(SequenceStep.fromString(step));
     }
@@ -442,7 +447,7 @@ class SequenceStep {
   }
 
   // return an array of "signal" object using WaveDrom synthax
-  toWavedromSignal(length) {
+  toWavedromSignal(length, onoff) {
     const stepColor    = '4';
     const nonStepColor = '9';
 
@@ -459,13 +464,13 @@ class SequenceStep {
       if('asserted' === signal.type) {
         groupOUT.push({
           name: signal.name,
-          wave: (signal.active^1).toString() + '.'.repeat(this.id) + (signal.active).toString() + '.'.repeat(length  - (this.id+1))
+          wave: (signal.active^onoff).toString() + '.'.repeat(this.id) + (signal.active^onoff^1).toString() + '.'.repeat(length  - (this.id+1))
         });
       }
       else if('awaited' === signal.type) {
         groupIN.push({
           name: signal.name,
-          wave: (signal.active^1).toString() + '.'.repeat(this.id) + 'x' + (signal.active).toString() + '.'.repeat((length - 1) - (this.id+1))
+          wave: (signal.active^onoff).toString() + '.'.repeat(this.id) + 'x' + (signal.active^onoff^1).toString() + '.'.repeat((length - 1) - (this.id+1))
         });
       }
     });

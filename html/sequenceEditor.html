@@ -22,13 +22,17 @@
       </ul>
       <select id="sequence_select"></select>
       <span id="sequence_edit"></span>
-      <ul id="sequence_control">
+      <ul id="sequence_control" class="sequence_control">
         <li><a id="sequence_rename"      data-toggle="tooltip" data-placement="bottom" title="Rename the&nbsp;sequence"                      ><span class="fa fa-lg fa-pencil"      ></span> Rename</a></li>
         <li><a id="sequence_export_img"  data-toggle="tooltip" data-placement="bottom" title="Export&nbsp;image"                             ><span class="fa fa-lg fa-file-image-o"></span> Export</a></li>
         <li><a id="sequence_export_json" data-toggle="tooltip" data-placement="bottom" title="Export&nbsp;JSON"                              ><span class="fa fa-lg fa-file-code-o" ></span> JSON</a></li>
         <li><a id="sequence_clone"       data-toggle="tooltip" data-placement="bottom" title="Create a copie"                                ><span class="fa fa-lg fa-clone"       ></span> Clone</a></li>
         <li><a id="sequence_remove"      data-toggle="tooltip" data-placement="bottom" title="Delete&nbsp;the selected&nbsp;sequence"        ><span class="fa fa-lg fa-close"       ></span> Remove</a></li>
       </ul>
+      <select id="sequence_onoff" class="sequence_control">
+        <option value="1">ON</option>
+        <option value="0">OFF</option>
+      </select>
     </nav>
     <section id="sequence_edition">
       <table id="step_table" class="table ">
