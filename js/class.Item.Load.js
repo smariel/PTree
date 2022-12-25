@@ -33,10 +33,11 @@ class Load extends Item {
       celltyp    : 'A1',
       cellmax    : 'B1',
       hidden     : false,
-      shape      : 1,  // v1.7.0
-      badge_in   : '', // v1.7.0
-      ptyp       : 0,  // v2.1.0
-      pmax       : 0,  // v2.1.0
+      shape      : 1,    // v1.7.0
+      badge_in   : '',   // v1.7.0
+      ptyp       : 0,    // v2.1.0
+      pmax       : 0,    // v2.1.0
+      quantity    : '1', // v2.1.3
     };
   }
 

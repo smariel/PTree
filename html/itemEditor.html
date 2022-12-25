@@ -51,15 +51,17 @@
           <div class="col-xs-6"><label for="badge_out">Output badge</label><input id="input_badge_out" type="text" data-itemdata="badge_out" class="form-control item-control" placeholder="..." /></div>
         </div>
         <div class="form-group row">
-          <div class="col-xs-12">
+          <div class="col-xs-9">
             <label for="source_shape">Shape</label>
-          </div>
-          <div class="col-xs-12">
             <select id="source_shape" data-itemdata="shape" class="form-control item-control">
               <option value="0">Rectangle</option>
               <option value="1">Rounded rectangle</option>
               <option value="2">Parallelogram</option>
             </select>
+          </div>
+          <div class="col-xs-3">
+            <label for="input_quantity">Quantity</label>
+            <input id="input_quantity" type="text" data-itemdata="quantity" class="form-control input_num item-control" placeholder="1" data-toggle="tooltip" data-placement="bottom" title="Number of stacked item (only graphical)" />
           </div>
         </div>
         <div class="form-group row">
@@ -77,8 +79,6 @@
           <!-- REGULATOR TYPE -->
           <div class="col-xs-12">
             <label for="source_regtype">Regulator type</label>
-          </div>
-          <div class="col-xs-12">
             <select id="source_regtype" data-itemdata="regtype" class="form-control item-control" data-toggle="tooltip">
               <optgroup label="Fixed output">
                 <option value="0">DC/DC switching regulator</option>
@@ -258,15 +258,17 @@
           </div>
         </div>
         <div class="form-group row">
-          <div class="col-xs-12">
+          <div class="col-xs-9">
             <label for="load_shape">Shape</label>
-          </div>
-          <div class="col-xs-12">
             <select id="load_shape" data-itemdata="shape" class="form-control item-control">
               <option value="0">Rectangle</option>
               <option value="1">Rounded rectangle</option>
               <option value="2">Parallelogram</option>
             </select>
+          </div>
+          <div class="col-xs-3">
+            <label for="load_quantity">Quantity</label>
+            <input id="load_quantity" type="text" data-itemdata="quantity" class="form-control input_num item-control" placeholder="1" data-toggle="tooltip" data-placement="bottom" title="Number of stacked item (only graphical)" />
           </div>
         </div>
         <div class="form-group row">

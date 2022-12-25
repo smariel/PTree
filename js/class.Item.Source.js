@@ -58,6 +58,7 @@ class Source extends Item {
       badge_in    : '',  // v1.7.0
       badge_out   : '',  // v1.7.0
       resistor    : '0', // v2.0.2
+      quantity    : '1', // v2.1.3
       sequence    : {    // v2.0.0
         enable: {
           exist:       true,

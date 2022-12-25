@@ -59,6 +59,7 @@ class Canvas {
       width_coef      : Canvas.app_template.item.width_coef,
       height_coef     : Canvas.app_template.item.height_coef,
       text_size       : 14,
+      text_margin     : 10,
       color_source    : '#FF1744', // materialze red accent-3,
       color_load      : '#00bfa5', // materializ teal accent-4
       display_typmax  : 'max',
@@ -119,7 +120,7 @@ class Canvas {
     itemGeometry.xvnet      = itemGeometry.x1 + Math.round(this.config.cell_width * Canvas.app_template.verticalNet.left_coef);
     itemGeometry.xhalf      = itemGeometry.x1 + Math.round(itemGeometry.width /2 + itemGeometry.skew_error/2);
     itemGeometry.yhalf      = itemGeometry.y1 + Math.round(itemGeometry.height/2);
-
+    itemGeometry.textmargin = Math.max((item.characs.quantity-1)*Canvas.app_template.item.quantity_gap, this.config.text_margin);
 
     // create a rectangle with the correct template
     // and add it to the canvas
@@ -171,6 +172,20 @@ class Canvas {
     this.fabricCanvas.fabric_obj[item.id] = itemGroup;
     this.fabricCanvas.add(itemGroup);
 
+    // add stacked rectangles with darker color if quantity > 1
+    for(let i=1; i<item.characs.quantity; i++){
+      let itemRect2 = new fabric.Rect(itemTemplate);
+      itemRect2.set({
+        left  : itemGeometry.x1+Canvas.app_template.item.quantity_gap*i,
+        top   : itemGeometry.y1+Canvas.app_template.item.quantity_gap*i,
+        width : itemGeometry.width,
+        height: itemGeometry.height,
+        fill  : Util.pickColorHex(item_color,'#000000',1-(i+1)*0.5/item.characs.quantity)
+      });
+      this.fabricCanvas.add(itemRect2);
+      itemRect2.sendToBack();
+    }
+
     // Add some text around the item
     this.addTexts(item, itemGeometry);
 
@@ -200,7 +215,7 @@ class Canvas {
           originX  : 'left',
           originY  : 'top',
           top      : itemGeometry.yhalf - Canvas.app_template.text.margin_y - this.config.text_size,
-          left     : itemGeometry.x2    + Canvas.app_template.text.margin_x + itemGeometry.skew_error,
+          left     : itemGeometry.x2    + itemGeometry.textmargin + itemGeometry.skew_error,
           fontSize : this.config.text_size
         });
         this.fabricCanvas.add(itemText_vout);
@@ -229,7 +244,7 @@ class Canvas {
           originX : 'left',
           originY : 'top',
           top     : itemGeometry.yhalf + Canvas.app_template.text.margin_y - 2,
-          left    : itemGeometry.x2    + Canvas.app_template.text.margin_x + itemGeometry.skew_error,
+          left    : itemGeometry.x2    + itemGeometry.textmargin + itemGeometry.skew_error,
           fontSize: this.config.text_size
         });
         this.fabricCanvas.add(itemText_ipout);
@@ -822,6 +837,7 @@ Canvas.app_template = {
   item: {
     width_coef  : 45,
     height_coef : 75,
+    quantity_gap: 5,
   },
   verticalNet: {
     left_coef : 0.9
