@@ -426,6 +426,8 @@ class PTree {
       newItem.characs.vout_typ = '5';
       newItem.characs.vout_max = '5.5';
       newItem.characs.name  = `Source #${newItem.id}`;
+      newItem.characs.sequence.enable.exist = false;
+      newItem.characs.sequence.pgood.exist  = false;
     }
     else {
       // add a DC/DC to the parent
