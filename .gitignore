@@ -45,3 +45,4 @@ docs/test/*error.png
 *.pages
 *.graffle
 *.sketch
+.vscode
