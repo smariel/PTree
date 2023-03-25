@@ -583,16 +583,22 @@ class Canvas {
     $('.totalpower.typ').text(Util.numberToSi(totalpower.typ,3));
     $('.totalpower.max').text(Util.numberToSi(totalpower.max,3));
 
+    // refresh the load power
+    const loadpower = this.tree.getLoadPower();
+    $('.loadpower.typ').text(Util.numberToSi(loadpower.typ,3));
+    $('.loadpower.max').text(Util.numberToSi(loadpower.max,3));
+
     // refresh the total losses
     const loss = this.tree.getTotalLoss();
     $('.totalloss.typ').text(Util.numberToSi(loss.typ,3));
     $('.totalloss.max').text(Util.numberToSi(loss.max,3));
 
-
     // refresh the total efficiency
     const efficiency = this.tree.getTotalEfficiency();
     $('.totaleff.typ').text(Util.numberToSi(efficiency.typ,3));
     $('.totaleff.max').text(Util.numberToSi(efficiency.max,3));
+
+ 
     /*
     // refresh the total losses
     const dcdcloss = this.tree.getTotalDCDCloss();

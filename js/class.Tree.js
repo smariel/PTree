@@ -162,9 +162,8 @@ class Tree {
     else return totalpower[typmax];
   }
 
-
-  // get the total efficiency = load_power / total_power
-  getTotalEfficiency(typmax='both') {
+  // return the power of all load
+  getLoadPower(typmax='both') {
     // get the total usefull power
     let loadpower = {typ:0, max:0};
     this.forEachLoad((load) => {
@@ -172,8 +171,17 @@ class Tree {
       loadpower.max += load.getInputPower('max');
     });
 
+    // return the typ or max or both
+    if('both' === typmax) return loadpower;
+    else return loadpower[typmax];
+  }
+
+
+  // get the total efficiency = load_power / total_power
+  getTotalEfficiency(typmax='both') {
     // refresh the total efficiency
     let totalpower = this.getTotalPower();
+    let loadpower = this.getLoadPower();
     const efficiency = {
       typ: (0 == totalpower.typ) ? 100 : (loadpower.typ / totalpower.typ) * 100,
       max: (0 == totalpower.max) ? 100 : (loadpower.max / totalpower.max) * 100
@@ -183,6 +191,9 @@ class Tree {
     if('both' === typmax) return efficiency;
     else return efficiency[typmax];
   }
+
+
+ 
 
 
   // return the loss of all DCDC
