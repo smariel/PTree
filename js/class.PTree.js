@@ -859,6 +859,74 @@ class PTree {
   }
 
 
+  import() {
+    // open a dialog de select the file
+    const {dialog} = require('electron').remote;
+    const paths = dialog.showOpenDialogSync({
+      title: 'Import...',
+      properties: ['openFile'],
+      filters: [
+        { name: 'PTree project file', extensions: ['ptree'] },
+        { name: 'JSON',               extensions: ['json']  },
+        { name: 'All Files',          extensions: ['*']     }
+      ]
+    });
+
+    // if the dialog was canceled, exit the function
+    if (undefined === paths) { return; }
+
+    // read the content of the file using node.js fs module
+    const fs = require('fs');
+    fs.readFile(paths[0], 'utf8', (err, datastr) => {
+      if (null !== err) {
+        alert(err);
+      }
+      else {
+        // reconstruct the tree from the data
+        let data = JSON.parse(datastr);
+        let importedTree = new Tree(false);
+        importedTree.fromString(data.tree);
+
+        // for each new item
+        importedTree.forEachItem((item) => {
+          if(item.isRoot()) return;
+
+          // update the tree
+          item.tree = this.tree;
+
+          // offset the item ID
+          item.id += this.tree.item_index;
+          
+          // offset the children ID
+          for(let i=0; i<item.childrenID.length; i++) {
+            item.childrenID[i] += this.tree.item_index;
+          }
+
+          // offset the parent ID
+          if(item.parentID != 0) {
+            item.parentID += this.tree.item_index;
+          }
+
+          // copy the item to the tree
+          this.tree.setItem(item.id, item);
+
+          // move the root children to the new root, without detaching it from its parent
+          if(item.isChildOfRoot()) {
+            item.moveTo(this.tree.getRoot(), false);
+          }
+        });
+
+        // offset the item_index
+        this.tree.item_index += importedTree.item_index;
+
+        this.canvas.refresh();
+        this.updateClearButtons();
+        this.saveHistory();
+      }
+    });
+  }
+
+
   // Check GitHub for update
   checkUpdate() {
     // get informations about the latest release using GitHub API
@@ -1452,6 +1520,12 @@ class PTree {
         this.saveHistory();
         this.updateStats(null);
       }
+    });
+
+
+    // create a new tree within the same project
+    $('#bt_import').click(() => {
+      this.import();
     });
 
 

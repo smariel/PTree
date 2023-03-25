@@ -216,9 +216,9 @@ class Item {
 
 
   // Move an item under a newparent
-  moveTo(newparent) {
+  moveTo(newparent, detach=true) {
     // remove the item from its parent but keep it in the global list
-    this.detach();
+    if(detach) this.detach();
 
     // add the item to the newparent :
     this.parentID    = newparent.id;
