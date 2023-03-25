@@ -17,6 +17,7 @@ class Canvas {
     this.canvas$          = $('#' + html_id);  // reference to the jquery object
     this.selectedItem     = null;              // by default, no selected item
     this.copiedItem       = null;              // by default, no copied item
+    this.copiedStyle      = null;              // by defaultn no style copied (item)
     this.rightClickedItem = null,              // by default, no clicked item
     this.size             = {line:0,col:0};    // grid size, default is empty: 0,0
     this.config           = {};                // config will be set below

@@ -440,6 +440,24 @@ class PTree {
   }
 
 
+  // copy the given item
+  copyStyle(item) {
+    this.canvas.copiedStyle = item;
+  }
+
+
+  // paste the style of the copied item on the given item
+  pasteStyle(target, itemToCopy) {
+    // if there is something to copy and something to paste on
+    if(null !== itemToCopy && null !== parent) {
+      target.characs.color = itemToCopy.characs.color;
+      target.characs.shape = itemToCopy.characs.shape;
+    }
+
+    this.canvas.refresh();
+    this.saveHistory();
+  }
+
   // create a new source
   addSource(parent) {
     let newItem;
@@ -1054,6 +1072,9 @@ class PTree {
       {label: 'Paste',         click: () => {this.pasteItem (this.canvas.rightClickedItem, this.canvas.copiedItem);}},
       {label: 'Remove',        click: () => {this.removeItem(this.canvas.rightClickedItem);}},
       {type:  'separator'},
+      {label: 'Copy Style',    click: () => {this.copyStyle (this.canvas.rightClickedItem);}},
+      {label: 'Paste Style',   click: () => {this.pasteStyle(this.canvas.rightClickedItem, this.canvas.copiedStyle);}},
+      {type:  'separator'},
       {label: 'Append Source', click: () => {this.addSource(this.canvas.rightClickedItem);}},
       {label: 'Append Load',   click: () => {this.addLoad(this.canvas.rightClickedItem);}},
     ];
@@ -1070,8 +1091,11 @@ class PTree {
     let menu_paste      = ctxMenuTemplate[8];
     let menu_remove     = ctxMenuTemplate[9];
     let menu_separator3 = ctxMenuTemplate[10];
-    let menu_addSource  = ctxMenuTemplate[11];
-    let menu_addLoad    = ctxMenuTemplate[12];
+    let menu_copyStyle  = ctxMenuTemplate[11];
+    let menu_pasteStyle = ctxMenuTemplate[12];
+    let menu_separator4 = ctxMenuTemplate[13];
+    let menu_addSource  = ctxMenuTemplate[14];
+    let menu_addLoad    = ctxMenuTemplate[15];
 
     // modify menus according to the given item
     if(item.isSource()) {
@@ -1079,6 +1103,8 @@ class PTree {
       menu_toggle.enabled     = (item.childrenID.length > 0);
       menu_moveup.enabled     = (item.child_index > 0);
       menu_movedown.enabled   = (item.child_index < (item.getParent().childrenID.length - 1));
+      menu_paste.enabled      = (null !== this.canvas.copiedItem);
+      menu_pasteStyle.enabled = (null !== this.canvas.copiedStyle);
     }
     else if(item.isLoad()) {
       menu_toggle.visible     = false;
@@ -1088,6 +1114,7 @@ class PTree {
       menu_separator3.visible = false;
       menu_addSource.visible  = false;
       menu_addLoad.visible    = false;
+      menu_pasteStyle.enabled = (null !== this.canvas.copiedStyle);
     }
     else if(item.isRoot()) {
       menu_select.visible     = false;
@@ -1100,6 +1127,9 @@ class PTree {
       menu_copy.visible       = false;
       menu_paste.enabled      = (null !== this.canvas.copiedItem && this.canvas.copiedItem.isSource());
       menu_remove.visible     = false;
+      menu_copyStyle.visible  = false;
+      menu_pasteStyle.visible = false;
+      menu_separator4.visible = false;
       menu_addSource.label    = 'Add Source';
       menu_addLoad.visible    = false;
     }
