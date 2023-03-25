@@ -239,6 +239,31 @@ class PTree {
       else {
         alert(err);
       }
+      
+      // check if the saved file is correct (usefull for network issues)
+      fs.stat(this.filePath, async (err, stats) => {
+        if (null === err) {
+          if(0 == stats.size) {
+            let popupData = {
+              title      : 'Error while saving',
+              width      : 500,
+              height     : 135,
+              sender     : 'PTree',
+              content    : `<strong>An error occured while saving the file</strong><br />
+                            Would you like to save a copie ? `,
+              btn_ok     : 'Save as',
+              btn_cancel : 'Cancel'
+            };
+            let popupRet = await Util.popup(popupData);
+            if(popupRet) {
+              this.save(true);
+            }
+          }
+        }
+        else {
+          alert(err);
+        }
+      });
     });
 
     return true;
