@@ -38,6 +38,9 @@ class Stats {
     else if('tags' === chartType) {
       this.updateTags();
     }
+    else if('loads' === chartType) {
+      this.updateLoads();
+    }
   }
 
 
@@ -226,6 +229,39 @@ class Stats {
       this.plotChart('max', datasets.max, labels, max, 'power (W)', null);
     }
   }
+
+
+  // update the Canvas by displaying the stats of the loads
+  updateLoads() {
+    let datasets  = {typ:[], max:[]};
+    let labels    = [];
+    let max       = 0;
+
+    // display the title
+    $('.title').html('Loads Power');
+
+    // hide the 'go to parent' button
+    $('.goToParent').fadeOut(200);
+
+    // fill the chart with loads power
+    this.tree.forEachLoad((load) => {
+      let name = load.characs.name;
+      let ptyp = load.getInputPower('typ');
+      let pmax = load.getInputPower('max');
+
+      datasets.typ.push(ptyp);
+      datasets.max.push(pmax);
+      labels.push(name);
+
+      if(ptyp > max) max = ptyp;
+      if(pmax > max) max = pmax;
+    });
+
+    // create two charts and fill them, without click callback
+    this.plotChart('typ', datasets.typ, labels, max, 'power (W)', null);
+    this.plotChart('max', datasets.max, labels, max, 'power (W)', null);
+  }
+
 
   // remove both canvas and print a default text
   empty(title = 'No selection') {
