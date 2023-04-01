@@ -197,7 +197,7 @@ class Source extends Item {
     // if the item is a LDO or a dummy item or a resistive element
     if (this.isLDO() || this.isDummy() || this.isResistive()) {
       // p_in = v_in_typ * i_in
-      p_in = this.getInputVoltage(valType) * this.getInputCurrent(valType);
+      p_in = Math.abs(this.getInputVoltage(valType)) * Math.abs(this.getInputCurrent(valType));
     }
     // if the item is perfect
     else if (this.isPerfect()) {
@@ -220,7 +220,7 @@ class Source extends Item {
     let p_out = 0.0;
 
     // p_out = v_out_typ * i_out
-    p_out = this.getOutputVoltage(valType) * this.getOutputCurrent(valType);
+    p_out = Math.abs(this.getOutputVoltage(valType)) * Math.abs(this.getOutputCurrent(valType));
 
     return p_out;
   }
@@ -266,6 +266,8 @@ class Source extends Item {
         // if there is multiple efficiency, use linear interpolation
         else {
           let itemCurrent = (undefined === outputCurrent) ? this.getOutputCurrent(valType) : outputCurrent;
+          itemCurrent = Math.abs(itemCurrent);
+          
           // if the current is <= of the min efficiency
           if(itemCurrent <= this.characs.efficiency[0].i) {
             // use linear interpolation to compute the efficiency (y = ax+b)
@@ -448,7 +450,7 @@ class Source extends Item {
 
   // add a new efficiency
   addEfficiency(eff, i) {
-    let new_data = {eff, i};
+    let new_data = {eff, i:Math.abs(i)};
 
     // if the new datas are numbers
     if(!isNaN(new_data.eff) && !isNaN(new_data.i)) {
@@ -606,6 +608,17 @@ class Source extends Item {
     if(8 == this.characs.regtype) {
       this.characs.regtype = 6;
     }
+
+
+    // compatibility with <v2.2.0
+    // Set all efficiency positive & re ordered
+    let efficiency_reOrdered = [];
+    for(let eff of this.characs.efficiency) {
+      eff.i = Math.abs(eff.i);
+      this.addToChart(efficiency_reOrdered, eff);
+    }
+    this.characs.efficiency = efficiency_reOrdered;
+
 
     return properties;
   }
