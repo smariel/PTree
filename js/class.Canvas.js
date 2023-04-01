@@ -599,6 +599,19 @@ class Canvas {
     $('.totaleff.typ').text(Util.numberToSi(efficiency.typ,3));
     $('.totaleff.max').text(Util.numberToSi(efficiency.max,3));
 
+    // refrech the node power
+    let selectedItem = this.getSelectedItem();
+    if(null !== selectedItem && selectedItem.isSource()) {
+      const nodeEff = selectedItem.getNodeEfficiency();
+      $('.nodeeff.typ').text(Util.numberToSi(nodeEff.typ,3));
+      $('.nodeeff.max').text(Util.numberToSi(nodeEff.max,3));
+
+      $('.totalcell_node').removeClass('hidden');
+    }
+    else {
+      $('.totalcell_node').addClass('hidden');
+    }
+
  
     /*
     // refresh the total losses
@@ -676,6 +689,8 @@ class Canvas {
 
     // save a ref to the precedent item
     this.selectedItem = item;
+
+    this.refreshTotalPower();
   }
 
 
@@ -686,6 +701,8 @@ class Canvas {
       this.fabricCanvas.renderAll();
     }
     this.selectedItem = null;
+
+    this.refreshTotalPower();
   }
 
 

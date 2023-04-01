@@ -408,6 +408,41 @@ class Source extends Item {
   }
 
 
+
+  // return the power of all load 
+  getLoadPower(typmax='both') {
+    // get the total usefull power
+    let loadpower = {typ:0, max:0};
+    let itemIDs = this.getDescendants();
+    this.tree.forEachLoad((load) => {
+      if(itemIDs.includes(load.id)) {
+        loadpower.typ += load.getInputPower('typ');
+        loadpower.max += load.getInputPower('max');
+      }
+    });
+
+    // return the typ or max or both
+    if('both' === typmax) return loadpower;
+    else return loadpower[typmax];
+  }
+
+
+  // get the total efficiency = load_power / input_power
+  getNodeEfficiency(typmax='both') {
+    // refresh the total efficiency
+    let totalpower = {typ: this.getInputPower('typ'), max:this.getInputPower('max')}; 
+    let loadpower = this.getLoadPower();
+    const efficiency = {
+      typ: (0 == totalpower.typ) ? 100 : (loadpower.typ / totalpower.typ) * 100,
+      max: (0 == totalpower.max) ? 100 : (loadpower.max / totalpower.max) * 100
+    };
+
+    // return the typ or max or both
+    if('both' === typmax) return efficiency;
+    else return efficiency[typmax];
+  }
+
+
   // add a new data to chart_type (efficiency or dropout)
   addToChart(chart_datas, new_data) {
     // add the data to the array, keeping ordered by ascending currend
