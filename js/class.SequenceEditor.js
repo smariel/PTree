@@ -319,7 +319,7 @@ class SequenceEditor {
     });
 
     // download the Sequence to a JSON file
-    let file_content = JSON.stringify(exportedSequence, null, 4);
+    let file_content = JSON.stringify(exportedSequence, null, 4).replace(/(\n|\r|\s)+/g,'')+'\n';
     let file_name = `${this.selectedSequence.name}.json`;
     let blob = new Blob([file_content]);
     let dataURL = URL.createObjectURL(blob);
