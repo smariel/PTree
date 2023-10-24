@@ -61,7 +61,7 @@
   },
   "linux": {
     "icon"       : "resources/png/app",
-    "target"     : {"target":"dir", "arch": "ia32"},
+    "target"     : {"target":"dir", "arch": "x64"},
     "extraFiles" : [
       {"from": "resources/example.ptree", "to": "example.ptree"},
       {"from": "resources/equations.pdf", "to": "equations.pdf"},
