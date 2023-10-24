@@ -17,9 +17,9 @@
     "build:mac": "electron-builder --config electron-builder.json --mac   --dir",
     "build:win": "electron-builder --config electron-builder.json --win   --dir",
     "build:lin": "electron-builder --config electron-builder.json --linux --dir",
-    "dist:mac": " electron-builder --config electron-builder.json --mac   ; cd bin ; mv PTree.dmg PTree-macos.dmg ; rm -rf mac",
-    "dist:win": " electron-builder --config electron-builder.json --win   ; cd bin ; mv win-unpacked        PTree ; rm -f PTree-windows.zip ; zip -r -X -y -q PTree-windows.zip PTree/ ; rm -rf PTree",
-    "dist:lin": " electron-builder --config electron-builder.json --linux ; cd bin ; mv linux-unpacked PTree ; rm -f PTree-linux.zip   ; zip -r -X -y -q PTree-linux.zip   PTree/ ; rm -rf PTree",
+    "dist:mac": " electron-builder --config electron-builder.json --mac   && cd bin && mv PTree.dmg PTree-macos.dmg && rm -rf mac",
+    "dist:win": " electron-builder --config electron-builder.json --win   && cd bin && mv win-unpacked        PTree && rm -f PTree-windows.zip && zip -r -X -y -q PTree-windows.zip PTree/ && rm -rf PTree",
+    "dist:lin": " electron-builder --config electron-builder.json --linux && cd bin && mv linux-unpacked PTree && rm -f PTree-linux.zip   && zip -r -X -y -q PTree-linux.zip   PTree/ && rm -rf PTree",
     "dist:all": " npm run dist:mac  && npm run dist:win  && npm run dist:lin"
   },
   "repository": {
