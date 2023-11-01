@@ -752,10 +752,10 @@ test.serial('TEST18: stats', async t => {
 
   // child
   await browser.clickElt('.topmenu a:nth-child(1)');
-  await wait(1000);
   // eslint-disable-next-line no-console
   console.log(''); // don't know why but this is needed... TODO: remove log...
-  await browser.clickAt(75,325);
+  await wait(1000);
+  await browser.clickAt(75,300);
   await wait (1000);
   ret = await browser.execute(() => stats.item.id);
   t.is(ret, 2);
