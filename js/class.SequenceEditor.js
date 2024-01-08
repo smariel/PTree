@@ -202,7 +202,11 @@ class SequenceEditor {
   }
 
   // draw the given wavedrom object to the fabric canvas
-  drawWavedromDiagram() {
+  drawWavedromDiagram(force=false) {
+    if(!force && !$('#diagramAutoRefresh')[0].checked) {
+      return;
+    }
+
     return new Promise(resolve => {
       const wavedrom = require('wavedrom');
       let wavedromSkin = require('../img/sequence_skin/sequence_skin.js');
@@ -336,7 +340,7 @@ class SequenceEditor {
     $('.sequence_control').show();
     $('#sequence_onoff').val(this.selectedSequence.onoff);
     this.refreshStepTable();
-    this.drawWavedromDiagram();
+    this.drawWavedromDiagram(true);
   }
 
 
@@ -584,6 +588,11 @@ class SequenceEditor {
     $('#sequence_onoff').change((event) => {
       this.selectedSequence.onoff = parseInt($(event.target).val());
       this.drawWavedromDiagram();
+    });
+
+    // force a refresh of the sequence
+    $('#diagramRefresh').click(() => {
+      this.drawWavedromDiagram(true);
     });
   }
 }

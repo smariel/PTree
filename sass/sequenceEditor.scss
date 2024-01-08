@@ -6,10 +6,17 @@
    margin: 10px;
 }
 
-#diagramScale_label {
+#sequence_display_control {
    background: $light-blue;
-   padding: 10px;
    margin-top: 10px;
+   padding: 10px;
+   label, button {
+      margin: 5px;
+   }
+
+   button {
+      @include square-btn($teal, white);
+   }
 }
 
 
