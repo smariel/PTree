@@ -84,7 +84,7 @@ $(async () => {
     // ENTER
     else if (13 == event.which) {
       if(undefined !== popupData.type && 'list' === popupData.type) {
-        close($('#list option:selected').text());
+        close($('#list option:selected').val());
       }
       else {
         close (true);
