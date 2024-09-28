@@ -401,7 +401,7 @@ class SequenceStep {
     // search the previous signal of the same type
     // for each signal, starting from the previous one, decrement
     let prevSignal = null;
-    for(let i=signal.id-1; i>0; i--) {
+    for(let i=signal.id-1; i>=0; i--) {
       if(this.signals[i].type == signal.type) {
         prevSignal = this.signals[i];
         break;
@@ -426,7 +426,7 @@ class SequenceStep {
     // search the next signal of the same type
     // for each signal, starting from the next one, increment
     let nextSignal = null;
-    for(let i=signal.id+1; i<this.length-1; i++) {
+    for(let i=signal.id+1; i<this.length; i++) {
       if(this.signals[i].type == signal.type) {
         nextSignal = this.signals[i];
         break;
