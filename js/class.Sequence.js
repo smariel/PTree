@@ -102,6 +102,7 @@ class Sequence {
     this.name  = name;
     this.steps = [];
     this.onoff = 1; // 1 = ON, 0 = 0FF
+    this.dataName = [];
     Object.defineProperties(this, {
       length: {
         get: function() {
@@ -113,7 +114,7 @@ class Sequence {
 
   // add an empty step to the sequence
   addStep(name = `STEP ${this.length}`) {
-    let newStep = new SequenceStep(this.length, name);
+    let newStep = new SequenceStep(this.length, name, this.dataName.length);
     this.steps.push(newStep);
     return newStep;
   }
@@ -177,6 +178,28 @@ class Sequence {
     return hasSignal;
   }
 
+  // add a new step data with a given name
+  addStepData(name='', value='') {
+    // first, add the name
+    this.dataName.push(name);
+
+    // then, add the value to each step
+    this.forEachStep((step) => {
+      step.data.push(value);
+    });   
+  }
+
+  // remove a step data from all step
+  removeStepData(stepdataid) {
+    // first, remove the data name
+    this.dataName.splice(stepdataid,1);
+    
+    // then, remove the data from each step
+    this.forEachStep((step) => {
+      step.data.splice(stepdataid,1);
+    });    
+  }
+
   // generate a JSON object using WaveDrom synthax
   toWavedromObject(config = {}) {
     // init the wavedrom object
@@ -218,6 +241,7 @@ class Sequence {
       name:  this.name,
       onoff: this.onoff,
       steps: [],
+      dataName: this.dataName
     };
     this.forEachStep((step) => {
       json.steps.push(step.toString());
@@ -236,6 +260,17 @@ class Sequence {
     for(let step of json.steps) {
       sequence.steps.push(SequenceStep.fromString(step));
     }
+
+    // import data (>= v2.3)
+    if (undefined !== json.dataName) {
+      sequence.dataName = json.dataName;
+    }
+    
+    // import tmin/tmax (< v2.3)
+    if(sequence.steps.length > 0 && sequence.steps[0].data.length == 2 && sequence.dataName.length == 0) {
+      sequence.dataName = ['tmin', 'tmax'];
+    }
+
     return sequence;
   }
 
@@ -286,12 +321,11 @@ class Sequence {
 // -----------------------------------------------------------------------------
 
 class SequenceStep {
-  constructor(id, name=`STEP ${id}`, tmin=0, tmax=0) {
+  constructor(id, name=`STEP ${id}`, datalength=0) {
     this.id      = id;
     this.name    = name;
-    this.tmin    = tmin;
-    this.tmax    = tmax;
     this.signals = [];
+    this.data = [];
 
     Object.defineProperties(this, {
       length: {
@@ -300,6 +334,10 @@ class SequenceStep {
         },
       }
     });
+
+    for(let i=0; i<datalength; i++) {
+      this.data.push('data value');
+    }
   }
 
   // add a signal to the step
@@ -485,18 +523,31 @@ class SequenceStep {
     let json = {
       id:      this.id,
       name:    this.name,
-      tmin:    this.tmin,
-      tmax:    this.tmax,
-      signals: this.signals
+      signals: this.signals,
+      data:    this.data
     };
     return JSON.stringify(json);
   }
 
   // return a SequenceStep object from a string created with .toString()
   static fromString(stepstr) {
-    let json = JSON.parse(stepstr);
-    let step = new SequenceStep(json.id, json.name, json.tmin, json.tmax);
+    let json = JSON.parse(stepstr);        
+    let step = new SequenceStep(json.id, json.name);
     step.signals = json.signals;
+
+    // import data (>= v2.3) 
+    if (undefined !== json.data) {
+      step.data = json.data;
+    }
+
+    // import tmin/tmax (< v2.3)   
+    if(undefined !== json.tmin) {
+      step.data.push(json.tmin);
+    }
+    if(undefined !== json.tmax) {
+      step.data.push(json.tmax);
+    }    
+
     return step;
   }
 }

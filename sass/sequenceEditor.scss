@@ -158,7 +158,8 @@ body {
    font-style: italic;
 }
 
-.signal-remove {
+.signal-remove, 
+.stepdata-remove {
    @include square-btn(white, $red);
 
    &:active {
@@ -176,6 +177,7 @@ body {
 }
 
 .signal-remove,
+.stepdata-remove,
 .signal-up,
 .signal-down {
    padding: 0px;
@@ -202,8 +204,22 @@ body {
    }
 }
 
+#step_table th {
+   &:hover {
+      & .stepdata-remove {
+         visibility: visible;
+      }
+   }
+
+   &:last-child {
+      text-align: right;
+      padding-right: 10px;
+   }
+}
+
 .asserted-add,
-.awaited-add {
+.awaited-add,
+.stepdata-add {
    @include square-btn(white, $teal);
    margin-top: 4px;
    padding: 0px 5px;
