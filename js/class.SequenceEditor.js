@@ -321,7 +321,7 @@ class SequenceEditor {
     // init the sequence data to be reformated for export
     let exportedSequence = {
       seq:    this.selectedSequence.name,
-      onoff:  this.onoff,
+      onoff:  this.selectedSequence.onoff,
       steps:  []
     };
 
