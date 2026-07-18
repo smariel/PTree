@@ -20,7 +20,7 @@
   "mac": {
     "category"   : "public.app-category.developer-tools",
     "icon"       : "resources/app.icns",
-    "target"     : "dmg",
+    "target"     : "zip",
     "identity"  : "P23QV2X53J",
     "type"      : "distribution",
     "extraFiles" : ["resources/equations.pdf"],

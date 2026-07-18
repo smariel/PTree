@@ -1,6 +1,6 @@
 {
   "name": "PTree",
-  "version": "2.3.0",
+  "version": "2.3.1",
   "description": "Design power trees and estimate consumptions",
   "author": {
     "name": "Sylvain Mariel",
@@ -14,13 +14,19 @@
     "start": "electron . --debug --no-update-check --no-backup --inspect --remote-debugging-port=9228",
     "nodebug": "electron .",
     "test": "ava --fail-fast",
-    "build:mac": "electron-builder --config electron-builder.json --mac   --dir",
-    "build:win": "electron-builder --config electron-builder.json --win   --dir",
-    "build:lin": "electron-builder --config electron-builder.json --linux --dir",
-    "dist:mac": " electron-builder --config electron-builder.json --mac   && cd bin && mv PTree.dmg PTree-macos.dmg && rm -rf mac",
-    "dist:win": " electron-builder --config electron-builder.json --win   && cd bin && mv win-unpacked        PTree && rm -f PTree-windows.zip && zip -r -X -y -q PTree-windows.zip PTree/ && rm -rf PTree",
-    "dist:lin": " electron-builder --config electron-builder.json --linux && cd bin && mv linux-unpacked PTree && rm -f PTree-linux.zip   && zip -r -X -y -q PTree-linux.zip   PTree/ && rm -rf PTree",
-    "dist:all": " npm run dist:mac  && npm run dist:win  && npm run dist:lin"
+    "build:mac": "    electron-builder --config electron-builder.json --mac   --dir",
+    "build:win": "    electron-builder --config electron-builder.json --win   --dir",
+    "build:lin": "    electron-builder --config electron-builder.json --linux --dir",
+    "dist:mac": "     electron-builder --config electron-builder.json --mac           && cd bin && mv PTree.zip PTree-macos.zip        && rm -rf mac",
+    "dist:mac_arm": " electron-builder --config electron-builder.json --mac --arm64   && cd bin && mv PTree.zip PTree-macos_arm.zip    && rm -rf mac-arm64",
+    "dist:mac_x64": " electron-builder --config electron-builder.json --mac --x64     && cd bin && mv PTree.zip PTree-macos_intel.zip  && rm -rf mac",
+    "dist:win": "     electron-builder --config electron-builder.json --win           && cd bin && mv win-unpacked         PTree && rm -f PTree-windows.zip       && zip -r -X -y -q PTree-windows.zip       PTree/ && rm -rf PTree",
+    "dist:win_arm": " electron-builder --config electron-builder.json --win --arm64   && cd bin && mv win-arm64-unpacked   PTree && rm -f PTree-windows_arm.zip   && zip -r -X -y -q PTree-windows_arm.zip   PTree/ && rm -rf PTree",
+    "dist:win_x64": " electron-builder --config electron-builder.json --win --x64     && cd bin && mv win-unpacked         PTree && rm -f PTree-windows_x64.zip   && zip -r -X -y -q PTree-windows_x64.zip   PTree/ && rm -rf PTree",
+    "dist:lin": "     electron-builder --config electron-builder.json --linux         && cd bin && mv linux-unpacked       PTree && rm -f PTree-linux.zip         && zip -r -X -y -q PTree-linux.zip         PTree/ && rm -rf PTree",
+    "dist:lin_arm": " electron-builder --config electron-builder.json --linux --arm64 && cd bin && mv linux-arm64-unpacked PTree && rm -f PTree-linux_arm.zip     && zip -r -X -y -q PTree-linux_arm.zip     PTree/ && rm -rf PTree",
+    "dist:lin_x64": " electron-builder --config electron-builder.json --linux --x64   && cd bin && mv linux-unpacked       PTree && rm -f PTree-linux_x64.zip     && zip -r -X -y -q PTree-linux_x64.zip     PTree/ && rm -rf PTree",
+    "dist:all": "     npm run dist:mac_x64 && npm run dist:mac_arm && npm run dist:win_x64 && npm run dist:win_arm && npm run dist:lin_x64"
   },
   "repository": {
     "type": "git",
